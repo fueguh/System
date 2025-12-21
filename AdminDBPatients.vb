@@ -20,6 +20,7 @@ Public Class AdminDBPatients
             End Using
         End Using
     End Sub
+
     Private Sub Clearform()
         selectedPatientID = 0
         txtFullName.Text = ""
