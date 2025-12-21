@@ -1,0 +1,219 @@
+﻿Imports System.Data.SqlClient
+
+Public Class AdminDBServices
+    Private selectedServiceID As Integer = 0
+    Private Sub LoadServices()
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+
+            Dim query As String = "SELECT * FROM Services ORDER BY ServiceID"
+
+            Using da As New SqlDataAdapter(query, con)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                DGVService.DataSource = dt
+            End Using
+        End Using
+    End Sub
+
+    Private Sub AdminDBServices_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        LoadServices()
+        Clearform()
+    End Sub
+
+    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellContentClick
+        If e.RowIndex >= 0 Then
+            Dim row = DGVService.Rows(e.RowIndex)
+
+            selectedServiceID = row.Cells("ServiceID").Value
+            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
+            txtPrice.Text = row.Cells("Price").Value.ToString()
+            txtDuration.Text = row.Cells("Duration").Value.ToString()
+        End If
+
+    End Sub
+    Private Function TryParseDuration(input As String, ByRef minutes As Integer) As Boolean
+        minutes = 0
+        If String.IsNullOrWhiteSpace(input) Then Return False
+
+        Dim s As String = input.Trim().ToLowerInvariant()
+
+        ' Remove commas and extra spaces
+        s = s.Replace(",", " ").Replace("  ", " ").Trim()
+
+        ' Quick numeric-only case: "30" or " 30 "
+        Dim n As Integer
+        If Integer.TryParse(s, n) Then
+            minutes = n
+            Return True
+        End If
+
+        ' Remove common words and symbols
+        s = s.Replace("minutes", "min").Replace("minute", "min").Replace("mins", "min")
+        s = s.Replace("hours", "h").Replace("hour", "h").Replace("hrs", "h").Replace("hr", "h")
+        s = s.Replace(" ", "")
+
+        ' Pattern 1: "30min" or "30min." or "30min,"
+        Dim m As Integer = 0
+        If s.EndsWith("min") Then
+            Dim numPart = s.Substring(0, s.Length - 3)
+            If Integer.TryParse(numPart, m) Then
+                minutes = m
+                Return True
+            End If
+        End If
+
+        Return False
+
+    End Function
+
+    Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
+        Dim price As Decimal
+        Dim durationMinutes As Integer
+
+        If txtServiceName.Text.Trim() = "" Then
+            MessageBox.Show("Service name is required.")
+            Return
+        End If
+
+        If Not Decimal.TryParse(txtPrice.Text.Trim(), price) Then
+            MessageBox.Show("Please enter a valid price.")
+            txtPrice.Focus()
+            Return
+        End If
+
+        If Not TryParseDuration(txtDuration.Text, durationMinutes) Then
+            MessageBox.Show("Please enter a valid duration (e.g., 30, 30 min, 1h30).")
+            txtDuration.Focus()
+            Return
+        End If
+
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+            Dim query As String = "
+            INSERT INTO Services (ServiceName, Price, Duration)
+            VALUES (@name, @price, @duration)
+        "
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.Add("@name", SqlDbType.VarChar, 100).Value = txtServiceName.Text.Trim()
+                Dim pParam = cmd.Parameters.Add("@price", SqlDbType.Decimal)
+                pParam.Precision = 10
+                pParam.Scale = 2
+                pParam.Value = price
+                cmd.Parameters.Add("@duration", SqlDbType.Int).Value = durationMinutes
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+
+        MessageBox.Show("Service added successfully.")
+        LoadServices()
+        Clearform()
+    End Sub
+
+    Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
+        If selectedServiceID = 0 Then
+            MessageBox.Show("Please select a service to update.")
+            Exit Sub
+        End If
+
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+
+            Dim query As String = "
+            UPDATE Services
+            SET ServiceName=@name, Price=@price, Duration=@duration
+            WHERE ServiceID=@id
+        "
+
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@id", selectedServiceID)
+                cmd.Parameters.AddWithValue("@name", txtServiceName.Text)
+                cmd.Parameters.AddWithValue("@price", Convert.ToDecimal(txtPrice.Text))
+                cmd.Parameters.AddWithValue("@duration", Convert.ToInt32(txtDuration.Text))
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+
+        MessageBox.Show("Service updated successfully.")
+        LoadServices()
+        Clearform()
+    End Sub
+    Private Sub Clearform()
+        txtServiceName.Text = ""
+        txtPrice.Text = ""
+        txtDuration.Text = ""
+        selectedServiceID = 0
+    End Sub
+    Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
+        If selectedServiceID = 0 Then
+            MessageBox.Show("Please select a service to delete.")
+            Exit Sub
+        End If
+
+        If MessageBox.Show("Are you sure you want to delete this service?",
+                       "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
+
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+
+            ' Check if service is used in appointments
+            Dim checkCmd As New SqlCommand("SELECT COUNT(*) FROM Appointments WHERE ServiceID=@id", con)
+            checkCmd.Parameters.AddWithValue("@id", selectedServiceID)
+            Dim count As Integer = CInt(checkCmd.ExecuteScalar())
+
+            If count > 0 Then
+                MessageBox.Show("This service is still used in appointments and cannot be deleted.")
+                Exit Sub
+            End If
+
+            ' Safe delete
+            Dim deleteCmd As New SqlCommand("DELETE FROM Services WHERE ServiceID=@id", con)
+            deleteCmd.Parameters.AddWithValue("@id", selectedServiceID)
+            deleteCmd.ExecuteNonQuery()
+        End Using
+
+        MessageBox.Show("Service deleted successfully.")
+
+        LoadServices()
+        Clearform()
+    End Sub
+
+    Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DGVService.CellFormatting
+        If DGVService.Columns(e.ColumnIndex).Name = "Duration" AndAlso e.Value IsNot Nothing AndAlso Not IsDBNull(e.Value) Then
+            Dim mins As Integer
+            If Integer.TryParse(e.Value.ToString(), mins) Then
+                e.Value = FormatMinutesFriendly(mins) ' returns "30 mins" or "1h 30m"
+                e.FormattingApplied = True
+            End If
+        End If
+    End Sub
+    Private Function FormatMinutesFriendly(mins As Integer) As String
+        If mins <= 0 Then Return ""
+        If mins < 60 Then Return $"{mins} mins"
+        Dim h = mins \ 60
+        Dim m = mins Mod 60
+        If m = 0 Then
+            Return $"{h}h"
+        Else
+            Return $"{h}h {m}m"
+        End If
+    End Function
+
+    Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
+        If e.RowIndex < 0 Then Return
+        Dim row = DGVService.Rows(e.RowIndex)
+        selectedServiceID = If(IsDBNull(row.Cells("ServiceID").Value), 0, Convert.ToInt32(row.Cells("ServiceID").Value))
+        txtServiceName.Text = If(IsDBNull(row.Cells("ServiceName").Value), "", row.Cells("ServiceName").Value.ToString())
+        txtPrice.Text = If(IsDBNull(row.Cells("Price").Value), "", row.Cells("Price").Value.ToString())
+        txtDuration.Text = If(IsDBNull(row.Cells("Duration").Value), "", row.Cells("Duration").Value.ToString())
+    End Sub
+
+    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+        If Dashboard Is Nothing Then
+            Dashboard = New AdminDashboard()
+        End If
+
+        Dashboard.Show()
+        Me.Hide()
+    End Sub
+End Class
