@@ -17,7 +17,7 @@ Public Class AdminDBUsers
         Clearform()
     End Sub
     Private Sub LoadUsers()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "

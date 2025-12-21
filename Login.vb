@@ -29,7 +29,7 @@ Public Class Login
         End If
 
         Dim hashed = HashPassword(txtPassword.Text)
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim cmd As New SqlCommand("
