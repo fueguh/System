@@ -107,4 +107,9 @@ Public Class AdminDashboard
             lblCompletedAppointments.Text = cmd4.ExecuteScalar().ToString()
         End Using
     End Sub
+
+    Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
+        TreatmentRecords.Show()
+        Me.Hide()
+    End Sub
 End Class

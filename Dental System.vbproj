@@ -164,6 +164,12 @@
     <Compile Include="SuperadminDashboard.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TreatmentRecords.Designer.vb">
+      <DependentUpon>TreatmentRecords.vb</DependentUpon>
+    </Compile>
+    <Compile Include="TreatmentRecords.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AdminDashboard.resx">
@@ -204,6 +210,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SuperadminDashboard.resx">
       <DependentUpon>SuperadminDashboard.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TreatmentRecords.resx">
+      <DependentUpon>TreatmentRecords.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

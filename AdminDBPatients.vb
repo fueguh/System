@@ -2,7 +2,7 @@
 
 Public Class AdminDBPatients
     Private selectedPatientID As Integer = 0
-    '??
+
     Private Sub AdminDBPatients_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPatients()
         Clearform()

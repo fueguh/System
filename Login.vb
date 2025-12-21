@@ -5,9 +5,10 @@ Imports System.Text
 Public Class Login
     Public Shared Dashboard As AdminDashboard
     Private Function HashPassword(password As String) As String
-        Using sha As SHA256 = SHA256.Create()
-            Dim bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password))
-            Return Convert.ToBase64String(bytes)
+        Using sha256 As SHA256 = SHA256.Create()
+            Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
+            Dim hash As Byte() = sha256.ComputeHash(bytes)
+            Return BitConverter.ToString(hash).Replace("-", "").ToLower() ' ✅ hex format
         End Using
     End Function
 
@@ -29,18 +30,18 @@ Public Class Login
         End If
 
         Dim hashed = HashPassword(txtPassword.Text)
+
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim cmd As New SqlCommand("
-        SELECT UserID, Username, Role
-        FROM Users
-        WHERE Username=@username AND Password=@password
-    ", con)
+            SELECT UserID, Username, Role
+            FROM Users
+            WHERE Username=@username AND Password=@password", con)
 
 
             cmd.Parameters.AddWithValue("@username", txtUsername.Text)
-            cmd.Parameters.AddWithValue("@password", txtPassword.Text)
+            cmd.Parameters.AddWithValue("@password", hashed)
 
             Using dr As SqlDataReader = cmd.ExecuteReader()
                 If dr.Read() Then

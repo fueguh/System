@@ -50,26 +50,29 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        Dim hashedPassword As String = HashPassword(txtPassword.Text)
-
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, Specialization, Availability, PhoneNumber, Email)
-            VALUES (@fullname, @username, @password, @role, @specialization, @availability, @phone, @email)"
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
+            VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)
+        "
 
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
             cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
+
+            Dim hashedPassword As String = HashPassword(txtPassword.Text)
             cmd.Parameters.AddWithValue("@password", hashedPassword)
+
             cmd.Parameters.AddWithValue("@role", CmbRole.Text)
-            cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
-            cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
             cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
             cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
+            cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
+            cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
 
             cmd.ExecuteNonQuery()
+
         End Using
 
         MessageBox.Show("User added successfully.")
@@ -170,5 +173,9 @@ Public Class AdminDBUsers
             txtSpecialization.Visible = False
             txtSpecialization.Text = ""
         End If
+    End Sub
+
+    Private Sub TxtPhoneNumber_TextChanged(sender As Object, e As EventArgs) Handles TxtPhoneNumber.TextChanged
+
     End Sub
 End Class
