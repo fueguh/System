@@ -17,11 +17,11 @@ Public Class AdminDBUsers
         Clearform()
     End Sub
     Private Sub LoadUsers()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
-            SELECT UserID, FullName, Username, Role, Specialization, Availability, PhoneNumber, Email, Password, DateCreated
+            SELECT UserID, FullName, Username, Role, Specialization, Availability, PhoneNum, Email, Password, DateCreated
             FROM Users
         "
 
@@ -55,11 +55,11 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNum, Email, Specialization, Availability)
             VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)
         "
 
@@ -91,7 +91,7 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -102,7 +102,7 @@ Public Class AdminDBUsers
             Role=@role,
             Specialization=@specialization,
             Availability=@availability,
-            PhoneNumber=@phone,
+            PhoneNum=@phone,
             Email=@email
             WHERE UserID=@id"
 
@@ -133,7 +133,7 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "DELETE FROM Users WHERE UserID=@id"
@@ -148,7 +148,7 @@ Public Class AdminDBUsers
     End Sub
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
@@ -166,7 +166,7 @@ Public Class AdminDBUsers
             TxtUsername.Text = row.Cells("Username").Value.ToString()
             txtPassword.Text = "" ' optional: don’t show password directly
             CmbRole.Text = row.Cells("Role").Value.ToString()
-            TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
+            TxtPhoneNumber.Text = row.Cells("PhoneNum").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()
         End If
     End Sub

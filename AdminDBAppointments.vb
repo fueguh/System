@@ -28,7 +28,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadComboBoxes()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Patients
@@ -67,7 +67,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadAppointments()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -112,7 +112,7 @@ Public Class AdminDBAppointments
     End Function
 
     Private Function IsConflict(Optional appointmentID As Integer = 0) As Boolean
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -153,7 +153,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' ✅ Corrected column name: UserID instead of UsersID
@@ -210,7 +210,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -258,7 +258,7 @@ Public Class AdminDBAppointments
         If MessageBox.Show("Are you sure you want to delete this appointment?",
                            "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "DELETE FROM Appointments WHERE AppointmentID=@id"

@@ -31,7 +31,7 @@ Public Class TreatmentRecords
     End Sub
 
     Private Sub LoadPatients()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "SELECT PatientID, FullName FROM Patients"
@@ -45,7 +45,7 @@ Public Class TreatmentRecords
         End Using
     End Sub
     Private Sub LoadDentists()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -64,7 +64,7 @@ Public Class TreatmentRecords
         End Using
     End Sub
     Private Sub LoadRecords()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -85,7 +85,7 @@ Public Class TreatmentRecords
     Private imagePath As String = ""
 
     Private Sub BtnSaveRecord_Click(sender As Object, e As EventArgs) Handles BtnSaveRecord.Click
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "

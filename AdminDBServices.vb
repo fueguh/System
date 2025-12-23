@@ -3,7 +3,7 @@
 Public Class AdminDBServices
     Private selectedServiceID As Integer = 0
     Private Sub LoadServices()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "SELECT * FROM Services ORDER BY ServiceID"
@@ -88,7 +88,7 @@ Public Class AdminDBServices
             Return
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
             INSERT INTO Services (ServiceName, Price, Duration)
@@ -116,7 +116,7 @@ Public Class AdminDBServices
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -153,7 +153,7 @@ Public Class AdminDBServices
         If MessageBox.Show("Are you sure you want to delete this service?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Check if service is used in appointments

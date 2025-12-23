@@ -84,7 +84,7 @@ Public Class AdminDashboard
         LoadDashboardStats()
     End Sub
     Public Sub LoadDashboardStats()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Total Patients

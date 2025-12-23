@@ -20,7 +20,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadDailyAppointments()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -49,7 +49,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadDentistWorkload()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -70,7 +70,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadServiceUsage()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -91,7 +91,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadPatientSummary()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -111,7 +111,7 @@ Public Class AdminDBReports
     End Sub
 
     Public Sub LoadAppointmentHistory()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -139,7 +139,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadMonthlyRevenue()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
                 SELECT FORMAT(A.Date, 'MMMM yyyy') AS Month,
@@ -158,7 +158,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadDentistPerformance()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -179,7 +179,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub LoadPatientCount()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "SELECT COUNT(PatientID) AS TotalPatients FROM Patients"
