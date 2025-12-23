@@ -50,6 +50,11 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
+        If IsUsernameTaken(TxtUsername.Text) Then
+            MessageBox.Show("Username already exists. Please choose a different one.")
+            Exit Sub
+        End If
+
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
@@ -141,6 +146,17 @@ Public Class AdminDBUsers
         LoadUsers()
         Clearform()
     End Sub
+
+    Private Function IsUsernameTaken(username As String) As Boolean
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+            Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
+            Dim cmd As New SqlCommand(query, con)
+            cmd.Parameters.AddWithValue("@username", username)
+            Dim count As Integer = CInt(cmd.ExecuteScalar())
+            Return count > 0
+        End Using
+    End Function
 
     Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
         If e.RowIndex >= 0 Then

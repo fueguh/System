@@ -38,14 +38,22 @@ Public Class AdminDBAppointments
             CmbPatient.DataSource = dtPatients
             CmbPatient.DisplayMember = "FullName"
             CmbPatient.ValueMember = "PatientID"
+            CmbPatient.SelectedIndex = -1
 
             ' Dentists
             Dim dtDentists As New DataTable()
-            Dim da2 As New SqlDataAdapter("SELECT DentistID, FullName FROM Dentists", con)
+            Dim da2 As New SqlDataAdapter("
+            SELECT UserID, FullName 
+            FROM Users 
+            WHERE Role = 'Dentist'
+            ", con)
             da2.Fill(dtDentists)
+
             CmbDentist.DataSource = dtDentists
             CmbDentist.DisplayMember = "FullName"
-            CmbDentist.ValueMember = "DentistID"
+            CmbDentist.ValueMember = "UserID"
+            CmbDentist.SelectedIndex = -1
+
 
             ' Services
             Dim dtServices As New DataTable()
@@ -54,6 +62,7 @@ Public Class AdminDBAppointments
             CmbService.DataSource = dtServices
             CmbService.DisplayMember = "ServiceName"
             CmbService.ValueMember = "ServiceID"
+            CmbService.SelectedIndex = -1
         End Using
     End Sub
 
@@ -72,7 +81,7 @@ Public Class AdminDBAppointments
                    A.Status
             FROM Appointments A
             JOIN Patients P ON A.PatientID = P.PatientID
-            JOIN Dentists D ON A.DentistID = D.DentistID
+            JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
             JOIN Services S ON A.ServiceID = S.ServiceID
             ORDER BY A.Date DESC, A.StartTime ASC
         "
@@ -90,11 +99,15 @@ Public Class AdminDBAppointments
             Return False
         End If
 
-        If DtpEndTime.Value <= dtpStartTime.Value Then
-            MessageBox.Show("End time must be later than start time.")
+        If DtpDate.Value.Date < DateTime.Today Then
+            MessageBox.Show("Appointment date cannot be in the past.")
             Return False
         End If
 
+        If cmbStatus.SelectedIndex = -1 Then
+            MessageBox.Show("Please select a status.")
+            Return False
+        End If
         Return True
     End Function
 
@@ -104,7 +117,7 @@ Public Class AdminDBAppointments
 
             Dim query As String = "
             SELECT * FROM Appointments
-            WHERE DentistID = @dentist
+            WHERE UserID = @dentist
             AND Date = @date
             AND AppointmentID <> @id
             AND (
@@ -123,7 +136,6 @@ Public Class AdminDBAppointments
 
             Dim dr = cmd.ExecuteReader()
             Return dr.HasRows
-
         End Using
     End Function
 
@@ -132,7 +144,10 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
+        ' ✅ Validate required fields
         If Not ValidateFields() Then Exit Sub
+
+        ' ✅ Check for conflicts
         If IsConflict() Then
             MessageBox.Show("This dentist already has an appointment at this time.")
             Exit Sub
@@ -141,8 +156,9 @@ Public Class AdminDBAppointments
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
+            ' ✅ Corrected column name: UserID instead of UsersID
             Dim query As String = "
-            INSERT INTO Appointments (PatientID, DentistID, ServiceID, Date, StartTime, EndTime, Status)
+            INSERT INTO Appointments (PatientID, UserID, ServiceID, Date, StartTime, EndTime, Status)
             VALUES (@p, @d, @s, @date, @start, @end, @status)
         "
 
@@ -151,18 +167,35 @@ Public Class AdminDBAppointments
             cmd.Parameters.AddWithValue("@d", CInt(CmbDentist.SelectedValue))
             cmd.Parameters.AddWithValue("@s", CInt(CmbService.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+
+            ' ⚠️ Use .Value if StartTime/EndTime are DATETIME in SQL
+            ' Use .TimeOfDay if they are TIME in SQL
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
+
             cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
-            cmd.ExecuteNonQuery()
+
+            Try
+                cmd.ExecuteNonQuery()
+                MessageBox.Show("Appointment added successfully.")
+            Catch ex As Exception
+                MessageBox.Show("Error adding appointment: " & ex.Message)
+            End Try
         End Using
 
-        MessageBox.Show("Appointment added successfully.")
+        ' ✅ Refresh UI
         LoadAppointments()
 
-        'to reload the system overview in admin dashboard after input
+        ' ✅ Refresh reports
+        Dim historyForm As New AdminDBReports()
+        historyForm.RefreshHistory()
+
+        ' ✅ Reload dashboard stats
         Dashboard?.LoadDashboardStats()
+
+        ' ✅ Clear form inputs
         ClearForm()
+
     End Sub
 
     Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
@@ -182,7 +215,7 @@ Public Class AdminDBAppointments
 
             Dim query As String = "
             UPDATE Appointments
-            SET PatientID=@p, DentistID=@d, ServiceID=@s, Date=@date,
+            SET PatientID=@p, UserID=@d, ServiceID=@s, Date=@date,
                 StartTime=@start, EndTime=@end, Status=@status
             WHERE AppointmentID=@id
         "
@@ -193,20 +226,27 @@ Public Class AdminDBAppointments
             cmd.Parameters.AddWithValue("@d", CInt(CmbDentist.SelectedValue))
             cmd.Parameters.AddWithValue("@s", CInt(CmbService.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+
+            ' ⚠️ Adjust depending on SQL column type
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
+
             cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
-            cmd.ExecuteNonQuery()
+
+            Try
+                cmd.ExecuteNonQuery()
+                MessageBox.Show("Appointment updated successfully.")
+            Catch ex As Exception
+                MessageBox.Show("Error updating appointment: " & ex.Message)
+            End Try
         End Using
 
-        MessageBox.Show("Appointment updated successfully.")
+        ' ✅ Refresh UI
         LoadAppointments()
-        'to reload the system overview in admin dashboard after input
         Dashboard?.LoadDashboardStats()
-        ' Refresh reports tab if open
         AdminDBReports?.LoadAppointmentHistory()
-
         ClearForm()
+
     End Sub
 
     Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
@@ -216,21 +256,25 @@ Public Class AdminDBAppointments
         End If
 
         If MessageBox.Show("Are you sure you want to delete this appointment?",
-                           "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
+                           "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Exit Sub
 
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "DELETE FROM Appointments WHERE AppointmentID=@id"
-
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
-            cmd.ExecuteNonQuery()
+
+            Try
+                cmd.ExecuteNonQuery()
+                MessageBox.Show("Appointment deleted successfully.")
+            Catch ex As Exception
+                MessageBox.Show("Error deleting appointment: " & ex.Message)
+            End Try
         End Using
 
-        MessageBox.Show("Appointment deleted successfully.")
+        ' ✅ Refresh UI
         LoadAppointments()
-        'to reload the system overview in admin dashboard after input
         Dashboard?.LoadDashboardStats()
         ClearForm()
     End Sub
@@ -242,19 +286,29 @@ Public Class AdminDBAppointments
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
 
-            ' Capture the AppointmentID for update/delete
+            ' ✅ Capture the AppointmentID for update/delete
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-            ' Populate the form fields with the selected row values
+            ' ✅ Populate ComboBoxes (use SelectedValue if bound)
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
             CmbDentist.Text = row.Cells("Dentist").Value.ToString()
             CmbService.Text = row.Cells("Service").Value.ToString()
+
+            ' ✅ Date
             DtpDate.Value = CDate(row.Cells("Date").Value)
 
-            ' StartTime and EndTime are stored as TimeSpan in SQL, so combine with today's date
-            dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
-            DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
+            ' ✅ Time handling
+            Try
+                ' If stored as TIME in SQL
+                dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
+                DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
+            Catch ex As Exception
+                ' If stored as DATETIME in SQL
+                dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
+                DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
+            End Try
 
+            ' ✅ Status
             cmbStatus.Text = row.Cells("Status").Value.ToString()
         End If
     End Sub
@@ -282,14 +336,35 @@ Public Class AdminDBAppointments
     Private Sub DGVAppointments_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointments.CellDoubleClick
         If e.RowIndex >= 0 Then
             Dim row = DGVAppointments.Rows(e.RowIndex)
+
+            ' ✅ Capture AppointmentID
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
+
+            ' ✅ Populate ComboBoxes (use SelectedValue if bound)
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
             CmbDentist.Text = row.Cells("Dentist").Value.ToString()
             CmbService.Text = row.Cells("Service").Value.ToString()
+
+            ' ✅ Date
             DtpDate.Value = CDate(row.Cells("Date").Value)
-            dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
-            DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
+
+            ' ✅ Time handling
+            Try
+                dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
+                DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
+            Catch ex As Exception
+                ' If stored as DATETIME instead of TIME
+                dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
+                DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
+            End Try
+
+            ' ✅ Status
             cmbStatus.Text = row.Cells("Status").Value.ToString()
         End If
+
+    End Sub
+
+    Private Sub AdminDBAppointments_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
+        LoadComboBoxes()
     End Sub
 End Class

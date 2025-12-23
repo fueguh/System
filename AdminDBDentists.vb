@@ -1,4 +1,6 @@
 ﻿Imports System.Data.SqlClient
+Imports System.Security.Cryptography
+Imports System.Text
 
 Public Class AdminDBDentists
     Private selectedDentistID As Integer = 0
@@ -6,135 +8,53 @@ Public Class AdminDBDentists
         LoadDentists()
         Clearform()
     End Sub
+    Public Function HashPassword(password As String) As String
+        Using sha256 As SHA256 = SHA256.Create()
+            Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
+            Dim hash As Byte() = sha256.ComputeHash(bytes)
+            Return BitConverter.ToString(hash).Replace("-", "").ToLower()
+        End Using
+    End Function
 
     Private Sub LoadDentists()
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
-            Dim query As String = "SELECT * FROM Dentists ORDER BY FullName"
+            Dim query As String = "
+            SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization, Availability
+            FROM Users
+            WHERE Role = 'Dentist'
+        "
 
-            Using da As New SqlDataAdapter(query, con)
-                Dim dt As New DataTable()
-                da.Fill(dt)
-                DGVDentists.DataSource = dt
-            End Using
+            Dim da As New SqlDataAdapter(query, con)
+            Dim dt As New DataTable()
+            da.Fill(dt)
+
+            DGVDentists.DataSource = dt
         End Using
     End Sub
 
     Private Sub DGVDentists_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellContentClick
+        ' ✅ Make sure the click is valid (not header row)
         If e.RowIndex >= 0 Then
-            Dim row = DGVDentists.Rows(e.RowIndex)
+            Dim row As DataGridViewRow = DGVDentists.Rows(e.RowIndex)
 
-            selectedDentistID = row.Cells("DentistID").Value
-            txtFullName.Text = row.Cells("FullName").Value.ToString()
-            txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
-            txtContact.Text = row.Cells("ContactNumber").Value.ToString()
-            txtEmail.Text = row.Cells("Email").Value.ToString()
+            ' ✅ Populate textboxes/comboboxes with selected row values
+            TxtName.Text = row.Cells("FullName").Value.ToString()
+            TxtUsername.Text = row.Cells("Username").Value.ToString()
+            TxtPhone.Text = row.Cells("PhoneNumber").Value.ToString()
+            TxtEmail.Text = row.Cells("Email").Value.ToString()
+            TxtSpecialization.Text = row.Cells("Specialization").Value.ToString()
             cmbAvailability.Text = row.Cells("Availability").Value.ToString()
         End If
 
     End Sub
 
-    Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
-        If txtFullName.Text.Trim = "" Or txtSpecialization.Text.Trim = "" Then
-            MessageBox.Show("Full name and specialization are required.")
-            Exit Sub
-        End If
-
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-
-            Dim query As String = "
-            INSERT INTO Dentists (FullName, Specialization, ContactNumber, Email, Availability)
-            VALUES (@name, @spec, @contact, @email, @avail)
-        "
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@name", txtFullName.Text)
-                cmd.Parameters.AddWithValue("@spec", txtSpecialization.Text)
-                cmd.Parameters.AddWithValue("@contact", txtContact.Text)
-                cmd.Parameters.AddWithValue("@email", txtEmail.Text)
-                cmd.Parameters.AddWithValue("@avail", cmbAvailability.Text)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-
-
-        MessageBox.Show("Dentist added successfully.")
-        LoadDentists()
-        Clearform()
-
-        'to reload the system overview in admin dashboard after input
-        Dashboard?.LoadDashboardStats()
-    End Sub
-
-    Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
-        If selectedDentistID = 0 Then
-            MessageBox.Show("Please select a dentist to update.")
-            Exit Sub
-        End If
-
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-
-            Dim query As String = "
-            UPDATE Dentists
-            SET FullName=@name, Specialization=@spec, ContactNumber=@contact,
-                Email=@email, Availability=@avail
-            WHERE DentistID=@id
-        "
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedDentistID)
-                cmd.Parameters.AddWithValue("@name", txtFullName.Text)
-                cmd.Parameters.AddWithValue("@spec", txtSpecialization.Text)
-                cmd.Parameters.AddWithValue("@contact", txtContact.Text)
-                cmd.Parameters.AddWithValue("@email", txtEmail.Text)
-                cmd.Parameters.AddWithValue("@avail", cmbAvailability.Text)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-
-
-        MessageBox.Show("Dentist updated successfully.")
-        LoadDentists()
-        Clearform()
-        'to reload the system overview in admin dashboard after input
-        Dashboard?.LoadDashboardStats()
-    End Sub
-
-    Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
-        If selectedDentistID = 0 Then
-            MessageBox.Show("Please select a dentist to delete.")
-            Exit Sub
-        End If
-
-        If MessageBox.Show("Are you sure you want to delete this dentist?",
-                       "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
-
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-
-            Dim query As String = "DELETE FROM Dentists WHERE DentistID=@id"
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedDentistID)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-
-        MessageBox.Show("Dentist deleted successfully.")
-        LoadDentists()
-        Clearform()
-        'to reload the system overview in admin dashboard after input
-        Dashboard?.LoadDashboardStats()
-    End Sub
-
     Private Sub Clearform()
-        txtFullName.Text = ""
+        TxtName.Text = ""
         txtSpecialization.Text = ""
-        txtContact.Text = ""
-        txtEmail.Text = ""
+        TxtPhone.Text = ""
+        TxtEmail.Text = ""
         cmbAvailability.Text = ""
         selectedDentistID = 0
     End Sub
@@ -147,4 +67,61 @@ Public Class AdminDBDentists
         Dashboard.Show()
         Me.Hide()
     End Sub
+
+    Private Sub BTNAdd_Click_1(sender As Object, e As EventArgs) Handles BTNAdd.Click
+        ' ✅ Confirm password check
+        If TxtPassword.Text <> TxtConfirmPassword.Text Then
+            MessageBox.Show("Passwords do not match. Please re-enter.")
+            Exit Sub
+        End If
+
+        'checks if user alreadey exixts
+        If IsUsernameTaken(TxtUsername.Text) Then
+            MessageBox.Show("Username already exists. Please choose a different one.")
+            Exit Sub
+        End If
+
+        ' ✅ Hash password
+        Dim hashedPassword As String = HashPassword(TxtPassword.Text)
+
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+
+            Dim query As String = "
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability)
+            VALUES (@name, @username, @password, 'Dentist', @phone, @email, GETDATE(), @spec, @avail)
+        "
+
+            Dim cmd As New SqlCommand(query, con)
+            cmd.Parameters.AddWithValue("@name", TxtName.Text)
+            cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
+            cmd.Parameters.AddWithValue("@password", hashedPassword)
+            cmd.Parameters.AddWithValue("@phone", TxtPhone.Text)
+            cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
+            cmd.Parameters.AddWithValue("@spec", TxtSpecialization.Text)
+            cmd.Parameters.AddWithValue("@avail", cmbAvailability.Text)
+
+            cmd.ExecuteNonQuery()
+        End Using
+
+
+        MessageBox.Show("Dentist saved successfully.")
+        LoadDentists()
+        Clearform()
+
+        'to reload the system overview in admin dashboard after input
+        Dashboard?.LoadDashboardStats()
+    End Sub
+
+    Private Function IsUsernameTaken(username As String) As Boolean
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+            Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
+            Dim cmd As New SqlCommand(query, con)
+            cmd.Parameters.AddWithValue("@username", username)
+            Dim count As Integer = CInt(cmd.ExecuteScalar())
+            Return count > 0
+        End Using
+    End Function
+
 End Class

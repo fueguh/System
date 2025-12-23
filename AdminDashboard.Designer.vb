@@ -25,14 +25,15 @@ Partial Class AdminDashboard
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDashboard))
         Me.Guna2PictureBox6 = New Guna.UI2.WinForms.Guna2PictureBox()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
-        Me.UserManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.UserManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.DentistManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PatientManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ServicesManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ManageForm = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ManageUsersForm = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ManageDentistsForm = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ManagePatientsForm = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ManageServicesForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.AuditTrailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SystemOverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
@@ -47,7 +48,6 @@ Partial Class AdminDashboard
         Me.Guna2Panel4 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
-        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Guna2PictureBox6, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -74,7 +74,7 @@ Partial Class AdminDashboard
         Me.MenuStrip1.BackColor = System.Drawing.SystemColors.ButtonHighlight
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.UserManagementToolStripMenuItem, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem1})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem1})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(1, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -82,36 +82,36 @@ Partial Class AdminDashboard
         Me.MenuStrip1.TabIndex = 19
         Me.MenuStrip1.Text = "MenuStrip1"
         '
-        'UserManagementToolStripMenuItem
+        'ManageForm
         '
-        Me.UserManagementToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.UserManagementToolStripMenuItem1, Me.DentistManagementToolStripMenuItem, Me.PatientManagementToolStripMenuItem, Me.ServicesManagementToolStripMenuItem})
-        Me.UserManagementToolStripMenuItem.Name = "UserManagementToolStripMenuItem"
-        Me.UserManagementToolStripMenuItem.Size = New System.Drawing.Size(212, 44)
-        Me.UserManagementToolStripMenuItem.Text = "Management"
+        Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm})
+        Me.ManageForm.Name = "ManageForm"
+        Me.ManageForm.Size = New System.Drawing.Size(212, 44)
+        Me.ManageForm.Text = "Management"
         '
-        'UserManagementToolStripMenuItem1
+        'ManageUsersForm
         '
-        Me.UserManagementToolStripMenuItem1.Name = "UserManagementToolStripMenuItem1"
-        Me.UserManagementToolStripMenuItem1.Size = New System.Drawing.Size(401, 44)
-        Me.UserManagementToolStripMenuItem1.Text = "User Management"
+        Me.ManageUsersForm.Name = "ManageUsersForm"
+        Me.ManageUsersForm.Size = New System.Drawing.Size(401, 44)
+        Me.ManageUsersForm.Text = "User Management"
         '
-        'DentistManagementToolStripMenuItem
+        'ManageDentistsForm
         '
-        Me.DentistManagementToolStripMenuItem.Name = "DentistManagementToolStripMenuItem"
-        Me.DentistManagementToolStripMenuItem.Size = New System.Drawing.Size(401, 44)
-        Me.DentistManagementToolStripMenuItem.Text = "Dentist Management"
+        Me.ManageDentistsForm.Name = "ManageDentistsForm"
+        Me.ManageDentistsForm.Size = New System.Drawing.Size(401, 44)
+        Me.ManageDentistsForm.Text = "Dentist Management"
         '
-        'PatientManagementToolStripMenuItem
+        'ManagePatientsForm
         '
-        Me.PatientManagementToolStripMenuItem.Name = "PatientManagementToolStripMenuItem"
-        Me.PatientManagementToolStripMenuItem.Size = New System.Drawing.Size(401, 44)
-        Me.PatientManagementToolStripMenuItem.Text = "Patient Management"
+        Me.ManagePatientsForm.Name = "ManagePatientsForm"
+        Me.ManagePatientsForm.Size = New System.Drawing.Size(401, 44)
+        Me.ManagePatientsForm.Text = "Patient Management"
         '
-        'ServicesManagementToolStripMenuItem
+        'ManageServicesForm
         '
-        Me.ServicesManagementToolStripMenuItem.Name = "ServicesManagementToolStripMenuItem"
-        Me.ServicesManagementToolStripMenuItem.Size = New System.Drawing.Size(401, 44)
-        Me.ServicesManagementToolStripMenuItem.Text = "Services Management"
+        Me.ManageServicesForm.Name = "ManageServicesForm"
+        Me.ManageServicesForm.Size = New System.Drawing.Size(401, 44)
+        Me.ManageServicesForm.Text = "Services Management"
         '
         'AuditTrailToolStripMenuItem
         '
@@ -131,6 +131,12 @@ Partial Class AdminDashboard
         Me.ReportsToolStripMenuItem.ShowShortcutKeys = False
         Me.ReportsToolStripMenuItem.Size = New System.Drawing.Size(138, 44)
         Me.ReportsToolStripMenuItem.Text = "Reports"
+        '
+        'ToolStripMenuItem1
+        '
+        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(281, 44)
+        Me.ToolStripMenuItem1.Text = "Treatment Record"
         '
         'Guna2CustomGradientPanel1
         '
@@ -270,12 +276,6 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments.Text = "0"
         Me.lblCompletedAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'ToolStripMenuItem1
-        '
-        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(281, 44)
-        Me.ToolStripMenuItem1.Text = "Treatment Record"
-        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -308,15 +308,15 @@ Partial Class AdminDashboard
     Friend WithEvents Guna2PictureBox6 As Guna.UI2.WinForms.Guna2PictureBox
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents SystemOverviewToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents UserManagementToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ManageForm As ToolStripMenuItem
     Friend WithEvents AuditTrailToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReportsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents UserManagementToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents DentistManagementToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents PatientManagementToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ServicesManagementToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ManageUsersForm As ToolStripMenuItem
+    Friend WithEvents ManageDentistsForm As ToolStripMenuItem
+    Friend WithEvents ManagePatientsForm As ToolStripMenuItem
+    Friend WithEvents ManageServicesForm As ToolStripMenuItem
     Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents Guna2Panel2 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents label5 As Label

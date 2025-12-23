@@ -57,22 +57,25 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub UserManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles UserManagementToolStripMenuItem1.Click
+    Private Sub UserManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ManageUsersForm.Click
+        Dim userForm As New AdminDBUsers()
+        userForm.ShowDialog()
+
         AdminDBUsers.Show()
         Me.Hide()
     End Sub
 
-    Private Sub DentistManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DentistManagementToolStripMenuItem.Click
+    Private Sub DentistManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManageDentistsForm.Click
         AdminDBDentists.Show()
         Me.Hide()
     End Sub
 
-    Private Sub PatientManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PatientManagementToolStripMenuItem.Click
+    Private Sub PatientManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManagePatientsForm.Click
         AdminDBPatients.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ServicesManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ServicesManagementToolStripMenuItem.Click
+    Private Sub ServicesManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManageServicesForm.Click
         AdminDBServices.Show()
         Me.Hide()
     End Sub
