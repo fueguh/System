@@ -5,7 +5,7 @@ Imports System.Text
 Public Class AdminDBUsers
     Private selectedUserID As Integer = 0
     Private Function HashPassword(password As String) As String
-        Using sha256 As SHA256 = sha256.Create()
+        Using sha256 As SHA256 = SHA256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
             Dim hash As Byte() = sha256.ComputeHash(bytes)
             Return BitConverter.ToString(hash).Replace("-", "").ToLower()
@@ -15,6 +15,9 @@ Public Class AdminDBUsers
     Private Sub AdminDBUsers_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadUsers()
         Clearform()
+
+        ' Call the centralized enforcement logics
+        SystemSession.EnforceAdminRole(CmbRole)
     End Sub
     Private Sub LoadUsers()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
@@ -44,6 +47,18 @@ Public Class AdminDBUsers
         TxtEmail.Text = ""
     End Sub
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
+
+        If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
+       String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
+       String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
+       String.IsNullOrWhiteSpace(txtConfirmPassword.Text) OrElse
+       String.IsNullOrWhiteSpace(CmbRole.Text) Then
+
+            MessageBox.Show("Please fill in all required fields before saving.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
+
         ' Confirm password check
         If txtPassword.Text <> txtConfirmPassword.Text Then
             MessageBox.Show("Passwords do not match.")
@@ -70,13 +85,29 @@ Public Class AdminDBUsers
             Dim hashedPassword As String = HashPassword(txtPassword.Text)
             cmd.Parameters.AddWithValue("@password", hashedPassword)
 
-            cmd.Parameters.AddWithValue("@role", CmbRole.Text)
+            ' Check if there is at least one Admin in the system
+            Dim roleToAssign As String
+            If Not SystemSession.AdminExists() Then
+                roleToAssign = "Admin"
+                MessageBox.Show("An Admin account must be created before adding Staff or Dentist. This user will be set as Admin.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Else
+                roleToAssign = CmbRole.Text
+
+            End If
+
+            cmd.Parameters.AddWithValue("@role", roleToAssign)
             cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
             cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
             cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
             cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
 
             cmd.ExecuteNonQuery()
+
+            If Not SystemSession.AdminExists() Then
+                SystemSession.LogAudit("First Admin Created", "Registration")
+            Else
+                SystemSession.LogAudit("Add user", "User Management")
+            End If
 
         End Using
 
@@ -91,19 +122,22 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
+        ' Get old role using SystemSession helper
+        Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
             UPDATE Users
             SET FullName=@fullname,
-            Username=@username,
-            Password=@password,
-            Role=@role,
-            Specialization=@specialization,
-            Availability=@availability,
-            PhoneNum=@phone,
-            Email=@email
+                Username=@username,
+                Password=@password,
+                Role=@role,
+                Specialization=@specialization,
+                Availability=@availability,
+                PhoneNum=@phone,
+                Email=@email
             WHERE UserID=@id"
 
             Dim hashedPassword As String = HashPassword(txtPassword.Text)
@@ -123,9 +157,21 @@ Public Class AdminDBUsers
         End Using
 
         MessageBox.Show("User updated successfully.")
+        ' ✅ Audit logging with last Admin check
+        If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
+            SystemSession.LogAudit("Last Admin Role Changed", "User Management")
+            MessageBox.Show("The last Admin account has been changed. Please register a new Admin immediately.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            SystemSession.EnforceAdminRole(CmbRole)
+        ElseIf CmbRole.Text = "Admin" Then
+            SystemSession.LogAudit("Admin Account Updated", "User Management")
+        Else
+            SystemSession.LogAudit("User Updated", "User Management")
+        End If
+
         LoadUsers()
         Clearform()
     End Sub
+
 
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
         If selectedUserID = 0 Then
@@ -142,7 +188,21 @@ Public Class AdminDBUsers
             cmd.ExecuteNonQuery()
         End Using
 
+        If Not SystemSession.AdminExists() Then
+            MessageBox.Show("All Admin accounts have been deleted. You must register a new Admin before adding Staff or Dentists.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            ' Log this critical event
+            SystemSession.LogAudit("All Admins Deleted", "User Management")
+
+            ' Optionally lock the ComboBox again
+            SystemSession.EnforceAdminRole(CmbRole)
+        End If
+
+
         MessageBox.Show("User deleted successfully.")
+        ' Re-check if Admins still exist
+        SystemSession.EnforceAdminRole(CmbRole)
+
         LoadUsers()
         Clearform()
     End Sub
@@ -177,7 +237,7 @@ Public Class AdminDBUsers
         End If
 
         Dashboard.Show()
-        Me.Hide()
+        Me.Close()
     End Sub
 
     Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged

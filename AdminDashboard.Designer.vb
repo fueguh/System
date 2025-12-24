@@ -62,9 +62,8 @@ Partial Class AdminDashboard
         Me.Guna2PictureBox6.Image = CType(resources.GetObject("Guna2PictureBox6.Image"), System.Drawing.Image)
         Me.Guna2PictureBox6.ImageRotate = 0!
         Me.Guna2PictureBox6.Location = New System.Drawing.Point(1, -2)
-        Me.Guna2PictureBox6.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Guna2PictureBox6.Name = "Guna2PictureBox6"
-        Me.Guna2PictureBox6.Size = New System.Drawing.Size(180, 153)
+        Me.Guna2PictureBox6.Size = New System.Drawing.Size(135, 124)
         Me.Guna2PictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.Guna2PictureBox6.TabIndex = 18
         Me.Guna2PictureBox6.TabStop = False
@@ -78,9 +77,10 @@ Partial Class AdminDashboard
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem1})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
-        Me.MenuStrip1.Location = New System.Drawing.Point(1, 150)
+        Me.MenuStrip1.Location = New System.Drawing.Point(1, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(372, 948)
+        Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
+        Me.MenuStrip1.Size = New System.Drawing.Size(279, 770)
         Me.MenuStrip1.TabIndex = 19
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -88,75 +88,73 @@ Partial Class AdminDashboard
         '
         Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm})
         Me.ManageForm.Name = "ManageForm"
-        Me.ManageForm.Size = New System.Drawing.Size(260, 55)
+        Me.ManageForm.Size = New System.Drawing.Size(212, 44)
         Me.ManageForm.Text = "Management"
         '
         'ManageUsersForm
         '
         Me.ManageUsersForm.Name = "ManageUsersForm"
-        Me.ManageUsersForm.Size = New System.Drawing.Size(499, 56)
+        Me.ManageUsersForm.Size = New System.Drawing.Size(401, 44)
         Me.ManageUsersForm.Text = "User Management"
         '
         'ManageDentistsForm
         '
         Me.ManageDentistsForm.Name = "ManageDentistsForm"
-        Me.ManageDentistsForm.Size = New System.Drawing.Size(499, 56)
+        Me.ManageDentistsForm.Size = New System.Drawing.Size(401, 44)
         Me.ManageDentistsForm.Text = "Dentist Management"
         '
         'ManagePatientsForm
         '
         Me.ManagePatientsForm.Name = "ManagePatientsForm"
-        Me.ManagePatientsForm.Size = New System.Drawing.Size(499, 56)
+        Me.ManagePatientsForm.Size = New System.Drawing.Size(401, 44)
         Me.ManagePatientsForm.Text = "Patient Management"
         '
         'ManageServicesForm
         '
         Me.ManageServicesForm.Name = "ManageServicesForm"
-        Me.ManageServicesForm.Size = New System.Drawing.Size(499, 56)
+        Me.ManageServicesForm.Size = New System.Drawing.Size(401, 44)
         Me.ManageServicesForm.Text = "Services Management"
         '
         'AuditTrailToolStripMenuItem
         '
         Me.AuditTrailToolStripMenuItem.Name = "AuditTrailToolStripMenuItem"
-        Me.AuditTrailToolStripMenuItem.Size = New System.Drawing.Size(226, 55)
+        Me.AuditTrailToolStripMenuItem.Size = New System.Drawing.Size(182, 44)
         Me.AuditTrailToolStripMenuItem.Text = "Audit Trail"
         '
         'SystemOverviewToolStripMenuItem
         '
         Me.SystemOverviewToolStripMenuItem.Name = "SystemOverviewToolStripMenuItem"
-        Me.SystemOverviewToolStripMenuItem.Size = New System.Drawing.Size(259, 55)
+        Me.SystemOverviewToolStripMenuItem.Size = New System.Drawing.Size(213, 44)
         Me.SystemOverviewToolStripMenuItem.Text = "Appointment"
         '
         'ReportsToolStripMenuItem
         '
         Me.ReportsToolStripMenuItem.Name = "ReportsToolStripMenuItem"
         Me.ReportsToolStripMenuItem.ShowShortcutKeys = False
-        Me.ReportsToolStripMenuItem.Size = New System.Drawing.Size(170, 55)
+        Me.ReportsToolStripMenuItem.Size = New System.Drawing.Size(138, 44)
         Me.ReportsToolStripMenuItem.Text = "Reports"
         '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(345, 55)
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(281, 44)
         Me.ToolStripMenuItem1.Text = "Treatment Record"
         '
         'Guna2CustomGradientPanel1
         '
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.Guna2HtmlLabel1)
-        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(181, -2)
-        Me.Guna2CustomGradientPanel1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(136, -2)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1569, 153)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1177, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 20
         '
         'Guna2HtmlLabel1
         '
         Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 24.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(525, 50)
-        Me.Guna2HtmlLabel1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(364, 41)
         Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
-        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(458, 56)
+        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(371, 46)
         Me.Guna2HtmlLabel1.TabIndex = 21
         Me.Guna2HtmlLabel1.Text = "Eme Dental Clinic System"
         '
@@ -165,19 +163,17 @@ Partial Class AdminDashboard
         Me.Guna2Panel1.BackColor = System.Drawing.SystemColors.ControlLight
         Me.Guna2Panel1.Controls.Add(Me.label5)
         Me.Guna2Panel1.Controls.Add(Me.lblTotalPatients)
-        Me.Guna2Panel1.Location = New System.Drawing.Point(413, 203)
-        Me.Guna2Panel1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2Panel1.Location = New System.Drawing.Point(310, 165)
         Me.Guna2Panel1.Name = "Guna2Panel1"
-        Me.Guna2Panel1.Size = New System.Drawing.Size(267, 258)
+        Me.Guna2Panel1.Size = New System.Drawing.Size(200, 210)
         Me.Guna2Panel1.TabIndex = 21
         '
         'label5
         '
         Me.label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label5.Location = New System.Drawing.Point(0, 193)
-        Me.label5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.label5.Location = New System.Drawing.Point(0, 157)
         Me.label5.Name = "label5"
-        Me.label5.Size = New System.Drawing.Size(267, 65)
+        Me.label5.Size = New System.Drawing.Size(200, 53)
         Me.label5.TabIndex = 25
         Me.label5.Text = "Total Patients"
         Me.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -186,9 +182,8 @@ Partial Class AdminDashboard
         '
         Me.lblTotalPatients.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTotalPatients.Location = New System.Drawing.Point(0, 0)
-        Me.lblTotalPatients.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblTotalPatients.Name = "lblTotalPatients"
-        Me.lblTotalPatients.Size = New System.Drawing.Size(267, 193)
+        Me.lblTotalPatients.Size = New System.Drawing.Size(200, 157)
         Me.lblTotalPatients.TabIndex = 25
         Me.lblTotalPatients.Text = "0"
         Me.lblTotalPatients.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -198,19 +193,17 @@ Partial Class AdminDashboard
         Me.Guna2Panel2.BackColor = System.Drawing.SystemColors.ControlLight
         Me.Guna2Panel2.Controls.Add(Me.label7)
         Me.Guna2Panel2.Controls.Add(Me.lblAppointmentsToday)
-        Me.Guna2Panel2.Location = New System.Drawing.Point(1099, 203)
-        Me.Guna2Panel2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2Panel2.Location = New System.Drawing.Point(824, 165)
         Me.Guna2Panel2.Name = "Guna2Panel2"
-        Me.Guna2Panel2.Size = New System.Drawing.Size(267, 258)
+        Me.Guna2Panel2.Size = New System.Drawing.Size(200, 210)
         Me.Guna2Panel2.TabIndex = 22
         '
         'label7
         '
         Me.label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label7.Location = New System.Drawing.Point(0, 183)
-        Me.label7.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.label7.Location = New System.Drawing.Point(0, 149)
         Me.label7.Name = "label7"
-        Me.label7.Size = New System.Drawing.Size(267, 75)
+        Me.label7.Size = New System.Drawing.Size(200, 61)
         Me.label7.TabIndex = 27
         Me.label7.Text = "Appointments Today"
         Me.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -219,9 +212,8 @@ Partial Class AdminDashboard
         '
         Me.lblAppointmentsToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblAppointmentsToday.Location = New System.Drawing.Point(0, 0)
-        Me.lblAppointmentsToday.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblAppointmentsToday.Name = "lblAppointmentsToday"
-        Me.lblAppointmentsToday.Size = New System.Drawing.Size(267, 193)
+        Me.lblAppointmentsToday.Size = New System.Drawing.Size(200, 157)
         Me.lblAppointmentsToday.TabIndex = 27
         Me.lblAppointmentsToday.Text = "0"
         Me.lblAppointmentsToday.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -231,19 +223,17 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.BackColor = System.Drawing.SystemColors.ControlLight
         Me.Guna2Panel3.Controls.Add(Me.label6)
         Me.Guna2Panel3.Controls.Add(Me.lblTotalDentists)
-        Me.Guna2Panel3.Location = New System.Drawing.Point(759, 203)
-        Me.Guna2Panel3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2Panel3.Location = New System.Drawing.Point(569, 165)
         Me.Guna2Panel3.Name = "Guna2Panel3"
-        Me.Guna2Panel3.Size = New System.Drawing.Size(267, 258)
+        Me.Guna2Panel3.Size = New System.Drawing.Size(200, 210)
         Me.Guna2Panel3.TabIndex = 23
         '
         'label6
         '
         Me.label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label6.Location = New System.Drawing.Point(0, 193)
-        Me.label6.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.label6.Location = New System.Drawing.Point(0, 157)
         Me.label6.Name = "label6"
-        Me.label6.Size = New System.Drawing.Size(267, 65)
+        Me.label6.Size = New System.Drawing.Size(200, 53)
         Me.label6.TabIndex = 26
         Me.label6.Text = "Total Dentists"
         Me.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -252,9 +242,8 @@ Partial Class AdminDashboard
         '
         Me.lblTotalDentists.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTotalDentists.Location = New System.Drawing.Point(0, 0)
-        Me.lblTotalDentists.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblTotalDentists.Name = "lblTotalDentists"
-        Me.lblTotalDentists.Size = New System.Drawing.Size(267, 193)
+        Me.lblTotalDentists.Size = New System.Drawing.Size(200, 157)
         Me.lblTotalDentists.TabIndex = 26
         Me.lblTotalDentists.Text = "0"
         Me.lblTotalDentists.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -264,19 +253,17 @@ Partial Class AdminDashboard
         Me.Guna2Panel4.BackColor = System.Drawing.SystemColors.ControlLight
         Me.Guna2Panel4.Controls.Add(Me.label8)
         Me.Guna2Panel4.Controls.Add(Me.lblCompletedAppointments)
-        Me.Guna2Panel4.Location = New System.Drawing.Point(1441, 203)
-        Me.Guna2Panel4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2Panel4.Location = New System.Drawing.Point(1081, 165)
         Me.Guna2Panel4.Name = "Guna2Panel4"
-        Me.Guna2Panel4.Size = New System.Drawing.Size(267, 258)
+        Me.Guna2Panel4.Size = New System.Drawing.Size(200, 210)
         Me.Guna2Panel4.TabIndex = 24
         '
         'label8
         '
         Me.label8.Font = New System.Drawing.Font("Microsoft Sans Serif", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label8.Location = New System.Drawing.Point(0, 183)
-        Me.label8.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.label8.Location = New System.Drawing.Point(0, 149)
         Me.label8.Name = "label8"
-        Me.label8.Size = New System.Drawing.Size(267, 75)
+        Me.label8.Size = New System.Drawing.Size(200, 61)
         Me.label8.TabIndex = 28
         Me.label8.Text = "Completed Appointments"
         Me.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -285,19 +272,18 @@ Partial Class AdminDashboard
         '
         Me.lblCompletedAppointments.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCompletedAppointments.Location = New System.Drawing.Point(0, 0)
-        Me.lblCompletedAppointments.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblCompletedAppointments.Name = "lblCompletedAppointments"
-        Me.lblCompletedAppointments.Size = New System.Drawing.Size(267, 193)
+        Me.lblCompletedAppointments.Size = New System.Drawing.Size(200, 157)
         Me.lblCompletedAppointments.TabIndex = 28
         Me.lblCompletedAppointments.Text = "0"
         Me.lblCompletedAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'AdminDashboard
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
-        Me.ClientSize = New System.Drawing.Size(1748, 1055)
+        Me.ClientSize = New System.Drawing.Size(1311, 857)
         Me.Controls.Add(Me.Guna2Panel4)
         Me.Controls.Add(Me.Guna2Panel3)
         Me.Controls.Add(Me.Guna2Panel2)
@@ -306,7 +292,6 @@ Partial Class AdminDashboard
         Me.Controls.Add(Me.Guna2PictureBox6)
         Me.Controls.Add(Me.MenuStrip1)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Name = "AdminDashboard"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDashboard"

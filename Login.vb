@@ -25,7 +25,7 @@ Public Class Login
         txtPassword.Text = ""
     End Sub
     Private Sub BtnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
-        If txtUsername.Text.Trim = "" Or txtPassword.Text.Trim = "" Then
+        If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse String.IsNullOrWhiteSpace(txtPassword.Text) Then
             MessageBox.Show("Please enter both username and password.")
             Exit Sub
         End If
@@ -36,40 +36,38 @@ Public Class Login
             con.Open()
 
             Dim cmd As New SqlCommand("
-            SELECT UserID, Username, Role, fullName
+            SELECT UserID, Username, Role, FullName
             FROM Users
             WHERE Username=@username AND Password=@password", con)
 
-
-            cmd.Parameters.AddWithValue("@username", txtUsername.Text)
-            cmd.Parameters.AddWithValue("@password", hashed)
+            cmd.Parameters.Add("@username", SqlDbType.VarChar, 50).Value = txtUsername.Text.Trim()
+            cmd.Parameters.Add("@password", SqlDbType.VarChar, 64).Value = hashed
 
             Using dr As SqlDataReader = cmd.ExecuteReader()
                 If dr.Read() Then
-                    Dim userId As Integer = dr("UserID")
-                    Dim username As String = dr("Username").ToString()
-                    Dim fullName As String = dr("fullName").ToString()
-                    Dim role As String = dr("Role").ToString()
+                    SystemSession.LoggedInUserID = CInt(dr("UserID"))
+                    SystemSession.LoggedInFullName = dr("FullName").ToString()
+                    SystemSession.LoggedInRole = dr("Role").ToString()
 
-                    LogAudit(userId, fullName, role, "Login Success", "Login")
+                    ' ✅ Simplified audit call
+                    SystemSession.LogAudit("Login Success", "Login")
 
-                    ' Redirect based on role
-                    Select Case role
+                    Select Case SystemSession.LoggedInRole
                         Case "Admin"
                             Dashboard = New AdminDashboard()
                             Dashboard.Show()
-
                         Case "Dentist"
                             DentistDashboard.Show()
-
                         Case "Staff"
                             StaffDashboard.Show()
-
                     End Select
+
                     Me.Hide()
                 Else
-                    LogAudit(0, txtUsername.Text, "Unknown", "Login Failed", "Login")
+                    ' Failed login → capture attempted username with overload
+                    SystemSession.LogAudit("Login Failed", "Login", 0, txtUsername.Text, "Unknown")
                     MessageBox.Show("Invalid username or password.")
+                    Clearform()
                 End If
 
             End Using
@@ -77,6 +75,23 @@ Public Class Login
     End Sub
 
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+
+            Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
+            Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
+
+            If adminCount = 0 Then
+                ' Open registration form immediately
+                Dim reg As New AdminDBUsers()
+
+                ' Optionally close login form until at least one user exists
+                Me.Hide()
+                reg.ShowDialog()
+                Me.Show()
+
+            End If
+        End Using
 
     End Sub
 

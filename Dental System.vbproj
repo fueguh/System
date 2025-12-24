@@ -81,6 +81,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminAudit&amp;SessionModule.vb" />
     <Compile Include="AdminDashboard.Designer.vb">
       <DependentUpon>AdminDashboard.vb</DependentUpon>
     </Compile>
@@ -123,7 +124,6 @@
     <Compile Include="AdminDBUsers.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AuditModule.vb" />
     <Compile Include="AdminAuditTrailForm.Designer.vb">
       <DependentUpon>AdminAuditTrailForm.vb</DependentUpon>
     </Compile>
