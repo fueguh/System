@@ -52,13 +52,13 @@ Partial Class AdminDBPatients
         Me.txtFullName.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtFullName.ForeColor = System.Drawing.Color.Black
         Me.txtFullName.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtFullName.Location = New System.Drawing.Point(32, 97)
-        Me.txtFullName.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtFullName.Location = New System.Drawing.Point(43, 119)
+        Me.txtFullName.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtFullName.Name = "txtFullName"
         Me.txtFullName.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtFullName.PlaceholderText = "Full name"
         Me.txtFullName.SelectedText = ""
-        Me.txtFullName.Size = New System.Drawing.Size(322, 50)
+        Me.txtFullName.Size = New System.Drawing.Size(429, 62)
         Me.txtFullName.TabIndex = 0
         '
         'dtpBirthDate
@@ -67,11 +67,12 @@ Partial Class AdminDBPatients
         Me.dtpBirthDate.FillColor = System.Drawing.Color.White
         Me.dtpBirthDate.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.dtpBirthDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpBirthDate.Location = New System.Drawing.Point(32, 169)
+        Me.dtpBirthDate.Location = New System.Drawing.Point(43, 208)
+        Me.dtpBirthDate.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.dtpBirthDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.dtpBirthDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
         Me.dtpBirthDate.Name = "dtpBirthDate"
-        Me.dtpBirthDate.Size = New System.Drawing.Size(322, 36)
+        Me.dtpBirthDate.Size = New System.Drawing.Size(429, 44)
         Me.dtpBirthDate.TabIndex = 1
         Me.dtpBirthDate.Value = New Date(2025, 12, 18, 12, 14, 7, 394)
         '
@@ -87,13 +88,13 @@ Partial Class AdminDBPatients
         Me.txtContact.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtContact.ForeColor = System.Drawing.Color.Black
         Me.txtContact.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtContact.Location = New System.Drawing.Point(32, 243)
-        Me.txtContact.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtContact.Location = New System.Drawing.Point(43, 299)
+        Me.txtContact.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtContact.Name = "txtContact"
         Me.txtContact.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtContact.PlaceholderText = "Contact no."
         Me.txtContact.SelectedText = ""
-        Me.txtContact.Size = New System.Drawing.Size(322, 50)
+        Me.txtContact.Size = New System.Drawing.Size(429, 62)
         Me.txtContact.TabIndex = 2
         '
         'txtEmail
@@ -108,13 +109,13 @@ Partial Class AdminDBPatients
         Me.txtEmail.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtEmail.ForeColor = System.Drawing.Color.Black
         Me.txtEmail.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtEmail.Location = New System.Drawing.Point(32, 326)
-        Me.txtEmail.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtEmail.Location = New System.Drawing.Point(43, 401)
+        Me.txtEmail.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtEmail.Name = "txtEmail"
         Me.txtEmail.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtEmail.PlaceholderText = "Email"
         Me.txtEmail.SelectedText = ""
-        Me.txtEmail.Size = New System.Drawing.Size(322, 50)
+        Me.txtEmail.Size = New System.Drawing.Size(429, 62)
         Me.txtEmail.TabIndex = 3
         '
         'txtAddress
@@ -129,13 +130,13 @@ Partial Class AdminDBPatients
         Me.txtAddress.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtAddress.ForeColor = System.Drawing.Color.Black
         Me.txtAddress.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtAddress.Location = New System.Drawing.Point(32, 416)
-        Me.txtAddress.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtAddress.Location = New System.Drawing.Point(43, 512)
+        Me.txtAddress.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtAddress.Name = "txtAddress"
         Me.txtAddress.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtAddress.PlaceholderText = "Address"
         Me.txtAddress.SelectedText = ""
-        Me.txtAddress.Size = New System.Drawing.Size(322, 50)
+        Me.txtAddress.Size = New System.Drawing.Size(429, 62)
         Me.txtAddress.TabIndex = 4
         '
         'BTNAdd
@@ -147,9 +148,10 @@ Partial Class AdminDBPatients
         Me.BTNAdd.FillColor = System.Drawing.Color.White
         Me.BTNAdd.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNAdd.ForeColor = System.Drawing.Color.Black
-        Me.BTNAdd.Location = New System.Drawing.Point(102, 525)
+        Me.BTNAdd.Location = New System.Drawing.Point(136, 646)
+        Me.BTNAdd.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.BTNAdd.Name = "BTNAdd"
-        Me.BTNAdd.Size = New System.Drawing.Size(180, 45)
+        Me.BTNAdd.Size = New System.Drawing.Size(240, 55)
         Me.BTNAdd.TabIndex = 5
         Me.BTNAdd.Text = "Add"
         '
@@ -162,9 +164,10 @@ Partial Class AdminDBPatients
         Me.BTNUpdate.FillColor = System.Drawing.Color.White
         Me.BTNUpdate.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.BTNUpdate.ForeColor = System.Drawing.Color.Black
-        Me.BTNUpdate.Location = New System.Drawing.Point(102, 593)
+        Me.BTNUpdate.Location = New System.Drawing.Point(136, 730)
+        Me.BTNUpdate.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.BTNUpdate.Name = "BTNUpdate"
-        Me.BTNUpdate.Size = New System.Drawing.Size(180, 45)
+        Me.BTNUpdate.Size = New System.Drawing.Size(240, 55)
         Me.BTNUpdate.TabIndex = 6
         Me.BTNUpdate.Text = "Update"
         '
@@ -177,9 +180,10 @@ Partial Class AdminDBPatients
         Me.BTNDelete.FillColor = System.Drawing.Color.White
         Me.BTNDelete.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.BTNDelete.ForeColor = System.Drawing.Color.Black
-        Me.BTNDelete.Location = New System.Drawing.Point(102, 654)
+        Me.BTNDelete.Location = New System.Drawing.Point(136, 805)
+        Me.BTNDelete.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.BTNDelete.Name = "BTNDelete"
-        Me.BTNDelete.Size = New System.Drawing.Size(180, 45)
+        Me.BTNDelete.Size = New System.Drawing.Size(240, 55)
         Me.BTNDelete.TabIndex = 7
         Me.BTNDelete.Text = "Delete"
         '
@@ -195,8 +199,7 @@ Partial Class AdminDBPatients
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVPatients.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVPatients.ColumnHeadersHeight = 4
-        Me.DGVPatients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVPatients.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -206,10 +209,12 @@ Partial Class AdminDBPatients
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.DGVPatients.DefaultCellStyle = DataGridViewCellStyle3
         Me.DGVPatients.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVPatients.Location = New System.Drawing.Point(492, 118)
+        Me.DGVPatients.Location = New System.Drawing.Point(656, 145)
+        Me.DGVPatients.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.DGVPatients.Name = "DGVPatients"
         Me.DGVPatients.RowHeadersVisible = False
-        Me.DGVPatients.Size = New System.Drawing.Size(643, 435)
+        Me.DGVPatients.RowHeadersWidth = 51
+        Me.DGVPatients.Size = New System.Drawing.Size(857, 535)
         Me.DGVPatients.TabIndex = 8
         Me.DGVPatients.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVPatients.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -222,8 +227,8 @@ Partial Class AdminDBPatients
         Me.DGVPatients.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVPatients.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVPatients.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVPatients.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVPatients.ThemeStyle.HeaderStyle.Height = 4
+        Me.DGVPatients.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVPatients.ThemeStyle.HeaderStyle.Height = 25
         Me.DGVPatients.ThemeStyle.ReadOnly = False
         Me.DGVPatients.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVPatients.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
@@ -238,19 +243,20 @@ Partial Class AdminDBPatients
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1307, 12)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1743, 15)
+        Me.Guna2CirclePictureBox1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
+        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(80, 71)
         Me.Guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.Guna2CirclePictureBox1.TabIndex = 19
         Me.Guna2CirclePictureBox1.TabStop = False
         '
         'AdminDBPatients
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1379, 743)
+        Me.ClientSize = New System.Drawing.Size(1839, 914)
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.DGVPatients)
         Me.Controls.Add(Me.BTNDelete)
@@ -261,6 +267,7 @@ Partial Class AdminDBPatients
         Me.Controls.Add(Me.txtContact)
         Me.Controls.Add(Me.dtpBirthDate)
         Me.Controls.Add(Me.txtFullName)
+        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Name = "AdminDBPatients"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBPatients"

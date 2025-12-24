@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class AuditTrailForm
+Partial Class AdminAuditTrailForm
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -25,13 +25,16 @@ Partial Class AuditTrailForm
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminAuditTrailForm))
         Me.dgvAuditLogs = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.RefreshButton = New Guna.UI2.WinForms.Guna2Button()
         Me.cmbUser = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.cmbAction = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.txtSearch = New Guna.UI2.WinForms.Guna2TextBox()
+        Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         CType(Me.dgvAuditLogs, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'dgvAuditLogs
@@ -47,8 +50,7 @@ Partial Class AuditTrailForm
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvAuditLogs.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.dgvAuditLogs.ColumnHeadersHeight = 4
-        Me.dgvAuditLogs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.dgvAuditLogs.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -78,8 +80,8 @@ Partial Class AuditTrailForm
         Me.dgvAuditLogs.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.dgvAuditLogs.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.dgvAuditLogs.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.dgvAuditLogs.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.dgvAuditLogs.ThemeStyle.HeaderStyle.Height = 4
+        Me.dgvAuditLogs.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.dgvAuditLogs.ThemeStyle.HeaderStyle.Height = 25
         Me.dgvAuditLogs.ThemeStyle.ReadOnly = True
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
@@ -176,21 +178,37 @@ Partial Class AuditTrailForm
         Me.txtSearch.Size = New System.Drawing.Size(283, 62)
         Me.txtSearch.TabIndex = 13
         '
-        'AuditTrailForm
+        'btnBack
+        '
+        Me.btnBack.FillColor = System.Drawing.Color.Transparent
+        Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
+        Me.btnBack.ImageRotate = 0!
+        Me.btnBack.Location = New System.Drawing.Point(1291, 31)
+        Me.btnBack.Margin = New System.Windows.Forms.Padding(4)
+        Me.btnBack.Name = "btnBack"
+        Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
+        Me.btnBack.Size = New System.Drawing.Size(80, 71)
+        Me.btnBack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.btnBack.TabIndex = 21
+        Me.btnBack.TabStop = False
+        '
+        'AdminAuditTrailForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
         Me.ClientSize = New System.Drawing.Size(1426, 700)
+        Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.dgvAuditLogs)
         Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.cmbAction)
         Me.Controls.Add(Me.cmbUser)
         Me.Controls.Add(Me.RefreshButton)
         Me.Controls.Add(Me.Guna2DateTimePicker1)
-        Me.Name = "AuditTrailForm"
+        Me.Name = "AdminAuditTrailForm"
         Me.Text = "AuditTrailForm"
         CType(Me.dgvAuditLogs, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.btnBack, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -206,4 +224,5 @@ Partial Class AuditTrailForm
 
     End Sub
 
+    Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
 End Class

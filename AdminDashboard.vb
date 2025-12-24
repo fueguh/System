@@ -117,7 +117,7 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub AuditTrailToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuditTrailToolStripMenuItem.Click
-        AuditTrailForm.Show()
+        AdminAuditTrailForm.Show()
         Me.Hide()
     End Sub
 End Class

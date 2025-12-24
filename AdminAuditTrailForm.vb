@@ -1,6 +1,6 @@
 ﻿Imports System.Data.SqlClient
 
-Public Class AuditTrailForm
+Public Class AdminAuditTrailForm
 
     ' Form Load Event
     Private Sub AuditTrailForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -24,6 +24,12 @@ Public Class AuditTrailForm
         End Using
     End Sub
 
+    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        If Dashboard Is Nothing Then
+            Dashboard = New AdminDashboard()
+        End If
 
-
+        Dashboard.Show()
+        Me.Hide()
+    End Sub
 End Class

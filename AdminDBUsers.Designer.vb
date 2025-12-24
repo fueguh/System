@@ -57,13 +57,13 @@ Partial Class AdminDBUsers
         Me.TxtFullName.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.TxtFullName.ForeColor = System.Drawing.Color.Black
         Me.TxtFullName.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TxtFullName.Location = New System.Drawing.Point(32, 114)
-        Me.TxtFullName.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.TxtFullName.Location = New System.Drawing.Point(43, 140)
+        Me.TxtFullName.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.TxtFullName.Name = "TxtFullName"
         Me.TxtFullName.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.TxtFullName.PlaceholderText = "Fullname"
         Me.TxtFullName.SelectedText = ""
-        Me.TxtFullName.Size = New System.Drawing.Size(257, 50)
+        Me.TxtFullName.Size = New System.Drawing.Size(343, 62)
         Me.TxtFullName.TabIndex = 0
         '
         'CmbRole
@@ -78,9 +78,10 @@ Partial Class AdminDBUsers
         Me.CmbRole.ForeColor = System.Drawing.Color.Black
         Me.CmbRole.ItemHeight = 30
         Me.CmbRole.Items.AddRange(New Object() {"Admin", "Dentist", "Staff"})
-        Me.CmbRole.Location = New System.Drawing.Point(32, 285)
+        Me.CmbRole.Location = New System.Drawing.Point(43, 351)
+        Me.CmbRole.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.CmbRole.Name = "CmbRole"
-        Me.CmbRole.Size = New System.Drawing.Size(257, 36)
+        Me.CmbRole.Size = New System.Drawing.Size(341, 36)
         Me.CmbRole.TabIndex = 1
         '
         'txtSpecialization
@@ -96,13 +97,13 @@ Partial Class AdminDBUsers
         Me.txtSpecialization.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtSpecialization.ForeColor = System.Drawing.Color.Black
         Me.txtSpecialization.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSpecialization.Location = New System.Drawing.Point(32, 362)
-        Me.txtSpecialization.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtSpecialization.Location = New System.Drawing.Point(43, 446)
+        Me.txtSpecialization.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtSpecialization.Name = "txtSpecialization"
         Me.txtSpecialization.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtSpecialization.PlaceholderText = "Specialization"
         Me.txtSpecialization.SelectedText = ""
-        Me.txtSpecialization.Size = New System.Drawing.Size(257, 50)
+        Me.txtSpecialization.Size = New System.Drawing.Size(343, 62)
         Me.txtSpecialization.TabIndex = 2
         '
         'cmbAvailability
@@ -117,9 +118,10 @@ Partial Class AdminDBUsers
         Me.cmbAvailability.ForeColor = System.Drawing.Color.Black
         Me.cmbAvailability.ItemHeight = 30
         Me.cmbAvailability.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
-        Me.cmbAvailability.Location = New System.Drawing.Point(32, 443)
+        Me.cmbAvailability.Location = New System.Drawing.Point(43, 545)
+        Me.cmbAvailability.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.cmbAvailability.Name = "cmbAvailability"
-        Me.cmbAvailability.Size = New System.Drawing.Size(257, 36)
+        Me.cmbAvailability.Size = New System.Drawing.Size(341, 36)
         Me.cmbAvailability.TabIndex = 3
         '
         'TxtPhoneNumber
@@ -135,13 +137,13 @@ Partial Class AdminDBUsers
         Me.TxtPhoneNumber.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.TxtPhoneNumber.ForeColor = System.Drawing.Color.Black
         Me.TxtPhoneNumber.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TxtPhoneNumber.Location = New System.Drawing.Point(339, 114)
-        Me.TxtPhoneNumber.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.TxtPhoneNumber.Location = New System.Drawing.Point(452, 140)
+        Me.TxtPhoneNumber.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.TxtPhoneNumber.Name = "TxtPhoneNumber"
         Me.TxtPhoneNumber.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.TxtPhoneNumber.PlaceholderText = "Phone number"
         Me.TxtPhoneNumber.SelectedText = ""
-        Me.TxtPhoneNumber.Size = New System.Drawing.Size(257, 50)
+        Me.TxtPhoneNumber.Size = New System.Drawing.Size(343, 62)
         Me.TxtPhoneNumber.TabIndex = 4
         '
         'TxtEmail
@@ -157,13 +159,13 @@ Partial Class AdminDBUsers
         Me.TxtEmail.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.TxtEmail.ForeColor = System.Drawing.Color.Black
         Me.TxtEmail.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TxtEmail.Location = New System.Drawing.Point(339, 193)
-        Me.TxtEmail.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.TxtEmail.Location = New System.Drawing.Point(452, 238)
+        Me.TxtEmail.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.TxtEmail.Name = "TxtEmail"
         Me.TxtEmail.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.TxtEmail.PlaceholderText = "Email"
         Me.TxtEmail.SelectedText = ""
-        Me.TxtEmail.Size = New System.Drawing.Size(257, 50)
+        Me.TxtEmail.Size = New System.Drawing.Size(343, 62)
         Me.TxtEmail.TabIndex = 5
         '
         'txtPassword
@@ -179,13 +181,13 @@ Partial Class AdminDBUsers
         Me.txtPassword.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtPassword.ForeColor = System.Drawing.Color.Black
         Me.txtPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtPassword.Location = New System.Drawing.Point(339, 284)
-        Me.txtPassword.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtPassword.Location = New System.Drawing.Point(452, 350)
+        Me.txtPassword.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtPassword.Name = "txtPassword"
         Me.txtPassword.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtPassword.PlaceholderText = "Password"
         Me.txtPassword.SelectedText = ""
-        Me.txtPassword.Size = New System.Drawing.Size(257, 50)
+        Me.txtPassword.Size = New System.Drawing.Size(343, 62)
         Me.txtPassword.TabIndex = 6
         '
         'txtConfirmPassword
@@ -201,13 +203,13 @@ Partial Class AdminDBUsers
         Me.txtConfirmPassword.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtConfirmPassword.ForeColor = System.Drawing.Color.Black
         Me.txtConfirmPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtConfirmPassword.Location = New System.Drawing.Point(339, 365)
-        Me.txtConfirmPassword.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtConfirmPassword.Location = New System.Drawing.Point(452, 449)
+        Me.txtConfirmPassword.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.txtConfirmPassword.Name = "txtConfirmPassword"
         Me.txtConfirmPassword.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtConfirmPassword.PlaceholderText = "Confirm Password"
         Me.txtConfirmPassword.SelectedText = ""
-        Me.txtConfirmPassword.Size = New System.Drawing.Size(257, 50)
+        Me.txtConfirmPassword.Size = New System.Drawing.Size(343, 62)
         Me.txtConfirmPassword.TabIndex = 7
         '
         'BtnAddUser
@@ -219,9 +221,10 @@ Partial Class AdminDBUsers
         Me.BtnAddUser.FillColor = System.Drawing.Color.White
         Me.BtnAddUser.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnAddUser.ForeColor = System.Drawing.Color.DimGray
-        Me.BtnAddUser.Location = New System.Drawing.Point(47, 586)
+        Me.BtnAddUser.Location = New System.Drawing.Point(63, 721)
+        Me.BtnAddUser.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.BtnAddUser.Name = "BtnAddUser"
-        Me.BtnAddUser.Size = New System.Drawing.Size(136, 45)
+        Me.BtnAddUser.Size = New System.Drawing.Size(181, 55)
         Me.BtnAddUser.TabIndex = 8
         Me.BtnAddUser.Text = "Save"
         '
@@ -234,9 +237,10 @@ Partial Class AdminDBUsers
         Me.BtnUpdate.FillColor = System.Drawing.Color.White
         Me.BtnUpdate.Font = New System.Drawing.Font("Segoe UI", 14.25!)
         Me.BtnUpdate.ForeColor = System.Drawing.Color.DimGray
-        Me.BtnUpdate.Location = New System.Drawing.Point(250, 586)
+        Me.BtnUpdate.Location = New System.Drawing.Point(333, 721)
+        Me.BtnUpdate.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.BtnUpdate.Name = "BtnUpdate"
-        Me.BtnUpdate.Size = New System.Drawing.Size(136, 45)
+        Me.BtnUpdate.Size = New System.Drawing.Size(181, 55)
         Me.BtnUpdate.TabIndex = 9
         Me.BtnUpdate.Text = "Update"
         '
@@ -249,9 +253,10 @@ Partial Class AdminDBUsers
         Me.BtnDelete.FillColor = System.Drawing.Color.White
         Me.BtnDelete.Font = New System.Drawing.Font("Segoe UI", 14.25!)
         Me.BtnDelete.ForeColor = System.Drawing.Color.DimGray
-        Me.BtnDelete.Location = New System.Drawing.Point(446, 586)
+        Me.BtnDelete.Location = New System.Drawing.Point(595, 721)
+        Me.BtnDelete.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.BtnDelete.Name = "BtnDelete"
-        Me.BtnDelete.Size = New System.Drawing.Size(136, 45)
+        Me.BtnDelete.Size = New System.Drawing.Size(181, 55)
         Me.BtnDelete.TabIndex = 10
         Me.BtnDelete.Text = "Delete"
         '
@@ -260,10 +265,11 @@ Partial Class AdminDBUsers
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1411, 30)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1881, 37)
+        Me.Guna2CirclePictureBox1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
+        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(80, 71)
         Me.Guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.Guna2CirclePictureBox1.TabIndex = 20
         Me.Guna2CirclePictureBox1.TabStop = False
@@ -281,13 +287,13 @@ Partial Class AdminDBUsers
         Me.TxtUsername.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.TxtUsername.ForeColor = System.Drawing.Color.Black
         Me.TxtUsername.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TxtUsername.Location = New System.Drawing.Point(32, 202)
-        Me.TxtUsername.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.TxtUsername.Location = New System.Drawing.Point(43, 249)
+        Me.TxtUsername.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.TxtUsername.Name = "TxtUsername"
         Me.TxtUsername.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.TxtUsername.PlaceholderText = "Username"
         Me.TxtUsername.SelectedText = ""
-        Me.TxtUsername.Size = New System.Drawing.Size(257, 50)
+        Me.TxtUsername.Size = New System.Drawing.Size(343, 62)
         Me.TxtUsername.TabIndex = 21
         '
         'DGVUsers
@@ -302,8 +308,7 @@ Partial Class AdminDBUsers
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVUsers.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVUsers.ColumnHeadersHeight = 4
-        Me.DGVUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVUsers.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -313,10 +318,12 @@ Partial Class AdminDBUsers
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.DGVUsers.DefaultCellStyle = DataGridViewCellStyle3
         Me.DGVUsers.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVUsers.Location = New System.Drawing.Point(673, 114)
+        Me.DGVUsers.Location = New System.Drawing.Point(897, 140)
+        Me.DGVUsers.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.DGVUsers.Name = "DGVUsers"
         Me.DGVUsers.RowHeadersVisible = False
-        Me.DGVUsers.Size = New System.Drawing.Size(798, 517)
+        Me.DGVUsers.RowHeadersWidth = 51
+        Me.DGVUsers.Size = New System.Drawing.Size(1064, 636)
         Me.DGVUsers.TabIndex = 22
         Me.DGVUsers.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVUsers.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -329,8 +336,8 @@ Partial Class AdminDBUsers
         Me.DGVUsers.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVUsers.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVUsers.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVUsers.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVUsers.ThemeStyle.HeaderStyle.Height = 4
+        Me.DGVUsers.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVUsers.ThemeStyle.HeaderStyle.Height = 25
         Me.DGVUsers.ThemeStyle.ReadOnly = False
         Me.DGVUsers.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVUsers.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
@@ -342,10 +349,10 @@ Partial Class AdminDBUsers
         '
         'AdminDBUsers
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
-        Me.ClientSize = New System.Drawing.Size(1509, 741)
+        Me.ClientSize = New System.Drawing.Size(1924, 912)
         Me.Controls.Add(Me.DGVUsers)
         Me.Controls.Add(Me.TxtUsername)
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
@@ -360,6 +367,7 @@ Partial Class AdminDBUsers
         Me.Controls.Add(Me.txtSpecialization)
         Me.Controls.Add(Me.CmbRole)
         Me.Controls.Add(Me.TxtFullName)
+        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Name = "AdminDBUsers"
         Me.Text = "AdminDBUsers"
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()

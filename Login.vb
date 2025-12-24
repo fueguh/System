@@ -68,6 +68,7 @@ Public Class Login
                     End Select
                     Me.Hide()
                 Else
+                    LogAudit(0, txtUsername.Text, "Unknown", "Login Failed", "Login")
                     MessageBox.Show("Invalid username or password.")
                 End If
 
