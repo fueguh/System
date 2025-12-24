@@ -12,12 +12,11 @@ Module AuditModule
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             Dim cmd As New SqlCommand("
                 INSERT INTO AuditTrail 
-                (UserID, Username, FullName, Role, Action, Module)
+                (UserID, FullName, Role, Action, Module)
                 VALUES 
-                (@UserID, @Username, @FullName, @Role, @Action, @Module)", con)
+                (@UserID, @FullName, @Role, @Action, @Module)", con)
 
             cmd.Parameters.AddWithValue("@UserID", userId)
-            cmd.Parameters.AddWithValue("@Username", username)
             cmd.Parameters.AddWithValue("@FullName", fullName)
             cmd.Parameters.AddWithValue("@Role", role)
             cmd.Parameters.AddWithValue("@Action", action)

@@ -61,6 +61,7 @@ Partial Class AuditTrailForm
         Me.dgvAuditLogs.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.dgvAuditLogs.Location = New System.Drawing.Point(0, 313)
         Me.dgvAuditLogs.Name = "dgvAuditLogs"
+        Me.dgvAuditLogs.ReadOnly = True
         Me.dgvAuditLogs.RowHeadersVisible = False
         Me.dgvAuditLogs.RowHeadersWidth = 51
         Me.dgvAuditLogs.RowTemplate.Height = 24
@@ -79,7 +80,7 @@ Partial Class AuditTrailForm
         Me.dgvAuditLogs.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.dgvAuditLogs.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         Me.dgvAuditLogs.ThemeStyle.HeaderStyle.Height = 4
-        Me.dgvAuditLogs.ThemeStyle.ReadOnly = False
+        Me.dgvAuditLogs.ThemeStyle.ReadOnly = True
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -204,4 +205,5 @@ Partial Class AuditTrailForm
     Private Sub Label1_Click(sender As Object, e As EventArgs)
 
     End Sub
+
 End Class
