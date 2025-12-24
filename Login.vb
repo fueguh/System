@@ -36,7 +36,7 @@ Public Class Login
             con.Open()
 
             Dim cmd As New SqlCommand("
-            SELECT UserID, Username, Role, FullName
+            SELECT UserID, Username, Role, fullName
             FROM Users
             WHERE Username=@username AND Password=@password", con)
 
@@ -48,9 +48,10 @@ Public Class Login
                 If dr.Read() Then
                     Dim userId As Integer = dr("UserID")
                     Dim username As String = dr("Username").ToString()
+                    Dim fullName As String = dr("fullName").ToString()
                     Dim role As String = dr("Role").ToString()
 
-                    LogAudit(userId, username, FullName, role, "Login Success", "Auth")
+                    LogAudit(userId, fullName, role, "Login Success", "Login")
 
                     ' Redirect based on role
                     Select Case role

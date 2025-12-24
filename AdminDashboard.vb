@@ -115,4 +115,9 @@ Public Class AdminDashboard
         TreatmentRecords.Show()
         Me.Hide()
     End Sub
+
+    Private Sub AuditTrailToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuditTrailToolStripMenuItem.Click
+        AuditTrailForm.Show()
+        Me.Hide()
+    End Sub
 End Class
