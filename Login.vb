@@ -1,6 +1,7 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Security.Cryptography
 Imports System.Text
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 
 Public Class Login
     Public Shared Dashboard As AdminDashboard
@@ -45,7 +46,11 @@ Public Class Login
 
             Using dr As SqlDataReader = cmd.ExecuteReader()
                 If dr.Read() Then
+                    Dim userId As Integer = dr("UserID")
+                    Dim username As String = dr("Username").ToString()
                     Dim role As String = dr("Role").ToString()
+
+                    LogAudit(userId, username, "LOGIN_SUCCESS", "Users", userId.ToString(), "", "")
 
 
                     ' Redirect based on role

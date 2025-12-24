@@ -123,6 +123,12 @@
     <Compile Include="AdminDBUsers.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AuditTrailForm.Designer.vb">
+      <DependentUpon>AuditTrailForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AuditTrailForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DentistDashboard.Designer.vb">
       <DependentUpon>DentistDashboard.vb</DependentUpon>
     </Compile>
@@ -198,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBUsers.resx">
       <DependentUpon>AdminDBUsers.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AuditTrailForm.resx">
+      <DependentUpon>AuditTrailForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DentistDashboard.resx">
       <DependentUpon>DentistDashboard.vb</DependentUpon>
