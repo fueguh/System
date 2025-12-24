@@ -3,26 +3,25 @@ Module AuditModule
     Public Sub LogAudit(
             userId As Integer,
             username As String,
+            fullName As String,
+            role As String,
             action As String,
-            tableName As String,
-            recordId As String,
-            oldValue As String,
-            newValue As String
+            moduleName As String
         )
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             Dim cmd As New SqlCommand("
                 INSERT INTO AuditTrail 
-                (UserID, Username, Action, TableName, RecordID, OldValue, NewValue)
+                (UserID, Username, FullName, Role, Action, Module)
                 VALUES 
-                (@UserID, @Username, @Action, @TableName, @RecordID, @OldValue, @NewValue)", con)
+                (@UserID, @Username, @FullName, @Role, @Action, @Module)", con)
 
             cmd.Parameters.AddWithValue("@UserID", userId)
             cmd.Parameters.AddWithValue("@Username", username)
+            cmd.Parameters.AddWithValue("@FullName", fullName)
+            cmd.Parameters.AddWithValue("@Role", role)
             cmd.Parameters.AddWithValue("@Action", action)
-            cmd.Parameters.AddWithValue("@TableName", tableName)
-            cmd.Parameters.AddWithValue("@RecordID", recordId)
-            cmd.Parameters.AddWithValue("@OldValue", oldValue)
-            cmd.Parameters.AddWithValue("@NewValue", newValue)
+            cmd.Parameters.AddWithValue("@Module", moduleName)
 
             con.Open()
             cmd.ExecuteNonQuery()
