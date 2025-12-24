@@ -1,6 +1,9 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class AdminAuditTrailForm
+    Private Sub AdminAuditTrailForm_Activated(sender As Object, e As EventArgs) Handles Me.Activated
+        LoadAuditTrail()
+    End Sub
 
     ' Form Load Event
     Private Sub AuditTrailForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load

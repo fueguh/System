@@ -318,6 +318,7 @@ Partial Class AdminDBUsers
         Me.DGVUsers.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVUsers.Location = New System.Drawing.Point(673, 114)
         Me.DGVUsers.Name = "DGVUsers"
+        Me.DGVUsers.ReadOnly = True
         Me.DGVUsers.RowHeadersVisible = False
         Me.DGVUsers.RowHeadersWidth = 51
         Me.DGVUsers.Size = New System.Drawing.Size(798, 517)
@@ -335,7 +336,7 @@ Partial Class AdminDBUsers
         Me.DGVUsers.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVUsers.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.DGVUsers.ThemeStyle.HeaderStyle.Height = 25
-        Me.DGVUsers.ThemeStyle.ReadOnly = False
+        Me.DGVUsers.ThemeStyle.ReadOnly = True
         Me.DGVUsers.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVUsers.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVUsers.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))

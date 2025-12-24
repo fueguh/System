@@ -68,6 +68,11 @@ Public Class AdminDBPatients
         End Using
 
         MessageBox.Show("Patient added successfully.")
+        SystemSession.LogAudit("Patient Added", "Patient Management",
+                       SystemSession.LoggedInUserID,
+                       SystemSession.LoggedInFullName,
+                       SystemSession.LoggedInRole)
+
         LoadPatients()
         Clearform()
         'to reload the system overview in admin dashboard after input
@@ -102,6 +107,10 @@ Public Class AdminDBPatients
         End Using
 
         MessageBox.Show("Patient updated successfully.")
+        SystemSession.LogAudit("Patient Updated", "Patient Management",
+                       SystemSession.LoggedInUserID,
+                       SystemSession.LoggedInFullName,
+                       SystemSession.LoggedInRole)
         LoadPatients()
         Clearform()
 
@@ -130,6 +139,12 @@ Public Class AdminDBPatients
         End Using
 
         MessageBox.Show("Patient deleted successfully.")
+        SystemSession.LogAudit("Patient Deleted", "Patient Management",
+                       SystemSession.LoggedInUserID,
+                       SystemSession.LoggedInFullName,
+                       SystemSession.LoggedInRole)
+
+
         LoadPatients()
         Clearform()
 

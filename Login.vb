@@ -61,7 +61,7 @@ Public Class Login
                         Case "Staff"
                             StaffDashboard.Show()
                     End Select
-
+                    Clearform()
                     Me.Hide()
                 Else
                     ' Failed login → capture attempted username with overload

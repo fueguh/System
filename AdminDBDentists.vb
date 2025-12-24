@@ -106,6 +106,11 @@ Public Class AdminDBDentists
 
 
         MessageBox.Show("Dentist saved successfully.")
+        SystemSession.LogAudit("Dentist Account Created", "Dentist Management",
+                           SystemSession.LoggedInUserID,
+                           SystemSession.LoggedInFullName,
+                           SystemSession.LoggedInRole)
+
         LoadDentists()
         Clearform()
 

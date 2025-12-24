@@ -178,6 +178,13 @@ Public Class AdminDBAppointments
             Try
                 cmd.ExecuteNonQuery()
                 MessageBox.Show("Appointment added successfully.")
+
+                ' ✅ Audit log entry
+                SystemSession.LogAudit("Appointment " & cmbStatus.Text,
+                       "Appointment Management",
+                       SystemSession.LoggedInUserID,
+                       SystemSession.LoggedInFullName,
+                       SystemSession.LoggedInRole)
             Catch ex As Exception
                 MessageBox.Show("Error adding appointment: " & ex.Message)
             End Try
@@ -236,6 +243,13 @@ Public Class AdminDBAppointments
             Try
                 cmd.ExecuteNonQuery()
                 MessageBox.Show("Appointment updated successfully.")
+
+                ' ✅ Audit log entry
+                SystemSession.LogAudit("Appointment " & cmbStatus.Text & " (Updated)",
+                       "Appointment Management",
+                       SystemSession.LoggedInUserID,
+                       SystemSession.LoggedInFullName,
+                       SystemSession.LoggedInRole)
             Catch ex As Exception
                 MessageBox.Show("Error updating appointment: " & ex.Message)
             End Try
@@ -268,6 +282,12 @@ Public Class AdminDBAppointments
             Try
                 cmd.ExecuteNonQuery()
                 MessageBox.Show("Appointment deleted successfully.")
+                ' ✅ Audit log entry
+                SystemSession.LogAudit("Appointment Deleted", "Appointment Management",
+                           SystemSession.LoggedInUserID,
+                           SystemSession.LoggedInFullName,
+                           SystemSession.LoggedInRole)
+
             Catch ex As Exception
                 MessageBox.Show("Error deleting appointment: " & ex.Message)
             End Try

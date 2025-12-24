@@ -58,9 +58,6 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub UserManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ManageUsersForm.Click
-        Dim userForm As New AdminDBUsers()
-        userForm.ShowDialog()
-
         AdminDBUsers.Show()
         Me.Hide()
     End Sub

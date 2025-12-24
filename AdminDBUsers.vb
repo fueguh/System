@@ -45,85 +45,83 @@ Public Class AdminDBUsers
         cmbAvailability.SelectedIndex = -1
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
+
     End Sub
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
-
+        ' =========================
+        ' Validation
+        ' =========================
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
        String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
        String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
        String.IsNullOrWhiteSpace(txtConfirmPassword.Text) OrElse
        String.IsNullOrWhiteSpace(CmbRole.Text) Then
-
-            MessageBox.Show("Please fill in all required fields before saving.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
-
-        ' Confirm password check
         If txtPassword.Text <> txtConfirmPassword.Text Then
-            MessageBox.Show("Passwords do not match.")
+            MessageBox.Show("Passwords do not match.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
         If IsUsernameTaken(TxtUsername.Text) Then
-            MessageBox.Show("Username already exists. Please choose a different one.")
+            MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
+        ' =========================
+        ' Determine role for insertion
+        ' =========================
+        Dim roleToAssign As String = If(Not SystemSession.AdminExists(), "Admin", CmbRole.Text)
+
+        ' =========================
+        ' Insert into database
+        ' =========================
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
-
             Dim query As String = "
             INSERT INTO Users (FullName, Username, Password, Role, PhoneNum, Email, Specialization, Availability)
-            VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)
-        "
-
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
-            cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
-
-            Dim hashedPassword As String = HashPassword(txtPassword.Text)
-            cmd.Parameters.AddWithValue("@password", hashedPassword)
-
-            ' Check if there is at least one Admin in the system
-            Dim roleToAssign As String
-            If Not SystemSession.AdminExists() Then
-                roleToAssign = "Admin"
-                MessageBox.Show("An Admin account must be created before adding Staff or Dentist. This user will be set as Admin.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Else
-                roleToAssign = CmbRole.Text
-
-            End If
-
-            cmd.Parameters.AddWithValue("@role", roleToAssign)
-            cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
-            cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
-            cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
-            cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
-
-            cmd.ExecuteNonQuery()
-
-            If Not SystemSession.AdminExists() Then
-                SystemSession.LogAudit("First Admin Created", "Registration")
-            Else
-                SystemSession.LogAudit("Add user", "User Management")
-            End If
-
+            VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)"
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
+                cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
+                cmd.Parameters.AddWithValue("@password", HashPassword(txtPassword.Text))
+                cmd.Parameters.AddWithValue("@role", roleToAssign)
+                cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
+                cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
+                cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
+                cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
+                cmd.ExecuteNonQuery()
+            End Using
         End Using
 
-        MessageBox.Show("User added successfully.")
+        ' =========================
+        ' Audit logging
+        ' =========================
+        If roleToAssign = "Admin" AndAlso Not SystemSession.AdminExists() Then
+            SystemSession.LogAudit("First Admin Created", "Registration")
+        Else
+            SystemSession.LogAudit("Add user", "User Management")
+        End If
+
+        ' =========================
+        ' Finish
+        ' =========================
+        SystemSession.ShowSuccess("added")
         LoadUsers()
         Clearform()
     End Sub
 
-    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
-        If selectedUserID = 0 Then
-            MessageBox.Show("Please select a user to update.")
-            Exit Sub
-        End If
 
-        ' Get old role using SystemSession helper
+    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
+        ' ✅ Only Admin can update users
+        If Not SystemSession.RequireAdmin("update users") Then Exit Sub
+        If Not SystemSession.RequireSelectedUser(selectedUserID, "update") Then Exit Sub
+
+        ' Get old role
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
+        Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -140,72 +138,84 @@ Public Class AdminDBUsers
                 Email=@email
             WHERE UserID=@id"
 
-            Dim hashedPassword As String = HashPassword(txtPassword.Text)
-
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@id", selectedUserID)
-            cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
-            cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
-            cmd.Parameters.AddWithValue("@role", CmbRole.Text)
-            cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
-            cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
-            cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
-            cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
-            cmd.Parameters.AddWithValue("@password", hashedPassword)
-
-            cmd.ExecuteNonQuery()
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@id", selectedUserID)
+                cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
+                cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
+                cmd.Parameters.AddWithValue("@password", hashedPassword)
+                cmd.Parameters.AddWithValue("@role", CmbRole.Text)
+                cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
+                cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
+                cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
+                cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
+                cmd.ExecuteNonQuery()
+            End Using
         End Using
 
-        MessageBox.Show("User updated successfully.")
-        ' ✅ Audit logging with last Admin check
+        SystemSession.ShowSuccess("updated")
+
+        ' Enforce session rules if the logged-in user updates their own role
+        SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
+
+        ' Audit logging
         If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
-            SystemSession.LogAudit("Last Admin Role Changed", "User Management")
-            MessageBox.Show("The last Admin account has been changed. Please register a new Admin immediately.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            SystemSession.LogAudit("Last Admin Role Changed", "User Management",
+                           selectedUserID, TxtFullName.Text, oldRole)
+            MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
+                    "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             SystemSession.EnforceAdminRole(CmbRole)
         ElseIf CmbRole.Text = "Admin" Then
-            SystemSession.LogAudit("Admin Account Updated", "User Management")
+            SystemSession.LogAudit("Admin Account Updated", "User Management",
+                           selectedUserID, TxtFullName.Text, CmbRole.Text)
         Else
-            SystemSession.LogAudit("User Updated", "User Management")
+            SystemSession.LogAudit("User Updated", "User Management",
+                           selectedUserID, TxtFullName.Text, CmbRole.Text)
         End If
 
         LoadUsers()
         Clearform()
     End Sub
-
-
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
+        ' Prevent deletion unless an Admin is logged in
+        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
+            MessageBox.Show("Only an Admin can delete users. Please log in as an Admin.",
+                        "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
         If selectedUserID = 0 Then
             MessageBox.Show("Please select a user to delete.")
             Exit Sub
         End If
 
+        ' Delete the user
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
-
             Dim query As String = "DELETE FROM Users WHERE UserID=@id"
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@id", selectedUserID)
             cmd.ExecuteNonQuery()
         End Using
 
+        ' Self-session enforcement
+        SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
+
+        ' Check if Admins still exist
         If Not SystemSession.AdminExists() Then
-            MessageBox.Show("All Admin accounts have been deleted. You must register a new Admin before adding Staff or Dentists.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-
-            ' Log this critical event
             SystemSession.LogAudit("All Admins Deleted", "User Management")
-
-            ' Optionally lock the ComboBox again
             SystemSession.EnforceAdminRole(CmbRole)
+        Else
+            SystemSession.ShowSuccess("deleted")
+            SystemSession.LogAudit("User Deleted", "User Management")
         End If
 
-
-        MessageBox.Show("User deleted successfully.")
-        ' Re-check if Admins still exist
+        ' Always enforce combo state
         SystemSession.EnforceAdminRole(CmbRole)
-
         LoadUsers()
         Clearform()
     End Sub
+
+
 
     Private Function IsUsernameTaken(username As String) As Boolean
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
@@ -232,12 +242,20 @@ Public Class AdminDBUsers
     End Sub
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        If Dashboard Is Nothing Then
+        ' ✅ If no admin is logged in, go back to Login form
+        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
+            Login.Show() ' assuming Login is a singleton form
+            Me.Hide()
+            Exit Sub
+        End If
+
+        ' Otherwise, show the Admin Dashboard
+        If Dashboard Is Nothing OrElse Dashboard.IsDisposed Then
             Dashboard = New AdminDashboard()
         End If
 
         Dashboard.Show()
-        Me.Close()
+        Me.Hide()
     End Sub
 
     Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged
@@ -251,7 +269,4 @@ Public Class AdminDBUsers
         End If
     End Sub
 
-    Private Sub TxtPhoneNumber_TextChanged(sender As Object, e As EventArgs) Handles TxtPhoneNumber.TextChanged
-
-    End Sub
 End Class

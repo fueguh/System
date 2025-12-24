@@ -22,52 +22,53 @@ Partial Class AdminAuditTrailForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminAuditTrailForm))
         Me.dgvAuditLogs = New Guna.UI2.WinForms.Guna2DataGridView()
-        Me.Guna2DateTimePicker1 = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.RefreshButton = New Guna.UI2.WinForms.Guna2Button()
-        Me.cmbUser = New Guna.UI2.WinForms.Guna2ComboBox()
-        Me.cmbAction = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.txtSearch = New Guna.UI2.WinForms.Guna2TextBox()
         Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
+        Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
+        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.dgvAuditLogs, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'dgvAuditLogs
         '
         Me.dgvAuditLogs.AllowUserToResizeColumns = False
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
-        Me.dgvAuditLogs.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgvAuditLogs.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle4.BackColor = System.Drawing.Color.White
+        Me.dgvAuditLogs.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle5.ForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvAuditLogs.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
         Me.dgvAuditLogs.ColumnHeadersHeight = 25
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvAuditLogs.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle6.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvAuditLogs.DefaultCellStyle = DataGridViewCellStyle6
         Me.dgvAuditLogs.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.dgvAuditLogs.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvAuditLogs.Location = New System.Drawing.Point(0, 313)
+        Me.dgvAuditLogs.Location = New System.Drawing.Point(0, 265)
+        Me.dgvAuditLogs.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.dgvAuditLogs.Name = "dgvAuditLogs"
         Me.dgvAuditLogs.ReadOnly = True
         Me.dgvAuditLogs.RowHeadersVisible = False
         Me.dgvAuditLogs.RowHeadersWidth = 51
         Me.dgvAuditLogs.RowTemplate.Height = 24
-        Me.dgvAuditLogs.Size = New System.Drawing.Size(1426, 387)
+        Me.dgvAuditLogs.Size = New System.Drawing.Size(1082, 501)
         Me.dgvAuditLogs.TabIndex = 0
         Me.dgvAuditLogs.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvAuditLogs.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -91,19 +92,6 @@ Partial Class AdminAuditTrailForm
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
-        'Guna2DateTimePicker1
-        '
-        Me.Guna2DateTimePicker1.Checked = True
-        Me.Guna2DateTimePicker1.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.Guna2DateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.Guna2DateTimePicker1.Location = New System.Drawing.Point(873, 31)
-        Me.Guna2DateTimePicker1.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        Me.Guna2DateTimePicker1.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        Me.Guna2DateTimePicker1.Name = "Guna2DateTimePicker1"
-        Me.Guna2DateTimePicker1.Size = New System.Drawing.Size(341, 36)
-        Me.Guna2DateTimePicker1.TabIndex = 2
-        Me.Guna2DateTimePicker1.Value = New Date(2025, 12, 24, 8, 37, 3, 900)
-        '
         'RefreshButton
         '
         Me.RefreshButton.DisabledState.BorderColor = System.Drawing.Color.DarkGray
@@ -113,48 +101,11 @@ Partial Class AdminAuditTrailForm
         Me.RefreshButton.FillColor = System.Drawing.Color.White
         Me.RefreshButton.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.RefreshButton.ForeColor = System.Drawing.Color.DimGray
-        Me.RefreshButton.Location = New System.Drawing.Point(525, 116)
-        Me.RefreshButton.Margin = New System.Windows.Forms.Padding(4)
+        Me.RefreshButton.Location = New System.Drawing.Point(460, 178)
         Me.RefreshButton.Name = "RefreshButton"
-        Me.RefreshButton.Size = New System.Drawing.Size(181, 55)
+        Me.RefreshButton.Size = New System.Drawing.Size(136, 45)
         Me.RefreshButton.TabIndex = 10
         Me.RefreshButton.Text = "Refresh"
-        '
-        'cmbUser
-        '
-        Me.cmbUser.BackColor = System.Drawing.Color.Transparent
-        Me.cmbUser.BorderRadius = 15
-        Me.cmbUser.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cmbUser.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbUser.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbUser.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbUser.Font = New System.Drawing.Font("Segoe UI", 12.0!)
-        Me.cmbUser.ForeColor = System.Drawing.Color.Black
-        Me.cmbUser.ItemHeight = 30
-        Me.cmbUser.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
-        Me.cmbUser.Location = New System.Drawing.Point(76, 31)
-        Me.cmbUser.Margin = New System.Windows.Forms.Padding(4)
-        Me.cmbUser.Name = "cmbUser"
-        Me.cmbUser.Size = New System.Drawing.Size(290, 36)
-        Me.cmbUser.TabIndex = 11
-        '
-        'cmbAction
-        '
-        Me.cmbAction.BackColor = System.Drawing.Color.Transparent
-        Me.cmbAction.BorderRadius = 15
-        Me.cmbAction.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cmbAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbAction.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbAction.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbAction.Font = New System.Drawing.Font("Segoe UI", 12.0!)
-        Me.cmbAction.ForeColor = System.Drawing.Color.Black
-        Me.cmbAction.ItemHeight = 30
-        Me.cmbAction.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
-        Me.cmbAction.Location = New System.Drawing.Point(525, 31)
-        Me.cmbAction.Margin = New System.Windows.Forms.Padding(4)
-        Me.cmbAction.Name = "cmbAction"
-        Me.cmbAction.Size = New System.Drawing.Size(283, 36)
-        Me.cmbAction.TabIndex = 12
         '
         'txtSearch
         '
@@ -169,55 +120,76 @@ Partial Class AdminAuditTrailForm
         Me.txtSearch.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtSearch.ForeColor = System.Drawing.Color.Black
         Me.txtSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSearch.Location = New System.Drawing.Point(76, 116)
-        Me.txtSearch.Margin = New System.Windows.Forms.Padding(5)
+        Me.txtSearch.Location = New System.Drawing.Point(622, 178)
+        Me.txtSearch.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtSearch.Name = "txtSearch"
         Me.txtSearch.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtSearch.PlaceholderText = "Search"
         Me.txtSearch.SelectedText = ""
-        Me.txtSearch.Size = New System.Drawing.Size(283, 62)
+        Me.txtSearch.Size = New System.Drawing.Size(447, 50)
         Me.txtSearch.TabIndex = 13
         '
         'btnBack
         '
+        Me.btnBack.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnBack.BackColor = System.Drawing.SystemColors.ControlLight
         Me.btnBack.FillColor = System.Drawing.Color.Transparent
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1291, 31)
-        Me.btnBack.Margin = New System.Windows.Forms.Padding(4)
+        Me.btnBack.Location = New System.Drawing.Point(964, 25)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.btnBack.Size = New System.Drawing.Size(80, 71)
+        Me.btnBack.Size = New System.Drawing.Size(60, 58)
         Me.btnBack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.btnBack.TabIndex = 21
         Me.btnBack.TabStop = False
         '
+        'Guna2CustomGradientPanel1
+        '
+        Me.Guna2CustomGradientPanel1.Controls.Add(Me.Guna2HtmlLabel1)
+        Me.Guna2CustomGradientPanel1.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Guna2CustomGradientPanel1.FillColor = System.Drawing.Color.LightGray
+        Me.Guna2CustomGradientPanel1.FillColor3 = System.Drawing.Color.Silver
+        Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.Silver
+        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1082, 124)
+        Me.Guna2CustomGradientPanel1.TabIndex = 22
+        '
+        'Guna2HtmlLabel1
+        '
+        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
+        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 24.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(436, 37)
+        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
+        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(160, 46)
+        Me.Guna2HtmlLabel1.TabIndex = 21
+        Me.Guna2HtmlLabel1.Text = "Audit Trail"
+        '
         'AdminAuditTrailForm
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
-        Me.ClientSize = New System.Drawing.Size(1426, 700)
+        Me.ClientSize = New System.Drawing.Size(1082, 766)
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.dgvAuditLogs)
         Me.Controls.Add(Me.txtSearch)
-        Me.Controls.Add(Me.cmbAction)
-        Me.Controls.Add(Me.cmbUser)
         Me.Controls.Add(Me.RefreshButton)
-        Me.Controls.Add(Me.Guna2DateTimePicker1)
+        Me.Controls.Add(Me.Guna2CustomGradientPanel1)
+        Me.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
         Me.Name = "AdminAuditTrailForm"
         Me.Text = "AuditTrailForm"
         CType(Me.dgvAuditLogs, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Guna2CustomGradientPanel1.ResumeLayout(False)
+        Me.Guna2CustomGradientPanel1.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
 
     Friend WithEvents dgvAuditLogs As Guna.UI2.WinForms.Guna2DataGridView
-    Friend WithEvents Guna2DateTimePicker1 As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents RefreshButton As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents cmbUser As Guna.UI2.WinForms.Guna2ComboBox
-    Friend WithEvents cmbAction As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents txtSearch As Guna.UI2.WinForms.Guna2TextBox
 
     Private Sub Label1_Click(sender As Object, e As EventArgs)
@@ -225,4 +197,6 @@ Partial Class AdminAuditTrailForm
     End Sub
 
     Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
+    Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
+    Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class
