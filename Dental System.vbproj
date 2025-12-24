@@ -123,6 +123,7 @@
     <Compile Include="AdminDBUsers.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AuditModule.vb" />
     <Compile Include="AuditTrailForm.Designer.vb">
       <DependentUpon>AuditTrailForm.vb</DependentUpon>
     </Compile>

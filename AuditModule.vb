@@ -1,6 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Module AuditModule
-    Public Sub LogAudit(message As string)
+    Public Sub LogAudit(
             userId As Integer,
             username As String,
             action As String,
