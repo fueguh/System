@@ -16,8 +16,6 @@ Public Class AdminDBUsers
         LoadUsers()
         Clearform()
 
-        ' Call the centralized enforcement logics
-        SystemSession.EnforceAdminRole(CmbRole)
     End Sub
     Private Sub LoadUsers()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
@@ -48,9 +46,7 @@ Public Class AdminDBUsers
 
     End Sub
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
-        ' =========================
         ' Validation
-        ' =========================
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
        String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
        String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
@@ -69,15 +65,9 @@ Public Class AdminDBUsers
             MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
-
-        ' =========================
         ' Determine role for insertion
-        ' =========================
         Dim roleToAssign As String = If(Not SystemSession.AdminExists(), "Admin", CmbRole.Text)
-
-        ' =========================
         ' Insert into database
-        ' =========================
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
@@ -95,30 +85,21 @@ Public Class AdminDBUsers
                 cmd.ExecuteNonQuery()
             End Using
         End Using
-
-        ' =========================
         ' Audit logging
-        ' =========================
         If roleToAssign = "Admin" AndAlso Not SystemSession.AdminExists() Then
             SystemSession.LogAudit("First Admin Created", "Registration")
         Else
             SystemSession.LogAudit("Add user", "User Management")
         End If
-
-        ' =========================
-        ' Finish
-        ' =========================
         SystemSession.ShowSuccess("added")
         LoadUsers()
         Clearform()
     End Sub
 
-
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
         ' ✅ Only Admin can update users
         If Not SystemSession.RequireAdmin("update users") Then Exit Sub
         If Not SystemSession.RequireSelectedUser(selectedUserID, "update") Then Exit Sub
-
         ' Get old role
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
@@ -163,7 +144,6 @@ Public Class AdminDBUsers
                            selectedUserID, TxtFullName.Text, oldRole)
             MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
                     "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            SystemSession.EnforceAdminRole(CmbRole)
         ElseIf CmbRole.Text = "Admin" Then
             SystemSession.LogAudit("Admin Account Updated", "User Management",
                            selectedUserID, TxtFullName.Text, CmbRole.Text)
@@ -199,18 +179,13 @@ Public Class AdminDBUsers
 
         ' Self-session enforcement
         SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
-
         ' Check if Admins still exist
         If Not SystemSession.AdminExists() Then
             SystemSession.LogAudit("All Admins Deleted", "User Management")
-            SystemSession.EnforceAdminRole(CmbRole)
         Else
             SystemSession.ShowSuccess("deleted")
             SystemSession.LogAudit("User Deleted", "User Management")
         End If
-
-        ' Always enforce combo state
-        SystemSession.EnforceAdminRole(CmbRole)
         LoadUsers()
         Clearform()
     End Sub

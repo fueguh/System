@@ -1,16 +1,11 @@
 ﻿Imports System.Data.SqlClient
 
 Public Module SystemSession
-    ' =========================
     ' Current User Session
-    ' =========================
     Public LoggedInUserID As Integer = 0
     Public LoggedInFullName As String = ""
     Public LoggedInRole As String = ""
-
-    ' =========================
     ' Admin Guards
-    ' =========================
     Public Function RequireAdmin(actionName As String) As Boolean
         If LoggedInUserID = 0 OrElse LoggedInRole <> "Admin" Then
             MessageBox.Show($"Only an Admin can {actionName}. Please log in as an Admin.",
@@ -32,12 +27,17 @@ Public Module SystemSession
         MessageBox.Show($"User {actionName} successfully.")
     End Sub
 
-    ' =========================
+    'combobox enforcement for admin role
+    Public Sub EnforceAdminRole(combo As ComboBox)
+        If Not AdminExists() Then
+            combo.SelectedItem = "Admin"
+            combo.Enabled = False   ' lock ComboBox to Admin
+        Else
+            combo.Enabled = True
+        End If
+    End Sub
+
     ' Self-session enforcement (deletion or demotion)
-    ' =========================
-    ' =========================
-    ' Self-session enforcement (deletion or demotion)
-    ' =========================
     Public Sub EnforceSelfSessionRules(selectedUserID As Integer,
                                    newRole As String,
                                    currentForm As Form,
@@ -75,9 +75,7 @@ Public Module SystemSession
         End If
     End Sub
 
-    ' =========================
     ' Admin Checks
-    ' =========================
     Public Function AdminExists() As Boolean
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -87,20 +85,8 @@ Public Module SystemSession
         End Using
     End Function
 
-    Public Sub EnforceAdminRole(combo As ComboBox)
-        If Not AdminExists() Then
-            MessageBox.Show("No Admin accounts exist. You must register an Admin.",
-                            "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            combo.SelectedItem = "Admin"
-            combo.Enabled = False   ' lock ComboBox to Admin
-        Else
-            combo.Enabled = True
-        End If
-    End Sub
 
-    ' =========================
     ' User Role Helpers
-    ' =========================
     Public Function GetUserRole(userId As Integer) As String
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -111,9 +97,7 @@ Public Module SystemSession
         End Using
     End Function
 
-    ' =========================
     ' Audit Trail
-    ' =========================
     Public Sub LogAudit(action As String, moduleName As String,
                         Optional userId As Integer = 0,
                         Optional fullName As String = "",

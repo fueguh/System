@@ -287,7 +287,7 @@ Partial Class AdminDBDentists
         Me.BTNAdd.Name = "BTNAdd"
         Me.BTNAdd.Size = New System.Drawing.Size(180, 45)
         Me.BTNAdd.TabIndex = 27
-        Me.BTNAdd.Text = "Guna2Button1"
+        Me.BTNAdd.Text = "Add"
         '
         'AdminDBDentists
         '
