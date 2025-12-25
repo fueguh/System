@@ -135,23 +135,23 @@ Public Class AdminDBUsers
 
         SystemSession.ShowSuccess("updated")
 
-        ' Enforce session rules if the logged-in user updates their own role
-        SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
 
         ' Audit logging
         If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
             SystemSession.LogAudit("Last Admin Role Changed", "User Management",
-                           selectedUserID, TxtFullName.Text, oldRole)
+            selectedUserID, TxtFullName.Text, oldRole)
             MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
                     "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         ElseIf CmbRole.Text = "Admin" Then
             SystemSession.LogAudit("Admin Account Updated", "User Management",
-                           selectedUserID, TxtFullName.Text, CmbRole.Text)
+            selectedUserID, TxtFullName.Text, CmbRole.Text)
         Else
             SystemSession.LogAudit("User Updated", "User Management",
-                           selectedUserID, TxtFullName.Text, CmbRole.Text)
+            selectedUserID, TxtFullName.Text, CmbRole.Text)
         End If
 
+        ' Enforce session rules if the logged-in user updates their own role
+        SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
         LoadUsers()
         Clearform()
     End Sub
@@ -177,8 +177,6 @@ Public Class AdminDBUsers
             cmd.ExecuteNonQuery()
         End Using
 
-        ' Self-session enforcement
-        SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
         ' Check if Admins still exist
         If Not SystemSession.AdminExists() Then
             SystemSession.LogAudit("All Admins Deleted", "User Management")
@@ -186,6 +184,8 @@ Public Class AdminDBUsers
             SystemSession.ShowSuccess("deleted")
             SystemSession.LogAudit("User Deleted", "User Management")
         End If
+        ' Self-session enforcement
+        SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
         LoadUsers()
         Clearform()
     End Sub

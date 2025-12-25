@@ -36,7 +36,7 @@ Public Module SystemSession
 
         If selectedUserID = LoggedInUserID AndAlso isDelete Then
             LoggedInUserID = 0
-            LoggedInRole = ""
+            LoggedInRole = "Unknown"
             MessageBox.Show("Your account has been deleted. You will be logged out.",
                         "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
