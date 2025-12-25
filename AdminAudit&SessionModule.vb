@@ -27,16 +27,6 @@ Public Module SystemSession
         MessageBox.Show($"User {actionName} successfully.")
     End Sub
 
-    'combobox enforcement for admin role
-    Public Sub EnforceAdminRole(combo As ComboBox)
-        If Not AdminExists() Then
-            combo.SelectedItem = "Admin"
-            combo.Enabled = False   ' lock ComboBox to Admin
-        Else
-            combo.Enabled = True
-        End If
-    End Sub
-
     ' Self-session enforcement (deletion or demotion)
     Public Sub EnforceSelfSessionRules(selectedUserID As Integer,
                                    newRole As String,

@@ -82,14 +82,7 @@ Public Class Login
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
 
             If adminCount = 0 Then
-                ' Open registration form immediately
-                Dim reg As New AdminDBUsers()
-
-                ' Optionally close login form until at least one user exists
-                Me.Hide()
-                reg.ShowDialog()
-                Me.Show()
-
+                MessageBox.Show("No admin account found. Please create an admin account.")
             End If
         End Using
 
