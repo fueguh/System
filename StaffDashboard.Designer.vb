@@ -24,15 +24,15 @@ Partial Class StaffDashboard
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(StaffDashboard))
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
+        Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.PatientManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.AppointmentToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.BillingAndPaymentsToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
-        Me.MenuStrip1.SuspendLayout()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'Guna2CustomGradientPanel1
@@ -46,6 +46,21 @@ Partial Class StaffDashboard
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
         Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1368, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 31
+        '
+        'LogoutPictureBox1
+        '
+        Me.LogoutPictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.LogoutPictureBox1.BackColor = System.Drawing.Color.Transparent
+        Me.LogoutPictureBox1.FillColor = System.Drawing.Color.Transparent
+        Me.LogoutPictureBox1.Image = CType(resources.GetObject("LogoutPictureBox1.Image"), System.Drawing.Image)
+        Me.LogoutPictureBox1.ImageRotate = 0!
+        Me.LogoutPictureBox1.Location = New System.Drawing.Point(1268, 29)
+        Me.LogoutPictureBox1.Name = "LogoutPictureBox1"
+        Me.LogoutPictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
+        Me.LogoutPictureBox1.Size = New System.Drawing.Size(64, 64)
+        Me.LogoutPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.LogoutPictureBox1.TabIndex = 33
+        Me.LogoutPictureBox1.TabStop = False
         '
         'Guna2HtmlLabel1
         '
@@ -93,21 +108,6 @@ Partial Class StaffDashboard
         Me.BillingAndPaymentsToolStripMenuItem3.Size = New System.Drawing.Size(330, 44)
         Me.BillingAndPaymentsToolStripMenuItem3.Text = "Billing and Payments"
         '
-        'LogoutPictureBox1
-        '
-        Me.LogoutPictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.LogoutPictureBox1.BackColor = System.Drawing.Color.Transparent
-        Me.LogoutPictureBox1.FillColor = System.Drawing.Color.Transparent
-        Me.LogoutPictureBox1.Image = CType(resources.GetObject("LogoutPictureBox1.Image"), System.Drawing.Image)
-        Me.LogoutPictureBox1.ImageRotate = 0!
-        Me.LogoutPictureBox1.Location = New System.Drawing.Point(1268, 29)
-        Me.LogoutPictureBox1.Name = "LogoutPictureBox1"
-        Me.LogoutPictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.LogoutPictureBox1.Size = New System.Drawing.Size(64, 64)
-        Me.LogoutPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.LogoutPictureBox1.TabIndex = 33
-        Me.LogoutPictureBox1.TabStop = False
-        '
         'StaffDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -119,9 +119,9 @@ Partial Class StaffDashboard
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "StaffDashboard"
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
+        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
-        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -146,4 +146,5 @@ Partial Class StaffDashboard
     Friend WithEvents AppointmentToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents BillingAndPaymentsToolStripMenuItem3 As ToolStripMenuItem
     Friend WithEvents LogoutPictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
+
 End Class
