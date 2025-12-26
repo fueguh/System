@@ -49,25 +49,7 @@ Public Module SystemSession
         LoggedInFullName = ""
         LoggedInRole = ""
     End Sub
-    Public Sub LogAdd(moduleName As String)
-        LogAudit("Add Record", moduleName)
-    End Sub
 
-    Public Sub LogEdit(moduleName As String)
-        LogAudit("Edit Record", moduleName)
-    End Sub
-
-    Public Sub LogDelete(moduleName As String)
-        LogAudit("Delete Record", moduleName)
-    End Sub
-
-    Public Sub LogUpdate(moduleName As String)
-        LogAudit("Update Record", moduleName)
-    End Sub
-
-    Public Sub LogCancel(moduleName As String)
-        LogAudit("Cancel Action", moduleName)
-    End Sub
     Public Sub NavigateToDashboard(currentForm As Form)
         Select Case LoggedInRole
             Case "Admin" : AdminDashboard.Show()
