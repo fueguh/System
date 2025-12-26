@@ -65,10 +65,11 @@ Public Class AdminDBUsers
             MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
-        ' Restrict creation of Staff/Dentist if no Admin exists yet
-        If Not SystemSession.AdminExists() AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
-            MessageBox.Show("You must create an Admin account first before adding Staff or Dentists.",
-                        "Restriction", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
+        ' Only allow Staff/Dentist to be added by logged-in Admin
+        If SystemSession.LoggedInRole <> "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
+            MessageBox.Show("You must be logged in as an Admin to add Staff or Dentists.",
+                        "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -80,8 +81,8 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNum, Email, Specialization, Availability)
-            VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)"
+        INSERT INTO Users (FullName, Username, Password, Role, PhoneNum, Email, Specialization, Availability)
+        VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)"
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
                 cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
@@ -106,6 +107,8 @@ Public Class AdminDBUsers
         LoadUsers()
         Clearform()
     End Sub
+
+
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
         ' ✅ Only Admin can update users
@@ -167,11 +170,8 @@ Public Class AdminDBUsers
     End Sub
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
         ' Prevent deletion unless an Admin is logged in
-        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
-            MessageBox.Show("Only an Admin can delete users. Please log in as an Admin.",
-                        "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
+
+        If Not SystemSession.RequireAdmin("delete users") Then Exit Sub
 
         If selectedUserID = 0 Then
             MessageBox.Show("Please select a user to delete.")
@@ -238,17 +238,6 @@ Public Class AdminDBUsers
         ' Otherwise, show user dashboard
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
-    End Sub
-
-    Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged
-        If CmbRole.Text = "Dentist" Then
-            txtSpecialization.Enabled = True
-            txtSpecialization.Visible = True
-        Else
-            txtSpecialization.Enabled = False
-            txtSpecialization.Visible = False
-            txtSpecialization.Text = ""
-        End If
     End Sub
 
 End Class
