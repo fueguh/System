@@ -65,6 +65,8 @@ Partial Class AdminDBDentists
         '
         'DGVDentists
         '
+        Me.DGVDentists.AllowUserToAddRows = False
+        Me.DGVDentists.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVDentists.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -75,8 +77,7 @@ Partial Class AdminDBDentists
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVDentists.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVDentists.ColumnHeadersHeight = 4
-        Me.DGVDentists.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVDentists.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -88,7 +89,7 @@ Partial Class AdminDBDentists
         Me.DGVDentists.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVDentists.Location = New System.Drawing.Point(430, 135)
         Me.DGVDentists.Name = "DGVDentists"
-        Me.DGVDentists.RowHeadersVisible = False
+        Me.DGVDentists.ReadOnly = True
         Me.DGVDentists.Size = New System.Drawing.Size(843, 492)
         Me.DGVDentists.TabIndex = 9
         Me.DGVDentists.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
@@ -102,9 +103,9 @@ Partial Class AdminDBDentists
         Me.DGVDentists.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVDentists.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVDentists.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVDentists.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVDentists.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVDentists.ThemeStyle.ReadOnly = False
+        Me.DGVDentists.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVDentists.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVDentists.ThemeStyle.ReadOnly = True
         Me.DGVDentists.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVDentists.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVDentists.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))

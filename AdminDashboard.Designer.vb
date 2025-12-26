@@ -35,6 +35,7 @@ Partial Class AdminDashboard
         Me.ReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
+        Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label5 = New System.Windows.Forms.Label()
@@ -48,15 +49,14 @@ Partial Class AdminDashboard
         Me.Guna2Panel4 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
-        Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         CType(Me.Guna2PictureBox6, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
+        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2Panel1.SuspendLayout()
         Me.Guna2Panel2.SuspendLayout()
         Me.Guna2Panel3.SuspendLayout()
         Me.Guna2Panel4.SuspendLayout()
-        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Guna2PictureBox6
@@ -150,6 +150,21 @@ Partial Class AdminDashboard
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
         Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1177, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 20
+        '
+        'LogoutPictureBox1
+        '
+        Me.LogoutPictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.LogoutPictureBox1.BackColor = System.Drawing.Color.Transparent
+        Me.LogoutPictureBox1.FillColor = System.Drawing.Color.Transparent
+        Me.LogoutPictureBox1.Image = CType(resources.GetObject("LogoutPictureBox1.Image"), System.Drawing.Image)
+        Me.LogoutPictureBox1.ImageRotate = 0!
+        Me.LogoutPictureBox1.Location = New System.Drawing.Point(1081, 32)
+        Me.LogoutPictureBox1.Name = "LogoutPictureBox1"
+        Me.LogoutPictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
+        Me.LogoutPictureBox1.Size = New System.Drawing.Size(64, 64)
+        Me.LogoutPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.LogoutPictureBox1.TabIndex = 35
+        Me.LogoutPictureBox1.TabStop = False
         '
         'Guna2HtmlLabel1
         '
@@ -281,21 +296,6 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments.Text = "0"
         Me.lblCompletedAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'LogoutPictureBox1
-        '
-        Me.LogoutPictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.LogoutPictureBox1.BackColor = System.Drawing.Color.Transparent
-        Me.LogoutPictureBox1.FillColor = System.Drawing.Color.Transparent
-        Me.LogoutPictureBox1.Image = CType(resources.GetObject("LogoutPictureBox1.Image"), System.Drawing.Image)
-        Me.LogoutPictureBox1.ImageRotate = 0!
-        Me.LogoutPictureBox1.Location = New System.Drawing.Point(1081, 32)
-        Me.LogoutPictureBox1.Name = "LogoutPictureBox1"
-        Me.LogoutPictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.LogoutPictureBox1.Size = New System.Drawing.Size(64, 64)
-        Me.LogoutPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.LogoutPictureBox1.TabIndex = 35
-        Me.LogoutPictureBox1.TabStop = False
-        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -318,11 +318,11 @@ Partial Class AdminDashboard
         Me.MenuStrip1.PerformLayout()
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
         Me.Guna2CustomGradientPanel1.PerformLayout()
+        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Guna2Panel1.ResumeLayout(False)
         Me.Guna2Panel2.ResumeLayout(False)
         Me.Guna2Panel3.ResumeLayout(False)
         Me.Guna2Panel4.ResumeLayout(False)
-        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

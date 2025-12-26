@@ -170,7 +170,6 @@ Public Class AdminDBUsers
     End Sub
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
         ' Prevent deletion unless an Admin is logged in
-
         If Not SystemSession.RequireAdmin("delete users") Then Exit Sub
 
         If selectedUserID = 0 Then
@@ -178,26 +177,44 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        ' Delete the user
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
-            con.Open()
-            Dim query As String = "DELETE FROM Users WHERE UserID=@id"
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@id", selectedUserID)
-            cmd.ExecuteNonQuery()
-        End Using
+        Try
+            ' Delete the user
+            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                con.Open()
+                Dim query As String = "DELETE FROM Users WHERE UserID=@id"
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@id", selectedUserID)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
 
-        ' Check if Admins still exist
-        If Not SystemSession.AdminExists() Then
-            SystemSession.LogAudit("All Admins Deleted", "User Management")
-        Else
-            SystemSession.ShowSuccess("deleted")
-            SystemSession.LogAudit("User Deleted", "User Management")
-        End If
-        ' Self-session enforcement
-        SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
-        LoadUsers()
-        Clearform()
+            ' Check if Admins still exist
+            If Not SystemSession.AdminExists() Then
+                SystemSession.LogAudit("All Admins Deleted", "User Management")
+            Else
+                SystemSession.ShowSuccess("deleted")
+                SystemSession.LogAudit("User Deleted", "User Management")
+            End If
+
+            ' Self-session enforcement
+            SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
+            LoadUsers()
+            Clearform()
+
+        Catch ex As SqlException
+            ' Handle foreign key violation (appointments linked to user)
+            If ex.Number = 547 Then
+                MessageBox.Show("Cannot delete this user because they have linked appointments.")
+                SystemSession.LogAudit("Delete blocked due to linked appointments", "User Management")
+            Else
+                MessageBox.Show("Database error: " & ex.Message)
+                SystemSession.LogAudit("Delete failed: " & ex.Message, "User Management")
+            End If
+        Catch ex As Exception
+            ' Catch any other unexpected errors
+            MessageBox.Show("Unexpected error: " & ex.Message)
+            SystemSession.LogAudit("Unexpected delete error: " & ex.Message, "User Management")
+        End Try
     End Sub
 
 

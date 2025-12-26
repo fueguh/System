@@ -29,7 +29,7 @@ Partial Class StaffDashboard
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.PatientManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.AppointmentToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.BillingAndPaymentsToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BillingAssistance = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
@@ -77,11 +77,11 @@ Partial Class StaffDashboard
         'MenuStrip1
         '
         Me.MenuStrip1.AutoSize = False
-        Me.MenuStrip1.BackColor = System.Drawing.SystemColors.ButtonHighlight
+        Me.MenuStrip1.BackColor = System.Drawing.SystemColors.ButtonFace
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.BillingAndPaymentsToolStripMenuItem3})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.BillingAssistance})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 127)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -102,16 +102,17 @@ Partial Class StaffDashboard
         Me.AppointmentToolStripMenuItem2.Size = New System.Drawing.Size(213, 44)
         Me.AppointmentToolStripMenuItem2.Text = "Appointment"
         '
-        'BillingAndPaymentsToolStripMenuItem3
+        'BillingAssistance
         '
-        Me.BillingAndPaymentsToolStripMenuItem3.Name = "BillingAndPaymentsToolStripMenuItem3"
-        Me.BillingAndPaymentsToolStripMenuItem3.Size = New System.Drawing.Size(330, 44)
-        Me.BillingAndPaymentsToolStripMenuItem3.Text = "Billing and Payments"
+        Me.BillingAssistance.Name = "BillingAssistance"
+        Me.BillingAssistance.Size = New System.Drawing.Size(279, 44)
+        Me.BillingAssistance.Text = "Billing Assistance"
         '
         'StaffDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.BackColor = System.Drawing.SystemColors.ButtonHighlight
         Me.ClientSize = New System.Drawing.Size(1368, 857)
         Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
@@ -144,7 +145,7 @@ Partial Class StaffDashboard
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents PatientManagementToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents AppointmentToolStripMenuItem2 As ToolStripMenuItem
-    Friend WithEvents BillingAndPaymentsToolStripMenuItem3 As ToolStripMenuItem
+    Friend WithEvents BillingAssistance As ToolStripMenuItem
     Friend WithEvents LogoutPictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
 
 End Class
