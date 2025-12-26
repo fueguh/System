@@ -11,8 +11,7 @@
         Me.Hide()
     End Sub
     Private Sub BillingAndPaymentsToolStripMenuItem3_Click(sender As Object, e As EventArgs) Handles BillingAndPaymentsToolStripMenuItem3.Click
-        AdminAuditTrailForm.Show()
-        Me.Hide()
+        MessageBox.Show("Billing and Payments screen not yet implemented.", "Coming Soon")
     End Sub
     Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)

@@ -11,6 +11,11 @@ Public Class AdminDBAppointments
         LoadAppointments()
         ClearForm()
 
+        'only Admin/Staff can edit, dentists have read-only access
+        If Not (SystemSession.LoggedInRole = "Admin" OrElse SystemSession.LoggedInRole = "Staff") Then
+            SystemSession.SetFormReadOnly(Me)
+        End If
+
         dtpStartTime.Format = DateTimePickerFormat.Time
         dtpStartTime.ShowUpDown = True
 

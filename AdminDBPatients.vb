@@ -6,6 +6,11 @@ Public Class AdminDBPatients
     Private Sub AdminDBPatients_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPatients()
         Clearform()
+
+        ' Only Admin/Staff access, dentists have read-only access
+        If Not (SystemSession.LoggedInRole = "Admin" OrElse SystemSession.LoggedInRole = "Staff") Then
+            SystemSession.SetFormReadOnly(Me)
+        End If
     End Sub
     Private Sub LoadPatients()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)

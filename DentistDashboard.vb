@@ -10,12 +10,10 @@
 
     Private Sub AppointmentToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles AppointmentToolStripMenuItem2.Click
         AdminDBAppointments.Show()
-        Me.Hide()
     End Sub
 
     Private Sub TreatementRecordsToolStripMenuItem3_Click(sender As Object, e As EventArgs) Handles TreatementRecordsToolStripMenuItem3.Click
-        AdminDBDentists.Show()
-        Me.Hide()
+        TreatmentRecords.Show()
     End Sub
     Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)

@@ -147,5 +147,50 @@ Public Module SystemSession
         End Using
     End Function
 
-    ' Audit Trail
+    Public Sub SetFormReadOnly(frm As Form)
+        LockControls(frm.Controls)
+    End Sub
+
+    Private Sub LockControls(ctrls As Control.ControlCollection)
+        For Each ctrl As Control In ctrls
+            ' TextBoxes
+            If TypeOf ctrl Is TextBox OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2TextBox Then
+                Try
+                    DirectCast(ctrl, TextBox).ReadOnly = True
+                Catch
+                    DirectCast(ctrl, Guna.UI2.WinForms.Guna2TextBox).ReadOnly = True
+                End Try
+
+                ' ComboBoxes and DateTimePickers
+            ElseIf TypeOf ctrl Is ComboBox OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2ComboBox _
+                OrElse TypeOf ctrl Is DateTimePicker OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2DateTimePicker Then
+                ctrl.Enabled = False
+
+                ' DataGridViews
+            ElseIf TypeOf ctrl Is DataGridView OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2DataGridView Then
+                Dim dgv As DataGridView
+                If TypeOf ctrl Is DataGridView Then
+                    dgv = DirectCast(ctrl, DataGridView)
+                Else
+                    dgv = DirectCast(ctrl, Guna.UI2.WinForms.Guna2DataGridView)
+                End If
+                dgv.ReadOnly = True
+                dgv.AllowUserToAddRows = False
+                dgv.AllowUserToDeleteRows = False
+
+                ' Buttons
+            ElseIf TypeOf ctrl Is Button OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2Button Then
+                If Not ctrl.Name.Contains("Back") AndAlso Not ctrl.Name.Contains("Logout") Then
+                    ctrl.Enabled = False
+                End If
+            End If
+
+            ' Recurse into child controls (panels, groupboxes, tabpages, etc.)
+            If ctrl.HasChildren Then
+                LockControls(ctrl.Controls)
+            End If
+        Next
+    End Sub
+
+
 End Module

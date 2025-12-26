@@ -69,10 +69,10 @@ Public Class TreatmentRecords
 
             Dim query As String = "
             SELECT TR.RecordID, P.FullName AS Patient, U.FullName AS Dentist,
-                   TR.TreatmentNotes, TR.Prescriptions, TR.ProceduresDone, TR.ImagePath, TR.DateCreated
+                   TR.Treatment, TR.Prescriptions, TR.Procedures, TR.ImagePath, TR.DateCreated
             FROM TreatmentRecords TR
             JOIN Patients P ON TR.PatientID = P.PatientID
-            JOIN Users U ON TR.DentistID = U.UserID
+            JOIN Users U ON TR.UserID = U.UserID
         "
 
             Dim da As New SqlDataAdapter(query, con)
@@ -89,17 +89,17 @@ Public Class TreatmentRecords
             con.Open()
 
             Dim query As String = "
-            INSERT INTO TreatmentRecords (PatientID, DentistID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
-            VALUES (@patient, @dentist, @notes, @prescriptions, @procedures, @image)
+            INSERT INTO TreatmentRecords (PatientID, UserID, Treatment, Prescriptions, Procedures, ImagePath)
+            VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
         "
 
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@patient", CInt(CmbPatient.SelectedValue))
             cmd.Parameters.AddWithValue("@dentist", CInt(CmbDentist.SelectedValue))
-            cmd.Parameters.AddWithValue("@notes", TxtTreatmentNotes.Text)
+            cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text)   ' maps to Treatment
             cmd.Parameters.AddWithValue("@prescriptions", TxtPrescriptions.Text)
-            cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text)
-            cmd.Parameters.AddWithValue("@image", imagePath) ' optional
+            cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text)  ' maps to Procedures
+            cmd.Parameters.AddWithValue("@image", imagePath)
 
             cmd.ExecuteNonQuery()
         End Using
