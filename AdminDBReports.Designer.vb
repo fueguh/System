@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class AdminDBReports
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class AdminDBReports
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBReports))
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
@@ -61,10 +61,10 @@ Partial Class AdminDBReports
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.DGVAppointmentHistory = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.TabRevenue = New System.Windows.Forms.TabPage()
-        Me.TabPerformance = New System.Windows.Forms.TabPage()
-        Me.TabPatients = New System.Windows.Forms.TabPage()
         Me.DGVMonthly = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.TabPerformance = New System.Windows.Forms.TabPage()
         Me.DGVDentistPerformance = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.TabPatients = New System.Windows.Forms.TabPage()
         Me.DGVPatientCount = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.TabRep.SuspendLayout()
         Me.TabDaily.SuspendLayout()
@@ -79,10 +79,10 @@ Partial Class AdminDBReports
         Me.TabPage1.SuspendLayout()
         CType(Me.DGVAppointmentHistory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabRevenue.SuspendLayout()
-        Me.TabPerformance.SuspendLayout()
-        Me.TabPatients.SuspendLayout()
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPerformance.SuspendLayout()
         CType(Me.DGVDentistPerformance, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPatients.SuspendLayout()
         CType(Me.DGVPatientCount, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -180,6 +180,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVDaily.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
+        Me.DGVDaily.RowHeadersVisible = False
         Me.DGVDaily.Size = New System.Drawing.Size(1083, 688)
         Me.DGVDaily.TabIndex = 0
         Me.DGVDaily.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
@@ -463,28 +464,6 @@ Partial Class AdminDBReports
         Me.TabRevenue.Text = "Monthly Revenue"
         Me.TabRevenue.UseVisualStyleBackColor = True
         '
-        'TabPerformance
-        '
-        Me.TabPerformance.Controls.Add(Me.DGVDentistPerformance)
-        Me.TabPerformance.Location = New System.Drawing.Point(184, 4)
-        Me.TabPerformance.Name = "TabPerformance"
-        Me.TabPerformance.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPerformance.Size = New System.Drawing.Size(1089, 694)
-        Me.TabPerformance.TabIndex = 6
-        Me.TabPerformance.Text = "Dentist Performance"
-        Me.TabPerformance.UseVisualStyleBackColor = True
-        '
-        'TabPatients
-        '
-        Me.TabPatients.Controls.Add(Me.DGVPatientCount)
-        Me.TabPatients.Location = New System.Drawing.Point(184, 4)
-        Me.TabPatients.Name = "TabPatients"
-        Me.TabPatients.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPatients.Size = New System.Drawing.Size(1089, 694)
-        Me.TabPatients.TabIndex = 7
-        Me.TabPatients.Text = "Patient Count"
-        Me.TabPatients.UseVisualStyleBackColor = True
-        '
         'DGVMonthly
         '
         DataGridViewCellStyle17.BackColor = System.Drawing.Color.White
@@ -536,6 +515,17 @@ Partial Class AdminDBReports
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'TabPerformance
+        '
+        Me.TabPerformance.Controls.Add(Me.DGVDentistPerformance)
+        Me.TabPerformance.Location = New System.Drawing.Point(184, 4)
+        Me.TabPerformance.Name = "TabPerformance"
+        Me.TabPerformance.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPerformance.Size = New System.Drawing.Size(1089, 694)
+        Me.TabPerformance.TabIndex = 6
+        Me.TabPerformance.Text = "Dentist Performance"
+        Me.TabPerformance.UseVisualStyleBackColor = True
+        '
         'DGVDentistPerformance
         '
         DataGridViewCellStyle20.BackColor = System.Drawing.Color.White
@@ -586,6 +576,17 @@ Partial Class AdminDBReports
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.Height = 22
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        '
+        'TabPatients
+        '
+        Me.TabPatients.Controls.Add(Me.DGVPatientCount)
+        Me.TabPatients.Location = New System.Drawing.Point(184, 4)
+        Me.TabPatients.Name = "TabPatients"
+        Me.TabPatients.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPatients.Size = New System.Drawing.Size(1089, 694)
+        Me.TabPatients.TabIndex = 7
+        Me.TabPatients.Text = "Patient Count"
+        Me.TabPatients.UseVisualStyleBackColor = True
         '
         'DGVPatientCount
         '
@@ -660,10 +661,10 @@ Partial Class AdminDBReports
         Me.TabPage1.ResumeLayout(False)
         CType(Me.DGVAppointmentHistory, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabRevenue.ResumeLayout(False)
-        Me.TabPerformance.ResumeLayout(False)
-        Me.TabPatients.ResumeLayout(False)
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPerformance.ResumeLayout(False)
         CType(Me.DGVDentistPerformance, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPatients.ResumeLayout(False)
         CType(Me.DGVPatientCount, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 

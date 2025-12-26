@@ -4,6 +4,7 @@
     End Sub
     Private Sub PatientManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles PatientManagementToolStripMenuItem1.Click
         AdminDBPatients.Show()
+        Me.Hide()
     End Sub
 
     Private Sub AppointmentToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles AppointmentToolStripMenuItem2.Click
