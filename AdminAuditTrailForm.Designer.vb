@@ -27,7 +27,7 @@ Partial Class AdminAuditTrailForm
         Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminAuditTrailForm))
         Me.dgvAuditLogs = New Guna.UI2.WinForms.Guna2DataGridView()
-        Me.RefreshButton = New Guna.UI2.WinForms.Guna2Button()
+        Me.ClearButton = New Guna.UI2.WinForms.Guna2Button()
         Me.txtSearch = New Guna.UI2.WinForms.Guna2TextBox()
         Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
@@ -94,21 +94,21 @@ Partial Class AdminAuditTrailForm
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.dgvAuditLogs.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
-        'RefreshButton
+        'ClearButton
         '
-        Me.RefreshButton.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.RefreshButton.DisabledState.BorderColor = System.Drawing.Color.DarkGray
-        Me.RefreshButton.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
-        Me.RefreshButton.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
-        Me.RefreshButton.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.RefreshButton.FillColor = System.Drawing.Color.White
-        Me.RefreshButton.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RefreshButton.ForeColor = System.Drawing.Color.DimGray
-        Me.RefreshButton.Location = New System.Drawing.Point(667, 209)
-        Me.RefreshButton.Name = "RefreshButton"
-        Me.RefreshButton.Size = New System.Drawing.Size(136, 45)
-        Me.RefreshButton.TabIndex = 10
-        Me.RefreshButton.Text = "Refresh"
+        Me.ClearButton.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.ClearButton.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.ClearButton.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.ClearButton.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.ClearButton.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.ClearButton.FillColor = System.Drawing.Color.White
+        Me.ClearButton.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ClearButton.ForeColor = System.Drawing.Color.DimGray
+        Me.ClearButton.Location = New System.Drawing.Point(667, 209)
+        Me.ClearButton.Name = "ClearButton"
+        Me.ClearButton.Size = New System.Drawing.Size(136, 45)
+        Me.ClearButton.TabIndex = 10
+        Me.ClearButton.Text = "Clear"
         '
         'txtSearch
         '
@@ -181,7 +181,7 @@ Partial Class AdminAuditTrailForm
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.dgvAuditLogs)
         Me.Controls.Add(Me.txtSearch)
-        Me.Controls.Add(Me.RefreshButton)
+        Me.Controls.Add(Me.ClearButton)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Margin = New System.Windows.Forms.Padding(2)
         Me.Name = "AdminAuditTrailForm"
@@ -195,7 +195,7 @@ Partial Class AdminAuditTrailForm
     End Sub
 
     Friend WithEvents dgvAuditLogs As Guna.UI2.WinForms.Guna2DataGridView
-    Friend WithEvents RefreshButton As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents ClearButton As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents txtSearch As Guna.UI2.WinForms.Guna2TextBox
 
     Private Sub Label1_Click(sender As Object, e As EventArgs)

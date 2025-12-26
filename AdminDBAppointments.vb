@@ -334,12 +334,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        If Dashboard Is Nothing Then
-            Dashboard = New AdminDashboard()
-        End If
-
-        Dashboard.Show()
-        Me.Hide()
+        SystemSession.NavigateToDashboard(Me)
     End Sub
 
     Private Sub ClearForm()

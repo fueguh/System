@@ -50,7 +50,7 @@ Public Class Login
                     SystemSession.LoggedInRole = dr("Role").ToString()
 
                     ' ✅ Simplified audit call
-                    SystemSession.LogAudit("Login Success", "Login")
+                    SystemSession.LogLogin()
 
                     Select Case SystemSession.LoggedInRole
                         Case "Admin"

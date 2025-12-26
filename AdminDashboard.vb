@@ -121,4 +121,14 @@ Public Class AdminDashboard
     Private Sub MenuStrip1_ItemClicked(sender As Object, e As ToolStripItemClickedEventArgs) Handles MenuStrip1.ItemClicked
 
     End Sub
+
+    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
+        Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If result = DialogResult.Yes Then
+            SystemSession.PerformLogout(Me.Name)
+            Me.Close()
+            Login.Show()
+        End If
+    End Sub
+
 End Class

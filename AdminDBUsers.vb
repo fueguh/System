@@ -65,8 +65,17 @@ Public Class AdminDBUsers
             MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
-        ' Determine role for insertion
-        Dim roleToAssign As String = If(Not SystemSession.AdminExists(), "Admin", CmbRole.Text)
+        ' Restrict creation of Staff/Dentist if no Admin exists yet
+        If Not SystemSession.AdminExists() AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
+            MessageBox.Show("You must create an Admin account first before adding Staff or Dentists.",
+                        "Restriction", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        ' Determine if this is the first admin BEFORE inserting
+        Dim isFirstAdmin As Boolean = Not SystemSession.AdminExists()
+        Dim roleToAssign As String = If(isFirstAdmin, "Admin", CmbRole.Text)
+
         ' Insert into database
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -85,12 +94,14 @@ Public Class AdminDBUsers
                 cmd.ExecuteNonQuery()
             End Using
         End Using
+
         ' Audit logging
-        If roleToAssign = "Admin" AndAlso Not SystemSession.AdminExists() Then
+        If isFirstAdmin Then
             SystemSession.LogAudit("First Admin Created", "Registration")
         Else
             SystemSession.LogAudit("Add user", "User Management")
         End If
+
         SystemSession.ShowSuccess("added")
         LoadUsers()
         Clearform()
@@ -134,7 +145,6 @@ Public Class AdminDBUsers
         End Using
 
         SystemSession.ShowSuccess("updated")
-
 
         ' Audit logging
         If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
@@ -219,17 +229,14 @@ Public Class AdminDBUsers
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         ' ✅ If no admin is logged in, go back to Login form
         If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
-            Login.Show() ' assuming Login is a singleton form
+            ' No active admin session → just redirect to Login without logging a logout
+            Login.Show()
             Me.Hide()
             Exit Sub
         End If
 
-        ' Otherwise, show the Admin Dashboard
-        If Dashboard Is Nothing OrElse Dashboard.IsDisposed Then
-            Dashboard = New AdminDashboard()
-        End If
-
-        Dashboard.Show()
+        ' Otherwise, show user dashboard
+        SystemSession.NavigateToDashboard(Me)
         Me.Hide()
     End Sub
 

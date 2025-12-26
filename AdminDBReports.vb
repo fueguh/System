@@ -212,8 +212,7 @@ Public Class AdminDBReports
     End Sub
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        AdminDashboard.Show()
-        Me.Hide()
+        SystemSession.NavigateToDashboard(Me)
     End Sub
 
     Private Sub DGVAppointmentHistory_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointmentHistory.CellContentClick

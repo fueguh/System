@@ -81,7 +81,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminAudit&amp;SessionModule.vb" />
+    <Compile Include="Globals.vb" />
     <Compile Include="AdminDashboard.Designer.vb">
       <DependentUpon>AdminDashboard.vb</DependentUpon>
     </Compile>
@@ -136,7 +136,6 @@
     <Compile Include="DentistDashboard.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Globals.vb" />
     <Compile Include="Login.vb">
       <SubType>Form</SubType>
     </Compile>
