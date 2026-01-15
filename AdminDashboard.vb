@@ -85,11 +85,12 @@ Public Class AdminDashboard
             con.Open()
 
             ' Total Patients
+
             Dim cmd1 As New SqlCommand("SELECT COUNT(*) FROM Patients", con)
             lblTotalPatients.Text = cmd1.ExecuteScalar().ToString()
 
-            ' Total Dentists
-            Dim cmd2 As New SqlCommand("SELECT COUNT(*) FROM Dentists", con)
+            ' Total Dentists from Users table
+            Dim cmd2 As New SqlCommand("SeLECT COUNT(*) FROM Users WHERE Role = 'Dentist'", con)
             lblTotalDentists.Text = cmd2.ExecuteScalar().ToString()
 
             ' Appointments Today
