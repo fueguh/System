@@ -26,32 +26,10 @@ Public Class AdminDashboard
         AdminDBReports.Show()
         Me.Hide()
     End Sub
-
-    Private Sub TabPage1_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub Guna2PictureBox6_Click(sender As Object, e As EventArgs) Handles Guna2PictureBox6.Click
-
-    End Sub
-
     Private Sub SystemOverviewToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SystemOverviewToolStripMenuItem.Click
         AdminDBAppointments.Show()
         Me.Hide()
     End Sub
-
-    Private Sub PatientsToolStripMenuItem_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub DentistsToolStripMenuItem_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
-    Private Sub DentistsToolStripMenuItem1_Click(sender As Object, e As EventArgs)
-
-    End Sub
-
     Private Sub ReportsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsToolStripMenuItem.Click
         AdminDBReports.Show()
         Me.Hide()
@@ -119,8 +97,10 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub MenuStrip1_ItemClicked(sender As Object, e As ToolStripItemClickedEventArgs) Handles MenuStrip1.ItemClicked
-
+    Private Sub ClinicSettingsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClinicSettingsToolStripMenuItem.Click
+        'show clinic settings form
+        ClinicSettings.Show()
+        Me.Hide()
     End Sub
 
     Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
@@ -131,5 +111,20 @@ Public Class AdminDashboard
             Login.Show()
         End If
     End Sub
+
+    'change clinic name into the one from clinifInfo table
+    Private Sub AdminDashboard_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
+            Dim clinicName As Object = cmd.ExecuteScalar()
+            If clinicName IsNot Nothing Then
+                lblClinicName.Text = clinicName.ToString()
+            Else
+                lblClinicName.Text = "Dental Clinic Management System"
+            End If
+        End Using
+    End Sub
+
 
 End Class
