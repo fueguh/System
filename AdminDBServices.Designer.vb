@@ -156,6 +156,8 @@ Partial Class AdminDBServices
         '
         Me.DGVService.AllowUserToAddRows = False
         Me.DGVService.AllowUserToDeleteRows = False
+        Me.DGVService.AllowUserToResizeColumns = False
+        Me.DGVService.AllowUserToResizeRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVService.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
