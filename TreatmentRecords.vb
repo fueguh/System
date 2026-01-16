@@ -78,7 +78,7 @@ Public Class TreatmentRecords
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
-            DGVRecords.DataSource = dt
+            Guna2DataGridView1.DataSource = dt
         End Using
     End Sub
 
@@ -122,4 +122,5 @@ Public Class TreatmentRecords
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
+
 End Class
