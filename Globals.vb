@@ -9,14 +9,12 @@ Public Module SystemSession
     Public LoggedInUserID As Integer = 0
     Public LoggedInFullName As String = ""
     Public LoggedInRole As String = ""
-    ' Core audit method
+    ' Audit Logging function for various actions
     Public Sub LogAudit(action As String, moduleName As String,
                         Optional userId As Integer = 0,
                         Optional fullName As String = "",
                         Optional role As String = "Unknown")
-
-       Dim message As String = action
-
+        Dim message As String = action
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim cmd As New SqlCommand("
@@ -24,7 +22,6 @@ Public Module SystemSession
                 (UserID, FullName, Role, Action, Module, Timestamp)
                 VALUES
                 (@UserID, @FullName, @Role, @Action, @Module, GETDATE())", con)
-
             cmd.Parameters.AddWithValue("@UserID", If(userId = 0, LoggedInUserID, userId))
             cmd.Parameters.AddWithValue("@FullName", If(fullName = "", LoggedInFullName, fullName))
             cmd.Parameters.AddWithValue("@Role", If(role = "Unknown", LoggedInRole, role))
@@ -43,13 +40,12 @@ Public Module SystemSession
     Public Sub PerformLogout(moduleName As String)
         ' Log the logout event
         LogAudit("Logout Success", moduleName)
-
-        ' Clear the session values
+        ' Clear the session values when
         LoggedInUserID = 0
         LoggedInFullName = ""
         LoggedInRole = ""
     End Sub
-
+    ' Navigation to dashboards based on role
     Public Sub NavigateToDashboard(currentForm As Form)
         Select Case LoggedInRole
             Case "Admin" : AdminDashboard.Show()
@@ -59,7 +55,6 @@ Public Module SystemSession
         End Select
         currentForm.Hide()
     End Sub
-
     ' Admin Guards
     Public Function RequireAdmin(actionName As String) As Boolean
         If LoggedInUserID = 0 OrElse LoggedInRole <> "Admin" Then
@@ -69,7 +64,6 @@ Public Module SystemSession
         End If
         Return True
     End Function
-
     Public Function RequireSelectedUser(selectedUserID As Integer, actionName As String) As Boolean
         If selectedUserID = 0 Then
             MessageBox.Show($"Please select a user to {actionName}.")
@@ -77,18 +71,15 @@ Public Module SystemSession
         End If
         Return True
     End Function
-
     Public Sub ShowSuccess(actionName As String)
         MessageBox.Show($"User {actionName} successfully.")
     End Sub
-
     ' Self-session enforcement (deletion or demotion)
     Public Sub EnforceSelfSessionRules(selectedUserID As Integer,
                                        newRole As String,
                                        currentForm As Form,
                                        loginForm As Form,
                                        Optional isDelete As Boolean = False)
-
         ' Cache the current session BEFORE making changes
         Dim oldUserID As Integer = LoggedInUserID
         Dim oldFullName As String = LoggedInFullName
@@ -110,7 +101,6 @@ Public Module SystemSession
 
             MessageBox.Show("Your session has ended. You will be logged out.",
                             "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
             If loginForm IsNot Nothing Then
                 loginForm.Show()
             Else
@@ -122,10 +112,7 @@ Public Module SystemSession
             Exit Sub
         End If
     End Sub
-
-
-
-    ' Admin Checks
+    ' This is for checking if at least one admin exists in the database when deleting or demoting an admin user
     Public Function AdminExists() As Boolean
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -134,9 +121,7 @@ Public Module SystemSession
             Return adminCount > 0
         End Using
     End Function
-
-
-    ' User Role Helpers
+    ' This is for getting the user role based on user id
     Public Function GetUserRole(userId As Integer) As String
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -146,11 +131,11 @@ Public Module SystemSession
             Return If(roleObj IsNot Nothing, roleObj.ToString(), String.Empty)
         End Using
     End Function
-
+    ' Set all controls in a form to read-only and disable buttons except "Back" and "Logout"
     Public Sub SetFormReadOnly(frm As Form)
         LockControls(frm.Controls)
     End Sub
-
+    ' For recursive locking of controls for users with view-only access
     Private Sub LockControls(ctrls As Control.ControlCollection)
         For Each ctrl As Control In ctrls
             ' TextBoxes
@@ -160,12 +145,10 @@ Public Module SystemSession
                 Catch
                     DirectCast(ctrl, Guna.UI2.WinForms.Guna2TextBox).ReadOnly = True
                 End Try
-
                 ' ComboBoxes and DateTimePickers
             ElseIf TypeOf ctrl Is ComboBox OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2ComboBox _
                 OrElse TypeOf ctrl Is DateTimePicker OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2DateTimePicker Then
                 ctrl.Enabled = False
-
                 ' DataGridViews
             ElseIf TypeOf ctrl Is DataGridView OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2DataGridView Then
                 Dim dgv As DataGridView
@@ -177,20 +160,16 @@ Public Module SystemSession
                 dgv.ReadOnly = True
                 dgv.AllowUserToAddRows = False
                 dgv.AllowUserToDeleteRows = False
-
                 ' Buttons
             ElseIf TypeOf ctrl Is Button OrElse TypeOf ctrl Is Guna.UI2.WinForms.Guna2Button Then
                 If Not ctrl.Name.Contains("Back") AndAlso Not ctrl.Name.Contains("Logout") Then
                     ctrl.Enabled = False
                 End If
             End If
-
             ' Recurse into child controls (panels, groupboxes, tabpages, etc.)
             If ctrl.HasChildren Then
                 LockControls(ctrl.Controls)
             End If
         Next
     End Sub
-
-
 End Module
