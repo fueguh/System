@@ -218,6 +218,7 @@ Partial Class TreatmentRecords
         Me.DGVRecords.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVRecords.Location = New System.Drawing.Point(710, 85)
         Me.DGVRecords.Name = "DGVRecords"
+        Me.DGVRecords.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control
         DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -244,7 +245,7 @@ Partial Class TreatmentRecords
         Me.DGVRecords.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVRecords.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         Me.DGVRecords.ThemeStyle.HeaderStyle.Height = 25
-        Me.DGVRecords.ThemeStyle.ReadOnly = False
+        Me.DGVRecords.ThemeStyle.ReadOnly = True
         Me.DGVRecords.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVRecords.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVRecords.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
