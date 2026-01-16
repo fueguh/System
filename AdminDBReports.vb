@@ -215,11 +215,4 @@ Public Class AdminDBReports
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
-    Private Sub DGVAppointmentHistory_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointmentHistory.CellContentClick
-
-    End Sub
-
-    Private Sub DGVDaily_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDaily.CellContentClick
-
-    End Sub
 End Class

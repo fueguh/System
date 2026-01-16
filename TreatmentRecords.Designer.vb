@@ -187,6 +187,8 @@ Partial Class TreatmentRecords
         '
         'DGVRecords
         '
+        Me.DGVRecords.AllowUserToAddRows = False
+        Me.DGVRecords.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle1.Padding = New System.Windows.Forms.Padding(100)
@@ -203,7 +205,7 @@ Partial Class TreatmentRecords
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.DGVRecords.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVRecords.ColumnHeadersHeight = 40
+        Me.DGVRecords.ColumnHeadersHeight = 25
         Me.DGVRecords.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
@@ -241,7 +243,7 @@ Partial Class TreatmentRecords
         Me.DGVRecords.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVRecords.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVRecords.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVRecords.ThemeStyle.HeaderStyle.Height = 40
+        Me.DGVRecords.ThemeStyle.HeaderStyle.Height = 25
         Me.DGVRecords.ThemeStyle.ReadOnly = False
         Me.DGVRecords.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVRecords.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
@@ -270,6 +272,7 @@ Partial Class TreatmentRecords
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
         Me.ClientSize = New System.Drawing.Size(1559, 781)
+        Me.ControlBox = False
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.DGVRecords)
         Me.Controls.Add(Me.BtnSaveRecord)

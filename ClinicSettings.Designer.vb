@@ -156,7 +156,7 @@ Partial Class ClinicSettings
         '
         'Guna2CirclePictureBox1
         '
-        Me.Guna2CirclePictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Right
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
@@ -212,7 +212,7 @@ Partial Class ClinicSettings
         Me.Controls.Add(Me.txtClinicAddress)
         Me.Controls.Add(Me.txtClinicName)
         Me.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "ClinicSettings"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

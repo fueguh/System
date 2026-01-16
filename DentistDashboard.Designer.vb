@@ -36,8 +36,8 @@ Partial Class DentistDashboard
         Me.tabPatientManagement = New System.Windows.Forms.TabPage()
         Me.dgvPatients = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.tabAppointment = New System.Windows.Forms.TabPage()
-        Me.tabTreatmentRecords = New System.Windows.Forms.TabPage()
         Me.dgvAppointments = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.tabTreatmentRecords = New System.Windows.Forms.TabPage()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.denTab.SuspendLayout()
@@ -197,16 +197,6 @@ Partial Class DentistDashboard
         Me.tabAppointment.Text = "Appointment"
         Me.tabAppointment.UseVisualStyleBackColor = True
         '
-        'tabTreatmentRecords
-        '
-        Me.tabTreatmentRecords.Location = New System.Drawing.Point(184, 4)
-        Me.tabTreatmentRecords.Name = "tabTreatmentRecords"
-        Me.tabTreatmentRecords.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabTreatmentRecords.Size = New System.Drawing.Size(1208, 631)
-        Me.tabTreatmentRecords.TabIndex = 2
-        Me.tabTreatmentRecords.Text = "Treatment Records"
-        Me.tabTreatmentRecords.UseVisualStyleBackColor = True
-        '
         'dgvAppointments
         '
         Me.dgvAppointments.AllowUserToAddRows = False
@@ -265,13 +255,25 @@ Partial Class DentistDashboard
         Me.dgvAppointments.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.dgvAppointments.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'tabTreatmentRecords
+        '
+        Me.tabTreatmentRecords.Location = New System.Drawing.Point(184, 4)
+        Me.tabTreatmentRecords.Name = "tabTreatmentRecords"
+        Me.tabTreatmentRecords.Padding = New System.Windows.Forms.Padding(3)
+        Me.tabTreatmentRecords.Size = New System.Drawing.Size(1208, 631)
+        Me.tabTreatmentRecords.TabIndex = 2
+        Me.tabTreatmentRecords.Text = "Treatment Records"
+        Me.tabTreatmentRecords.UseVisualStyleBackColor = True
+        '
         'DentistDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1396, 763)
+        Me.ControlBox = False
         Me.Controls.Add(Me.denTab)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "DentistDashboard"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "DentistDashboard"

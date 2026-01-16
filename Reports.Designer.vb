@@ -99,6 +99,8 @@ Partial Class Reports
         '
         'DGVReports
         '
+        Me.DGVReports.AllowUserToAddRows = False
+        Me.DGVReports.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVReports.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -109,7 +111,8 @@ Partial Class Reports
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVReports.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVReports.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DGVReports.ColumnHeadersHeight = 25
+        Me.DGVReports.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -121,6 +124,7 @@ Partial Class Reports
         Me.DGVReports.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVReports.Location = New System.Drawing.Point(331, 101)
         Me.DGVReports.Name = "DGVReports"
+        Me.DGVReports.ReadOnly = True
         Me.DGVReports.RowHeadersVisible = False
         Me.DGVReports.Size = New System.Drawing.Size(1190, 595)
         Me.DGVReports.TabIndex = 4
@@ -135,9 +139,9 @@ Partial Class Reports
         Me.DGVReports.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVReports.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVReports.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVReports.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DGVReports.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVReports.ThemeStyle.ReadOnly = False
+        Me.DGVReports.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVReports.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVReports.ThemeStyle.ReadOnly = True
         Me.DGVReports.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVReports.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVReports.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -151,11 +155,13 @@ Partial Class Reports
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1571, 740)
+        Me.ControlBox = False
         Me.Controls.Add(Me.DGVReports)
         Me.Controls.Add(Me.BtnPatientCount)
         Me.Controls.Add(Me.BtnDentistPerformance)
         Me.Controls.Add(Me.BtnMonthlyRevenue)
         Me.Controls.Add(Me.BtnDailyAppointments)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "Reports"
         Me.Text = "Reports"
         CType(Me.DGVReports, System.ComponentModel.ISupportInitialize).EndInit()

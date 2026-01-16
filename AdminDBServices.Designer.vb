@@ -51,13 +51,13 @@ Partial Class AdminDBServices
         Me.txtServiceName.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtServiceName.ForeColor = System.Drawing.Color.Black
         Me.txtServiceName.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtServiceName.Location = New System.Drawing.Point(61, 82)
-        Me.txtServiceName.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.txtServiceName.Location = New System.Drawing.Point(46, 67)
+        Me.txtServiceName.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtServiceName.Name = "txtServiceName"
         Me.txtServiceName.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtServiceName.PlaceholderText = "Service Name"
         Me.txtServiceName.SelectedText = ""
-        Me.txtServiceName.Size = New System.Drawing.Size(343, 62)
+        Me.txtServiceName.Size = New System.Drawing.Size(257, 50)
         Me.txtServiceName.TabIndex = 0
         '
         'txtPrice
@@ -73,13 +73,13 @@ Partial Class AdminDBServices
         Me.txtPrice.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtPrice.ForeColor = System.Drawing.Color.Black
         Me.txtPrice.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtPrice.Location = New System.Drawing.Point(61, 187)
-        Me.txtPrice.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.txtPrice.Location = New System.Drawing.Point(46, 152)
+        Me.txtPrice.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtPrice.Name = "txtPrice"
         Me.txtPrice.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtPrice.PlaceholderText = "Price"
         Me.txtPrice.SelectedText = ""
-        Me.txtPrice.Size = New System.Drawing.Size(343, 62)
+        Me.txtPrice.Size = New System.Drawing.Size(257, 50)
         Me.txtPrice.TabIndex = 1
         '
         'txtDuration
@@ -95,13 +95,13 @@ Partial Class AdminDBServices
         Me.txtDuration.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.txtDuration.ForeColor = System.Drawing.Color.Black
         Me.txtDuration.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtDuration.Location = New System.Drawing.Point(61, 292)
-        Me.txtDuration.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.txtDuration.Location = New System.Drawing.Point(46, 237)
+        Me.txtDuration.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtDuration.Name = "txtDuration"
         Me.txtDuration.PlaceholderForeColor = System.Drawing.Color.Gray
         Me.txtDuration.PlaceholderText = "Service Duration"
         Me.txtDuration.SelectedText = ""
-        Me.txtDuration.Size = New System.Drawing.Size(343, 62)
+        Me.txtDuration.Size = New System.Drawing.Size(257, 50)
         Me.txtDuration.TabIndex = 2
         '
         'BTNAdd
@@ -114,10 +114,9 @@ Partial Class AdminDBServices
         Me.BTNAdd.FillColor = System.Drawing.Color.White
         Me.BTNAdd.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.BTNAdd.Location = New System.Drawing.Point(112, 388)
-        Me.BTNAdd.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.BTNAdd.Location = New System.Drawing.Point(84, 315)
         Me.BTNAdd.Name = "BTNAdd"
-        Me.BTNAdd.Size = New System.Drawing.Size(240, 55)
+        Me.BTNAdd.Size = New System.Drawing.Size(180, 45)
         Me.BTNAdd.TabIndex = 3
         Me.BTNAdd.Text = "Add"
         '
@@ -131,10 +130,9 @@ Partial Class AdminDBServices
         Me.BTNUpdate.FillColor = System.Drawing.Color.White
         Me.BTNUpdate.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.BTNUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.BTNUpdate.Location = New System.Drawing.Point(112, 463)
-        Me.BTNUpdate.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.BTNUpdate.Location = New System.Drawing.Point(84, 376)
         Me.BTNUpdate.Name = "BTNUpdate"
-        Me.BTNUpdate.Size = New System.Drawing.Size(240, 55)
+        Me.BTNUpdate.Size = New System.Drawing.Size(180, 45)
         Me.BTNUpdate.TabIndex = 4
         Me.BTNUpdate.Text = "Update"
         '
@@ -148,15 +146,16 @@ Partial Class AdminDBServices
         Me.BTNDelete.FillColor = System.Drawing.Color.White
         Me.BTNDelete.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.BTNDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.BTNDelete.Location = New System.Drawing.Point(112, 544)
-        Me.BTNDelete.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.BTNDelete.Location = New System.Drawing.Point(84, 442)
         Me.BTNDelete.Name = "BTNDelete"
-        Me.BTNDelete.Size = New System.Drawing.Size(240, 55)
+        Me.BTNDelete.Size = New System.Drawing.Size(180, 45)
         Me.BTNDelete.TabIndex = 5
         Me.BTNDelete.Text = "Delete"
         '
         'DGVService
         '
+        Me.DGVService.AllowUserToAddRows = False
+        Me.DGVService.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVService.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -177,12 +176,12 @@ Partial Class AdminDBServices
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.DGVService.DefaultCellStyle = DataGridViewCellStyle3
         Me.DGVService.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVService.Location = New System.Drawing.Point(515, 82)
-        Me.DGVService.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.DGVService.Location = New System.Drawing.Point(386, 67)
         Me.DGVService.Name = "DGVService"
+        Me.DGVService.ReadOnly = True
         Me.DGVService.RowHeadersVisible = False
         Me.DGVService.RowHeadersWidth = 51
-        Me.DGVService.Size = New System.Drawing.Size(693, 539)
+        Me.DGVService.Size = New System.Drawing.Size(520, 438)
         Me.DGVService.TabIndex = 6
         Me.DGVService.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVService.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -197,7 +196,7 @@ Partial Class AdminDBServices
         Me.DGVService.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVService.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
         Me.DGVService.ThemeStyle.HeaderStyle.Height = 15
-        Me.DGVService.ThemeStyle.ReadOnly = False
+        Me.DGVService.ThemeStyle.ReadOnly = True
         Me.DGVService.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVService.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVService.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -208,23 +207,24 @@ Partial Class AdminDBServices
         '
         'Guna2CirclePictureBox1
         '
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1351, 15)
-        Me.Guna2CirclePictureBox1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1013, 12)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(80, 71)
+        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
         Me.Guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.Guna2CirclePictureBox1.TabIndex = 19
         Me.Guna2CirclePictureBox1.TabStop = False
         '
         'AdminDBServices
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1447, 830)
+        Me.ClientSize = New System.Drawing.Size(1085, 674)
+        Me.ControlBox = False
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.DGVService)
         Me.Controls.Add(Me.BTNDelete)
@@ -233,7 +233,7 @@ Partial Class AdminDBServices
         Me.Controls.Add(Me.txtDuration)
         Me.Controls.Add(Me.txtPrice)
         Me.Controls.Add(Me.txtServiceName)
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBServices"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBServices"

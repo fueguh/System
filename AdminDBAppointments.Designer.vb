@@ -179,6 +179,8 @@ Partial Class AdminDBAppointments
         '
         'DGVAppointments
         '
+        Me.DGVAppointments.AllowUserToAddRows = False
+        Me.DGVAppointments.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVAppointments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.DGVAppointments.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -190,7 +192,7 @@ Partial Class AdminDBAppointments
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVAppointments.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVAppointments.ColumnHeadersHeight = 15
+        Me.DGVAppointments.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -202,6 +204,7 @@ Partial Class AdminDBAppointments
         Me.DGVAppointments.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVAppointments.Location = New System.Drawing.Point(506, 117)
         Me.DGVAppointments.Name = "DGVAppointments"
+        Me.DGVAppointments.ReadOnly = True
         Me.DGVAppointments.RowHeadersVisible = False
         Me.DGVAppointments.RowHeadersWidth = 51
         Me.DGVAppointments.Size = New System.Drawing.Size(687, 512)
@@ -218,8 +221,8 @@ Partial Class AdminDBAppointments
         Me.DGVAppointments.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVAppointments.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVAppointments.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
-        Me.DGVAppointments.ThemeStyle.HeaderStyle.Height = 15
-        Me.DGVAppointments.ThemeStyle.ReadOnly = False
+        Me.DGVAppointments.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVAppointments.ThemeStyle.ReadOnly = True
         Me.DGVAppointments.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVAppointments.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVAppointments.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
