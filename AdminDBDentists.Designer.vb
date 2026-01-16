@@ -90,6 +90,7 @@ Partial Class AdminDBDentists
         Me.DGVDentists.Location = New System.Drawing.Point(430, 135)
         Me.DGVDentists.Name = "DGVDentists"
         Me.DGVDentists.ReadOnly = True
+        Me.DGVDentists.RowHeadersVisible = False
         Me.DGVDentists.Size = New System.Drawing.Size(843, 492)
         Me.DGVDentists.TabIndex = 9
         Me.DGVDentists.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
@@ -116,6 +117,7 @@ Partial Class AdminDBDentists
         '
         'Guna2CirclePictureBox1
         '
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
@@ -295,6 +297,7 @@ Partial Class AdminDBDentists
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1362, 727)
+        Me.ControlBox = False
         Me.Controls.Add(Me.BTNAdd)
         Me.Controls.Add(Me.TxtConfirmPassword)
         Me.Controls.Add(Me.TxtPassword)
@@ -306,6 +309,7 @@ Partial Class AdminDBDentists
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.DGVDentists)
         Me.Controls.Add(Me.TxtName)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBDentists"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBDentists"
