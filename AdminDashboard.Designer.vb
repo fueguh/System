@@ -159,6 +159,8 @@ Partial Class AdminDashboard
         '
         'Guna2CustomGradientPanel1
         '
+        Me.Guna2CustomGradientPanel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.LogoutPictureBox1)
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.lblClinicName)
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(136, -2)
@@ -317,6 +319,7 @@ Partial Class AdminDashboard
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
         Me.ClientSize = New System.Drawing.Size(1311, 857)
+        Me.ControlBox = False
         Me.Controls.Add(Me.Guna2Panel4)
         Me.Controls.Add(Me.Guna2Panel3)
         Me.Controls.Add(Me.Guna2Panel2)
@@ -324,8 +327,10 @@ Partial Class AdminDashboard
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.Guna2PictureBox6)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "AdminDashboard"
+        Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDashboard"
         CType(Me.Guna2PictureBox6, System.ComponentModel.ISupportInitialize).EndInit()
