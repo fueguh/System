@@ -13,13 +13,6 @@ Public Class Login
         End Using
     End Function
 
-    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles txtUsername.TextChanged
-
-    End Sub
-
-    Private Sub Guna2TextBox2_TextChanged(sender As Object, e As EventArgs) Handles txtPassword.TextChanged
-
-    End Sub
     Private Sub Clearform()
         txtUsername.Text = ""
         txtPassword.Text = ""
