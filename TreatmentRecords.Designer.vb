@@ -256,6 +256,7 @@ Partial Class TreatmentRecords
         '
         'Guna2CirclePictureBox1
         '
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
@@ -285,6 +286,7 @@ Partial Class TreatmentRecords
         Me.Controls.Add(Me.CmbDentist)
         Me.Controls.Add(Me.CmbPatient)
         Me.Name = "TreatmentRecords"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "TreatmentRecords"
         CType(Me.PicXrayPreview, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DGVRecords, System.ComponentModel.ISupportInitialize).EndInit()
