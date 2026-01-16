@@ -106,6 +106,8 @@ Public Class AdminDBServices
         End Using
 
         MessageBox.Show("Service added successfully.")
+        'audit log
+        LogAudit("Added new service: ", "Service Management")
         LoadServices()
         Clearform()
     End Sub
@@ -135,6 +137,7 @@ Public Class AdminDBServices
         End Using
 
         MessageBox.Show("Service updated successfully.")
+        LogAudit("Updated service ", "Service Management")
         LoadServices()
         Clearform()
     End Sub
@@ -173,7 +176,7 @@ Public Class AdminDBServices
         End Using
 
         MessageBox.Show("Service deleted successfully.")
-
+        LogAudit("Deleted service ", "Service Management")
         LoadServices()
         Clearform()
     End Sub
