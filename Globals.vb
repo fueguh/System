@@ -68,7 +68,7 @@ Public Module SystemSession
             Case "Dentist" : DentistDashboard.Show()
             Case "Staff" : StaffDashboard.Show()
         End Select
-        currentForm.Hide()
+        currentForm.Close()
     End Sub
     ' Admin Guards
     Public Function RequireAdmin(actionName As String) As Boolean
