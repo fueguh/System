@@ -4,8 +4,9 @@ Public Module SystemSession
 
     Public Dashboard As AdminDashboard
     Public AdminDBReports As AdminDBReports
-
     ' Current User Session
+    Public CurrentSessionToken As String = ""
+    Public CurrentDeviceName As String = Environment.MachineName
     Public LoggedInUserID As Integer = 0
     Public LoggedInFullName As String = ""
     Public LoggedInRole As String = ""
@@ -37,13 +38,28 @@ Public Module SystemSession
             LogAudit("Login Success", "Login", LoggedInUserID, LoggedInFullName, LoggedInRole)
         End If
     End Sub
+
     Public Sub PerformLogout(moduleName As String)
-        ' Log the logout event
+        ' 1️⃣ End DB session for this device
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+            Dim cmd As New SqlCommand("
+            UPDATE UserSessions
+            SET IsActive = 0
+            WHERE DeviceName = @deviceName AND IsActive = 1", con)
+            cmd.Parameters.AddWithValue("@deviceName", CurrentDeviceName)
+            cmd.ExecuteNonQuery()
+        End Using
+
+        ' 2️⃣ Log the logout event
         LogAudit("Logout Success", moduleName)
-        ' Clear the session values when
+
+        ' 3️⃣ Clear the in-memory session
         LoggedInUserID = 0
         LoggedInFullName = ""
         LoggedInRole = ""
+        CurrentSessionToken = ""
+        Login.Show()
     End Sub
     ' Navigation to dashboards based on role
     Public Sub NavigateToDashboard(currentForm As Form)
@@ -51,7 +67,6 @@ Public Module SystemSession
             Case "Admin" : AdminDashboard.Show()
             Case "Dentist" : DentistDashboard.Show()
             Case "Staff" : StaffDashboard.Show()
-            Case Else : Login.Show()
         End Select
         currentForm.Hide()
     End Sub
@@ -98,18 +113,12 @@ Public Module SystemSession
             LoggedInUserID = 0
             LoggedInFullName = "Unknown"
             LoggedInRole = "Unknown"
-
-            MessageBox.Show("Your session has ended. You will be logged out.",
+            SystemSession.PerformLogout(currentForm.Name)
+            'close current form.
+            currentForm.Close()
+            MessageBox.Show("Your session has ended. You have been logged out.",
                             "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            If loginForm IsNot Nothing Then
-                loginForm.Show()
-            Else
-                Dim lf As New Login()
-                lf.Show()
-            End If
 
-            currentForm.Hide()
-            Exit Sub
         End If
     End Sub
     ' This is for checking if at least one admin exists in the database when deleting or demoting an admin user

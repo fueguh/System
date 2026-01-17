@@ -108,7 +108,6 @@ Public Class AdminDashboard
         If result = DialogResult.Yes Then
             SystemSession.PerformLogout(Me.Name)
             Me.Close()
-            Login.Show()
         End If
     End Sub
 

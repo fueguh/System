@@ -178,6 +178,7 @@
     <Compile Include="StaffDashboard.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Startup.vb" />
     <Compile Include="SuperadminDashboard.Designer.vb">
       <DependentUpon>SuperadminDashboard.vb</DependentUpon>
     </Compile>

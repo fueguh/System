@@ -32,19 +32,44 @@ Public Class Login
             SELECT UserID, Username, Role, FullName
             FROM Users
             WHERE Username=@username AND Password=@password", con)
-
             cmd.Parameters.Add("@username", SqlDbType.VarChar, 50).Value = txtUsername.Text.Trim()
             cmd.Parameters.Add("@password", SqlDbType.VarChar, 64).Value = hashed
 
             Using dr As SqlDataReader = cmd.ExecuteReader()
                 If dr.Read() Then
+                    ' Set current session
                     SystemSession.LoggedInUserID = CInt(dr("UserID"))
                     SystemSession.LoggedInFullName = dr("FullName").ToString()
                     SystemSession.LoggedInRole = dr("Role").ToString()
 
-                    ' ✅ Simplified audit call
+                    ' Audit
                     SystemSession.LogLogin()
 
+                    ' ✅ Remember Me logic AFTER login
+                    If chkRememberMe.Checked Then
+                        Using con2 As New SqlConnection(My.Settings.DentalDBConnection)
+                            con2.Open()
+
+                            ' End any existing session for this device
+                            Dim cmdReset As New SqlCommand("
+                            UPDATE UserSessions
+                            SET IsActive = 0
+                            WHERE DeviceName = @deviceName AND IsActive = 1", con2)
+                            cmdReset.Parameters.AddWithValue("@deviceName", Environment.MachineName)
+                            cmdReset.ExecuteNonQuery()
+
+                            ' Create new session
+                            Dim cmdInsert As New SqlCommand("
+                            INSERT INTO UserSessions (UserID, SessionToken, DeviceName, IsActive)
+                            VALUES (@uid, @token, @deviceName, 1)", con2)
+                            cmdInsert.Parameters.AddWithValue("@uid", SystemSession.LoggedInUserID)
+                            cmdInsert.Parameters.AddWithValue("@token", Guid.NewGuid().ToString())
+                            cmdInsert.Parameters.AddWithValue("@deviceName", Environment.MachineName)
+                            cmdInsert.ExecuteNonQuery()
+                        End Using
+                    End If
+
+                    ' Open the correct dashboard
                     Select Case SystemSession.LoggedInRole
                         Case "Admin"
                             Dashboard = New AdminDashboard()
@@ -54,18 +79,19 @@ Public Class Login
                         Case "Staff"
                             StaffDashboard.Show()
                     End Select
+
                     Clearform()
                     Me.Hide()
                 Else
-                    ' Failed login → capture attempted username with overload
+                    ' Failed login
                     SystemSession.LogAudit("Login Failed", "Login", 0, txtUsername.Text, "Unknown")
                     MessageBox.Show("Invalid username or password.")
                     Clearform()
                 End If
-
             End Using
         End Using
     End Sub
+
 
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
@@ -86,11 +112,4 @@ Public Class Login
         reg.ShowDialog()
     End Sub
 
-    Private Sub chkRememberMe_CheckedChanged(sender As Object, e As EventArgs) Handles chkRememberMe.CheckedChanged
-        If chkRememberMe.Checked Then
-            ' save session
-        Else
-            ' normal login
-        End If
-    End Sub
 End Class
