@@ -119,20 +119,21 @@ Partial Class Login
         'chkRememberMe
         '
         Me.chkRememberMe.AutoSize = True
-        Me.chkRememberMe.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.chkRememberMe.CheckedState.BorderColor = System.Drawing.Color.Blue
         Me.chkRememberMe.CheckedState.BorderRadius = 0
         Me.chkRememberMe.CheckedState.BorderThickness = 0
-        Me.chkRememberMe.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.chkRememberMe.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkRememberMe.CheckedState.FillColor = System.Drawing.Color.White
+        Me.chkRememberMe.CheckMarkColor = System.Drawing.Color.Black
+        Me.chkRememberMe.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
         Me.chkRememberMe.Location = New System.Drawing.Point(150, 260)
         Me.chkRememberMe.Name = "chkRememberMe"
         Me.chkRememberMe.Size = New System.Drawing.Size(133, 24)
         Me.chkRememberMe.TabIndex = 2
         Me.chkRememberMe.Text = "Remember me"
-        Me.chkRememberMe.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.chkRememberMe.UncheckedState.BorderColor = System.Drawing.Color.White
         Me.chkRememberMe.UncheckedState.BorderRadius = 0
         Me.chkRememberMe.UncheckedState.BorderThickness = 0
-        Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
         '
         'Login
         '
