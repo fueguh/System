@@ -36,38 +36,56 @@ Public Class AdminDBAppointments
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
-            ' Patients
+            ' ================= PATIENTS =================
             Dim dtPatients As New DataTable()
-            Dim da1 As New SqlDataAdapter("SELECT PatientID, FullName FROM Patients", con)
-            da1.Fill(dtPatients)
+            Dim daPatients As New SqlDataAdapter(
+            "SELECT PatientID, FullName FROM Patients", con)
+            daPatients.Fill(dtPatients)
+
+            Dim rowPatient As DataRow = dtPatients.NewRow()
+            rowPatient("PatientID") = 0
+            rowPatient("FullName") = "— Select Patient —"
+            dtPatients.Rows.InsertAt(rowPatient, 0)
+
             CmbPatient.DataSource = dtPatients
             CmbPatient.DisplayMember = "FullName"
             CmbPatient.ValueMember = "PatientID"
-            CmbPatient.SelectedIndex = -1
+            CmbPatient.SelectedIndex = 0
 
-            ' Dentists
+
+            ' ================= DENTISTS =================
             Dim dtDentists As New DataTable()
-            Dim da2 As New SqlDataAdapter("
-            SELECT UserID, FullName 
-            FROM Users 
-            WHERE Role = 'Dentist'
-            ", con)
-            da2.Fill(dtDentists)
+            Dim daDentists As New SqlDataAdapter(
+            "SELECT UserID, FullName FROM Users WHERE Role = 'Dentist'", con)
+            daDentists.Fill(dtDentists)
+
+            Dim rowDentist As DataRow = dtDentists.NewRow()
+            rowDentist("UserID") = 0
+            rowDentist("FullName") = "— Select Dentist —"
+            dtDentists.Rows.InsertAt(rowDentist, 0)
 
             CmbDentist.DataSource = dtDentists
             CmbDentist.DisplayMember = "FullName"
             CmbDentist.ValueMember = "UserID"
-            CmbDentist.SelectedIndex = -1
+            CmbDentist.SelectedIndex = 0
 
 
-            ' Services
+
+            ' ================= SERVICES =================
             Dim dtServices As New DataTable()
-            Dim da3 As New SqlDataAdapter("SELECT ServiceID, ServiceName FROM Services", con)
-            da3.Fill(dtServices)
+            Dim daServices As New SqlDataAdapter(
+            "SELECT ServiceID, ServiceName FROM Services", con)
+            daServices.Fill(dtServices)
+
+            Dim rowService As DataRow = dtServices.NewRow()
+            rowService("ServiceID") = 0
+            rowService("ServiceName") = "— Select Service —"
+            dtServices.Rows.InsertAt(rowService, 0)
+
             CmbService.DataSource = dtServices
             CmbService.DisplayMember = "ServiceName"
             CmbService.ValueMember = "ServiceID"
-            CmbService.SelectedIndex = -1
+            CmbService.SelectedIndex = 0
         End Using
     End Sub
 
@@ -99,20 +117,42 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Function ValidateFields() As Boolean
-        If CmbPatient.SelectedIndex = -1 Or CmbDentist.SelectedIndex = -1 Or CmbService.SelectedIndex = -1 Then
-            MessageBox.Show("Please fill all fields.")
+
+        ' Patient
+        If CmbPatient.SelectedValue Is Nothing OrElse CInt(CmbPatient.SelectedValue) = 0 Then
+            MessageBox.Show("Please select a patient.")
+            CmbPatient.Focus()
             Return False
         End If
 
-        If DtpDate.Value.Date < DateTime.Today Then
-            MessageBox.Show("Appointment date cannot be in the past.")
+        ' Dentist
+        If CmbDentist.SelectedValue Is Nothing OrElse CInt(CmbDentist.SelectedValue) = 0 Then
+            MessageBox.Show("Please select a dentist.")
+            CmbDentist.Focus()
             Return False
         End If
 
-        If cmbStatus.SelectedIndex = -1 Then
+        ' Service
+        If CmbService.SelectedValue Is Nothing OrElse CInt(CmbService.SelectedValue) = 0 Then
+            MessageBox.Show("Please select a service.")
+            CmbService.Focus()
+            Return False
+        End If
+
+        ' Time validation
+        If DtpEndTime.Value <= dtpStartTime.Value Then
+            MessageBox.Show("End time must be later than start time.")
+            DtpEndTime.Focus()
+            Return False
+        End If
+
+        ' Status
+        If String.IsNullOrWhiteSpace(cmbStatus.Text) Then
             MessageBox.Show("Please select a status.")
+            cmbStatus.Focus()
             Return False
         End If
+
         Return True
     End Function
 
@@ -343,14 +383,14 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub ClearForm()
-        CmbPatient.SelectedIndex = -1
-        CmbDentist.SelectedIndex = -1
-        CmbService.SelectedIndex = -1
+        CmbPatient.SelectedIndex = 0
+        CmbDentist.SelectedIndex = 0
+        CmbService.SelectedIndex = 0
         DtpDate.Value = Date.Today
         dtpStartTime.Value = Date.Now
         DtpEndTime.Value = Date.Now.AddMinutes(30)
-        cmbStatus.SelectedIndex = -1
-        selectedAppointmentID = -1
+        cmbStatus.SelectedIndex = 0
+        selectedAppointmentID = 0
     End Sub
 
     Private Sub DGVAppointments_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointments.CellDoubleClick
