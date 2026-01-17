@@ -7,7 +7,6 @@ Public Class DentistDashboard
         If result = DialogResult.Yes Then
             SystemSession.PerformLogout(Me.Name)
             Me.Close()
-            Login.Show()
         End If
     End Sub
     Private Sub denTab_SelectedIndexChanged(sender As Object, e As EventArgs) Handles denTab.SelectedIndexChanged

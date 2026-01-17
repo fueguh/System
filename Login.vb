@@ -85,4 +85,12 @@ Public Class Login
         Dim reg As New AdminDBUsers()
         reg.ShowDialog()
     End Sub
+
+    Private Sub chkRememberMe_CheckedChanged(sender As Object, e As EventArgs) Handles chkRememberMe.CheckedChanged
+        If chkRememberMe.Checked Then
+            ' save session
+        Else
+            ' normal login
+        End If
+    End Sub
 End Class
