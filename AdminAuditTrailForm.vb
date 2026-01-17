@@ -7,19 +7,11 @@ Public Class AdminAuditTrailForm
     ' Class-level DataTable and DataView
     Private auditTable As DataTable
     Private auditView As DataView
-    Private autoRefreshTimer As Timer
-
-    ' ----------------------------
     ' Form Load
-    ' ----------------------------
     Private Sub AdminAuditTrailForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadAuditTrail()
-        SetupAutoRefresh()
     End Sub
-
-    ' ----------------------------
     ' Load fresh audit trail from DB
-    ' ----------------------------
     Private Sub LoadAuditTrail()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -29,7 +21,6 @@ Public Class AdminAuditTrailForm
                 FROM AuditTrail
                 ORDER BY Timestamp DESC
             "
-
             auditTable = New DataTable()
             Using da As New SqlDataAdapter(query, con)
                 da.Fill(auditTable)
@@ -67,16 +58,8 @@ Public Class AdminAuditTrailForm
         LoadAuditTrail()
     End Sub
 
-    Private Sub SetupAutoRefresh()
-        autoRefreshTimer = New Timer()
-        autoRefreshTimer.Interval = 10000 ' 10 seconds
-        AddHandler autoRefreshTimer.Tick, Sub()
-                                              LoadAuditTrail()
-                                          End Sub
-        autoRefreshTimer.Start()
-    End Sub
-
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
+        'clean up
     End Sub
 End Class
