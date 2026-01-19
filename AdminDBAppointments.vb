@@ -69,23 +69,15 @@ Public Class AdminDBAppointments
             CmbDentist.ValueMember = "UserID"
             CmbDentist.SelectedIndex = 0
 
-
-
-            ' ================= SERVICES =================
+            ' ================= SERVICES (MULTI) =================
             Dim dtServices As New DataTable()
             Dim daServices As New SqlDataAdapter(
-            "SELECT ServiceID, ServiceName FROM Services", con)
+                "SELECT ServiceID, ServiceName FROM Services ORDER BY ServiceName", con)
             daServices.Fill(dtServices)
 
-            Dim rowService As DataRow = dtServices.NewRow()
-            rowService("ServiceID") = 0
-            rowService("ServiceName") = "— Select Service —"
-            dtServices.Rows.InsertAt(rowService, 0)
-
-            CmbService.DataSource = dtServices
-            CmbService.DisplayMember = "ServiceName"
-            CmbService.ValueMember = "ServiceID"
-            CmbService.SelectedIndex = 0
+            clbServices.DataSource = dtServices
+            clbServices.DisplayMember = "ServiceName"
+            clbServices.ValueMember = "ServiceID"
         End Using
     End Sub
 
@@ -94,20 +86,21 @@ Public Class AdminDBAppointments
             con.Open()
 
             Dim query As String = "
-            SELECT A.AppointmentID,
-                   P.FullName AS Patient,
-                   D.FullName AS Dentist,
-                   S.ServiceName AS Service,
-                   A.Date,
-                   A.StartTime,
-                   A.EndTime,
-                   A.Status
+             SELECT A.AppointmentID,
+                P.FullName AS Patient,
+                D.FullName AS Dentist,
+                STRING_AGG(S.ServiceName, ', ') AS Services,
+                A.Date, A.StartTime, A.EndTime, A.Status
             FROM Appointments A
             JOIN Patients P ON A.PatientID = P.PatientID
             JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-            JOIN Services S ON A.ServiceID = S.ServiceID
-            ORDER BY A.Date DESC, A.StartTime ASC
-        "
+            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+            JOIN Services S ON ASV.ServiceID = S.ServiceID
+            GROUP BY A.AppointmentID, P.FullName, D.FullName,
+         A.Date, A.StartTime, A.EndTime, A.Status
+         ORDER BY A.Date DESC
+
+       "
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
@@ -132,10 +125,10 @@ Public Class AdminDBAppointments
             Return False
         End If
 
-        ' Service
-        If CmbService.SelectedValue Is Nothing OrElse CInt(CmbService.SelectedValue) = 0 Then
-            MessageBox.Show("Please select a service.")
-            CmbService.Focus()
+        ' Services (multi)
+        If clbServices.CheckedItems.Count = 0 Then
+            MessageBox.Show("Please select at least one service.")
+            clbServices.Focus()
             Return False
         End If
 
@@ -184,10 +177,6 @@ Public Class AdminDBAppointments
         End Using
     End Function
 
-    Private Sub Guna2DateTimePicker1_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
-
-    End Sub
-
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
         ' ✅ Validate required fields
         If Not ValidateFields() Then Exit Sub
@@ -201,35 +190,37 @@ Public Class AdminDBAppointments
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
-            ' ✅ Corrected column name: UserID instead of UsersID
+            ' --- Insert appointment (without single ServiceID) ---
             Dim query As String = "
-            INSERT INTO Appointments (PatientID, UserID, ServiceID, Date, StartTime, EndTime, Status)
-            VALUES (@p, @d, @s, @date, @start, @end, @status)
+            INSERT INTO Appointments (PatientID, UserID, Date, StartTime, EndTime, Status)
+            OUTPUT INSERTED.AppointmentID
+            VALUES (@p, @d, @date, @start, @end, @status)
         "
 
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
             cmd.Parameters.AddWithValue("@d", CInt(CmbDentist.SelectedValue))
-            cmd.Parameters.AddWithValue("@s", CInt(CmbService.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-
-            ' ⚠️ Use .Value if StartTime/EndTime are DATETIME in SQL
-            ' Use .TimeOfDay if they are TIME in SQL
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
-
             cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
 
             Try
-                cmd.ExecuteNonQuery()
+                ' ✅ Get the new AppointmentID
+                Dim newAppointmentID As Integer = CInt(cmd.ExecuteScalar())
+
+                ' ✅ Save all checked services for this appointment
+                SaveAppointmentServices(newAppointmentID)
+
                 MessageBox.Show("Appointment added successfully.")
 
                 ' ✅ Audit log entry
                 SystemSession.LogAudit("Appointment " & cmbStatus.Text,
-                       "Appointment Management",
-                       SystemSession.LoggedInUserID,
-                       SystemSession.LoggedInFullName,
-                       SystemSession.LoggedInRole)
+                   "Appointment Management",
+                   SystemSession.LoggedInUserID,
+                   SystemSession.LoggedInFullName,
+                   SystemSession.LoggedInRole)
+
             Catch ex As Exception
                 MessageBox.Show("Error adding appointment: " & ex.Message)
             End Try
@@ -247,8 +238,8 @@ Public Class AdminDBAppointments
 
         ' ✅ Clear form inputs
         ClearForm()
-
     End Sub
+
 
     Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
         If selectedAppointmentID = 0 Then
@@ -265,40 +256,49 @@ Public Class AdminDBAppointments
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
+            ' Update appointment (no ServiceID column)
             Dim query As String = "
-            UPDATE Appointments
-            SET PatientID=@p, UserID=@d, ServiceID=@s, Date=@date,
-                StartTime=@start, EndTime=@end, Status=@status
-            WHERE AppointmentID=@id
-        "
+        UPDATE Appointments
+        SET PatientID=@p, UserID=@d, Date=@date,
+            StartTime=@start, EndTime=@end, Status=@status
+        WHERE AppointmentID=@id
+    "
 
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
             cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
             cmd.Parameters.AddWithValue("@d", CInt(CmbDentist.SelectedValue))
-            cmd.Parameters.AddWithValue("@s", CInt(CmbService.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-
-            ' ⚠️ Adjust depending on SQL column type
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
-
             cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
 
             Try
                 cmd.ExecuteNonQuery()
+
+                ' --- Delete old services ---
+                Using cmdDelete As New SqlCommand(
+            "DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con)
+                    cmdDelete.Parameters.AddWithValue("@aid", selectedAppointmentID)
+                    cmdDelete.ExecuteNonQuery()
+                End Using
+
+                ' --- Insert new checked services ---
+                SaveAppointmentServices(selectedAppointmentID)
+
                 MessageBox.Show("Appointment updated successfully.")
 
-                ' ✅ Audit log entry
+                ' Audit log
                 SystemSession.LogAudit("Appointment " & cmbStatus.Text & " (Updated)",
-                       "Appointment Management",
-                       SystemSession.LoggedInUserID,
-                       SystemSession.LoggedInFullName,
-                       SystemSession.LoggedInRole)
+               "Appointment Management",
+               SystemSession.LoggedInUserID,
+               SystemSession.LoggedInFullName,
+               SystemSession.LoggedInRole)
             Catch ex As Exception
                 MessageBox.Show("Error updating appointment: " & ex.Message)
             End Try
         End Using
+
 
         ' ✅ Refresh UI
         LoadAppointments()
@@ -351,32 +351,30 @@ Public Class AdminDBAppointments
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
 
-            ' ✅ Capture the AppointmentID for update/delete
+            ' Capture the AppointmentID
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-            ' ✅ Populate ComboBoxes (use SelectedValue if bound)
+            ' Populate patient and dentist
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
             CmbDentist.Text = row.Cells("Dentist").Value.ToString()
-            CmbService.Text = row.Cells("Service").Value.ToString()
 
-            ' ✅ Date
+            ' Populate date and time
             DtpDate.Value = CDate(row.Cells("Date").Value)
-
-            ' ✅ Time handling
             Try
-                ' If stored as TIME in SQL
                 dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
                 DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
             Catch ex As Exception
-                ' If stored as DATETIME in SQL
                 dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
                 DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
             End Try
 
-            ' ✅ Status
             cmbStatus.Text = row.Cells("Status").Value.ToString()
+
+            ' ✅ Load services into CheckedListBox
+            LoadCheckedServices(selectedAppointmentID)
         End If
     End Sub
+
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
@@ -385,46 +383,90 @@ Public Class AdminDBAppointments
     Private Sub ClearForm()
         CmbPatient.SelectedIndex = 0
         CmbDentist.SelectedIndex = 0
-        CmbService.SelectedIndex = 0
         DtpDate.Value = Date.Today
         dtpStartTime.Value = Date.Now
         DtpEndTime.Value = Date.Now.AddMinutes(30)
         cmbStatus.SelectedIndex = 0
         selectedAppointmentID = 0
+        For i As Integer = 0 To clbServices.Items.Count - 1
+            clbServices.SetItemChecked(i, False)
+        Next
     End Sub
 
     Private Sub DGVAppointments_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointments.CellDoubleClick
         If e.RowIndex >= 0 Then
             Dim row = DGVAppointments.Rows(e.RowIndex)
 
-            ' ✅ Capture AppointmentID
+            ' Capture AppointmentID
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-            ' ✅ Populate ComboBoxes (use SelectedValue if bound)
+            ' Populate patient and dentist
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
             CmbDentist.Text = row.Cells("Dentist").Value.ToString()
-            CmbService.Text = row.Cells("Service").Value.ToString()
 
-            ' ✅ Date
+            ' Populate date and time
             DtpDate.Value = CDate(row.Cells("Date").Value)
-
-            ' ✅ Time handling
             Try
                 dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
                 DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
             Catch ex As Exception
-                ' If stored as DATETIME instead of TIME
                 dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
                 DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
             End Try
 
-            ' ✅ Status
             cmbStatus.Text = row.Cells("Status").Value.ToString()
+
+            ' ✅ Load services into CheckedListBox
+            LoadCheckedServices(selectedAppointmentID)
         End If
-
     End Sub
 
-    Private Sub AdminDBAppointments_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
-        LoadComboBoxes()
+    Private Sub SaveAppointmentServices(appointmentID As Integer)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+
+            For Each item As DataRowView In clbServices.CheckedItems
+                Using cmd As New SqlCommand(
+                "INSERT INTO AppointmentServices (AppointmentID, ServiceID)
+                 VALUES (@aid, @sid)", con)
+
+                    cmd.Parameters.AddWithValue("@aid", appointmentID)
+                    cmd.Parameters.AddWithValue("@sid", item("ServiceID"))
+
+                    cmd.ExecuteNonQuery()
+                End Using
+            Next
+        End Using
     End Sub
+
+    Private Sub LoadCheckedServices(appointmentID As Integer)
+        ' Clear first
+        For i As Integer = 0 To clbServices.Items.Count - 1
+            clbServices.SetItemChecked(i, False)
+        Next
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+
+            Dim cmd As New SqlCommand(
+            "SELECT ServiceID FROM AppointmentServices WHERE AppointmentID=@aid", con)
+            cmd.Parameters.AddWithValue("@aid", appointmentID)
+            Dim reader = cmd.ExecuteReader()
+
+            Dim serviceIDs As New List(Of Integer)
+            While reader.Read()
+                serviceIDs.Add(CInt(reader("ServiceID")))
+            End While
+            reader.Close()
+
+            ' Check the items
+            For i As Integer = 0 To clbServices.Items.Count - 1
+                Dim item As DataRowView = CType(clbServices.Items(i), DataRowView)
+                If serviceIDs.Contains(CInt(item("ServiceID"))) Then
+                    clbServices.SetItemChecked(i, True)
+                End If
+            Next
+        End Using
+    End Sub
+
 End Class
