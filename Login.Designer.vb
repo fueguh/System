@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Login
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,13 +20,14 @@ Partial Class Login
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.txtUsername = New Guna.UI2.WinForms.Guna2TextBox()
         Me.txtPassword = New Guna.UI2.WinForms.Guna2TextBox()
         Me.btnLogin = New Guna.UI2.WinForms.Guna2Button()
         Me.Guna2MessageDialog1 = New Guna.UI2.WinForms.Guna2MessageDialog()
         Me.Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
+        Me.CheckBoxShowPassword = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.chkRememberMe = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.SuspendLayout()
         '
@@ -135,6 +136,24 @@ Partial Class Login
         Me.chkRememberMe.UncheckedState.BorderThickness = 0
         Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
         '
+        'CheckBoxShowPassword
+        '
+        Me.CheckBoxShowPassword.AutoSize = True
+        Me.CheckBoxShowPassword.CheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckedState.BorderRadius = 7
+        Me.CheckBoxShowPassword.CheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
+        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Papyrus", 8.25!)
+        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(319, 253)
+        Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
+        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(15, 14)
+        Me.CheckBoxShowPassword.TabIndex = 7
+        Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.UncheckedState.BorderRadius = 7
+        Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.UncheckedState.FillColor = System.Drawing.Color.White
+        '
         'Login
         '
         Me.AcceptButton = Me.btnLogin
@@ -142,6 +161,7 @@ Partial Class Login
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
         Me.ClientSize = New System.Drawing.Size(444, 506)
+        Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.chkRememberMe)
         Me.Controls.Add(Me.Guna2Button1)
         Me.Controls.Add(Me.btnLogin)
@@ -161,5 +181,6 @@ Partial Class Login
     Friend WithEvents btnLogin As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2MessageDialog1 As Guna.UI2.WinForms.Guna2MessageDialog
     Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents CheckBoxShowPassword As Guna.UI2.WinForms.Guna2CheckBox
     Friend WithEvents chkRememberMe As Guna.UI2.WinForms.Guna2CheckBox
 End Class

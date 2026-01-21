@@ -55,17 +55,44 @@ Public Class Login
 
     Public Shared Dashboard As AdminDashboard
     Private Function HashPassword(password As String) As String
-        Using sha256 As SHA256 = SHA256.Create()
+        Using sha256 As SHA256 = sha256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
             Dim hash As Byte() = sha256.ComputeHash(bytes)
             Return BitConverter.ToString(hash).Replace("-", "").ToLower() ' ✅ hex format
         End Using
     End Function
+    Private Function IsValidPassword(password As String) As Boolean
+        ' Must be at least 8 characters
+        If password.Length < 8 Then Return False
 
+        ' Allowed: letters, numbers, @, and up to 3 spaces
+        Dim spaceCount As Integer = password.Count(Function(c) c = " "c)
+        If spaceCount > 3 Then Return False
+
+        ' Regex: only letters, numbers, @, and spaces
+        Dim pattern As String = "^[A-Za-z0-9@ ]+$"
+        Return System.Text.RegularExpressions.Regex.IsMatch(password, pattern)
+    End Function
+
+    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles txtUsername.TextChanged
+
+    End Sub
+
+    Private Sub Guna2TextBox2_TextChanged(sender As Object, e As EventArgs) Handles txtPassword.TextChanged
+
+    End Sub
     Private Sub Clearform()
         txtUsername.Text = ""
         txtPassword.Text = ""
     End Sub
+    Private Function ComputeHash(input As String) As String
+        Using sha256 As Security.Cryptography.SHA256 = Security.Cryptography.SHA256.Create()
+            Dim bytes As Byte() = System.Text.Encoding.UTF8.GetBytes(input)
+            Dim hash As Byte() = sha256.ComputeHash(bytes)
+            Return BitConverter.ToString(hash).Replace("-", "").ToLower()
+        End Using
+    End Function
+
     Private Sub BtnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
         If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse String.IsNullOrWhiteSpace(txtPassword.Text) Then
             MessageBox.Show("Please enter both username and password.")
@@ -73,6 +100,10 @@ Public Class Login
         End If
 
         Dim hashed = HashPassword(txtPassword.Text)
+
+        ' Hash the entered password
+        Dim hashedPassword As String = ComputeHash(txtPassword.Text)
+
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -141,6 +172,12 @@ Public Class Login
         End Using
     End Sub
 
+    Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+
+            Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
+            Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
 
 
 
@@ -149,4 +186,14 @@ Public Class Login
         reg.ShowDialog()
     End Sub
 
+    Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtUsername.KeyPress
+        ' Allow only letters and numbers
+        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub CheckBoxShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxShowPassword.CheckedChanged
+        txtPassword.UseSystemPasswordChar = Not CheckBoxShowPassword.Checked
+    End Sub
 End Class

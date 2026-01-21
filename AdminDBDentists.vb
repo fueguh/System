@@ -17,11 +17,11 @@ Public Class AdminDBDentists
     End Function
 
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
-            SELECT UserID, FullName, Username, PhoneNum, Email, Specialization, Availability
+            SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization, Availability
             FROM Users
             WHERE Role = 'Dentist'
         "
@@ -42,7 +42,7 @@ Public Class AdminDBDentists
             ' ✅ Populate textboxes/comboboxes with selected row values
             TxtName.Text = row.Cells("FullName").Value.ToString()
             TxtUsername.Text = row.Cells("Username").Value.ToString()
-            TxtPhone.Text = row.Cells("PhoneNum").Value.ToString()
+            TxtPhone.Text = row.Cells("PhoneNumber").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()
             TxtSpecialization.Text = row.Cells("Specialization").Value.ToString()
             cmbAvailability.Text = row.Cells("Availability").Value.ToString()
@@ -79,11 +79,11 @@ Public Class AdminDBDentists
         ' ✅ Hash password
         Dim hashedPassword As String = HashPassword(TxtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNum, Email, DateCreated, Specialization, Availability)
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability)
             VALUES (@name, @username, @password, 'Dentist', @phone, @email, GETDATE(), @spec, @avail)
         "
 
@@ -114,7 +114,7 @@ Public Class AdminDBDentists
     End Sub
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)

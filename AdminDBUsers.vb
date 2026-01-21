@@ -18,11 +18,11 @@ Public Class AdminDBUsers
 
     End Sub
     Private Sub LoadUsers()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
-            SELECT UserID, FullName, Username, Role, Specialization, Availability, PhoneNum, Email, Password, DateCreated
+            SELECT UserID, FullName, Username, Role, Specialization, Availability, PhoneNumber, Email, Password, DateCreated
             FROM Users
         "
 
@@ -78,10 +78,10 @@ Public Class AdminDBUsers
         Dim roleToAssign As String = If(isFirstAdmin, "Admin", CmbRole.Text)
 
         ' Insert into database
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
-        INSERT INTO Users (FullName, Username, Password, Role, PhoneNum, Email, Specialization, Availability)
+        INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
         VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)"
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
@@ -118,7 +118,7 @@ Public Class AdminDBUsers
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -129,7 +129,7 @@ Public Class AdminDBUsers
                 Role=@role,
                 Specialization=@specialization,
                 Availability=@availability,
-                PhoneNum=@phone,
+                PhoneNumber=@phone,
                 Email=@email
             WHERE UserID=@id"
 
@@ -179,7 +179,7 @@ Public Class AdminDBUsers
 
         Try
             ' Delete the user
-            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
                 con.Open()
                 Dim query As String = "DELETE FROM Users WHERE UserID=@id"
                 Using cmd As New SqlCommand(query, con)
@@ -220,7 +220,7 @@ Public Class AdminDBUsers
 
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
@@ -239,7 +239,7 @@ Public Class AdminDBUsers
             txtPassword.Text = "" ' optional: don’t show password directly
             txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
             CmbRole.Text = row.Cells("Role").Value.ToString()
-            TxtPhoneNumber.Text = row.Cells("PhoneNum").Value.ToString()
+            TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()
         End If
     End Sub
