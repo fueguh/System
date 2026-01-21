@@ -17,7 +17,7 @@ Public Module SystemSession
 
        Dim message As String = action
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim cmd As New SqlCommand("
                 INSERT INTO AuditTrail
@@ -127,7 +127,7 @@ Public Module SystemSession
 
     ' Admin Checks
     Public Function AdminExists() As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
@@ -138,7 +138,7 @@ Public Module SystemSession
 
     ' User Role Helpers
     Public Function GetUserRole(userId As Integer) As String
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim cmdGetRole As New SqlCommand("SELECT Role FROM Users WHERE UserID=@id", con)
             cmdGetRole.Parameters.AddWithValue("@id", userId)

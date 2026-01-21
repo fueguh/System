@@ -21,7 +21,7 @@ Public Class AdminAuditTrailForm
     ' Load fresh audit trail from DB
     ' ----------------------------
     Private Sub LoadAuditTrail()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -44,7 +44,7 @@ Public Class AdminAuditTrailForm
     ' ----------------------------
     ' Live search filter
     ' ----------------------------
-    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
+    Private Sub TxtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
         If auditView Is Nothing Then Return
 
         If String.IsNullOrWhiteSpace(txtSearch.Text) Then
@@ -62,7 +62,7 @@ Public Class AdminAuditTrailForm
     ' ----------------------------
     ' Clear search and reload data
     ' ----------------------------
-    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles ClearButton.Click
+    Private Sub BtnClear_Click(sender As Object, e As EventArgs) Handles ClearButton.Click
         txtSearch.Text = String.Empty
         LoadAuditTrail()
     End Sub
@@ -76,7 +76,7 @@ Public Class AdminAuditTrailForm
         autoRefreshTimer.Start()
     End Sub
 
-    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
 End Class

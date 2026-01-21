@@ -27,6 +27,7 @@ Partial Class Login
         Me.btnLogin = New Guna.UI2.WinForms.Guna2Button()
         Me.Guna2MessageDialog1 = New Guna.UI2.WinForms.Guna2MessageDialog()
         Me.Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
+        Me.CheckBoxShowPassword = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.SuspendLayout()
         '
         'txtUsername
@@ -84,7 +85,7 @@ Partial Class Login
         Me.btnLogin.FillColor = System.Drawing.Color.White
         Me.btnLogin.Font = New System.Drawing.Font("Tahoma", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnLogin.ForeColor = System.Drawing.Color.DimGray
-        Me.btnLogin.Location = New System.Drawing.Point(123, 284)
+        Me.btnLogin.Location = New System.Drawing.Point(129, 327)
         Me.btnLogin.Name = "btnLogin"
         Me.btnLogin.Size = New System.Drawing.Size(180, 45)
         Me.btnLogin.TabIndex = 2
@@ -109,11 +110,29 @@ Partial Class Login
         Me.Guna2Button1.FillColor = System.Drawing.Color.White
         Me.Guna2Button1.Font = New System.Drawing.Font("Tahoma", 12.0!)
         Me.Guna2Button1.ForeColor = System.Drawing.Color.DimGray
-        Me.Guna2Button1.Location = New System.Drawing.Point(123, 371)
+        Me.Guna2Button1.Location = New System.Drawing.Point(129, 414)
         Me.Guna2Button1.Name = "Guna2Button1"
         Me.Guna2Button1.Size = New System.Drawing.Size(180, 45)
         Me.Guna2Button1.TabIndex = 6
         Me.Guna2Button1.Text = "Register"
+        '
+        'CheckBoxShowPassword
+        '
+        Me.CheckBoxShowPassword.AutoSize = True
+        Me.CheckBoxShowPassword.CheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckedState.BorderRadius = 7
+        Me.CheckBoxShowPassword.CheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
+        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Papyrus", 8.25!)
+        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(319, 253)
+        Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
+        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(15, 14)
+        Me.CheckBoxShowPassword.TabIndex = 7
+        Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.UncheckedState.BorderRadius = 7
+        Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.UncheckedState.FillColor = System.Drawing.Color.White
         '
         'Login
         '
@@ -122,6 +141,7 @@ Partial Class Login
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
         Me.ClientSize = New System.Drawing.Size(444, 506)
+        Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.Guna2Button1)
         Me.Controls.Add(Me.btnLogin)
         Me.Controls.Add(Me.txtPassword)
@@ -130,6 +150,7 @@ Partial Class Login
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Login"
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -138,4 +159,5 @@ Partial Class Login
     Friend WithEvents btnLogin As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2MessageDialog1 As Guna.UI2.WinForms.Guna2MessageDialog
     Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents CheckBoxShowPassword As Guna.UI2.WinForms.Guna2CheckBox
 End Class
