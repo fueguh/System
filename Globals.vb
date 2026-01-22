@@ -12,26 +12,35 @@ Public Module SystemSession
     Public LoggedInRole As String = ""
     ' Audit Logging function for various actions
     Public Sub LogAudit(action As String, moduleName As String,
-                        Optional userId As Integer = 0,
-                        Optional fullName As String = "",
-                        Optional role As String = "Unknown")
-        Dim message As String = action
+                    Optional userId As Integer = 0,
+                    Optional fullName As String = "",
+                    Optional role As String = "Unknown")
+
+        Dim auditUserID As Integer = If(userId = 0, LoggedInUserID, userId)
+        Dim auditFullName As String = If(fullName = "", LoggedInFullName, fullName)
+        Dim auditRole As String = If(role = "Unknown", LoggedInRole, role)
+
+        ' Safety check: prevent FK violation
+        If auditUserID <= 0 Then
+            Throw New Exception("Cannot log audit: invalid or missing UserID.")
+        End If
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim cmd As New SqlCommand("
-                INSERT INTO AuditTrail
-                (UserID, FullName, Role, Action, Module, Timestamp)
-                VALUES
-                (@UserID, @FullName, @Role, @Action, @Module, GETDATE())", con)
-            cmd.Parameters.AddWithValue("@UserID", If(userId = 0, LoggedInUserID, userId))
-            cmd.Parameters.AddWithValue("@FullName", If(fullName = "", LoggedInFullName, fullName))
-            cmd.Parameters.AddWithValue("@Role", If(role = "Unknown", LoggedInRole, role))
-            cmd.Parameters.AddWithValue("@Action", message)
+            INSERT INTO AuditTrail
+            (UserID, FullName, Role, Action, Module, Timestamp)
+            VALUES
+            (@UserID, @FullName, @Role, @Action, @Module, GETDATE())", con)
+            cmd.Parameters.AddWithValue("@UserID", auditUserID)
+            cmd.Parameters.AddWithValue("@FullName", auditFullName)
+            cmd.Parameters.AddWithValue("@Role", auditRole)
+            cmd.Parameters.AddWithValue("@Action", action)
             cmd.Parameters.AddWithValue("@Module", moduleName)
-
             cmd.ExecuteNonQuery()
         End Using
     End Sub
+
     ' Convenience wrappers
     Public Sub LogLogin()
         If LoggedInUserID <> 0 AndAlso Not String.IsNullOrEmpty(LoggedInFullName) Then
