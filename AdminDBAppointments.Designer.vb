@@ -82,7 +82,7 @@ Partial Class AdminDBAppointments
         Me.DtpDate.FillColor = System.Drawing.Color.White
         Me.DtpDate.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.DtpDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpDate.Location = New System.Drawing.Point(74, 264)
+        Me.DtpDate.Location = New System.Drawing.Point(74, 457)
         Me.DtpDate.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -97,7 +97,7 @@ Partial Class AdminDBAppointments
         Me.dtpStartTime.FillColor = System.Drawing.Color.White
         Me.dtpStartTime.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpStartTime.Location = New System.Drawing.Point(74, 466)
+        Me.dtpStartTime.Location = New System.Drawing.Point(74, 511)
         Me.dtpStartTime.Margin = New System.Windows.Forms.Padding(4)
         Me.dtpStartTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.dtpStartTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -112,7 +112,7 @@ Partial Class AdminDBAppointments
         Me.DtpEndTime.FillColor = System.Drawing.Color.White
         Me.DtpEndTime.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.DtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpEndTime.Location = New System.Drawing.Point(74, 529)
+        Me.DtpEndTime.Location = New System.Drawing.Point(74, 565)
         Me.DtpEndTime.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpEndTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpEndTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -274,7 +274,7 @@ Partial Class AdminDBAppointments
         Me.Guna2GroupBox1.Controls.Add(Me.clbServices)
         Me.Guna2GroupBox1.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2GroupBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2GroupBox1.Location = New System.Drawing.Point(74, 141)
+        Me.Guna2GroupBox1.Location = New System.Drawing.Point(74, 176)
         Me.Guna2GroupBox1.Name = "Guna2GroupBox1"
         Me.Guna2GroupBox1.Size = New System.Drawing.Size(365, 254)
         Me.Guna2GroupBox1.TabIndex = 21
