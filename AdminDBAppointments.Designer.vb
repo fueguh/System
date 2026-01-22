@@ -82,7 +82,7 @@ Partial Class AdminDBAppointments
         Me.DtpDate.FillColor = System.Drawing.Color.White
         Me.DtpDate.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.DtpDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpDate.Location = New System.Drawing.Point(74, 457)
+        Me.DtpDate.Location = New System.Drawing.Point(74, 502)
         Me.DtpDate.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -97,7 +97,7 @@ Partial Class AdminDBAppointments
         Me.dtpStartTime.FillColor = System.Drawing.Color.White
         Me.dtpStartTime.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpStartTime.Location = New System.Drawing.Point(74, 511)
+        Me.dtpStartTime.Location = New System.Drawing.Point(74, 556)
         Me.dtpStartTime.Margin = New System.Windows.Forms.Padding(4)
         Me.dtpStartTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.dtpStartTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -112,7 +112,7 @@ Partial Class AdminDBAppointments
         Me.DtpEndTime.FillColor = System.Drawing.Color.White
         Me.DtpEndTime.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.DtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpEndTime.Location = New System.Drawing.Point(74, 565)
+        Me.DtpEndTime.Location = New System.Drawing.Point(74, 610)
         Me.DtpEndTime.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpEndTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpEndTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -131,7 +131,7 @@ Partial Class AdminDBAppointments
         Me.BTNAdd.FillColor = System.Drawing.Color.White
         Me.BTNAdd.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNAdd.ForeColor = System.Drawing.Color.Black
-        Me.BTNAdd.Location = New System.Drawing.Point(63, 642)
+        Me.BTNAdd.Location = New System.Drawing.Point(63, 676)
         Me.BTNAdd.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNAdd.Name = "BTNAdd"
         Me.BTNAdd.Size = New System.Drawing.Size(180, 45)
@@ -148,7 +148,7 @@ Partial Class AdminDBAppointments
         Me.BTNUpdate.FillColor = System.Drawing.Color.White
         Me.BTNUpdate.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNUpdate.ForeColor = System.Drawing.Color.Black
-        Me.BTNUpdate.Location = New System.Drawing.Point(383, 642)
+        Me.BTNUpdate.Location = New System.Drawing.Point(259, 676)
         Me.BTNUpdate.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNUpdate.Name = "BTNUpdate"
         Me.BTNUpdate.Size = New System.Drawing.Size(180, 45)
@@ -165,7 +165,7 @@ Partial Class AdminDBAppointments
         Me.BTNDelete.FillColor = System.Drawing.Color.White
         Me.BTNDelete.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNDelete.ForeColor = System.Drawing.Color.Black
-        Me.BTNDelete.Location = New System.Drawing.Point(220, 738)
+        Me.BTNDelete.Location = New System.Drawing.Point(152, 729)
         Me.BTNDelete.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNDelete.Name = "BTNDelete"
         Me.BTNDelete.Size = New System.Drawing.Size(180, 45)
@@ -238,7 +238,7 @@ Partial Class AdminDBAppointments
         Me.cmbStatus.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.cmbStatus.ItemHeight = 30
-        Me.cmbStatus.Location = New System.Drawing.Point(74, 98)
+        Me.cmbStatus.Location = New System.Drawing.Point(74, 460)
         Me.cmbStatus.Margin = New System.Windows.Forms.Padding(4)
         Me.cmbStatus.Name = "cmbStatus"
         Me.cmbStatus.Size = New System.Drawing.Size(365, 36)
@@ -274,7 +274,7 @@ Partial Class AdminDBAppointments
         Me.Guna2GroupBox1.Controls.Add(Me.clbServices)
         Me.Guna2GroupBox1.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2GroupBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2GroupBox1.Location = New System.Drawing.Point(74, 176)
+        Me.Guna2GroupBox1.Location = New System.Drawing.Point(74, 199)
         Me.Guna2GroupBox1.Name = "Guna2GroupBox1"
         Me.Guna2GroupBox1.Size = New System.Drawing.Size(365, 254)
         Me.Guna2GroupBox1.TabIndex = 21
