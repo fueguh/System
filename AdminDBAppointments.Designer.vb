@@ -128,9 +128,9 @@ Partial Class AdminDBAppointments
         Me.BTNAdd.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.BTNAdd.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
         Me.BTNAdd.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.BTNAdd.FillColor = System.Drawing.Color.WhiteSmoke
+        Me.BTNAdd.FillColor = System.Drawing.Color.White
         Me.BTNAdd.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.BTNAdd.ForeColor = System.Drawing.Color.White
+        Me.BTNAdd.ForeColor = System.Drawing.Color.Black
         Me.BTNAdd.Location = New System.Drawing.Point(63, 642)
         Me.BTNAdd.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNAdd.Name = "BTNAdd"
@@ -145,9 +145,9 @@ Partial Class AdminDBAppointments
         Me.BTNUpdate.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.BTNUpdate.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
         Me.BTNUpdate.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.BTNUpdate.FillColor = System.Drawing.Color.WhiteSmoke
+        Me.BTNUpdate.FillColor = System.Drawing.Color.White
         Me.BTNUpdate.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.BTNUpdate.ForeColor = System.Drawing.Color.White
+        Me.BTNUpdate.ForeColor = System.Drawing.Color.Black
         Me.BTNUpdate.Location = New System.Drawing.Point(383, 642)
         Me.BTNUpdate.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNUpdate.Name = "BTNUpdate"
@@ -162,9 +162,9 @@ Partial Class AdminDBAppointments
         Me.BTNDelete.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.BTNDelete.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
         Me.BTNDelete.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.BTNDelete.FillColor = System.Drawing.Color.WhiteSmoke
+        Me.BTNDelete.FillColor = System.Drawing.Color.White
         Me.BTNDelete.Font = New System.Drawing.Font("Segoe UI", 9.0!)
-        Me.BTNDelete.ForeColor = System.Drawing.Color.White
+        Me.BTNDelete.ForeColor = System.Drawing.Color.Black
         Me.BTNDelete.Location = New System.Drawing.Point(220, 738)
         Me.BTNDelete.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNDelete.Name = "BTNDelete"
@@ -238,7 +238,7 @@ Partial Class AdminDBAppointments
         Me.cmbStatus.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.cmbStatus.ItemHeight = 30
-        Me.cmbStatus.Location = New System.Drawing.Point(99, 553)
+        Me.cmbStatus.Location = New System.Drawing.Point(74, 98)
         Me.cmbStatus.Margin = New System.Windows.Forms.Padding(4)
         Me.cmbStatus.Name = "cmbStatus"
         Me.cmbStatus.Size = New System.Drawing.Size(365, 36)
