@@ -69,7 +69,7 @@ Public Class AdminDBUsers
         ' Only allow Staff/Dentist to be added by logged-in Admin
         If SystemSession.LoggedInRole <> "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
             MessageBox.Show("You must be logged in as an Admin to add Staff or Dentists.",
-                        "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
@@ -77,12 +77,15 @@ Public Class AdminDBUsers
         Dim isFirstAdmin As Boolean = Not SystemSession.AdminExists()
         Dim roleToAssign As String = If(isFirstAdmin, "Admin", CmbRole.Text)
 
-        ' Insert into database
+        Dim newUserID As Integer
+
+        ' Insert into database and get the new UserID
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
-        INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
-        VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability)"
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
+            VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability);
+            SELECT SCOPE_IDENTITY()"
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
                 cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
@@ -92,21 +95,23 @@ Public Class AdminDBUsers
                 cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
                 cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
                 cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
-                cmd.ExecuteNonQuery()
+                ' Get the inserted UserID
+                newUserID = Convert.ToInt32(cmd.ExecuteScalar())
             End Using
         End Using
 
-        ' Audit logging
+        ' Audit logging with actual UserID
         If isFirstAdmin Then
-            SystemSession.LogAudit("First Admin Created", "Registration")
+            SystemSession.LogAudit("First Admin Created", "Registration", newUserID, TxtFullName.Text, roleToAssign)
         Else
-            SystemSession.LogAudit("Add user", "User Management")
+            SystemSession.LogAudit("Add user", "User Management", newUserID, TxtFullName.Text, roleToAssign)
         End If
 
         SystemSession.ShowSuccess("added")
         LoadUsers()
         Clearform()
     End Sub
+
 
 
 
