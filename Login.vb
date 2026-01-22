@@ -172,14 +172,6 @@ Public Class Login
         End Using
     End Sub
 
-    Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
-            con.Open()
-
-            Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
-            Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
-
-
 
     Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
         Dim reg As New AdminDBUsers()

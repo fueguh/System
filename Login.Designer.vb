@@ -117,6 +117,24 @@ Partial Class Login
         Me.Guna2Button1.TabIndex = 4
         Me.Guna2Button1.Text = "Register"
         '
+        'CheckBoxShowPassword
+        '
+        Me.CheckBoxShowPassword.AutoSize = True
+        Me.CheckBoxShowPassword.CheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckedState.BorderRadius = 7
+        Me.CheckBoxShowPassword.CheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
+        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Papyrus", 8.25!)
+        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(319, 253)
+        Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
+        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(15, 14)
+        Me.CheckBoxShowPassword.TabIndex = 7
+        Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.UncheckedState.BorderRadius = 7
+        Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.UncheckedState.FillColor = System.Drawing.Color.White
+        '
         'chkRememberMe
         '
         Me.chkRememberMe.AutoSize = True
@@ -135,24 +153,6 @@ Partial Class Login
         Me.chkRememberMe.UncheckedState.BorderRadius = 0
         Me.chkRememberMe.UncheckedState.BorderThickness = 0
         Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
-        '
-        'CheckBoxShowPassword
-        '
-        Me.CheckBoxShowPassword.AutoSize = True
-        Me.CheckBoxShowPassword.CheckedState.BorderColor = System.Drawing.Color.White
-        Me.CheckBoxShowPassword.CheckedState.BorderRadius = 7
-        Me.CheckBoxShowPassword.CheckedState.BorderThickness = 0
-        Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
-        Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
-        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Papyrus", 8.25!)
-        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(319, 253)
-        Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
-        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(15, 14)
-        Me.CheckBoxShowPassword.TabIndex = 7
-        Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.White
-        Me.CheckBoxShowPassword.UncheckedState.BorderRadius = 7
-        Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 0
-        Me.CheckBoxShowPassword.UncheckedState.FillColor = System.Drawing.Color.White
         '
         'Login
         '

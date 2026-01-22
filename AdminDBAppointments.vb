@@ -33,7 +33,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadComboBoxes()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' ================= PATIENTS =================
@@ -67,7 +67,6 @@ Public Class AdminDBAppointments
             CmbDentist.DataSource = dtDentists
             CmbDentist.DisplayMember = "FullName"
             CmbDentist.ValueMember = "UserID"
-            CmbDentist.SelectedIndex = 0
 
             ' ================= SERVICES (MULTI) =================
             Dim dtServices As New DataTable()
@@ -82,7 +81,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadAppointments()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -150,7 +149,7 @@ Public Class AdminDBAppointments
     End Function
 
     Private Function IsConflict(Optional appointmentID As Integer = 0) As Boolean
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -187,7 +186,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' --- Insert appointment (without single ServiceID) ---
@@ -253,7 +252,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Update appointment (no ServiceID column)
@@ -317,7 +316,7 @@ Public Class AdminDBAppointments
         If MessageBox.Show("Are you sure you want to delete this appointment?",
                            "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "DELETE FROM Appointments WHERE AppointmentID=@id"
@@ -382,7 +381,6 @@ Public Class AdminDBAppointments
 
     Private Sub ClearForm()
         CmbPatient.SelectedIndex = 0
-        CmbDentist.SelectedIndex = 0
         DtpDate.Value = Date.Today
         dtpStartTime.Value = Date.Now
         DtpEndTime.Value = Date.Now.AddMinutes(30)
@@ -469,4 +467,7 @@ Public Class AdminDBAppointments
         End Using
     End Sub
 
+    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        SystemSession.NavigateToDashboard(Me)
+    End Sub
 End Class

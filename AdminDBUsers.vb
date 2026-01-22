@@ -18,7 +18,7 @@ Public Class AdminDBUsers
 
     End Sub
     Private Sub LoadUsers()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -78,7 +78,7 @@ Public Class AdminDBUsers
         Dim roleToAssign As String = If(isFirstAdmin, "Admin", CmbRole.Text)
 
         ' Insert into database
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
         INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
@@ -118,7 +118,7 @@ Public Class AdminDBUsers
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -179,7 +179,7 @@ Public Class AdminDBUsers
 
         Try
             ' Delete the user
-            Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            Using con As New SqlConnection(My.Settings.DentalDBConnection)
                 con.Open()
                 Dim query As String = "DELETE FROM Users WHERE UserID=@id"
                 Using cmd As New SqlCommand(query, con)
@@ -220,7 +220,7 @@ Public Class AdminDBUsers
 
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
