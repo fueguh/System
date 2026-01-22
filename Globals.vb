@@ -21,8 +21,10 @@ Public Module SystemSession
         Dim auditRole As String = If(role = "Unknown", LoggedInRole, role)
 
         ' Safety check: prevent FK violation
-        If auditUserID <= 0 Then
-            Throw New Exception("Cannot log audit: invalid or missing UserID.")
+        If userId <= 0 Then
+            ' Instead of throwing, just skip logging or log to fallback
+            Debug.Print($"Audit skipped: invalid UserID for action '{action}' in {moduleName}")
+            Return
         End If
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
@@ -100,36 +102,40 @@ Public Module SystemSession
     End Sub
     ' Self-session enforcement (deletion or demotion)
     Public Sub EnforceSelfSessionRules(selectedUserID As Integer,
-                                       newRole As String,
-                                       currentForm As Form,
-                                       loginForm As Form,
-                                       Optional isDelete As Boolean = False)
+                                   newRole As String,
+                                   currentForm As Form,
+                                   loginForm As Form,
+                                   Optional isDelete As Boolean = False)
         ' Cache the current session BEFORE making changes
         Dim oldUserID As Integer = LoggedInUserID
         Dim oldFullName As String = LoggedInFullName
         Dim oldRole As String = LoggedInRole
 
-        If selectedUserID = LoggedInUserID Then
+        ' Only enforce rules if the affected user is the logged-in user
+        If selectedUserID = oldUserID AndAlso oldUserID > 0 Then
+
+            ' Audit the action BEFORE clearing session
             If isDelete Then
-                ' Audit deletion only
                 LogAudit("Deleted own account", "Users", oldUserID, oldFullName, oldRole)
             ElseIf newRole <> "Admin" Then
-                ' Audit role change only
                 LogAudit($"Role changed to {newRole}", "Users", oldUserID, oldFullName, oldRole)
             End If
 
-            ' Clear session after logging
+            ' Perform logout BEFORE clearing session
+            SystemSession.PerformLogout(currentForm.Name)
+
+            ' Now clear session safely
             LoggedInUserID = 0
             LoggedInFullName = "Unknown"
             LoggedInRole = "Unknown"
-            SystemSession.PerformLogout(currentForm.Name)
-            'close current form.
+
+            ' Close current form and show message
             currentForm.Close()
             MessageBox.Show("Your session has ended. You have been logged out.",
-                            "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
+                        "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
         End If
     End Sub
+
     ' This is for checking if at least one admin exists in the database when deleting or demoting an admin user
     Public Function AdminExists() As Boolean
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
