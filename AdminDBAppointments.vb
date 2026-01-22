@@ -470,4 +470,8 @@ Public Class AdminDBAppointments
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
+
+    Private Sub CmbDentist_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbDentist.SelectedIndexChanged
+
+    End Sub
 End Class

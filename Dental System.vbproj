@@ -97,7 +97,9 @@
     <Compile Include="AdminDBAppointments.Designer.vb">
       <DependentUpon>AdminDBAppointments.vb</DependentUpon>
     </Compile>
-    <Compile Include="AdminDBAppointments.vb" />
+    <Compile Include="AdminDBAppointments.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBDentists.Designer.vb">
       <DependentUpon>AdminDBDentists.vb</DependentUpon>
     </Compile>
