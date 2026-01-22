@@ -112,9 +112,6 @@ Public Class AdminDBUsers
         Clearform()
     End Sub
 
-
-
-
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
         ' ✅ Only Admin can update users
         If Not SystemSession.RequireAdmin("update users") Then Exit Sub
@@ -126,7 +123,23 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
-            Dim query As String = "
+            ' Decide query depending on whether password is entered
+            Dim query As String
+            If String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                ' Password not changed
+                query = "
+            UPDATE Users
+            SET FullName=@fullname,
+                Username=@username,
+                Role=@role,
+                Specialization=@specialization,
+                Availability=@availability,
+                PhoneNumber=@phone,
+                Email=@email
+            WHERE UserID=@id"
+            Else
+                ' Password changed
+                query = "
             UPDATE Users
             SET FullName=@fullname,
                 Username=@username,
@@ -137,6 +150,7 @@ Public Class AdminDBUsers
                 PhoneNumber=@phone,
                 Email=@email
             WHERE UserID=@id"
+            End If
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedUserID)
