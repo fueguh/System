@@ -71,7 +71,7 @@ Partial Class AdminDBAppointments
         Me.CmbDentist.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.CmbDentist.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.CmbDentist.ItemHeight = 30
-        Me.CmbDentist.Location = New System.Drawing.Point(49, 97)
+        Me.CmbDentist.Location = New System.Drawing.Point(49, 105)
         Me.CmbDentist.Name = "CmbDentist"
         Me.CmbDentist.Size = New System.Drawing.Size(365, 36)
         Me.CmbDentist.TabIndex = 1
