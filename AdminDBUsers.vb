@@ -123,7 +123,7 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
-            ' Decide query depending on whether password is entered
+            ' Decide query depending on whether password is entered, to avoid updating password with blank.
             Dim query As String
             If String.IsNullOrWhiteSpace(txtPassword.Text) Then
                 ' Password not changed
