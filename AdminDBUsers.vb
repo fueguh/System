@@ -207,10 +207,29 @@ Public Class AdminDBUsers
             Clearform()
 
         Catch ex As SqlException
-            ' Handle foreign key violation (appointments linked to user)
             If ex.Number = 547 Then
-                MessageBox.Show("Cannot delete this user because they have linked appointments.")
-                SystemSession.LogAudit("Delete blocked due to linked appointments", "User Management")
+                ' FK violation – extract constraint name
+                Dim tableName As String = "unknown table"
+                Dim match = System.Text.RegularExpressions.Regex.Match(ex.Message, "constraint ""?(\w+)""?")
+                If match.Success Then
+                    Dim fkName = match.Groups(1).Value
+                    ' Look up FK parent table in database
+                    Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                        con.Open()
+                        Dim cmd As New SqlCommand("
+                        SELECT OBJECT_NAME(parent_object_id) 
+                        FROM sys.foreign_keys 
+                        WHERE name = @fkName
+                    ", con)
+                        cmd.Parameters.AddWithValue("@fkName", fkName)
+                        Dim obj = cmd.ExecuteScalar()
+                        If obj IsNot Nothing Then tableName = obj.ToString()
+                    End Using
+                End If
+
+                MessageBox.Show($"Cannot delete this user because they have linked data in table: {tableName}.")
+                SystemSession.LogAudit($"Delete blocked due to linked data in {tableName}", "User Management")
+
             Else
                 MessageBox.Show("Database error: " & ex.Message)
                 SystemSession.LogAudit("Delete failed: " & ex.Message, "User Management")
@@ -221,6 +240,7 @@ Public Class AdminDBUsers
             SystemSession.LogAudit("Unexpected delete error: " & ex.Message, "User Management")
         End Try
     End Sub
+
 
 
 
