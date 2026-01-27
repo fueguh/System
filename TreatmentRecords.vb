@@ -67,19 +67,18 @@ Public Class TreatmentRecords
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
-             SELECT TR.RecordID,
-                P.FullName AS Patient,
-                 U.FullName AS Dentist,
-                 TR.Treatment,
-                 TR.Prescriptions,
-                 TR.Procedures,
-                 TR.ImagePath,
-                 TR.DateCreated
-              FROM TreatmentRecords TR
-              JOIN Patients P ON TR.PatientID = P.PatientID
-              JOIN Users U ON TR.UserID = U.UserID
+ SELECT TR.RecordID,
+    P.FullName AS Patient,
+     U.FullName AS Dentist,
+     TR.Treatment,
+     TR.Prescriptions,
+     TR.Procedures,
+     TR.ImagePath,
+     TR.DateCreated
+  FROM TreatmentRecords TR
+  JOIN Patients P ON TR.PatientID = P.PatientID
+  JOIN Users U ON TR.UserID = U.UserID
 "
-
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
@@ -95,16 +94,16 @@ Public Class TreatmentRecords
             con.Open()
 
             Dim query As String = "
-            INSERT INTO TreatmentRecords (PatientID, UserID, Treatment, Prescriptions, Procedures, ImagePath)
-            VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
-        "
+    INSERT INTO ProceduresDone (PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
+    VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
+"
 
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@patient", CInt(CmbPatient.SelectedValue))
             cmd.Parameters.AddWithValue("@dentist", CInt(CmbDentist.SelectedValue))
-            cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text)   ' maps to Treatment
+            cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text)   ' maps to TreatmentNotes
             cmd.Parameters.AddWithValue("@prescriptions", TxtPrescriptions.Text)
-            cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text)  ' maps to Procedures
+            cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text)  ' maps to ProceduresDone
             cmd.Parameters.AddWithValue("@image", imagePath)
 
             cmd.ExecuteNonQuery()
