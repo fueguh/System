@@ -19,7 +19,7 @@ Public Class AdminDBPayment
     End Sub
 
     Private Sub LoadPatients()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "SELECT PatientID, FullName FROM Patients"
             Dim da As New SqlDataAdapter(query, con)
@@ -35,7 +35,7 @@ Public Class AdminDBPayment
     End Sub
 
     Private Sub LoadServices()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "SELECT ServiceID, ServiceName, Price FROM Services"
             Dim da As New SqlDataAdapter(query, con)
@@ -50,7 +50,7 @@ Public Class AdminDBPayment
     End Sub
 
     Private Sub LoadAppointmentServices()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
             SELECT S.ServiceID, S.ServiceName, S.Price
@@ -87,7 +87,7 @@ Public Class AdminDBPayment
     End Sub
 
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
             INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod)

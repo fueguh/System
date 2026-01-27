@@ -1,10 +1,10 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class ClinicSettings
-    Private con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+    Private con As New SqlConnection(My.Settings.DentalDBConnection)
     'fill textboxes with existing data
     Private Sub ClinicSettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim cmd As New SqlCommand("SELECT ClinicName, ClinicAddress, ContactNumber, Email, OperatingHours FROM ClinicInfo WHERE ClinicID=1", con)
             Dim reader As SqlDataReader = cmd.ExecuteReader()
@@ -18,7 +18,7 @@ Public Class ClinicSettings
         End Using
     End Sub
     Private Sub BtnSave_Click(sender As Object, e As EventArgs) Handles BtnSave.Click
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Check if row exists

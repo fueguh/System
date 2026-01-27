@@ -5,7 +5,7 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 
 Public Class Login
     Private Sub Login_Shown(sender As Object, e As EventArgs) Handles Me.Shown
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Check for active session
@@ -43,7 +43,7 @@ Public Class Login
     End Sub
 
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
@@ -105,7 +105,7 @@ Public Class Login
         Dim hashedPassword As String = ComputeHash(txtPassword.Text)
 
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim cmd As New SqlCommand("
@@ -127,7 +127,7 @@ Public Class Login
 
                     ' ✅ Remember Me logic AFTER login
                     If chkRememberMe.Checked Then
-                        Using con2 As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+                        Using con2 As New SqlConnection(My.Settings.DentalDBConnection)
                             con2.Open()
 
                             ' End any existing session for this device

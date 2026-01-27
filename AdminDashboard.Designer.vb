@@ -36,6 +36,7 @@ Partial Class AdminDashboard
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ClinicSettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
@@ -51,7 +52,6 @@ Partial Class AdminDashboard
         Me.Guna2Panel4 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
-        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.Guna2PictureBox6, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -148,7 +148,6 @@ Partial Class AdminDashboard
         'ToolStripMenuItem2
         '
         Me.ToolStripMenuItem2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ClinicSettingsToolStripMenuItem})
-        Me.ToolStripMenuItem2.Enabled = False
         Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
         Me.ToolStripMenuItem2.Size = New System.Drawing.Size(141, 44)
         Me.ToolStripMenuItem2.Text = "Settings"
@@ -158,6 +157,12 @@ Partial Class AdminDashboard
         Me.ClinicSettingsToolStripMenuItem.Name = "ClinicSettingsToolStripMenuItem"
         Me.ClinicSettingsToolStripMenuItem.Size = New System.Drawing.Size(186, 44)
         Me.ClinicSettingsToolStripMenuItem.Text = "Clinic "
+        '
+        'ToolStripMenuItem3
+        '
+        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(152, 44)
+        Me.ToolStripMenuItem3.Text = "Payment"
         '
         'Guna2CustomGradientPanel1
         '
@@ -314,12 +319,6 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments.TabIndex = 28
         Me.lblCompletedAppointments.Text = "0"
         Me.lblCompletedAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'ToolStripMenuItem3
-        '
-        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
-        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(152, 44)
-        Me.ToolStripMenuItem3.Text = "Payment"
         '
         'AdminDashboard
         '

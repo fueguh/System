@@ -492,4 +492,5 @@ Public Class AdminDBAppointments
         paymentForm.SelectedPatientName = selectedPatientNameFromGrid
         paymentForm.Show()
     End Sub
+
 End Class

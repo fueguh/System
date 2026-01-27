@@ -22,12 +22,11 @@ Partial Class AdminDBAppointments
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBAppointments))
         Me.CmbPatient = New Guna.UI2.WinForms.Guna2ComboBox()
-        Me.CmbDentist = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.DtpDate = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.dtpStartTime = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.DtpEndTime = New Guna.UI2.WinForms.Guna2DateTimePicker()
@@ -58,25 +57,10 @@ Partial Class AdminDBAppointments
         Me.CmbPatient.Font = New System.Drawing.Font("Segoe UI", 10.0!)
         Me.CmbPatient.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.CmbPatient.ItemHeight = 30
-        Me.CmbPatient.Location = New System.Drawing.Point(49, 53)
+        Me.CmbPatient.Location = New System.Drawing.Point(54, 53)
         Me.CmbPatient.Name = "CmbPatient"
         Me.CmbPatient.Size = New System.Drawing.Size(365, 36)
         Me.CmbPatient.TabIndex = 0
-        '
-        'CmbDentist
-        '
-        Me.CmbDentist.BackColor = System.Drawing.Color.Transparent
-        Me.CmbDentist.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.CmbDentist.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.CmbDentist.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.CmbDentist.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.CmbDentist.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.CmbDentist.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
-        Me.CmbDentist.ItemHeight = 30
-        Me.CmbDentist.Location = New System.Drawing.Point(49, 105)
-        Me.CmbDentist.Name = "CmbDentist"
-        Me.CmbDentist.Size = New System.Drawing.Size(365, 36)
-        Me.CmbDentist.TabIndex = 1
         '
         'DtpDate
         '
@@ -84,7 +68,7 @@ Partial Class AdminDBAppointments
         Me.DtpDate.FillColor = System.Drawing.Color.White
         Me.DtpDate.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.DtpDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpDate.Location = New System.Drawing.Point(74, 474)
+        Me.DtpDate.Location = New System.Drawing.Point(50, 444)
         Me.DtpDate.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -99,7 +83,7 @@ Partial Class AdminDBAppointments
         Me.dtpStartTime.FillColor = System.Drawing.Color.White
         Me.dtpStartTime.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpStartTime.Location = New System.Drawing.Point(74, 542)
+        Me.dtpStartTime.Location = New System.Drawing.Point(50, 512)
         Me.dtpStartTime.Margin = New System.Windows.Forms.Padding(4)
         Me.dtpStartTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.dtpStartTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -114,7 +98,7 @@ Partial Class AdminDBAppointments
         Me.DtpEndTime.FillColor = System.Drawing.Color.White
         Me.DtpEndTime.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.DtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpEndTime.Location = New System.Drawing.Point(74, 605)
+        Me.DtpEndTime.Location = New System.Drawing.Point(50, 575)
         Me.DtpEndTime.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpEndTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpEndTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -133,7 +117,7 @@ Partial Class AdminDBAppointments
         Me.BTNAdd.FillColor = System.Drawing.Color.White
         Me.BTNAdd.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNAdd.ForeColor = System.Drawing.Color.Black
-        Me.BTNAdd.Location = New System.Drawing.Point(94, 685)
+        Me.BTNAdd.Location = New System.Drawing.Point(54, 643)
         Me.BTNAdd.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNAdd.Name = "BTNAdd"
         Me.BTNAdd.Size = New System.Drawing.Size(180, 45)
@@ -150,7 +134,7 @@ Partial Class AdminDBAppointments
         Me.BTNUpdate.FillColor = System.Drawing.Color.White
         Me.BTNUpdate.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNUpdate.ForeColor = System.Drawing.Color.Black
-        Me.BTNUpdate.Location = New System.Drawing.Point(371, 685)
+        Me.BTNUpdate.Location = New System.Drawing.Point(239, 643)
         Me.BTNUpdate.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNUpdate.Name = "BTNUpdate"
         Me.BTNUpdate.Size = New System.Drawing.Size(180, 45)
@@ -167,7 +151,7 @@ Partial Class AdminDBAppointments
         Me.BTNDelete.FillColor = System.Drawing.Color.White
         Me.BTNDelete.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNDelete.ForeColor = System.Drawing.Color.Black
-        Me.BTNDelete.Location = New System.Drawing.Point(94, 768)
+        Me.BTNDelete.Location = New System.Drawing.Point(54, 696)
         Me.BTNDelete.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNDelete.Name = "BTNDelete"
         Me.BTNDelete.Size = New System.Drawing.Size(180, 45)
@@ -178,29 +162,29 @@ Partial Class AdminDBAppointments
         '
         Me.DGVAppointments.AllowUserToAddRows = False
         Me.DGVAppointments.AllowUserToDeleteRows = False
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
-        Me.DGVAppointments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle4.BackColor = System.Drawing.Color.White
+        Me.DGVAppointments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
         Me.DGVAppointments.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DGVAppointments.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders
-        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle2.ForeColor = System.Drawing.Color.White
-        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVAppointments.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
+        DataGridViewCellStyle5.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle5.ForeColor = System.Drawing.Color.White
+        DataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight
+        DataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText
+        DataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVAppointments.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle5
         Me.DGVAppointments.ColumnHeadersHeight = 25
-        DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        DataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVAppointments.DefaultCellStyle = DataGridViewCellStyle3
+        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle6.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle6.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVAppointments.DefaultCellStyle = DataGridViewCellStyle6
         Me.DGVAppointments.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVAppointments.Location = New System.Drawing.Point(643, 164)
+        Me.DGVAppointments.Location = New System.Drawing.Point(493, 50)
         Me.DGVAppointments.Margin = New System.Windows.Forms.Padding(4)
         Me.DGVAppointments.Name = "DGVAppointments"
         Me.DGVAppointments.ReadOnly = True
@@ -240,7 +224,7 @@ Partial Class AdminDBAppointments
         Me.cmbStatus.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.cmbStatus.ItemHeight = 30
-        Me.cmbStatus.Location = New System.Drawing.Point(49, 421)
+        Me.cmbStatus.Location = New System.Drawing.Point(54, 140)
         Me.cmbStatus.Margin = New System.Windows.Forms.Padding(4)
         Me.cmbStatus.Name = "cmbStatus"
         Me.cmbStatus.Size = New System.Drawing.Size(365, 36)
@@ -251,7 +235,7 @@ Partial Class AdminDBAppointments
         Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1281, 15)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1453, 15)
         Me.Guna2CirclePictureBox1.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
@@ -276,7 +260,7 @@ Partial Class AdminDBAppointments
         Me.Guna2GroupBox1.Controls.Add(Me.clbServices)
         Me.Guna2GroupBox1.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.Guna2GroupBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(125, Byte), Integer), CType(CType(137, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2GroupBox1.Location = New System.Drawing.Point(74, 200)
+        Me.Guna2GroupBox1.Location = New System.Drawing.Point(54, 183)
         Me.Guna2GroupBox1.Name = "Guna2GroupBox1"
         Me.Guna2GroupBox1.Size = New System.Drawing.Size(365, 254)
         Me.Guna2GroupBox1.TabIndex = 21
@@ -289,7 +273,7 @@ Partial Class AdminDBAppointments
         Me.btnBack.FillColor = System.Drawing.Color.LightGray
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1275, 29)
+        Me.btnBack.Location = New System.Drawing.Point(1447, 29)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.btnBack.Size = New System.Drawing.Size(60, 58)
@@ -307,7 +291,7 @@ Partial Class AdminDBAppointments
         Me.CmbDent.Font = New System.Drawing.Font("Segoe UI", 12.0!)
         Me.CmbDent.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.CmbDent.ItemHeight = 30
-        Me.CmbDent.Location = New System.Drawing.Point(74, 144)
+        Me.CmbDent.Location = New System.Drawing.Point(54, 96)
         Me.CmbDent.Margin = New System.Windows.Forms.Padding(4)
         Me.CmbDent.Name = "CmbDent"
         Me.CmbDent.Size = New System.Drawing.Size(365, 36)
@@ -323,7 +307,7 @@ Partial Class AdminDBAppointments
         Me.BTNPayment.FillColor = System.Drawing.Color.White
         Me.BTNPayment.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.BTNPayment.ForeColor = System.Drawing.Color.Black
-        Me.BTNPayment.Location = New System.Drawing.Point(371, 768)
+        Me.BTNPayment.Location = New System.Drawing.Point(239, 696)
         Me.BTNPayment.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNPayment.Name = "BTNPayment"
         Me.BTNPayment.Size = New System.Drawing.Size(180, 45)
@@ -334,7 +318,7 @@ Partial Class AdminDBAppointments
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1377, 782)
+        Me.ClientSize = New System.Drawing.Size(1549, 895)
         Me.ControlBox = False
         Me.Controls.Add(Me.BTNPayment)
         Me.Controls.Add(Me.CmbDent)
@@ -347,7 +331,6 @@ Partial Class AdminDBAppointments
         Me.Controls.Add(Me.BTNUpdate)
         Me.Controls.Add(Me.BTNAdd)
         Me.Controls.Add(Me.DtpEndTime)
-        Me.Controls.Add(Me.CmbDentist)
         Me.Controls.Add(Me.dtpStartTime)
         Me.Controls.Add(Me.DtpDate)
         Me.Controls.Add(Me.CmbPatient)
@@ -365,7 +348,6 @@ Partial Class AdminDBAppointments
     End Sub
 
     Friend WithEvents CmbPatient As Guna.UI2.WinForms.Guna2ComboBox
-    Friend WithEvents CmbDentist As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents DtpDate As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents dtpStartTime As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents DtpEndTime As Guna.UI2.WinForms.Guna2DateTimePicker
