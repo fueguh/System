@@ -17,7 +17,7 @@ Public Class AdminDBPatients
             con.Open()
 
             Dim query As String = "
-            SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address
+            SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address,DateRegistered
             FROM Patients
             WHERE IsActive = 1
             ORDER BY PatientID

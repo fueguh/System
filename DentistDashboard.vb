@@ -23,6 +23,7 @@ Public Class DentistDashboard
             Case "tabPatientManagement"
                 ' Refresh the Patient Management DataGridView
                 LoadPatientsGrid()
+
         End Select
     End Sub
 
@@ -78,7 +79,8 @@ ORDER BY A.Date DESC;
             Dim query As String = "
                 SELECT PatientID, FullName, BirthDate, ContactNumber, Email,Address,DateRegistered
                 FROM Patients
-                ORDER BY FullName
+                where IsActive=1
+                ORDER BY PatientID
             "
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()

@@ -16,32 +16,39 @@ Public Module SystemSession
                     Optional fullName As String = "",
                     Optional role As String = "Unknown")
 
-        Dim auditUserID As Integer = If(userId = 0, LoggedInUserID, userId)
-        Dim auditFullName As String = If(fullName = "", LoggedInFullName, fullName)
-        Dim auditRole As String = If(role = "Unknown", LoggedInRole, role)
+        ' Use provided info, or fallback to session info
+        Dim auditUserID As Integer = If(userId <> 0, userId, LoggedInUserID)
+        Dim auditFullName As String = If(fullName <> "", fullName, LoggedInFullName)
+        Dim auditRole As String = If(role <> "Unknown", role, LoggedInRole)
 
-        ' Safety check: prevent FK violation
-        If userId <= 0 Then
-            ' Instead of throwing, just skip logging or log to fallback
-            Debug.Print($"Audit skipped: invalid UserID for action '{action}' in {moduleName}")
-            Return
+        ' If still invalid, use SYSTEM fallback
+        If auditUserID <= 0 Then
+            auditUserID = -1
+            auditFullName = "SYSTEM"
+            auditRole = "System"
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
-            con.Open()
-            Dim cmd As New SqlCommand("
-            INSERT INTO AuditTrail
-            (UserID, FullName, Role, Action, Module, Timestamp)
-            VALUES
-            (@UserID, @FullName, @Role, @Action, @Module, GETDATE())", con)
-            cmd.Parameters.AddWithValue("@UserID", auditUserID)
-            cmd.Parameters.AddWithValue("@FullName", auditFullName)
-            cmd.Parameters.AddWithValue("@Role", auditRole)
-            cmd.Parameters.AddWithValue("@Action", action)
-            cmd.Parameters.AddWithValue("@Module", moduleName)
-            cmd.ExecuteNonQuery()
-        End Using
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                con.Open()
+                Dim cmd As New SqlCommand("
+                INSERT INTO AuditTrail
+                (UserID, FullName, Role, Action, Module, Timestamp)
+                VALUES
+                (@UserID, @FullName, @Role, @Action, @Module, GETDATE())", con)
+                cmd.Parameters.AddWithValue("@UserID", auditUserID)
+                cmd.Parameters.AddWithValue("@FullName", auditFullName)
+                cmd.Parameters.AddWithValue("@Role", auditRole)
+                cmd.Parameters.AddWithValue("@Action", action)
+                cmd.Parameters.AddWithValue("@Module", moduleName)
+                cmd.ExecuteNonQuery()
+            End Using
+        Catch ex As Exception
+            ' If audit logging fails, write to debug console
+            Debug.Print($"Failed to log audit: {ex.Message}")
+        End Try
     End Sub
+
 
     ' Convenience wrappers
     Public Sub LogLogin()
@@ -51,27 +58,40 @@ Public Module SystemSession
     End Sub
 
     Public Sub PerformLogout(moduleName As String)
-        ' 1️⃣ End DB session for this device
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
-            con.Open()
-            Dim cmd As New SqlCommand("
-            UPDATE UserSessions
-            SET IsActive = 0
-            WHERE DeviceName = @deviceName AND IsActive = 1", con)
-            cmd.Parameters.AddWithValue("@deviceName", CurrentDeviceName)
-            cmd.ExecuteNonQuery()
-        End Using
+        ' Capture user info before clearing session
+        Dim userId As Integer = LoggedInUserID
+        Dim fullName As String = LoggedInFullName
+        Dim role As String = LoggedInRole
 
-        ' 2️⃣ Log the logout event
-        LogAudit("Logout Success", moduleName)
+        Try
+            ' 1️⃣ End DB session for this device
+            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                con.Open()
+                Dim cmd As New SqlCommand("
+                UPDATE UserSessions
+                SET IsActive = 0
+                WHERE DeviceName = @deviceName AND IsActive = 1", con)
+                cmd.Parameters.AddWithValue("@deviceName", CurrentDeviceName)
+                cmd.ExecuteNonQuery()
+            End Using
 
-        ' 3️⃣ Clear the in-memory session
-        LoggedInUserID = 0
-        LoggedInFullName = ""
-        LoggedInRole = ""
-        CurrentSessionToken = ""
-        Login.Show()
+            ' 2️⃣ Log the logout event
+            LogAudit("Logout Success", moduleName, userId, fullName, role)
+
+        Catch ex As Exception
+            MessageBox.Show("Error during logout: " & ex.Message)
+        Finally
+            ' 3️⃣ Clear in-memory session
+            LoggedInUserID = 0
+            LoggedInFullName = ""
+            LoggedInRole = ""
+            CurrentSessionToken = ""
+
+            ' 4️⃣ Show login form
+            Login.Show()
+        End Try
     End Sub
+
     ' Navigation to dashboards based on role
     Public Sub NavigateToDashboard(currentForm As Form)
         Select Case LoggedInRole
