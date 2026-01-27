@@ -86,7 +86,7 @@ Partial Class Login
         Me.btnLogin.FillColor = System.Drawing.Color.White
         Me.btnLogin.Font = New System.Drawing.Font("Tahoma", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnLogin.ForeColor = System.Drawing.Color.DimGray
-        Me.btnLogin.Location = New System.Drawing.Point(123, 304)
+        Me.btnLogin.Location = New System.Drawing.Point(123, 328)
         Me.btnLogin.Name = "btnLogin"
         Me.btnLogin.Size = New System.Drawing.Size(180, 45)
         Me.btnLogin.TabIndex = 3
@@ -111,7 +111,7 @@ Partial Class Login
         Me.Guna2Button1.FillColor = System.Drawing.Color.White
         Me.Guna2Button1.Font = New System.Drawing.Font("Tahoma", 12.0!)
         Me.Guna2Button1.ForeColor = System.Drawing.Color.DimGray
-        Me.Guna2Button1.Location = New System.Drawing.Point(123, 391)
+        Me.Guna2Button1.Location = New System.Drawing.Point(123, 419)
         Me.Guna2Button1.Name = "Guna2Button1"
         Me.Guna2Button1.Size = New System.Drawing.Size(180, 45)
         Me.Guna2Button1.TabIndex = 4
@@ -125,11 +125,12 @@ Partial Class Login
         Me.CheckBoxShowPassword.CheckedState.BorderThickness = 0
         Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
         Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
-        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Papyrus", 8.25!)
-        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(319, 253)
+        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(87, 246)
         Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
-        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(15, 14)
+        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(141, 24)
         Me.CheckBoxShowPassword.TabIndex = 7
+        Me.CheckBoxShowPassword.Text = "Show Password"
         Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.White
         Me.CheckBoxShowPassword.UncheckedState.BorderRadius = 7
         Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 0
@@ -144,7 +145,7 @@ Partial Class Login
         Me.chkRememberMe.CheckedState.FillColor = System.Drawing.Color.White
         Me.chkRememberMe.CheckMarkColor = System.Drawing.Color.Black
         Me.chkRememberMe.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.chkRememberMe.Location = New System.Drawing.Point(150, 260)
+        Me.chkRememberMe.Location = New System.Drawing.Point(149, 379)
         Me.chkRememberMe.Name = "chkRememberMe"
         Me.chkRememberMe.Size = New System.Drawing.Size(133, 24)
         Me.chkRememberMe.TabIndex = 2
