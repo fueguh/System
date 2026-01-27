@@ -250,6 +250,7 @@ Partial Class AdminDBPayment
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1179, 702)
+        Me.ControlBox = False
         Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
         Me.Controls.Add(Me.CmbPatient)
@@ -261,7 +262,9 @@ Partial Class AdminDBPayment
         Me.Controls.Add(Me.ComboBoxPaymentMethod)
         Me.Controls.Add(Me.TextBoxTotal)
         Me.Controls.Add(Me.CmbService)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBPayment"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBPayment"
         CType(Me.DGVServices, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).EndInit()
