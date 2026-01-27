@@ -168,4 +168,8 @@ Public Class Login
         txtPassword.UseSystemPasswordChar = Not CheckBoxShowPassword.Checked
     End Sub
 
+    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+        Dim reg As New AdminDBUsers()
+        reg.ShowDialog()
+    End Sub
 End Class
