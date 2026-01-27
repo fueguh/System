@@ -5,7 +5,7 @@ Imports System.Text
 Public Class AdminDBUsers
     Private selectedUserID As Integer = 0
     Private Function HashPassword(password As String) As String
-        Using sha256 As SHA256 = SHA256.Create()
+        Using sha256 As SHA256 = sha256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
             Dim hash As Byte() = sha256.ComputeHash(bytes)
             Return BitConverter.ToString(hash).Replace("-", "").ToLower()
@@ -112,9 +112,6 @@ Public Class AdminDBUsers
         Clearform()
     End Sub
 
-
-
-
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
         ' ✅ Only Admin can update users
         If Not SystemSession.RequireAdmin("update users") Then Exit Sub
@@ -126,7 +123,23 @@ Public Class AdminDBUsers
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
-            Dim query As String = "
+            ' Decide query depending on whether password is entered, to avoid updating password with blank.
+            Dim query As String
+            If String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                ' Password not changed
+                query = "
+            UPDATE Users
+            SET FullName=@fullname,
+                Username=@username,
+                Role=@role,
+                Specialization=@specialization,
+                Availability=@availability,
+                PhoneNumber=@phone,
+                Email=@email
+            WHERE UserID=@id"
+            Else
+                ' Password changed
+                query = "
             UPDATE Users
             SET FullName=@fullname,
                 Username=@username,
@@ -137,6 +150,7 @@ Public Class AdminDBUsers
                 PhoneNumber=@phone,
                 Email=@email
             WHERE UserID=@id"
+            End If
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedUserID)
@@ -174,7 +188,7 @@ Public Class AdminDBUsers
         Clearform()
     End Sub
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
-        ' Prevent deletion unless an Admin is logged in
+        ' Only Admin can delete users
         If Not SystemSession.RequireAdmin("delete users") Then Exit Sub
 
         If selectedUserID = 0 Then
@@ -183,49 +197,80 @@ Public Class AdminDBUsers
         End If
 
         Try
-            ' Delete the user
-            Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            Using con As New SqlConnection(My.Settings.DentalDBConnection)
                 con.Open()
-                Dim query As String = "DELETE FROM Users WHERE UserID=@id"
-                Using cmd As New SqlCommand(query, con)
+
+                ' First, remove any active sessions for this user to avoid locked sessions
+                Using cmd As New SqlCommand("DELETE FROM UserSessions WHERE UserID=@id", con)
+                    cmd.Parameters.AddWithValue("@id", selectedUserID)
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                ' Then delete the user
+                Using cmd As New SqlCommand("DELETE FROM Users WHERE UserID=@id", con)
                     cmd.Parameters.AddWithValue("@id", selectedUserID)
                     cmd.ExecuteNonQuery()
                 End Using
             End Using
 
-            ' Check if Admins still exist
+            ' Always log the deletion BEFORE enforcing self-session
+            SystemSession.LogAudit("User Deleted", "User Management", selectedUserID)
+
+            ' Show success message
+            SystemSession.ShowSuccess("deleted")
+
+            ' Check if any Admins remain in the system
             If Not SystemSession.AdminExists() Then
                 SystemSession.LogAudit("All Admins Deleted", "User Management")
-            Else
-                SystemSession.ShowSuccess("deleted")
-                SystemSession.LogAudit("User Deleted", "User Management")
+                MessageBox.Show("Warning: No Admin accounts remain! Create a new Admin immediately.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             End If
 
-            ' Self-session enforcement
+            ' Self-session enforcement (logs out if deleted yourself)
             SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login)
+
+            ' Refresh users table
             LoadUsers()
             Clearform()
 
         Catch ex As SqlException
-            ' Handle foreign key violation (appointments linked to user)
+            ' Handle foreign key violations (linked data like appointments)
             If ex.Number = 547 Then
-                MessageBox.Show("Cannot delete this user because they have linked appointments.")
-                SystemSession.LogAudit("Delete blocked due to linked appointments", "User Management")
+                Dim tableName As String = "unknown table"
+                Dim match = System.Text.RegularExpressions.Regex.Match(ex.Message, "constraint ""?(\w+)""?")
+                If match.Success Then
+                    Dim fkName = match.Groups(1).Value
+                    ' Look up parent table
+                    Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                        con.Open()
+                        Using cmd As New SqlCommand("SELECT OBJECT_NAME(parent_object_id) FROM sys.foreign_keys WHERE name=@fkName", con)
+                            cmd.Parameters.AddWithValue("@fkName", fkName)
+                            Dim obj = cmd.ExecuteScalar()
+                            If obj IsNot Nothing Then tableName = obj.ToString()
+                        End Using
+                    End Using
+                End If
+
+                MessageBox.Show($"Cannot delete this user because they have linked data in table: {tableName}.", "Delete Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                SystemSession.LogAudit($"Delete blocked due to linked data in {tableName}", "User Management")
+
             Else
-                MessageBox.Show("Database error: " & ex.Message)
+                MessageBox.Show("Database error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 SystemSession.LogAudit("Delete failed: " & ex.Message, "User Management")
             End If
+
         Catch ex As Exception
-            ' Catch any other unexpected errors
-            MessageBox.Show("Unexpected error: " & ex.Message)
+            ' Catch any unexpected errors
+            MessageBox.Show("Unexpected error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             SystemSession.LogAudit("Unexpected delete error: " & ex.Message, "User Management")
         End Try
     End Sub
 
 
 
+
+
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)

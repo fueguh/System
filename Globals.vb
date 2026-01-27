@@ -133,6 +133,8 @@ Public Module SystemSession
             currentForm.Close()
             MessageBox.Show("Your session has ended. You have been logged out.",
                         "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            'log audit for forced logout
+            LogAudit("Forced Logout after user account change", "Users", oldUserID, oldFullName, oldRole)
         End If
     End Sub
 
