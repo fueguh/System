@@ -5,6 +5,7 @@ Public Class AdminDBAppointments
     Private selectedAppointmentID As Integer = 0
     Public Shared Dashboard As AdminDashboard
     Public Shared AdminDBReports As AdminDBReports
+
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupStatusCombo()
         LoadComboBoxes()
@@ -22,6 +23,7 @@ Public Class AdminDBAppointments
         DtpEndTime.Format = DateTimePickerFormat.Time
         DtpEndTime.ShowUpDown = True
     End Sub
+
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
         cmbStatus.Items.Add("Pending")
@@ -33,7 +35,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadComboBoxes()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' ================= PATIENTS =================
@@ -64,9 +66,11 @@ Public Class AdminDBAppointments
             rowDentist("FullName") = "— Select Dentist —"
             dtDentists.Rows.InsertAt(rowDentist, 0)
 
-            CmbDentist.DataSource = dtDentists
-            CmbDentist.DisplayMember = "FullName"
-            CmbDentist.ValueMember = "UserID"
+            CmbDent.DataSource = dtDentists
+            CmbDent.DisplayMember = "FullName"
+            CmbDent.ValueMember = "UserID"
+            CmbDent.SelectedIndex = -1 ' Optional: start with no selection
+
 
             ' ================= SERVICES (MULTI) =================
             Dim dtServices As New DataTable()
@@ -81,7 +85,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadAppointments()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -118,9 +122,9 @@ Public Class AdminDBAppointments
         End If
 
         ' Dentist
-        If CmbDentist.SelectedValue Is Nothing OrElse CInt(CmbDentist.SelectedValue) = 0 Then
+        If CmbDent.SelectedValue Is Nothing OrElse CInt(CmbDent.SelectedValue) = 0 Then
             MessageBox.Show("Please select a dentist.")
-            CmbDentist.Focus()
+            CmbDent.Focus()
             Return False
         End If
 
@@ -149,7 +153,7 @@ Public Class AdminDBAppointments
     End Function
 
     Private Function IsConflict(Optional appointmentID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -165,7 +169,7 @@ Public Class AdminDBAppointments
         "
 
             Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@dentist", CInt(CmbDentist.SelectedValue))
+            cmd.Parameters.AddWithValue("@dentist", CInt(CmbDent.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
@@ -186,7 +190,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' --- Insert appointment (without single ServiceID) ---
@@ -198,7 +202,7 @@ Public Class AdminDBAppointments
 
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
-            cmd.Parameters.AddWithValue("@d", CInt(CmbDentist.SelectedValue))
+            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
@@ -252,7 +256,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' Update appointment (no ServiceID column)
@@ -266,7 +270,7 @@ Public Class AdminDBAppointments
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
             cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
-            cmd.Parameters.AddWithValue("@d", CInt(CmbDentist.SelectedValue))
+            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
             cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
             cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
@@ -316,7 +320,7 @@ Public Class AdminDBAppointments
         If MessageBox.Show("Are you sure you want to delete this appointment?",
                            "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "DELETE FROM Appointments WHERE AppointmentID=@id"
@@ -355,7 +359,7 @@ Public Class AdminDBAppointments
 
             ' Populate patient and dentist
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDentist.Text = row.Cells("Dentist").Value.ToString()
+            CmbDent.Text = row.Cells("Dentist").Value.ToString()
 
             ' Populate date and time
             DtpDate.Value = CDate(row.Cells("Date").Value)
@@ -400,7 +404,7 @@ Public Class AdminDBAppointments
 
             ' Populate patient and dentist
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDentist.Text = row.Cells("Dentist").Value.ToString()
+            CmbDent.Text = row.Cells("Dentist").Value.ToString()
 
             ' Populate date and time
             DtpDate.Value = CDate(row.Cells("Date").Value)
@@ -420,7 +424,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub SaveAppointmentServices(appointmentID As Integer)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             For Each item As DataRowView In clbServices.CheckedItems
@@ -443,7 +447,7 @@ Public Class AdminDBAppointments
             clbServices.SetItemChecked(i, False)
         Next
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim cmd As New SqlCommand(
@@ -467,7 +471,25 @@ Public Class AdminDBAppointments
         End Using
     End Sub
 
-    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
+    End Sub
+
+    Private Sub BTNPayment_Click(sender As Object, e As EventArgs) Handles BTNPayment.Click
+        If DGVAppointments.CurrentRow Is Nothing Then
+            MessageBox.Show("Please select an appointment first.")
+            Exit Sub
+        End If
+
+        ' ✅ Adjust column names to match your DataGridView
+        Dim selectedAppointmentIDFromGrid As Integer = CInt(DGVAppointments.CurrentRow.Cells("AppointmentID").Value)
+        Dim selectedPatientIDFromGrid As Integer = CInt(DGVAppointments.CurrentRow.Cells("PatientID").Value)
+        Dim selectedPatientNameFromGrid As String = DGVAppointments.CurrentRow.Cells("FullName").Value.ToString()
+
+        Dim paymentForm As New AdminDBPayment()
+        paymentForm.SelectedAppointmentID = selectedAppointmentIDFromGrid
+        paymentForm.SelectedPatientID = selectedPatientIDFromGrid
+        paymentForm.SelectedPatientName = selectedPatientNameFromGrid
+        paymentForm.Show()
     End Sub
 End Class

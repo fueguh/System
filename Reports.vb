@@ -2,7 +2,7 @@
 
 Public Class Reports
     Private Sub BtnDailyAppointments_Click(sender As Object, e As EventArgs) Handles BtnDailyAppointments.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -28,7 +28,7 @@ Public Class Reports
     End Sub
 
     Private Sub BtnMonthlyRevenue_Click(sender As Object, e As EventArgs) Handles BtnMonthlyRevenue.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -48,7 +48,7 @@ Public Class Reports
     End Sub
 
     Private Sub BtnDentistPerformance_Click(sender As Object, e As EventArgs) Handles BtnDentistPerformance.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -70,7 +70,7 @@ Public Class Reports
     End Sub
 
     Private Sub BtnPatientCount_Click(sender As Object, e As EventArgs) Handles BtnPatientCount.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "SELECT COUNT(PatientID) AS TotalPatients FROM Patients"

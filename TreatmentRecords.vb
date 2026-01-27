@@ -1,8 +1,8 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class TreatmentRecords
-    Public Property currentUserRole As String
-    Public Property currentUserID As Integer
+    Public Property CurrentUserRole As String
+    Public Property CurrentUserID As Integer
 
     Private Sub TreatmentRecords_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadRecords()
@@ -31,7 +31,7 @@ Public Class TreatmentRecords
     End Sub
 
     Private Sub LoadPatients()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "SELECT PatientID, FullName FROM Patients"
@@ -45,7 +45,7 @@ Public Class TreatmentRecords
         End Using
     End Sub
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -64,15 +64,15 @@ Public Class TreatmentRecords
         End Using
     End Sub
     Private Sub LoadRecords()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
             SELECT TR.RecordID, P.FullName AS Patient, U.FullName AS Dentist,
-                   TR.Treatment, TR.Prescriptions, TR.Procedures, TR.ImagePath, TR.DateCreated
+                   TR.TreatmentNotes, TR.Prescriptions, TR.ProceduresDone, TR.ImagePath, TR.DateCreated
             FROM TreatmentRecords TR
             JOIN Patients P ON TR.PatientID = P.PatientID
-            JOIN Users U ON TR.UserID = U.UserID
+            JOIN Users U ON TR.RecordID = U.UserID
         "
 
             Dim da As New SqlDataAdapter(query, con)
@@ -85,7 +85,7 @@ Public Class TreatmentRecords
     Private imagePath As String = ""
 
     Private Sub BtnSaveRecord_Click(sender As Object, e As EventArgs) Handles BtnSaveRecord.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "

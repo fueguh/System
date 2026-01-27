@@ -13,16 +13,20 @@ Public Class AdminDBPatients
         End If
     End Sub
     Private Sub LoadPatients()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
-            Dim query As String = "SELECT * FROM Patients ORDER BY FullName"
+            Dim query As String = "
+            SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address
+            FROM Patients
+            WHERE IsActive = 1
+            ORDER BY PatientID
+        "
 
-            Using da As New SqlDataAdapter(query, con)
-                Dim dt As New DataTable()
-                da.Fill(dt)
-                DGVPatients.DataSource = dt
-            End Using
+            Dim da As New SqlDataAdapter(query, con)
+            Dim dt As New DataTable()
+            da.Fill(dt)
+            DGVPatients.DataSource = dt
         End Using
     End Sub
 
@@ -54,7 +58,7 @@ Public Class AdminDBPatients
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -90,7 +94,7 @@ Public Class AdminDBPatients
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -132,13 +136,13 @@ Public Class AdminDBPatients
         If MessageBox.Show("Are you sure you want to delete this patient?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
-            Dim query As String = "DELETE FROM Patients WHERE PatientID=@id"
+            Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
 
             Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedPatientID)
+                cmd.Parameters.AddWithValue("@PatientID", selectedPatientID)
                 cmd.ExecuteNonQuery()
             End Using
         End Using
@@ -156,6 +160,17 @@ Public Class AdminDBPatients
         'to reload the system overview in admin dashboard after input
         Dashboard?.LoadDashboardStats()
     End Sub
+
+    Private Sub DeactivatePatient(patientId As Integer)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+            Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
+            Dim cmd As New SqlCommand(query, con)
+            cmd.Parameters.AddWithValue("@PatientID", patientId)
+            cmd.ExecuteNonQuery()
+        End Using
+    End Sub
+
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)

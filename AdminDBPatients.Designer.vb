@@ -77,6 +77,7 @@ Partial Class AdminDBPatients
         '
         'txtContact
         '
+        Me.txtContact.BorderRadius = 6
         Me.txtContact.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtContact.DefaultText = ""
         Me.txtContact.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -98,6 +99,7 @@ Partial Class AdminDBPatients
         '
         'txtEmail
         '
+        Me.txtEmail.BorderRadius = 6
         Me.txtEmail.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtEmail.DefaultText = ""
         Me.txtEmail.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
