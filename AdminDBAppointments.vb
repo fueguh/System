@@ -26,12 +26,13 @@ Public Class AdminDBAppointments
 
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
+        cmbStatus.Items.Add("— Select Status —") ' placeholder at index 0
         cmbStatus.Items.Add("Pending")
         cmbStatus.Items.Add("Confirmed")
         cmbStatus.Items.Add("Completed")
         cmbStatus.Items.Add("Cancelled")
         cmbStatus.Items.Add("No-Show")
-        cmbStatus.SelectedIndex = 0
+        cmbStatus.SelectedIndex = 0 ' start with placeholder
     End Sub
 
     Private Sub LoadComboBoxes()
@@ -69,7 +70,7 @@ Public Class AdminDBAppointments
             CmbDent.DataSource = dtDentists
             CmbDent.DisplayMember = "FullName"
             CmbDent.ValueMember = "UserID"
-            CmbDent.SelectedIndex = -1 ' Optional: start with no selection
+            CmbDent.SelectedIndex = 0 ' Optional: start with no selection
 
 
             ' ================= SERVICES (MULTI) =================
@@ -89,19 +90,34 @@ Public Class AdminDBAppointments
             con.Open()
 
             Dim query As String = "
-             SELECT A.AppointmentID,
-                P.FullName AS Patient,
-                D.FullName AS Dentist,
-                STRING_AGG(S.ServiceName, ', ') AS Services,
-                A.Date, A.StartTime, A.EndTime, A.Status
-            FROM Appointments A
-            JOIN Patients P ON A.PatientID = P.PatientID
-            JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-            JOIN Services S ON ASV.ServiceID = S.ServiceID
-            GROUP BY A.AppointmentID, P.FullName, D.FullName,
-         A.Date, A.StartTime, A.EndTime, A.Status
-         ORDER BY A.Date DESC
+             SELECT
+    A.AppointmentID,
+    A.PatientID,
+    A.UserID,
+    P.FullName AS Patient,
+    D.FullName AS Dentist,
+    STRING_AGG(S.ServiceName, ', ') AS Services,
+    A.Date,
+    A.StartTime,
+    A.EndTime,
+    A.Status
+FROM Appointments A
+JOIN Patients P ON A.PatientID = P.PatientID
+JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+JOIN Services S ON ASV.ServiceID = S.ServiceID
+GROUP BY
+    A.AppointmentID,
+    A.PatientID,
+    A.UserID,
+    P.FullName,
+    D.FullName,
+    A.Date,
+    A.StartTime,
+    A.EndTime,
+    A.Status
+ORDER BY A.Date DESC;
+
 
        "
 
@@ -357,11 +373,23 @@ Public Class AdminDBAppointments
             ' Capture the AppointmentID
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-            ' Populate patient and dentist
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDent.Text = row.Cells("Dentist").Value.ToString()
+            ' ----------------- PATIENT -----------------
+            Dim patientID As Integer = CInt(row.Cells("PatientID").Value)
+            If CmbPatient.Items.Cast(Of DataRowView)().Any(Function(x) CInt(x("PatientID")) = patientID) Then
+                CmbPatient.SelectedValue = patientID
+            Else
+                CmbPatient.SelectedIndex = 0 ' fallback to "— Select Patient —"
+            End If
 
-            ' Populate date and time
+            ' ----------------- DENTIST -----------------
+            Dim dentistID As Integer = CInt(row.Cells("UserID").Value)
+            If CmbDent.Items.Cast(Of DataRowView)().Any(Function(x) CInt(x("UserID")) = dentistID) Then
+                CmbDent.SelectedValue = dentistID
+            Else
+                CmbDent.SelectedIndex = 0 ' fallback to "— Select Dentist —"
+            End If
+
+            ' ----------------- DATE & TIME -----------------
             DtpDate.Value = CDate(row.Cells("Date").Value)
             Try
                 dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
@@ -371,12 +399,19 @@ Public Class AdminDBAppointments
                 DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
             End Try
 
-            cmbStatus.Text = row.Cells("Status").Value.ToString()
+            ' ----------------- STATUS -----------------
+            Dim statusValue As String = row.Cells("Status").Value.ToString()
+            If cmbStatus.Items.Contains(statusValue) Then
+                cmbStatus.SelectedItem = statusValue
+            Else
+                cmbStatus.SelectedIndex = 0 ' fallback to "— Select Status —"
+            End If
 
-            ' ✅ Load services into CheckedListBox
+            ' ----------------- SERVICES -----------------
             LoadCheckedServices(selectedAppointmentID)
         End If
     End Sub
+
 
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
@@ -385,6 +420,7 @@ Public Class AdminDBAppointments
 
     Private Sub ClearForm()
         CmbPatient.SelectedIndex = 0
+        CmbDent.SelectedIndex = 0
         DtpDate.Value = Date.Today
         dtpStartTime.Value = Date.Now
         DtpEndTime.Value = Date.Now.AddMinutes(30)
@@ -403,8 +439,8 @@ Public Class AdminDBAppointments
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
             ' Populate patient and dentist
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDent.Text = row.Cells("Dentist").Value.ToString()
+            CmbPatient.SelectedValue = row.Cells("PatientID").Value
+            CmbDent.SelectedValue = row.Cells("UserID").Value
 
             ' Populate date and time
             DtpDate.Value = CDate(row.Cells("Date").Value)

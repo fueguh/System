@@ -54,7 +54,7 @@ Partial Class AdminDBAppointments
         Me.CmbPatient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.CmbPatient.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.CmbPatient.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.CmbPatient.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.CmbPatient.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CmbPatient.ForeColor = System.Drawing.Color.FromArgb(CType(CType(68, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(112, Byte), Integer))
         Me.CmbPatient.ItemHeight = 30
         Me.CmbPatient.Location = New System.Drawing.Point(54, 53)
