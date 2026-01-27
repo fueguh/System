@@ -26,6 +26,7 @@ Partial Class AdminDBPayment
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBPayment))
         Me.Guna2AnimateWindow1 = New Guna.UI2.WinForms.Guna2AnimateWindow(Me.components)
         Me.CmbService = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.TextBoxTotal = New Guna.UI2.WinForms.Guna2TextBox()
@@ -37,7 +38,9 @@ Partial Class AdminDBPayment
         Me.DGVServices = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.CmbPatient = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         CType(Me.DGVServices, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'CmbService
@@ -172,12 +175,12 @@ Partial Class AdminDBPayment
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
         Me.DGVServices.DefaultCellStyle = DataGridViewCellStyle3
         Me.DGVServices.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVServices.Location = New System.Drawing.Point(364, 55)
+        Me.DGVServices.Location = New System.Drawing.Point(359, 102)
         Me.DGVServices.Name = "DGVServices"
         Me.DGVServices.ReadOnly = True
         Me.DGVServices.RowHeadersVisible = False
         Me.DGVServices.RowHeadersWidth = 51
-        Me.DGVServices.Size = New System.Drawing.Size(717, 540)
+        Me.DGVServices.Size = New System.Drawing.Size(771, 540)
         Me.DGVServices.TabIndex = 26
         Me.DGVServices.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVServices.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -227,11 +230,27 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel2.TabIndex = 28
         Me.Guna2HtmlLabel2.Text = "Patient Name"
         '
+        'btnBack
+        '
+        Me.btnBack.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnBack.BackColor = System.Drawing.Color.Transparent
+        Me.btnBack.FillColor = System.Drawing.Color.LightGray
+        Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
+        Me.btnBack.ImageRotate = 0!
+        Me.btnBack.Location = New System.Drawing.Point(1107, 12)
+        Me.btnBack.Name = "btnBack"
+        Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
+        Me.btnBack.Size = New System.Drawing.Size(60, 58)
+        Me.btnBack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.btnBack.TabIndex = 29
+        Me.btnBack.TabStop = False
+        '
         'AdminDBPayment
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1132, 702)
+        Me.ClientSize = New System.Drawing.Size(1179, 702)
+        Me.Controls.Add(Me.btnBack)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
         Me.Controls.Add(Me.CmbPatient)
         Me.Controls.Add(Me.DGVServices)
@@ -245,6 +264,7 @@ Partial Class AdminDBPayment
         Me.Name = "AdminDBPayment"
         Me.Text = "AdminDBPayment"
         CType(Me.DGVServices, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.btnBack, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -261,4 +281,5 @@ Partial Class AdminDBPayment
     Friend WithEvents DGVServices As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents CmbPatient As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
 End Class
