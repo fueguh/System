@@ -67,19 +67,19 @@ Public Class TreatmentRecords
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
- SELECT TR.RecordID,
-    P.FullName AS Patient,
-     U.FullName AS Dentist,
-     TR.Treatment,
-     TR.Prescriptions,
-     TR.Procedures,
-     TR.ImagePath,
-     TR.DateCreated
-  FROM TreatmentRecords TR
-  JOIN Patients P ON TR.PatientID = P.PatientID
-  JOIN Users U ON TR.UserID = U.UserID
-"
+ SELECT PD.RecordID,
+        P.FullName AS Patient,
+        U.FullName AS Dentist,
+        PD.TreatmentNotes,
+        PD.Prescriptions,
+        PD.ProceduresDone,
+        PD.ImagePath,
+        PD.DateCreated
+ FROM TreatmentRecords PD
+JOIN Patients P ON PD.PatientID = P.PatientID
+JOIN Users U ON PD.UserID = U.UserID
 
+"
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
@@ -94,8 +94,9 @@ Public Class TreatmentRecords
             con.Open()
 
             Dim query As String = "
-    INSERT INTO ProceduresDone (PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
-    VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
+    INSERT INTO TreatmentRecords (PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
+VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
+
 "
 
             Dim cmd As New SqlCommand(query, con)
