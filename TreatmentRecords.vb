@@ -66,14 +66,20 @@ Public Class TreatmentRecords
     Private Sub LoadRecords()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
-
             Dim query As String = "
-            SELECT TR.RecordID, P.FullName AS Patient, U.FullName AS Dentist,
-                   TR.Treatment, TR.Prescriptions, TR.Procedures, TR.ImagePath, TR.DateCreated
-            FROM TreatmentRecords TR
-            JOIN Patients P ON TR.PatientID = P.PatientID
-            JOIN Users U ON TR.RecordID = U.UserID
-        "
+             SELECT TR.RecordID,
+                P.FullName AS Patient,
+                 U.FullName AS Dentist,
+                 TR.Treatment,
+                 TR.Prescriptions,
+                 TR.Procedures,
+                 TR.ImagePath,
+                 TR.DateCreated
+              FROM TreatmentRecords TR
+              JOIN Patients P ON TR.PatientID = P.PatientID
+              JOIN Users U ON TR.UserID = U.UserID
+"
+
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
