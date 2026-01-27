@@ -201,13 +201,13 @@ Partial Class DentistDashboard
         '
         Me.dgvAppointments.AllowUserToAddRows = False
         Me.dgvAppointments.AllowUserToDeleteRows = False
-        Me.dgvAppointments.AllowUserToResizeColumns = False
-        Me.dgvAppointments.AllowUserToResizeRows = False
         DataGridViewCellStyle4.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvAppointments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle4
         Me.dgvAppointments.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.dgvAppointments.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders
         Me.dgvAppointments.BackgroundColor = System.Drawing.SystemColors.ControlDark
         DataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))

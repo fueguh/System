@@ -30,21 +30,46 @@ Public Class DentistDashboard
     Private Sub LoadAppointmentsGrid()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
+
             Dim query As String = "
-                SELECT A.AppointmentID, P.FullName AS Patient, U.FullName AS Dentist,
-                       S.ServiceName, A.Date, A.StartTime, A.EndTime, A.Status
-                FROM Appointments A
-                JOIN Patients P ON A.PatientID = P.PatientID
-                JOIN Users U ON A.UserID = U.UserID AND U.Role = 'Dentist'
-                JOIN Services S ON A.ServiceID = S.ServiceID
-                ORDER BY A.Date DESC, A.StartTime ASC
-            "
+             SELECT
+    A.AppointmentID,
+    A.PatientID,
+    A.UserID,
+    P.FullName AS Patient,
+    D.FullName AS Dentist,
+    STRING_AGG(S.ServiceName, ', ') AS Services,
+    A.Date,
+    A.StartTime,
+    A.EndTime,
+    A.Status
+FROM Appointments A
+JOIN Patients P ON A.PatientID = P.PatientID
+JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+JOIN Services S ON ASV.ServiceID = S.ServiceID
+GROUP BY
+    A.AppointmentID,
+    A.PatientID,
+    A.UserID,
+    P.FullName,
+    D.FullName,
+    A.Date,
+    A.StartTime,
+    A.EndTime,
+    A.Status
+ORDER BY A.Date DESC;
+
+
+       "
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             dgvAppointments.DataSource = dt
         End Using
     End Sub
+
 
     ' === Load Patients into DataGridView ===
     Private Sub LoadPatientsGrid()

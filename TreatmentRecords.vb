@@ -69,7 +69,7 @@ Public Class TreatmentRecords
 
             Dim query As String = "
             SELECT TR.RecordID, P.FullName AS Patient, U.FullName AS Dentist,
-                   TR.TreatmentNotes, TR.Prescriptions, TR.ProceduresDone, TR.ImagePath, TR.DateCreated
+                   TR.Treatment, TR.Prescriptions, TR.Procedures, TR.ImagePath, TR.DateCreated
             FROM TreatmentRecords TR
             JOIN Patients P ON TR.PatientID = P.PatientID
             JOIN Users U ON TR.RecordID = U.UserID
