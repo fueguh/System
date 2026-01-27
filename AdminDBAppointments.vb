@@ -512,21 +512,28 @@ ORDER BY A.Date DESC;
     End Sub
 
     Private Sub BTNPayment_Click(sender As Object, e As EventArgs) Handles BTNPayment.Click
+
         If DGVAppointments.CurrentRow Is Nothing Then
             MessageBox.Show("Please select an appointment first.")
             Exit Sub
         End If
 
-        ' ✅ Adjust column names to match your DataGridView
-        Dim selectedAppointmentIDFromGrid As Integer = CInt(DGVAppointments.CurrentRow.Cells("AppointmentID").Value)
-        Dim selectedPatientIDFromGrid As Integer = CInt(DGVAppointments.CurrentRow.Cells("PatientID").Value)
-        Dim selectedPatientNameFromGrid As String = DGVAppointments.CurrentRow.Cells("FullName").Value.ToString()
+        Dim appointmentID As Integer =
+            CInt(DGVAppointments.CurrentRow.Cells("AppointmentID").Value)
+
+        Dim patientID As Integer =
+            CInt(DGVAppointments.CurrentRow.Cells("PatientID").Value)
+
+        Dim patientName As String =
+            DGVAppointments.CurrentRow.Cells("Patient").Value.ToString()
 
         Dim paymentForm As New AdminDBPayment()
-        paymentForm.SelectedAppointmentID = selectedAppointmentIDFromGrid
-        paymentForm.SelectedPatientID = selectedPatientIDFromGrid
-        paymentForm.SelectedPatientName = selectedPatientNameFromGrid
-        paymentForm.Show()
+        paymentForm.SelectedAppointmentID = appointmentID
+        paymentForm.SelectedPatientID = patientID
+        paymentForm.SelectedPatientName = patientName
+        paymentForm.ShowDialog()
+
     End Sub
+
 
 End Class
