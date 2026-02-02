@@ -160,7 +160,8 @@ Public Class AdminDBServices
             con.Open()
 
             ' Check if service is used in appointments
-            Dim checkCmd As New SqlCommand("SELECT COUNT(*) FROM Appointments WHERE ServiceID=@id", con)
+            Dim checkCmd As New SqlCommand("SELECT COUNT(*) FROM AppointmentServices WHERE ServiceID=@id", con)
+
             checkCmd.Parameters.AddWithValue("@id", selectedServiceID)
             Dim count As Integer = CInt(checkCmd.ExecuteScalar())
 
