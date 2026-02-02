@@ -159,9 +159,10 @@ Public Class AdminDBServices
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
+            ' Check if service is used in appointments
             Using checkCmd As New SqlCommand("SELECT COUNT(*) FROM AppointmentServices WHERE ServiceID=@id", con)
-                checkCmd.Parameters.Add("@id", SqlDbType.Int).Value = selectedServiceID
-                Dim count As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+                checkCmd.Parameters.AddWithValue("@id", selectedServiceID)
+                Dim count As Integer = CInt(checkCmd.ExecuteScalar())
 
                 If count > 0 Then
                     MessageBox.Show("This service is still used in appointments and cannot be deleted.")
@@ -169,11 +170,11 @@ Public Class AdminDBServices
                 End If
             End Using
 
-
             ' Safe delete
-            Dim deleteCmd As New SqlCommand("DELETE FROM Services WHERE ServiceID=@id", con)
-            deleteCmd.Parameters.AddWithValue("@id", selectedServiceID)
-            deleteCmd.ExecuteNonQuery()
+            Using deleteCmd As New SqlCommand("DELETE FROM Services WHERE ServiceID=@id", con)
+                deleteCmd.Parameters.AddWithValue("@id", selectedServiceID)
+                deleteCmd.ExecuteNonQuery()
+            End Using
         End Using
 
         MessageBox.Show("Service deleted successfully.")
@@ -181,6 +182,7 @@ Public Class AdminDBServices
         LoadServices()
         Clearform()
     End Sub
+
 
     Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DGVService.CellFormatting
         If DGVService.Columns(e.ColumnIndex).Name = "Duration" AndAlso e.Value IsNot Nothing AndAlso Not IsDBNull(e.Value) Then
