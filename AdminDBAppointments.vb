@@ -328,34 +328,43 @@ ORDER BY A.Date DESC;
     End Sub
 
     Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
-        If selectedAppointmentID = 0 Then
-            MessageBox.Show("Please select an appointment to delete.")
-            Exit Sub
-        End If
-
-        If MessageBox.Show("Are you sure you want to delete this appointment?",
-                           "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Exit Sub
-
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
-            Dim query As String = "DELETE FROM Appointments WHERE AppointmentID=@id"
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
+            Using trans = con.BeginTransaction()
+                Try
+                    ' 1️⃣ Delete linked services first
+                    Using cmdServices As New SqlCommand(
+                "DELETE FROM AppointmentServices WHERE AppointmentID=@id", con, trans)
+                        cmdServices.Parameters.AddWithValue("@id", selectedAppointmentID)
+                        cmdServices.ExecuteNonQuery()
+                    End Using
 
-            Try
-                cmd.ExecuteNonQuery()
-                MessageBox.Show("Appointment deleted successfully.")
-                ' ✅ Audit log entry
-                SystemSession.LogAudit("Appointment Deleted", "Appointment Management",
-                           SystemSession.LoggedInUserID,
-                           SystemSession.LoggedInFullName,
-                           SystemSession.LoggedInRole)
+                    ' 2️⃣ Delete appointment
+                    Using cmdAppt As New SqlCommand(
+                "DELETE FROM Appointments WHERE AppointmentID=@id", con, trans)
+                        cmdAppt.Parameters.AddWithValue("@id", selectedAppointmentID)
+                        cmdAppt.ExecuteNonQuery()
+                    End Using
 
-            Catch ex As Exception
-                MessageBox.Show("Error deleting appointment: " & ex.Message)
-            End Try
+                    trans.Commit()
+
+                    MessageBox.Show("Appointment deleted successfully.")
+
+                    SystemSession.LogAudit(
+                "Appointment Deleted",
+                "Appointment Management",
+                SystemSession.LoggedInUserID,
+                SystemSession.LoggedInFullName,
+                SystemSession.LoggedInRole)
+
+                Catch ex As Exception
+                    trans.Rollback()
+                    MessageBox.Show("Error deleting appointment: " & ex.Message)
+                End Try
+            End Using
         End Using
+
 
         ' ✅ Refresh UI
         LoadAppointments()

@@ -93,32 +93,32 @@ Partial Class AdminDashboard
         '
         Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm})
         Me.ManageForm.Name = "ManageForm"
-        Me.ManageForm.Size = New System.Drawing.Size(212, 44)
-        Me.ManageForm.Text = "Management"
+        Me.ManageForm.Size = New System.Drawing.Size(210, 44)
+        Me.ManageForm.Text = "Maintenance"
         '
         'ManageUsersForm
         '
         Me.ManageUsersForm.Name = "ManageUsersForm"
-        Me.ManageUsersForm.Size = New System.Drawing.Size(401, 44)
-        Me.ManageUsersForm.Text = "User Management"
+        Me.ManageUsersForm.Size = New System.Drawing.Size(399, 44)
+        Me.ManageUsersForm.Text = "User Maintenance"
         '
         'ManageDentistsForm
         '
         Me.ManageDentistsForm.Name = "ManageDentistsForm"
-        Me.ManageDentistsForm.Size = New System.Drawing.Size(401, 44)
-        Me.ManageDentistsForm.Text = "Dentist Management"
+        Me.ManageDentistsForm.Size = New System.Drawing.Size(399, 44)
+        Me.ManageDentistsForm.Text = "Dentist Maintenance"
         '
         'ManagePatientsForm
         '
         Me.ManagePatientsForm.Name = "ManagePatientsForm"
-        Me.ManagePatientsForm.Size = New System.Drawing.Size(401, 44)
-        Me.ManagePatientsForm.Text = "Patient Management"
+        Me.ManagePatientsForm.Size = New System.Drawing.Size(399, 44)
+        Me.ManagePatientsForm.Text = "Patient Maintenance"
         '
         'ManageServicesForm
         '
         Me.ManageServicesForm.Name = "ManageServicesForm"
-        Me.ManageServicesForm.Size = New System.Drawing.Size(401, 44)
-        Me.ManageServicesForm.Text = "Services Management"
+        Me.ManageServicesForm.Size = New System.Drawing.Size(399, 44)
+        Me.ManageServicesForm.Text = "Services Maintenance"
         '
         'AuditTrailToolStripMenuItem
         '
