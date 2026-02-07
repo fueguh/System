@@ -81,6 +81,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminDBItemManagement.Designer.vb">
+      <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBItemManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBPayment.Designer.vb">
       <DependentUpon>AdminDBPayment.vb</DependentUpon>
     </Compile>
@@ -206,6 +212,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBDentists.resx">
       <DependentUpon>AdminDBDentists.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBItemManagement.resx">
+      <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBPatients.resx">
       <DependentUpon>AdminDBPatients.vb</DependentUpon>

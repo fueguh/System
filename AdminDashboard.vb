@@ -125,8 +125,13 @@ Public Class AdminDashboard
         End Using
     End Sub
 
-    Private Sub ToolStripMenuItem3_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem3.Click
+    Private Sub ToolStripMenuItem3_Click(sender As Object, e As EventArgs)
         AdminDBPayment.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ItemManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ItemManagementToolStripMenuItem.Click
+        AdminDBItemManagement.Show()
         Me.Hide()
     End Sub
 End Class
