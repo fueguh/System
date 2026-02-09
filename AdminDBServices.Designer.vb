@@ -154,6 +154,10 @@ Partial Class AdminDBServices
         '
         'DGVService
         '
+        Me.DGVService.AllowUserToAddRows = False
+        Me.DGVService.AllowUserToDeleteRows = False
+        Me.DGVService.AllowUserToResizeColumns = False
+        Me.DGVService.AllowUserToResizeRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVService.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -164,8 +168,7 @@ Partial Class AdminDBServices
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVService.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVService.ColumnHeadersHeight = 15
-        Me.DGVService.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVService.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -177,7 +180,9 @@ Partial Class AdminDBServices
         Me.DGVService.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVService.Location = New System.Drawing.Point(386, 67)
         Me.DGVService.Name = "DGVService"
+        Me.DGVService.ReadOnly = True
         Me.DGVService.RowHeadersVisible = False
+        Me.DGVService.RowHeadersWidth = 51
         Me.DGVService.Size = New System.Drawing.Size(520, 438)
         Me.DGVService.TabIndex = 6
         Me.DGVService.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
@@ -191,9 +196,9 @@ Partial Class AdminDBServices
         Me.DGVService.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVService.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVService.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVService.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVService.ThemeStyle.HeaderStyle.Height = 15
-        Me.DGVService.ThemeStyle.ReadOnly = False
+        Me.DGVService.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVService.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVService.ThemeStyle.ReadOnly = True
         Me.DGVService.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVService.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVService.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -204,6 +209,7 @@ Partial Class AdminDBServices
         '
         'Guna2CirclePictureBox1
         '
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
@@ -220,6 +226,7 @@ Partial Class AdminDBServices
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1085, 674)
+        Me.ControlBox = False
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.DGVService)
         Me.Controls.Add(Me.BTNDelete)
@@ -228,6 +235,7 @@ Partial Class AdminDBServices
         Me.Controls.Add(Me.txtDuration)
         Me.Controls.Add(Me.txtPrice)
         Me.Controls.Add(Me.txtServiceName)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBServices"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBServices"

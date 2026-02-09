@@ -81,6 +81,25 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminDBItemManagement.Designer.vb">
+      <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBItemManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDBPayment.Designer.vb">
+      <DependentUpon>AdminDBPayment.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBPayment.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClinicSettings.Designer.vb">
+      <DependentUpon>ClinicSettings.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ClinicSettings.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Globals.vb" />
     <Compile Include="AdminDashboard.Designer.vb">
       <DependentUpon>AdminDashboard.vb</DependentUpon>
     </Compile>
@@ -123,13 +142,18 @@
     <Compile Include="AdminDBUsers.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AdminAuditTrailForm.Designer.vb">
+      <DependentUpon>AdminAuditTrailForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminAuditTrailForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DentistDashboard.Designer.vb">
       <DependentUpon>DentistDashboard.vb</DependentUpon>
     </Compile>
     <Compile Include="DentistDashboard.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Globals.vb" />
     <Compile Include="Login.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -141,6 +165,7 @@
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -149,9 +174,10 @@
     </Compile>
     <Compile Include="My Project\Settings.Designer.vb">
       <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="My Project\StaffDashboard.vb" />
     <Compile Include="Reports.Designer.vb">
       <DependentUpon>Reports.vb</DependentUpon>
     </Compile>
@@ -187,8 +213,14 @@
     <EmbeddedResource Include="AdminDBDentists.resx">
       <DependentUpon>AdminDBDentists.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBItemManagement.resx">
+      <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBPatients.resx">
       <DependentUpon>AdminDBPatients.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBPayment.resx">
+      <DependentUpon>AdminDBPayment.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBReports.resx">
       <DependentUpon>AdminDBReports.vb</DependentUpon>
@@ -198,6 +230,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBUsers.resx">
       <DependentUpon>AdminDBUsers.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminAuditTrailForm.resx">
+      <DependentUpon>AdminAuditTrailForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClinicSettings.resx">
+      <DependentUpon>ClinicSettings.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DentistDashboard.resx">
       <DependentUpon>DentistDashboard.vb</DependentUpon>
@@ -229,12 +267,12 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
+    <None Include="App.config" />
     <None Include="My Project\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>
+      <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

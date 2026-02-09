@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class AdminDBReports
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,9 +20,8 @@ Partial Class AdminDBReports
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBReports))
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
@@ -48,9 +47,9 @@ Partial Class AdminDBReports
         Dim DataGridViewCellStyle23 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle24 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle25 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBReports))
         Me.TabRep = New Guna.UI2.WinForms.Guna2TabControl()
         Me.TabDaily = New System.Windows.Forms.TabPage()
-        Me.Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.DGVDaily = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
         Me.DgvDentistWorkload = New Guna.UI2.WinForms.Guna2DataGridView()
@@ -61,14 +60,15 @@ Partial Class AdminDBReports
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.DGVAppointmentHistory = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.TabRevenue = New System.Windows.Forms.TabPage()
-        Me.TabPerformance = New System.Windows.Forms.TabPage()
-        Me.TabPatients = New System.Windows.Forms.TabPage()
         Me.DGVMonthly = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.TabPerformance = New System.Windows.Forms.TabPage()
         Me.DGVDentistPerformance = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.TabPatients = New System.Windows.Forms.TabPage()
         Me.DGVPatientCount = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
+        Me.pnlHeader = New Guna.UI2.WinForms.Guna2Panel()
         Me.TabRep.SuspendLayout()
         Me.TabDaily.SuspendLayout()
-        CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DGVDaily, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage2.SuspendLayout()
         CType(Me.DgvDentistWorkload, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -79,11 +79,13 @@ Partial Class AdminDBReports
         Me.TabPage1.SuspendLayout()
         CType(Me.DGVAppointmentHistory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabRevenue.SuspendLayout()
-        Me.TabPerformance.SuspendLayout()
-        Me.TabPatients.SuspendLayout()
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPerformance.SuspendLayout()
         CType(Me.DGVDentistPerformance, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPatients.SuspendLayout()
         CType(Me.DGVPatientCount, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.pnlHeader.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabRep
@@ -97,11 +99,12 @@ Partial Class AdminDBReports
         Me.TabRep.Controls.Add(Me.TabRevenue)
         Me.TabRep.Controls.Add(Me.TabPerformance)
         Me.TabRep.Controls.Add(Me.TabPatients)
+        Me.TabRep.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabRep.ItemSize = New System.Drawing.Size(180, 40)
-        Me.TabRep.Location = New System.Drawing.Point(0, 0)
+        Me.TabRep.Location = New System.Drawing.Point(0, 88)
         Me.TabRep.Name = "TabRep"
         Me.TabRep.SelectedIndex = 0
-        Me.TabRep.Size = New System.Drawing.Size(1277, 702)
+        Me.TabRep.Size = New System.Drawing.Size(1425, 693)
         Me.TabRep.TabButtonHoverState.BorderColor = System.Drawing.Color.Empty
         Me.TabRep.TabButtonHoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(40, Byte), Integer), CType(CType(52, Byte), Integer), CType(CType(70, Byte), Integer))
         Me.TabRep.TabButtonHoverState.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!)
@@ -123,31 +126,19 @@ Partial Class AdminDBReports
         '
         'TabDaily
         '
-        Me.TabDaily.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.TabDaily.Controls.Add(Me.DGVDaily)
         Me.TabDaily.Location = New System.Drawing.Point(184, 4)
         Me.TabDaily.Name = "TabDaily"
         Me.TabDaily.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabDaily.Size = New System.Drawing.Size(1089, 694)
+        Me.TabDaily.Size = New System.Drawing.Size(1237, 685)
         Me.TabDaily.TabIndex = 0
         Me.TabDaily.Text = "Daily Appointments"
         Me.TabDaily.UseVisualStyleBackColor = True
         '
-        'Guna2CirclePictureBox1
-        '
-        Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
-        Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
-        Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1021, 630)
-        Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
-        Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
-        Me.Guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.Guna2CirclePictureBox1.TabIndex = 19
-        Me.Guna2CirclePictureBox1.TabStop = False
-        '
         'DGVDaily
         '
+        Me.DGVDaily.AllowUserToAddRows = False
+        Me.DGVDaily.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVDaily.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -158,7 +149,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVDaily.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVDaily.ColumnHeadersHeight = 4
+        Me.DGVDaily.ColumnHeadersHeight = 25
         Me.DGVDaily.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
@@ -172,6 +163,7 @@ Partial Class AdminDBReports
         Me.DGVDaily.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVDaily.Location = New System.Drawing.Point(3, 3)
         Me.DGVDaily.Name = "DGVDaily"
+        Me.DGVDaily.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control
         DataGridViewCellStyle4.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -180,7 +172,8 @@ Partial Class AdminDBReports
         DataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVDaily.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
-        Me.DGVDaily.Size = New System.Drawing.Size(1083, 688)
+        Me.DGVDaily.RowHeadersVisible = False
+        Me.DGVDaily.Size = New System.Drawing.Size(1231, 679)
         Me.DGVDaily.TabIndex = 0
         Me.DGVDaily.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVDaily.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -194,8 +187,8 @@ Partial Class AdminDBReports
         Me.DGVDaily.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVDaily.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVDaily.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVDaily.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVDaily.ThemeStyle.ReadOnly = False
+        Me.DGVDaily.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVDaily.ThemeStyle.ReadOnly = True
         Me.DGVDaily.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVDaily.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVDaily.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -210,13 +203,15 @@ Partial Class AdminDBReports
         Me.TabPage2.Location = New System.Drawing.Point(184, 4)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(1089, 694)
+        Me.TabPage2.Size = New System.Drawing.Size(1237, 685)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Dentist Workload"
         Me.TabPage2.UseVisualStyleBackColor = True
         '
         'DgvDentistWorkload
         '
+        Me.DgvDentistWorkload.AllowUserToAddRows = False
+        Me.DgvDentistWorkload.AllowUserToDeleteRows = False
         DataGridViewCellStyle5.BackColor = System.Drawing.Color.White
         Me.DgvDentistWorkload.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
         DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -227,7 +222,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DgvDentistWorkload.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle6
-        Me.DgvDentistWorkload.ColumnHeadersHeight = 4
+        Me.DgvDentistWorkload.ColumnHeadersHeight = 25
         Me.DgvDentistWorkload.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle7.BackColor = System.Drawing.Color.White
@@ -241,8 +236,9 @@ Partial Class AdminDBReports
         Me.DgvDentistWorkload.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvDentistWorkload.Location = New System.Drawing.Point(3, 3)
         Me.DgvDentistWorkload.Name = "DgvDentistWorkload"
+        Me.DgvDentistWorkload.ReadOnly = True
         Me.DgvDentistWorkload.RowHeadersVisible = False
-        Me.DgvDentistWorkload.Size = New System.Drawing.Size(1083, 688)
+        Me.DgvDentistWorkload.Size = New System.Drawing.Size(1231, 679)
         Me.DgvDentistWorkload.TabIndex = 0
         Me.DgvDentistWorkload.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DgvDentistWorkload.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -256,8 +252,8 @@ Partial Class AdminDBReports
         Me.DgvDentistWorkload.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DgvDentistWorkload.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DgvDentistWorkload.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DgvDentistWorkload.ThemeStyle.HeaderStyle.Height = 4
-        Me.DgvDentistWorkload.ThemeStyle.ReadOnly = False
+        Me.DgvDentistWorkload.ThemeStyle.HeaderStyle.Height = 25
+        Me.DgvDentistWorkload.ThemeStyle.ReadOnly = True
         Me.DgvDentistWorkload.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DgvDentistWorkload.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DgvDentistWorkload.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -272,13 +268,15 @@ Partial Class AdminDBReports
         Me.TabPage3.Location = New System.Drawing.Point(184, 4)
         Me.TabPage3.Name = "TabPage3"
         Me.TabPage3.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage3.Size = New System.Drawing.Size(1089, 694)
+        Me.TabPage3.Size = New System.Drawing.Size(1237, 685)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "Service Usage"
         Me.TabPage3.UseVisualStyleBackColor = True
         '
         'DgvServiceUsage
         '
+        Me.DgvServiceUsage.AllowUserToAddRows = False
+        Me.DgvServiceUsage.AllowUserToDeleteRows = False
         DataGridViewCellStyle8.BackColor = System.Drawing.Color.White
         Me.DgvServiceUsage.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle8
         DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -289,7 +287,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DgvServiceUsage.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle9
-        Me.DgvServiceUsage.ColumnHeadersHeight = 4
+        Me.DgvServiceUsage.ColumnHeadersHeight = 25
         Me.DgvServiceUsage.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle10.BackColor = System.Drawing.Color.White
@@ -303,8 +301,9 @@ Partial Class AdminDBReports
         Me.DgvServiceUsage.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvServiceUsage.Location = New System.Drawing.Point(3, 3)
         Me.DgvServiceUsage.Name = "DgvServiceUsage"
+        Me.DgvServiceUsage.ReadOnly = True
         Me.DgvServiceUsage.RowHeadersVisible = False
-        Me.DgvServiceUsage.Size = New System.Drawing.Size(1083, 688)
+        Me.DgvServiceUsage.Size = New System.Drawing.Size(1231, 679)
         Me.DgvServiceUsage.TabIndex = 0
         Me.DgvServiceUsage.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DgvServiceUsage.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -318,8 +317,8 @@ Partial Class AdminDBReports
         Me.DgvServiceUsage.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DgvServiceUsage.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DgvServiceUsage.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DgvServiceUsage.ThemeStyle.HeaderStyle.Height = 4
-        Me.DgvServiceUsage.ThemeStyle.ReadOnly = False
+        Me.DgvServiceUsage.ThemeStyle.HeaderStyle.Height = 25
+        Me.DgvServiceUsage.ThemeStyle.ReadOnly = True
         Me.DgvServiceUsage.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DgvServiceUsage.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DgvServiceUsage.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -334,13 +333,15 @@ Partial Class AdminDBReports
         Me.TabPage4.Location = New System.Drawing.Point(184, 4)
         Me.TabPage4.Name = "TabPage4"
         Me.TabPage4.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage4.Size = New System.Drawing.Size(1089, 694)
+        Me.TabPage4.Size = New System.Drawing.Size(1237, 685)
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "Patient Summary"
         Me.TabPage4.UseVisualStyleBackColor = True
         '
         'DgvPatientSummary
         '
+        Me.DgvPatientSummary.AllowUserToAddRows = False
+        Me.DgvPatientSummary.AllowUserToDeleteRows = False
         DataGridViewCellStyle11.BackColor = System.Drawing.Color.White
         Me.DgvPatientSummary.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle11
         DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -351,7 +352,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DgvPatientSummary.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle12
-        Me.DgvPatientSummary.ColumnHeadersHeight = 4
+        Me.DgvPatientSummary.ColumnHeadersHeight = 25
         Me.DgvPatientSummary.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle13.BackColor = System.Drawing.Color.White
@@ -365,8 +366,9 @@ Partial Class AdminDBReports
         Me.DgvPatientSummary.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvPatientSummary.Location = New System.Drawing.Point(3, 3)
         Me.DgvPatientSummary.Name = "DgvPatientSummary"
+        Me.DgvPatientSummary.ReadOnly = True
         Me.DgvPatientSummary.RowHeadersVisible = False
-        Me.DgvPatientSummary.Size = New System.Drawing.Size(1083, 688)
+        Me.DgvPatientSummary.Size = New System.Drawing.Size(1231, 679)
         Me.DgvPatientSummary.TabIndex = 0
         Me.DgvPatientSummary.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DgvPatientSummary.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -380,8 +382,8 @@ Partial Class AdminDBReports
         Me.DgvPatientSummary.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DgvPatientSummary.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DgvPatientSummary.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DgvPatientSummary.ThemeStyle.HeaderStyle.Height = 4
-        Me.DgvPatientSummary.ThemeStyle.ReadOnly = False
+        Me.DgvPatientSummary.ThemeStyle.HeaderStyle.Height = 25
+        Me.DgvPatientSummary.ThemeStyle.ReadOnly = True
         Me.DgvPatientSummary.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DgvPatientSummary.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DgvPatientSummary.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -396,13 +398,15 @@ Partial Class AdminDBReports
         Me.TabPage1.Location = New System.Drawing.Point(184, 4)
         Me.TabPage1.Name = "TabPage1"
         Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(1089, 694)
+        Me.TabPage1.Size = New System.Drawing.Size(1237, 685)
         Me.TabPage1.TabIndex = 4
         Me.TabPage1.Text = "Appointment History"
         Me.TabPage1.UseVisualStyleBackColor = True
         '
         'DGVAppointmentHistory
         '
+        Me.DGVAppointmentHistory.AllowUserToAddRows = False
+        Me.DGVAppointmentHistory.AllowUserToDeleteRows = False
         DataGridViewCellStyle14.BackColor = System.Drawing.Color.White
         Me.DGVAppointmentHistory.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle14
         DataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -413,7 +417,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVAppointmentHistory.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle15
-        Me.DGVAppointmentHistory.ColumnHeadersHeight = 4
+        Me.DGVAppointmentHistory.ColumnHeadersHeight = 25
         Me.DGVAppointmentHistory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle16.BackColor = System.Drawing.Color.White
@@ -427,8 +431,9 @@ Partial Class AdminDBReports
         Me.DGVAppointmentHistory.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVAppointmentHistory.Location = New System.Drawing.Point(3, 3)
         Me.DGVAppointmentHistory.Name = "DGVAppointmentHistory"
+        Me.DGVAppointmentHistory.ReadOnly = True
         Me.DGVAppointmentHistory.RowHeadersVisible = False
-        Me.DGVAppointmentHistory.Size = New System.Drawing.Size(1083, 688)
+        Me.DGVAppointmentHistory.Size = New System.Drawing.Size(1231, 679)
         Me.DGVAppointmentHistory.TabIndex = 1
         Me.DGVAppointmentHistory.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVAppointmentHistory.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -442,8 +447,8 @@ Partial Class AdminDBReports
         Me.DGVAppointmentHistory.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVAppointmentHistory.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVAppointmentHistory.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVAppointmentHistory.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVAppointmentHistory.ThemeStyle.ReadOnly = False
+        Me.DGVAppointmentHistory.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVAppointmentHistory.ThemeStyle.ReadOnly = True
         Me.DGVAppointmentHistory.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVAppointmentHistory.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVAppointmentHistory.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -458,35 +463,15 @@ Partial Class AdminDBReports
         Me.TabRevenue.Location = New System.Drawing.Point(184, 4)
         Me.TabRevenue.Name = "TabRevenue"
         Me.TabRevenue.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabRevenue.Size = New System.Drawing.Size(1089, 694)
+        Me.TabRevenue.Size = New System.Drawing.Size(1237, 685)
         Me.TabRevenue.TabIndex = 5
         Me.TabRevenue.Text = "Monthly Revenue"
         Me.TabRevenue.UseVisualStyleBackColor = True
         '
-        'TabPerformance
-        '
-        Me.TabPerformance.Controls.Add(Me.DGVDentistPerformance)
-        Me.TabPerformance.Location = New System.Drawing.Point(184, 4)
-        Me.TabPerformance.Name = "TabPerformance"
-        Me.TabPerformance.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPerformance.Size = New System.Drawing.Size(1089, 694)
-        Me.TabPerformance.TabIndex = 6
-        Me.TabPerformance.Text = "Dentist Performance"
-        Me.TabPerformance.UseVisualStyleBackColor = True
-        '
-        'TabPatients
-        '
-        Me.TabPatients.Controls.Add(Me.DGVPatientCount)
-        Me.TabPatients.Location = New System.Drawing.Point(184, 4)
-        Me.TabPatients.Name = "TabPatients"
-        Me.TabPatients.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPatients.Size = New System.Drawing.Size(1089, 694)
-        Me.TabPatients.TabIndex = 7
-        Me.TabPatients.Text = "Patient Count"
-        Me.TabPatients.UseVisualStyleBackColor = True
-        '
         'DGVMonthly
         '
+        Me.DGVMonthly.AllowUserToAddRows = False
+        Me.DGVMonthly.AllowUserToDeleteRows = False
         DataGridViewCellStyle17.BackColor = System.Drawing.Color.White
         Me.DGVMonthly.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle17
         DataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -497,7 +482,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVMonthly.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle18
-        Me.DGVMonthly.ColumnHeadersHeight = 4
+        Me.DGVMonthly.ColumnHeadersHeight = 25
         Me.DGVMonthly.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle19.BackColor = System.Drawing.Color.White
@@ -511,8 +496,9 @@ Partial Class AdminDBReports
         Me.DGVMonthly.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVMonthly.Location = New System.Drawing.Point(3, 3)
         Me.DGVMonthly.Name = "DGVMonthly"
+        Me.DGVMonthly.ReadOnly = True
         Me.DGVMonthly.RowHeadersVisible = False
-        Me.DGVMonthly.Size = New System.Drawing.Size(1083, 688)
+        Me.DGVMonthly.Size = New System.Drawing.Size(1231, 679)
         Me.DGVMonthly.TabIndex = 2
         Me.DGVMonthly.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVMonthly.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -526,8 +512,8 @@ Partial Class AdminDBReports
         Me.DGVMonthly.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVMonthly.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVMonthly.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVMonthly.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVMonthly.ThemeStyle.ReadOnly = False
+        Me.DGVMonthly.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVMonthly.ThemeStyle.ReadOnly = True
         Me.DGVMonthly.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVMonthly.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVMonthly.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -536,8 +522,21 @@ Partial Class AdminDBReports
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'TabPerformance
+        '
+        Me.TabPerformance.Controls.Add(Me.DGVDentistPerformance)
+        Me.TabPerformance.Location = New System.Drawing.Point(184, 4)
+        Me.TabPerformance.Name = "TabPerformance"
+        Me.TabPerformance.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPerformance.Size = New System.Drawing.Size(1237, 685)
+        Me.TabPerformance.TabIndex = 6
+        Me.TabPerformance.Text = "Dentist Performance"
+        Me.TabPerformance.UseVisualStyleBackColor = True
+        '
         'DGVDentistPerformance
         '
+        Me.DGVDentistPerformance.AllowUserToAddRows = False
+        Me.DGVDentistPerformance.AllowUserToDeleteRows = False
         DataGridViewCellStyle20.BackColor = System.Drawing.Color.White
         Me.DGVDentistPerformance.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle20
         DataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -548,7 +547,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle21.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVDentistPerformance.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle21
-        Me.DGVDentistPerformance.ColumnHeadersHeight = 4
+        Me.DGVDentistPerformance.ColumnHeadersHeight = 25
         Me.DGVDentistPerformance.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle22.BackColor = System.Drawing.Color.White
@@ -562,8 +561,9 @@ Partial Class AdminDBReports
         Me.DGVDentistPerformance.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVDentistPerformance.Location = New System.Drawing.Point(3, 3)
         Me.DGVDentistPerformance.Name = "DGVDentistPerformance"
+        Me.DGVDentistPerformance.ReadOnly = True
         Me.DGVDentistPerformance.RowHeadersVisible = False
-        Me.DGVDentistPerformance.Size = New System.Drawing.Size(1083, 688)
+        Me.DGVDentistPerformance.Size = New System.Drawing.Size(1231, 679)
         Me.DGVDentistPerformance.TabIndex = 2
         Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -577,8 +577,8 @@ Partial Class AdminDBReports
         Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVDentistPerformance.ThemeStyle.ReadOnly = False
+        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVDentistPerformance.ThemeStyle.ReadOnly = True
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -587,8 +587,21 @@ Partial Class AdminDBReports
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVDentistPerformance.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'TabPatients
+        '
+        Me.TabPatients.Controls.Add(Me.DGVPatientCount)
+        Me.TabPatients.Location = New System.Drawing.Point(184, 4)
+        Me.TabPatients.Name = "TabPatients"
+        Me.TabPatients.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPatients.Size = New System.Drawing.Size(1237, 685)
+        Me.TabPatients.TabIndex = 7
+        Me.TabPatients.Text = "Patient Count"
+        Me.TabPatients.UseVisualStyleBackColor = True
+        '
         'DGVPatientCount
         '
+        Me.DGVPatientCount.AllowUserToAddRows = False
+        Me.DGVPatientCount.AllowUserToDeleteRows = False
         DataGridViewCellStyle23.BackColor = System.Drawing.Color.White
         Me.DGVPatientCount.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle23
         DataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -599,7 +612,7 @@ Partial Class AdminDBReports
         DataGridViewCellStyle24.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVPatientCount.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle24
-        Me.DGVPatientCount.ColumnHeadersHeight = 4
+        Me.DGVPatientCount.ColumnHeadersHeight = 25
         Me.DGVPatientCount.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
         DataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle25.BackColor = System.Drawing.Color.White
@@ -613,8 +626,9 @@ Partial Class AdminDBReports
         Me.DGVPatientCount.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVPatientCount.Location = New System.Drawing.Point(3, 3)
         Me.DGVPatientCount.Name = "DGVPatientCount"
+        Me.DGVPatientCount.ReadOnly = True
         Me.DGVPatientCount.RowHeadersVisible = False
-        Me.DGVPatientCount.Size = New System.Drawing.Size(1083, 688)
+        Me.DGVPatientCount.Size = New System.Drawing.Size(1231, 679)
         Me.DGVPatientCount.TabIndex = 2
         Me.DGVPatientCount.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVPatientCount.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -628,8 +642,8 @@ Partial Class AdminDBReports
         Me.DGVPatientCount.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVPatientCount.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
         Me.DGVPatientCount.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVPatientCount.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVPatientCount.ThemeStyle.ReadOnly = False
+        Me.DGVPatientCount.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVPatientCount.ThemeStyle.ReadOnly = True
         Me.DGVPatientCount.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVPatientCount.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVPatientCount.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -638,18 +652,43 @@ Partial Class AdminDBReports
         Me.DGVPatientCount.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVPatientCount.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'Guna2CirclePictureBox1
+        '
+        Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.IndianRed
+        Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
+        Me.Guna2CirclePictureBox1.ImageRotate = 0!
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1318, 12)
+        Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
+        Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
+        Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
+        Me.Guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.Guna2CirclePictureBox1.TabIndex = 19
+        Me.Guna2CirclePictureBox1.TabStop = False
+        '
+        'pnlHeader
+        '
+        Me.pnlHeader.BackColor = System.Drawing.Color.FromArgb(CType(CType(33, Byte), Integer), CType(CType(42, Byte), Integer), CType(CType(57, Byte), Integer))
+        Me.pnlHeader.Controls.Add(Me.Guna2CirclePictureBox1)
+        Me.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top
+        Me.pnlHeader.Location = New System.Drawing.Point(0, 0)
+        Me.pnlHeader.Name = "pnlHeader"
+        Me.pnlHeader.Size = New System.Drawing.Size(1425, 88)
+        Me.pnlHeader.TabIndex = 1
+        '
         'AdminDBReports
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1277, 704)
+        Me.ClientSize = New System.Drawing.Size(1425, 781)
+        Me.ControlBox = False
         Me.Controls.Add(Me.TabRep)
+        Me.Controls.Add(Me.pnlHeader)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBReports"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBReports"
         Me.TabRep.ResumeLayout(False)
         Me.TabDaily.ResumeLayout(False)
-        CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DGVDaily, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage2.ResumeLayout(False)
         CType(Me.DgvDentistWorkload, System.ComponentModel.ISupportInitialize).EndInit()
@@ -660,11 +699,13 @@ Partial Class AdminDBReports
         Me.TabPage1.ResumeLayout(False)
         CType(Me.DGVAppointmentHistory, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabRevenue.ResumeLayout(False)
-        Me.TabPerformance.ResumeLayout(False)
-        Me.TabPatients.ResumeLayout(False)
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPerformance.ResumeLayout(False)
         CType(Me.DGVDentistPerformance, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPatients.ResumeLayout(False)
         CType(Me.DGVPatientCount, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.pnlHeader.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -687,4 +728,5 @@ Partial Class AdminDBReports
     Friend WithEvents DGVDentistPerformance As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents TabPatients As TabPage
     Friend WithEvents DGVPatientCount As Guna.UI2.WinForms.Guna2DataGridView
+    Friend WithEvents pnlHeader As Guna.UI2.WinForms.Guna2Panel
 End Class

@@ -257,6 +257,7 @@ Partial Class AdminDBUsers
         '
         'Guna2CirclePictureBox1
         '
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
@@ -292,6 +293,10 @@ Partial Class AdminDBUsers
         '
         'DGVUsers
         '
+        Me.DGVUsers.AllowUserToAddRows = False
+        Me.DGVUsers.AllowUserToDeleteRows = False
+        Me.DGVUsers.AllowUserToResizeColumns = False
+        Me.DGVUsers.AllowUserToResizeRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVUsers.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -302,8 +307,7 @@ Partial Class AdminDBUsers
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVUsers.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVUsers.ColumnHeadersHeight = 4
-        Me.DGVUsers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVUsers.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -315,7 +319,9 @@ Partial Class AdminDBUsers
         Me.DGVUsers.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVUsers.Location = New System.Drawing.Point(673, 114)
         Me.DGVUsers.Name = "DGVUsers"
+        Me.DGVUsers.ReadOnly = True
         Me.DGVUsers.RowHeadersVisible = False
+        Me.DGVUsers.RowHeadersWidth = 51
         Me.DGVUsers.Size = New System.Drawing.Size(798, 517)
         Me.DGVUsers.TabIndex = 22
         Me.DGVUsers.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
@@ -329,9 +335,9 @@ Partial Class AdminDBUsers
         Me.DGVUsers.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVUsers.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVUsers.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVUsers.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVUsers.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVUsers.ThemeStyle.ReadOnly = False
+        Me.DGVUsers.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVUsers.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVUsers.ThemeStyle.ReadOnly = True
         Me.DGVUsers.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVUsers.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVUsers.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -345,7 +351,8 @@ Partial Class AdminDBUsers
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
-        Me.ClientSize = New System.Drawing.Size(1509, 741)
+        Me.ClientSize = New System.Drawing.Size(1510, 741)
+        Me.ControlBox = False
         Me.Controls.Add(Me.DGVUsers)
         Me.Controls.Add(Me.TxtUsername)
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
@@ -360,7 +367,9 @@ Partial Class AdminDBUsers
         Me.Controls.Add(Me.txtSpecialization)
         Me.Controls.Add(Me.CmbRole)
         Me.Controls.Add(Me.TxtFullName)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBUsers"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBUsers"
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DGVUsers, System.ComponentModel.ISupportInitialize).EndInit()

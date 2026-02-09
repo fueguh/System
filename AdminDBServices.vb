@@ -3,7 +3,7 @@
 Public Class AdminDBServices
     Private selectedServiceID As Integer = 0
     Private Sub LoadServices()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "SELECT * FROM Services ORDER BY ServiceID"
@@ -88,7 +88,7 @@ Public Class AdminDBServices
             Return
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
             INSERT INTO Services (ServiceName, Price, Duration)
@@ -106,6 +106,8 @@ Public Class AdminDBServices
         End Using
 
         MessageBox.Show("Service added successfully.")
+        'audit log
+        LogAudit("Added new service: ", "Service Management")
         LoadServices()
         Clearform()
     End Sub
@@ -116,7 +118,7 @@ Public Class AdminDBServices
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -135,6 +137,7 @@ Public Class AdminDBServices
         End Using
 
         MessageBox.Show("Service updated successfully.")
+        LogAudit("Updated service ", "Service Management")
         LoadServices()
         Clearform()
     End Sub
@@ -153,30 +156,33 @@ Public Class AdminDBServices
         If MessageBox.Show("Are you sure you want to delete this service?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Check if service is used in appointments
-            Dim checkCmd As New SqlCommand("SELECT COUNT(*) FROM Appointments WHERE ServiceID=@id", con)
-            checkCmd.Parameters.AddWithValue("@id", selectedServiceID)
-            Dim count As Integer = CInt(checkCmd.ExecuteScalar())
+            Using checkCmd As New SqlCommand("SELECT COUNT(*) FROM AppointmentServices WHERE ServiceID=@id", con)
+                checkCmd.Parameters.AddWithValue("@id", selectedServiceID)
+                Dim count As Integer = CInt(checkCmd.ExecuteScalar())
 
-            If count > 0 Then
-                MessageBox.Show("This service is still used in appointments and cannot be deleted.")
-                Exit Sub
-            End If
+                If count > 0 Then
+                    MessageBox.Show("This service is still used in appointments and cannot be deleted.")
+                    Exit Sub
+                End If
+            End Using
 
             ' Safe delete
-            Dim deleteCmd As New SqlCommand("DELETE FROM Services WHERE ServiceID=@id", con)
-            deleteCmd.Parameters.AddWithValue("@id", selectedServiceID)
-            deleteCmd.ExecuteNonQuery()
+            Using deleteCmd As New SqlCommand("DELETE FROM Services WHERE ServiceID=@id", con)
+                deleteCmd.Parameters.AddWithValue("@id", selectedServiceID)
+                deleteCmd.ExecuteNonQuery()
+            End Using
         End Using
 
         MessageBox.Show("Service deleted successfully.")
-
+        LogAudit("Deleted service ", "Service Management")
         LoadServices()
         Clearform()
     End Sub
+
 
     Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DGVService.CellFormatting
         If DGVService.Columns(e.ColumnIndex).Name = "Duration" AndAlso e.Value IsNot Nothing AndAlso Not IsDBNull(e.Value) Then

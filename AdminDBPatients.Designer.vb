@@ -77,6 +77,7 @@ Partial Class AdminDBPatients
         '
         'txtContact
         '
+        Me.txtContact.BorderRadius = 6
         Me.txtContact.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtContact.DefaultText = ""
         Me.txtContact.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -98,6 +99,7 @@ Partial Class AdminDBPatients
         '
         'txtEmail
         '
+        Me.txtEmail.BorderRadius = 6
         Me.txtEmail.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtEmail.DefaultText = ""
         Me.txtEmail.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -185,6 +187,8 @@ Partial Class AdminDBPatients
         '
         'DGVPatients
         '
+        Me.DGVPatients.AllowUserToAddRows = False
+        Me.DGVPatients.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DGVPatients.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -195,8 +199,7 @@ Partial Class AdminDBPatients
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVPatients.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle2
-        Me.DGVPatients.ColumnHeadersHeight = 4
-        Me.DGVPatients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
+        Me.DGVPatients.ColumnHeadersHeight = 25
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.White
         DataGridViewCellStyle3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -208,7 +211,9 @@ Partial Class AdminDBPatients
         Me.DGVPatients.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVPatients.Location = New System.Drawing.Point(492, 118)
         Me.DGVPatients.Name = "DGVPatients"
+        Me.DGVPatients.ReadOnly = True
         Me.DGVPatients.RowHeadersVisible = False
+        Me.DGVPatients.RowHeadersWidth = 51
         Me.DGVPatients.Size = New System.Drawing.Size(643, 435)
         Me.DGVPatients.TabIndex = 8
         Me.DGVPatients.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
@@ -222,9 +227,9 @@ Partial Class AdminDBPatients
         Me.DGVPatients.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
         Me.DGVPatients.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DGVPatients.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVPatients.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.EnableResizing
-        Me.DGVPatients.ThemeStyle.HeaderStyle.Height = 4
-        Me.DGVPatients.ThemeStyle.ReadOnly = False
+        Me.DGVPatients.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVPatients.ThemeStyle.HeaderStyle.Height = 25
+        Me.DGVPatients.ThemeStyle.ReadOnly = True
         Me.DGVPatients.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVPatients.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
         Me.DGVPatients.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -235,6 +240,7 @@ Partial Class AdminDBPatients
         '
         'Guna2CirclePictureBox1
         '
+        Me.Guna2CirclePictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
@@ -251,6 +257,7 @@ Partial Class AdminDBPatients
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1379, 743)
+        Me.ControlBox = False
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.DGVPatients)
         Me.Controls.Add(Me.BTNDelete)
@@ -261,6 +268,7 @@ Partial Class AdminDBPatients
         Me.Controls.Add(Me.txtContact)
         Me.Controls.Add(Me.dtpBirthDate)
         Me.Controls.Add(Me.txtFullName)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Name = "AdminDBPatients"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBPatients"
