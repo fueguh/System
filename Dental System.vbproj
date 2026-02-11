@@ -61,6 +61,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -91,6 +92,18 @@
       <DependentUpon>AdminDBPayment.vb</DependentUpon>
     </Compile>
     <Compile Include="AdminDBPayment.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDBRepandAnalytics.Designer.vb">
+      <DependentUpon>AdminDBRepandAnalytics.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBRepandAnalytics.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDBStockTracking.Designer.vb">
+      <DependentUpon>AdminDBStockTracking.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBStockTracking.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ClinicSettings.Designer.vb">
@@ -222,11 +235,17 @@
     <EmbeddedResource Include="AdminDBPayment.resx">
       <DependentUpon>AdminDBPayment.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBRepandAnalytics.resx">
+      <DependentUpon>AdminDBRepandAnalytics.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBReports.resx">
       <DependentUpon>AdminDBReports.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBServices.resx">
       <DependentUpon>AdminDBServices.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBStockTracking.resx">
+      <DependentUpon>AdminDBStockTracking.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBUsers.resx">
       <DependentUpon>AdminDBUsers.vb</DependentUpon>

@@ -39,40 +39,36 @@ Partial Class SuperadminDashboard
         'Guna2PictureBox1
         '
         Me.Guna2PictureBox1.ImageRotate = 0!
-        Me.Guna2PictureBox1.Location = New System.Drawing.Point(197, 101)
-        Me.Guna2PictureBox1.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2PictureBox1.Location = New System.Drawing.Point(148, 82)
         Me.Guna2PictureBox1.Name = "Guna2PictureBox1"
-        Me.Guna2PictureBox1.Size = New System.Drawing.Size(163, 169)
+        Me.Guna2PictureBox1.Size = New System.Drawing.Size(122, 137)
         Me.Guna2PictureBox1.TabIndex = 0
         Me.Guna2PictureBox1.TabStop = False
         '
         'Guna2PictureBox2
         '
         Me.Guna2PictureBox2.ImageRotate = 0!
-        Me.Guna2PictureBox2.Location = New System.Drawing.Point(691, 101)
-        Me.Guna2PictureBox2.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2PictureBox2.Location = New System.Drawing.Point(518, 82)
         Me.Guna2PictureBox2.Name = "Guna2PictureBox2"
-        Me.Guna2PictureBox2.Size = New System.Drawing.Size(163, 169)
+        Me.Guna2PictureBox2.Size = New System.Drawing.Size(122, 137)
         Me.Guna2PictureBox2.TabIndex = 1
         Me.Guna2PictureBox2.TabStop = False
         '
         'Guna2PictureBox3
         '
         Me.Guna2PictureBox3.ImageRotate = 0!
-        Me.Guna2PictureBox3.Location = New System.Drawing.Point(197, 416)
-        Me.Guna2PictureBox3.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2PictureBox3.Location = New System.Drawing.Point(148, 338)
         Me.Guna2PictureBox3.Name = "Guna2PictureBox3"
-        Me.Guna2PictureBox3.Size = New System.Drawing.Size(163, 169)
+        Me.Guna2PictureBox3.Size = New System.Drawing.Size(122, 137)
         Me.Guna2PictureBox3.TabIndex = 2
         Me.Guna2PictureBox3.TabStop = False
         '
         'Guna2PictureBox4
         '
         Me.Guna2PictureBox4.ImageRotate = 0!
-        Me.Guna2PictureBox4.Location = New System.Drawing.Point(691, 416)
-        Me.Guna2PictureBox4.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Guna2PictureBox4.Location = New System.Drawing.Point(518, 338)
         Me.Guna2PictureBox4.Name = "Guna2PictureBox4"
-        Me.Guna2PictureBox4.Size = New System.Drawing.Size(163, 169)
+        Me.Guna2PictureBox4.Size = New System.Drawing.Size(122, 137)
         Me.Guna2PictureBox4.TabIndex = 3
         Me.Guna2PictureBox4.TabStop = False
         '
@@ -80,10 +76,9 @@ Partial Class SuperadminDashboard
         '
         Me.Label1.AutoSize = True
         Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(180, 289)
-        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label1.Location = New System.Drawing.Point(135, 235)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(199, 29)
+        Me.Label1.Size = New System.Drawing.Size(155, 24)
         Me.Label1.TabIndex = 4
         Me.Label1.Text = "System Overview"
         '
@@ -91,10 +86,9 @@ Partial Class SuperadminDashboard
         '
         Me.Label2.AutoSize = True
         Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(657, 289)
-        Me.Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label2.Location = New System.Drawing.Point(493, 235)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(210, 29)
+        Me.Label2.Size = New System.Drawing.Size(165, 24)
         Me.Label2.TabIndex = 5
         Me.Label2.Text = "User Management"
         '
@@ -102,10 +96,9 @@ Partial Class SuperadminDashboard
         '
         Me.Label3.AutoSize = True
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(211, 608)
-        Me.Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label3.Location = New System.Drawing.Point(158, 494)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(126, 29)
+        Me.Label3.Size = New System.Drawing.Size(99, 24)
         Me.Label3.TabIndex = 6
         Me.Label3.Text = "Audit Logs"
         '
@@ -113,19 +106,18 @@ Partial Class SuperadminDashboard
         '
         Me.Label4.AutoSize = True
         Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.Location = New System.Drawing.Point(689, 608)
-        Me.Label4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label4.Location = New System.Drawing.Point(517, 494)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(166, 29)
+        Me.Label4.Size = New System.Drawing.Size(127, 24)
         Me.Label4.TabIndex = 7
         Me.Label4.Text = "Clinic Settings"
         '
         'SuperadminDashboard
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
-        Me.ClientSize = New System.Drawing.Size(1067, 690)
+        Me.ClientSize = New System.Drawing.Size(800, 561)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
@@ -134,7 +126,7 @@ Partial Class SuperadminDashboard
         Me.Controls.Add(Me.Guna2PictureBox3)
         Me.Controls.Add(Me.Guna2PictureBox2)
         Me.Controls.Add(Me.Guna2PictureBox1)
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "SuperadminDashboard"
         Me.Text = "SuperadminDashboard"
         CType(Me.Guna2PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()

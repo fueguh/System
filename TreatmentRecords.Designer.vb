@@ -279,6 +279,7 @@ Partial Class TreatmentRecords
         Me.Controls.Add(Me.TxtTreatmentNotes)
         Me.Controls.Add(Me.CmbDentist)
         Me.Controls.Add(Me.CmbPatient)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "TreatmentRecords"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "TreatmentRecords"

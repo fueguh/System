@@ -683,7 +683,7 @@ Partial Class AdminDBReports
         Me.ControlBox = False
         Me.Controls.Add(Me.TabRep)
         Me.Controls.Add(Me.pnlHeader)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBReports"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBReports"

@@ -235,7 +235,7 @@ Partial Class AdminDBServices
         Me.Controls.Add(Me.txtDuration)
         Me.Controls.Add(Me.txtPrice)
         Me.Controls.Add(Me.txtServiceName)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBServices"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBServices"

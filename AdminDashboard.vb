@@ -59,7 +59,7 @@ Public Class AdminDashboard
         LoadDashboardStats()
     End Sub
     Public Sub LoadDashboardStats()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' Total Patients
@@ -113,7 +113,7 @@ Public Class AdminDashboard
 
     'change clinic name into the one from clinifInfo table
     Private Sub AdminDashboard_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
             Dim clinicName As Object = cmd.ExecuteScalar()
@@ -132,6 +132,16 @@ Public Class AdminDashboard
 
     Private Sub ItemManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ItemManagementToolStripMenuItem.Click
         AdminDBItemManagement.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub StockTrackingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StockTrackingToolStripMenuItem.Click
+        AdminDBStockTracking.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ReportsAnalyticsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsAnalyticsToolStripMenuItem.Click
+        AdminDBRepandAnalytics.Show()
         Me.Hide()
     End Sub
 End Class

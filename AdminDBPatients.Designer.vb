@@ -268,7 +268,7 @@ Partial Class AdminDBPatients
         Me.Controls.Add(Me.txtContact)
         Me.Controls.Add(Me.dtpBirthDate)
         Me.Controls.Add(Me.txtFullName)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBPatients"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBPatients"

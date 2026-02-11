@@ -367,7 +367,7 @@ Partial Class AdminDBUsers
         Me.Controls.Add(Me.txtSpecialization)
         Me.Controls.Add(Me.CmbRole)
         Me.Controls.Add(Me.TxtFullName)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBUsers"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDBUsers"

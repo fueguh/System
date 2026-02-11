@@ -334,7 +334,7 @@ Partial Class AdminDBAppointments
         Me.Controls.Add(Me.dtpStartTime)
         Me.Controls.Add(Me.DtpDate)
         Me.Controls.Add(Me.CmbPatient)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "AdminDBAppointments"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

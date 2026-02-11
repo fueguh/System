@@ -273,7 +273,7 @@ Partial Class DentistDashboard
         Me.ControlBox = False
         Me.Controls.Add(Me.denTab)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "DentistDashboard"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "DentistDashboard"

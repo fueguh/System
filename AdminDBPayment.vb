@@ -29,7 +29,7 @@ Public Class AdminDBPayment
 
     ' ================= LOAD PATIENT =================
     Private Sub LoadPatients()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim da As New SqlDataAdapter(
@@ -49,7 +49,7 @@ Public Class AdminDBPayment
 
     ' ================= LOAD ALL SERVICES (COMBOBOX) =================
     Private Sub LoadAllServices()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim da As New SqlDataAdapter("SELECT ServiceID, ServiceName, Price FROM Services", con)
@@ -70,7 +70,7 @@ Public Class AdminDBPayment
 
     ' ================= LOAD APPOINTMENT SERVICES (GRID) =================
     Private Sub LoadAppointmentServices()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' Get services linked to this appointment
@@ -142,7 +142,7 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim cmd As New SqlCommand("
@@ -203,10 +203,10 @@ Public Class AdminDBPayment
     End Sub
 
     ' ================= NAVIGATION =================
-    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
-    Private Sub clbServices_ItemCheck(sender As Object, e As ItemCheckEventArgs) Handles clbServices.ItemCheck
+    Private Sub ClbServices_ItemCheck(sender As Object, e As ItemCheckEventArgs) Handles clbServices.ItemCheck
         ' Delay execution until the check state is updated
         Me.BeginInvoke(Sub() CalculateTotal())
     End Sub

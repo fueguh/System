@@ -17,7 +17,7 @@ Public Class AdminDBDentists
     End Function
 
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -52,7 +52,7 @@ Public Class AdminDBDentists
 
     Private Sub Clearform()
         TxtName.Text = ""
-        txtSpecialization.Text = ""
+        TxtSpecialization.Text = ""
         TxtPhone.Text = ""
         TxtEmail.Text = ""
         cmbAvailability.Text = ""
@@ -79,7 +79,7 @@ Public Class AdminDBDentists
         ' ✅ Hash password
         Dim hashedPassword As String = HashPassword(TxtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -114,7 +114,7 @@ Public Class AdminDBDentists
     End Sub
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)

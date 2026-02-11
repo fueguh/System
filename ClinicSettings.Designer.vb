@@ -212,7 +212,7 @@ Partial Class ClinicSettings
         Me.Controls.Add(Me.txtClinicAddress)
         Me.Controls.Add(Me.txtClinicName)
         Me.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "ClinicSettings"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen

@@ -116,6 +116,7 @@ Partial Class StaffDashboard
         Me.ClientSize = New System.Drawing.Size(1368, 857)
         Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "StaffDashboard"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "StaffDashboard"
