@@ -19,7 +19,7 @@ Public Class AdminDBRepandAnalytics
     '======================================== LOADS '========================================
 
     Private Sub LoadTransactions()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
             SELECT t.TransactionID, i.ItemName, t.TransactionType, 
@@ -35,7 +35,7 @@ Public Class AdminDBRepandAnalytics
     End Sub
 
     Private Sub LoadInventory()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
             SELECT ItemID, ItemName, Quantity, Supplier, ExpiryDate
@@ -55,7 +55,7 @@ Public Class AdminDBRepandAnalytics
         ChartStockLevels.Series.Add("Stock")
         ChartStockLevels.Series("Stock").ChartType = SeriesChartType.Bar
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("SELECT ItemName, Quantity FROM Inventory", con)
             Dim dt As New DataTable()
@@ -75,7 +75,7 @@ Public Class AdminDBRepandAnalytics
         ChartSupplierContributions.Series.Add("Suppliers")
         ChartSupplierContributions.Series("Suppliers").ChartType = SeriesChartType.Pie
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("
             SELECT Supplier, SUM(Quantity) AS TotalQty
@@ -98,7 +98,7 @@ Public Class AdminDBRepandAnalytics
         ChartTransactionTrends.Series.Add("Trends")
         ChartTransactionTrends.Series("Trends").ChartType = SeriesChartType.Line
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("
             SELECT CAST(TransactionDate AS DATE) AS DateOnly, COUNT(*) AS Count
@@ -116,7 +116,7 @@ Public Class AdminDBRepandAnalytics
     End Sub
 
     Private Sub LoadSummaryBoxes()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Total IN

@@ -3,7 +3,7 @@ Imports System.Data.SqlClient
 
 Public Class AdminDBStockTracking
     Private Sub LoadTransactions()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("
             SELECT t.TransactionID, i.ItemName, t.TransactionType, t.Supplier, t.Quantity, t.TransactionDate
@@ -17,7 +17,7 @@ Public Class AdminDBStockTracking
     End Sub
 
     Private Sub LoadItems()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("SELECT ItemID, ItemName FROM Inventory", con)
             Dim dt As New DataTable()
@@ -54,7 +54,7 @@ Public Class AdminDBStockTracking
         Dim itemID As Integer = CInt(ComboBoxItem.SelectedValue)
         Dim supplierName As String = TextBoxSupplier.Text.Trim()
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Insert transaction
@@ -95,7 +95,7 @@ Public Class AdminDBStockTracking
         If DGVTransactions.CurrentRow Is Nothing Then Exit Sub
         Dim transID As Integer = CInt(DGVTransactions.CurrentRow.Cells("TransactionID").Value)
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim cmd As New SqlCommand("DELETE FROM InventoryTransactions WHERE TransactionID=@TransID", con)
             cmd.Parameters.AddWithValue("@TransID", transID)

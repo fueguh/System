@@ -29,7 +29,7 @@ Public Class DentistDashboard
 
     ' === Load Appointments into DataGridView ===
     Private Sub LoadAppointmentsGrid()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -74,7 +74,7 @@ ORDER BY A.Date DESC;
 
     ' === Load Patients into DataGridView ===
     Private Sub LoadPatientsGrid()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "
                 SELECT PatientID, FullName, BirthDate, ContactNumber, Email,Address,DateRegistered

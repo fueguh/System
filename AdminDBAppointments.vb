@@ -36,7 +36,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadComboBoxes()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' ================= PATIENTS =================
@@ -86,7 +86,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadAppointments()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -169,7 +169,7 @@ ORDER BY A.Date DESC;
     End Function
 
     Private Function IsConflict(Optional appointmentID As Integer = 0) As Boolean
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -206,7 +206,7 @@ ORDER BY A.Date DESC;
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' --- Insert appointment (without single ServiceID) ---
@@ -272,7 +272,7 @@ ORDER BY A.Date DESC;
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Update appointment (no ServiceID column)
@@ -333,7 +333,7 @@ ORDER BY A.Date DESC;
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             If MessageBox.Show("Are you sure you want to delete this appointment?",
@@ -484,7 +484,7 @@ ORDER BY A.Date DESC;
     End Sub
 
     Private Sub SaveAppointmentServices(appointmentID As Integer)
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             For Each item As DataRowView In clbServices.CheckedItems
@@ -507,7 +507,7 @@ ORDER BY A.Date DESC;
             clbServices.SetItemChecked(i, False)
         Next
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim cmd As New SqlCommand(
