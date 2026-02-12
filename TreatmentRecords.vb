@@ -130,4 +130,11 @@ VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
+    Private Sub Guna2HtmlLabel1_Click(sender As Object, e As EventArgs) Handles Guna2HtmlLabel1.Click
+
+    End Sub
+
+    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+        SystemSession.NavigateToDashboard(Me)
+    End Sub
 End Class

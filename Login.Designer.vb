@@ -26,7 +26,6 @@ Partial Class Login
         Me.txtPassword = New Guna.UI2.WinForms.Guna2TextBox()
         Me.btnLogin = New Guna.UI2.WinForms.Guna2Button()
         Me.Guna2MessageDialog1 = New Guna.UI2.WinForms.Guna2MessageDialog()
-        Me.Guna2Button1 = New Guna.UI2.WinForms.Guna2Button()
         Me.CheckBoxShowPassword = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.chkRememberMe = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.SuspendLayout()
@@ -44,7 +43,7 @@ Partial Class Login
         Me.txtUsername.Font = New System.Drawing.Font("Tahoma", 12.0!)
         Me.txtUsername.ForeColor = System.Drawing.SystemColors.ControlDarkDark
         Me.txtUsername.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtUsername.Location = New System.Drawing.Point(87, 97)
+        Me.txtUsername.Location = New System.Drawing.Point(117, 225)
         Me.txtUsername.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtUsername.Name = "txtUsername"
         Me.txtUsername.PlaceholderForeColor = System.Drawing.Color.Gray
@@ -66,7 +65,7 @@ Partial Class Login
         Me.txtPassword.Font = New System.Drawing.Font("Tahoma", 12.0!)
         Me.txtPassword.ForeColor = System.Drawing.SystemColors.ControlDarkDark
         Me.txtPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtPassword.Location = New System.Drawing.Point(87, 189)
+        Me.txtPassword.Location = New System.Drawing.Point(117, 317)
         Me.txtPassword.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtPassword.Name = "txtPassword"
         Me.txtPassword.PlaceholderForeColor = System.Drawing.Color.Gray
@@ -86,7 +85,7 @@ Partial Class Login
         Me.btnLogin.FillColor = System.Drawing.Color.White
         Me.btnLogin.Font = New System.Drawing.Font("Tahoma", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnLogin.ForeColor = System.Drawing.Color.DimGray
-        Me.btnLogin.Location = New System.Drawing.Point(123, 328)
+        Me.btnLogin.Location = New System.Drawing.Point(153, 456)
         Me.btnLogin.Name = "btnLogin"
         Me.btnLogin.Size = New System.Drawing.Size(180, 45)
         Me.btnLogin.TabIndex = 3
@@ -101,22 +100,6 @@ Partial Class Login
         Me.Guna2MessageDialog1.Style = Guna.UI2.WinForms.MessageDialogStyle.[Default]
         Me.Guna2MessageDialog1.Text = Nothing
         '
-        'Guna2Button1
-        '
-        Me.Guna2Button1.BorderRadius = 10
-        Me.Guna2Button1.DisabledState.BorderColor = System.Drawing.Color.DarkGray
-        Me.Guna2Button1.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
-        Me.Guna2Button1.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
-        Me.Guna2Button1.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.Guna2Button1.FillColor = System.Drawing.Color.White
-        Me.Guna2Button1.Font = New System.Drawing.Font("Tahoma", 12.0!)
-        Me.Guna2Button1.ForeColor = System.Drawing.Color.DimGray
-        Me.Guna2Button1.Location = New System.Drawing.Point(123, 419)
-        Me.Guna2Button1.Name = "Guna2Button1"
-        Me.Guna2Button1.Size = New System.Drawing.Size(180, 45)
-        Me.Guna2Button1.TabIndex = 4
-        Me.Guna2Button1.Text = "Register"
-        '
         'CheckBoxShowPassword
         '
         Me.CheckBoxShowPassword.AutoSize = True
@@ -126,7 +109,7 @@ Partial Class Login
         Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
         Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
         Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(87, 246)
+        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(117, 374)
         Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
         Me.CheckBoxShowPassword.Size = New System.Drawing.Size(141, 24)
         Me.CheckBoxShowPassword.TabIndex = 7
@@ -145,7 +128,7 @@ Partial Class Login
         Me.chkRememberMe.CheckedState.FillColor = System.Drawing.Color.White
         Me.chkRememberMe.CheckMarkColor = System.Drawing.Color.Black
         Me.chkRememberMe.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.chkRememberMe.Location = New System.Drawing.Point(149, 379)
+        Me.chkRememberMe.Location = New System.Drawing.Point(179, 507)
         Me.chkRememberMe.Name = "chkRememberMe"
         Me.chkRememberMe.Size = New System.Drawing.Size(133, 24)
         Me.chkRememberMe.TabIndex = 2
@@ -161,10 +144,9 @@ Partial Class Login
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.InactiveCaption
-        Me.ClientSize = New System.Drawing.Size(444, 506)
+        Me.ClientSize = New System.Drawing.Size(512, 719)
         Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.chkRememberMe)
-        Me.Controls.Add(Me.Guna2Button1)
         Me.Controls.Add(Me.btnLogin)
         Me.Controls.Add(Me.txtPassword)
         Me.Controls.Add(Me.txtUsername)
@@ -181,7 +163,6 @@ Partial Class Login
     Friend WithEvents txtPassword As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents btnLogin As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2MessageDialog1 As Guna.UI2.WinForms.Guna2MessageDialog
-    Friend WithEvents Guna2Button1 As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents CheckBoxShowPassword As Guna.UI2.WinForms.Guna2CheckBox
     Friend WithEvents chkRememberMe As Guna.UI2.WinForms.Guna2CheckBox
 End Class

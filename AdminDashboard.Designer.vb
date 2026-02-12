@@ -41,8 +41,6 @@ Partial Class AdminDashboard
         Me.ReportsAnalyticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.IntegrationWithClinicOperationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
-        Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
-        Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label5 = New System.Windows.Forms.Label()
         Me.lblTotalPatients = New System.Windows.Forms.Label()
@@ -56,9 +54,10 @@ Partial Class AdminDashboard
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
+        Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
-        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2Panel1.SuspendLayout()
         Me.Guna2Panel2.SuspendLayout()
         Me.Guna2Panel3.SuspendLayout()
@@ -212,7 +211,6 @@ Partial Class AdminDashboard
         Me.Guna2CustomGradientPanel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CustomGradientPanel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.Controls.Add(Me.LogoutPictureBox1)
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.lblClinicName)
         Me.Guna2CustomGradientPanel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.FillColor2 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -222,32 +220,6 @@ Partial Class AdminDashboard
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
         Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1298, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 20
-        '
-        'LogoutPictureBox1
-        '
-        Me.LogoutPictureBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.LogoutPictureBox1.BackColor = System.Drawing.Color.Transparent
-        Me.LogoutPictureBox1.FillColor = System.Drawing.Color.Transparent
-        Me.LogoutPictureBox1.Image = CType(resources.GetObject("LogoutPictureBox1.Image"), System.Drawing.Image)
-        Me.LogoutPictureBox1.ImageRotate = 0!
-        Me.LogoutPictureBox1.Location = New System.Drawing.Point(1202, 32)
-        Me.LogoutPictureBox1.Name = "LogoutPictureBox1"
-        Me.LogoutPictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
-        Me.LogoutPictureBox1.Size = New System.Drawing.Size(64, 64)
-        Me.LogoutPictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.LogoutPictureBox1.TabIndex = 35
-        Me.LogoutPictureBox1.TabStop = False
-        '
-        'lblClinicName
-        '
-        Me.lblClinicName.BackColor = System.Drawing.Color.Transparent
-        Me.lblClinicName.Font = New System.Drawing.Font("Palatino Linotype", 24.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblClinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblClinicName.Location = New System.Drawing.Point(481, 32)
-        Me.lblClinicName.Name = "lblClinicName"
-        Me.lblClinicName.Size = New System.Drawing.Size(371, 46)
-        Me.lblClinicName.TabIndex = 21
-        Me.lblClinicName.Text = "Eme Dental Clinic System"
         '
         'Guna2Panel1
         '
@@ -388,6 +360,34 @@ Partial Class AdminDashboard
         Me.PictureBox1.TabIndex = 29
         Me.PictureBox1.TabStop = False
         '
+        'btnLogout
+        '
+        Me.btnLogout.CustomBorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.btnLogout.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.btnLogout.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.btnLogout.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.btnLogout.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.btnLogout.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.btnLogout.Font = New System.Drawing.Font("Times New Roman", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnLogout.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.btnLogout.Location = New System.Drawing.Point(0, 862)
+        Me.btnLogout.Name = "btnLogout"
+        Me.btnLogout.Size = New System.Drawing.Size(354, 65)
+        Me.btnLogout.TabIndex = 30
+        Me.btnLogout.Text = "Logout"
+        '
+        'lblClinicName
+        '
+        Me.lblClinicName.BackColor = System.Drawing.Color.Transparent
+        Me.lblClinicName.Font = New System.Drawing.Font("Palatino Linotype", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblClinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblClinicName.Location = New System.Drawing.Point(444, 39)
+        Me.lblClinicName.Name = "lblClinicName"
+        Me.lblClinicName.Size = New System.Drawing.Size(407, 49)
+        Me.lblClinicName.TabIndex = 21
+        Me.lblClinicName.Text = "Eme Dental Clinic System"
+        Me.lblClinicName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
+        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -395,6 +395,7 @@ Partial Class AdminDashboard
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
         Me.ControlBox = False
+        Me.Controls.Add(Me.btnLogout)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Guna2Panel4)
         Me.Controls.Add(Me.Guna2Panel3)
@@ -412,7 +413,6 @@ Partial Class AdminDashboard
         Me.MenuStrip1.PerformLayout()
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
         Me.Guna2CustomGradientPanel1.PerformLayout()
-        CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Guna2Panel1.ResumeLayout(False)
         Me.Guna2Panel2.ResumeLayout(False)
         Me.Guna2Panel3.ResumeLayout(False)
@@ -427,7 +427,6 @@ Partial Class AdminDashboard
     Friend WithEvents AuditTrailToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReportsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
-    Friend WithEvents lblClinicName As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents ManageUsersForm As ToolStripMenuItem
     Friend WithEvents ManageDentistsForm As ToolStripMenuItem
     Friend WithEvents ManagePatientsForm As ToolStripMenuItem
@@ -445,7 +444,6 @@ Partial Class AdminDashboard
     Friend WithEvents label6 As Label
     Friend WithEvents label8 As Label
     Friend WithEvents ToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents LogoutPictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents ToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents ClinicSettingsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
@@ -454,4 +452,6 @@ Partial Class AdminDashboard
     Friend WithEvents ReportsAnalyticsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents IntegrationWithClinicOperationsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents btnLogout As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents lblClinicName As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class

@@ -103,7 +103,7 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
+    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs)
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If result = DialogResult.Yes Then
             SystemSession.PerformLogout(Me.Name)
@@ -143,5 +143,21 @@ Public Class AdminDashboard
     Private Sub ReportsAnalyticsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsAnalyticsToolStripMenuItem.Click
         AdminDBRepandAnalytics.Show()
         Me.Hide()
+    End Sub
+
+    Private Sub btnLogout_Click(sender As Object, e As EventArgs) Handles btnLogout.Click
+        Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If result = DialogResult.Yes Then
+            SystemSession.PerformLogout(Me.Name)
+            Me.Close()
+        End If
+    End Sub
+
+    Private Sub lblClinicName_Click(sender As Object, e As EventArgs) Handles lblClinicName.Click
+
+    End Sub
+
+    Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem2.Click
+
     End Sub
 End Class
