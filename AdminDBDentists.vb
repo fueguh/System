@@ -17,7 +17,7 @@ Public Class AdminDBDentists
     End Function
 
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -34,7 +34,7 @@ Public Class AdminDBDentists
         End Using
     End Sub
 
-    Private Sub DGVDentists_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellContentClick
+    Private Sub DGVDentists_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         ' ✅ Make sure the click is valid (not header row)
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVDentists.Rows(e.RowIndex)
@@ -79,7 +79,7 @@ Public Class AdminDBDentists
         ' ✅ Hash password
         Dim hashedPassword As String = HashPassword(TxtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -114,7 +114,7 @@ Public Class AdminDBDentists
     End Sub
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)

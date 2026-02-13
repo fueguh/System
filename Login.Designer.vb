@@ -32,7 +32,9 @@ Partial Class Login
         '
         'txtUsername
         '
+        Me.txtUsername.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtUsername.BorderRadius = 15
+        Me.txtUsername.BorderThickness = 2
         Me.txtUsername.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtUsername.DefaultText = ""
         Me.txtUsername.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -40,13 +42,13 @@ Partial Class Login
         Me.txtUsername.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
         Me.txtUsername.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
         Me.txtUsername.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtUsername.Font = New System.Drawing.Font("Tahoma", 12.0!)
-        Me.txtUsername.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.txtUsername.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.txtUsername.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtUsername.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.txtUsername.Location = New System.Drawing.Point(117, 225)
         Me.txtUsername.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtUsername.Name = "txtUsername"
-        Me.txtUsername.PlaceholderForeColor = System.Drawing.Color.Gray
+        Me.txtUsername.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtUsername.PlaceholderText = "Username"
         Me.txtUsername.SelectedText = ""
         Me.txtUsername.Size = New System.Drawing.Size(257, 50)
@@ -54,7 +56,9 @@ Partial Class Login
         '
         'txtPassword
         '
+        Me.txtPassword.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtPassword.BorderRadius = 15
+        Me.txtPassword.BorderThickness = 2
         Me.txtPassword.Cursor = System.Windows.Forms.Cursors.IBeam
         Me.txtPassword.DefaultText = ""
         Me.txtPassword.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
@@ -62,13 +66,13 @@ Partial Class Login
         Me.txtPassword.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
         Me.txtPassword.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
         Me.txtPassword.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtPassword.Font = New System.Drawing.Font("Tahoma", 12.0!)
-        Me.txtPassword.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.txtPassword.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.txtPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.txtPassword.Location = New System.Drawing.Point(117, 317)
         Me.txtPassword.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.txtPassword.Name = "txtPassword"
-        Me.txtPassword.PlaceholderForeColor = System.Drawing.Color.Gray
+        Me.txtPassword.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtPassword.PlaceholderText = "Password"
         Me.txtPassword.SelectedText = ""
         Me.txtPassword.Size = New System.Drawing.Size(257, 50)
@@ -77,14 +81,15 @@ Partial Class Login
         '
         'btnLogin
         '
+        Me.btnLogin.BorderColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnLogin.BorderRadius = 10
         Me.btnLogin.DisabledState.BorderColor = System.Drawing.Color.DarkGray
         Me.btnLogin.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.btnLogin.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
         Me.btnLogin.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.btnLogin.FillColor = System.Drawing.Color.White
-        Me.btnLogin.Font = New System.Drawing.Font("Tahoma", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnLogin.ForeColor = System.Drawing.Color.DimGray
+        Me.btnLogin.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.btnLogin.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        Me.btnLogin.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.btnLogin.Location = New System.Drawing.Point(153, 456)
         Me.btnLogin.Name = "btnLogin"
         Me.btnLogin.Size = New System.Drawing.Size(180, 45)
@@ -103,39 +108,41 @@ Partial Class Login
         'CheckBoxShowPassword
         '
         Me.CheckBoxShowPassword.AutoSize = True
-        Me.CheckBoxShowPassword.CheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CheckBoxShowPassword.CheckedState.BorderRadius = 7
-        Me.CheckBoxShowPassword.CheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.CheckedState.BorderThickness = 1
         Me.CheckBoxShowPassword.CheckedState.FillColor = System.Drawing.Color.White
-        Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.Black
-        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.CheckBoxShowPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CheckBoxShowPassword.Location = New System.Drawing.Point(117, 374)
         Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
-        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(141, 24)
+        Me.CheckBoxShowPassword.Size = New System.Drawing.Size(128, 20)
         Me.CheckBoxShowPassword.TabIndex = 7
         Me.CheckBoxShowPassword.Text = "Show Password"
-        Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.White
+        Me.CheckBoxShowPassword.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CheckBoxShowPassword.UncheckedState.BorderRadius = 7
-        Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 0
+        Me.CheckBoxShowPassword.UncheckedState.BorderThickness = 1
         Me.CheckBoxShowPassword.UncheckedState.FillColor = System.Drawing.Color.White
         '
         'chkRememberMe
         '
         Me.chkRememberMe.AutoSize = True
-        Me.chkRememberMe.CheckedState.BorderColor = System.Drawing.Color.Blue
-        Me.chkRememberMe.CheckedState.BorderRadius = 0
-        Me.chkRememberMe.CheckedState.BorderThickness = 0
+        Me.chkRememberMe.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.chkRememberMe.CheckedState.BorderRadius = 7
+        Me.chkRememberMe.CheckedState.BorderThickness = 1
         Me.chkRememberMe.CheckedState.FillColor = System.Drawing.Color.White
-        Me.chkRememberMe.CheckMarkColor = System.Drawing.Color.Black
-        Me.chkRememberMe.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
+        Me.chkRememberMe.CheckMarkColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.chkRememberMe.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkRememberMe.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.chkRememberMe.Location = New System.Drawing.Point(179, 507)
         Me.chkRememberMe.Name = "chkRememberMe"
-        Me.chkRememberMe.Size = New System.Drawing.Size(133, 24)
+        Me.chkRememberMe.Size = New System.Drawing.Size(118, 20)
         Me.chkRememberMe.TabIndex = 2
         Me.chkRememberMe.Text = "Remember me"
-        Me.chkRememberMe.UncheckedState.BorderColor = System.Drawing.Color.White
-        Me.chkRememberMe.UncheckedState.BorderRadius = 0
-        Me.chkRememberMe.UncheckedState.BorderThickness = 0
+        Me.chkRememberMe.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.chkRememberMe.UncheckedState.BorderRadius = 7
+        Me.chkRememberMe.UncheckedState.BorderThickness = 1
         Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
         '
         'Login
@@ -143,7 +150,7 @@ Partial Class Login
         Me.AcceptButton = Me.btnLogin
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.SystemColors.InactiveCaption
+        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(512, 719)
         Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.chkRememberMe)

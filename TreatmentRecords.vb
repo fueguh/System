@@ -31,7 +31,7 @@ Public Class TreatmentRecords
     End Sub
 
     Private Sub LoadPatients()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "SELECT PatientID, FullName FROM Patients"
@@ -45,7 +45,7 @@ Public Class TreatmentRecords
         End Using
     End Sub
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -64,7 +64,7 @@ Public Class TreatmentRecords
         End Using
     End Sub
     Private Sub LoadRecords()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
  SELECT PD.RecordID,
@@ -90,7 +90,7 @@ JOIN Users U ON PD.UserID = U.UserID
     Private imagePath As String = ""
 
     Private Sub BtnSaveRecord_Click(sender As Object, e As EventArgs) Handles BtnSaveRecord.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -134,7 +134,17 @@ VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
 
     End Sub
 
-    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
+    End Sub
+
+    Private Sub Guna2CirclePictureBox2_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox2.Click
+        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
+            Login.Show()
+            Me.Hide()
+            Exit Sub
+        End If
+        SystemSession.NavigateToDashboard(Me)
+        Me.Hide()
     End Sub
 End Class

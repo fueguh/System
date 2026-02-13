@@ -29,7 +29,7 @@ Public Class DentistDashboard
 
     ' === Load Appointments into DataGridView ===
     Private Sub LoadAppointmentsGrid()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -74,7 +74,7 @@ ORDER BY A.Date DESC;
 
     ' === Load Patients into DataGridView ===
     Private Sub LoadPatientsGrid()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
                 SELECT PatientID, FullName, BirthDate, ContactNumber, Email,Address,DateRegistered
@@ -91,6 +91,10 @@ ORDER BY A.Date DESC;
 
 
     Private Sub Guna2CustomGradientPanel1_Paint(sender As Object, e As PaintEventArgs) Handles Guna2CustomGradientPanel1.Paint
+
+    End Sub
+
+    Private Sub DgvPatients_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvPatients.CellContentClick
 
     End Sub
 End Class

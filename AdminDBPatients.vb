@@ -13,7 +13,7 @@ Public Class AdminDBPatients
         End If
     End Sub
     Private Sub LoadPatients()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -38,7 +38,7 @@ Public Class AdminDBPatients
         txtEmail.Text = ""
         txtAddress.Text = ""
     End Sub
-    Private Sub DGVPatients_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPatients.CellContentClick
+    Private Sub DGVPatients_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex >= 0 Then
             Dim row = DGVPatients.Rows(e.RowIndex)
 
@@ -58,7 +58,7 @@ Public Class AdminDBPatients
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -94,7 +94,7 @@ Public Class AdminDBPatients
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -136,7 +136,7 @@ Public Class AdminDBPatients
         If MessageBox.Show("Are you sure you want to delete this patient?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
@@ -162,7 +162,7 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub DeactivatePatient(patientId As Integer)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
             Dim cmd As New SqlCommand(query, con)
@@ -174,5 +174,9 @@ Public Class AdminDBPatients
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
+    End Sub
+
+    Private Sub DGVPatients_CellContentClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPatients.CellContentClick
+
     End Sub
 End Class

@@ -2,11 +2,11 @@
 
 Public Class AdminDBItemManagement
 
-    Dim connString As String = My.Settings.DentalDBConnection
+    Dim connString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
     Dim conn As New SqlConnection(connString)
 
     Private Sub LoadInventory()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim da As New SqlDataAdapter("SELECT * FROM Inventory", con)
             Dim dt As New DataTable()
@@ -16,7 +16,7 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub LoadSuppliers()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim da As New SqlDataAdapter("SELECT DISTINCT Supplier FROM Inventory WHERE Supplier IS NOT NULL ORDER BY Supplier", con)
             Dim dt As New DataTable()
@@ -55,7 +55,7 @@ Public Class AdminDBItemManagement
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
             INSERT INTO Inventory (ItemName, Category, Quantity, Unit, Price, Supplier, ExpiryDate)
@@ -105,7 +105,7 @@ Public Class AdminDBItemManagement
         End If
         Dim itemID As Integer = CInt(DGVInventory.CurrentRow.Cells("ItemID").Value)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
             UPDATE Inventory
@@ -169,7 +169,7 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub LoadInventory(Optional searchText As String = "")
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String
@@ -199,7 +199,7 @@ Public Class AdminDBItemManagement
         If DGVInventory.CurrentRow Is Nothing Then Exit Sub
         Dim itemID As Integer = CInt(DGVInventory.CurrentRow.Cells("ItemID").Value)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' Because of FK with ON DELETE CASCADE, deleting Inventory will auto-delete transactions

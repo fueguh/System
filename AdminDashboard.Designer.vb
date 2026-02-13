@@ -39,8 +39,8 @@ Partial Class AdminDashboard
         Me.ItemManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StockTrackingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsAnalyticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.IntegrationWithClinicOperationsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
+        Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label5 = New System.Windows.Forms.Label()
         Me.lblTotalPatients = New System.Windows.Forms.Label()
@@ -55,7 +55,6 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
-        Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -168,7 +167,7 @@ Partial Class AdminDashboard
         '
         'ToolStripMenuItem3
         '
-        Me.ToolStripMenuItem3.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ItemManagementToolStripMenuItem, Me.StockTrackingToolStripMenuItem, Me.ReportsAnalyticsToolStripMenuItem, Me.IntegrationWithClinicOperationsToolStripMenuItem})
+        Me.ToolStripMenuItem3.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ItemManagementToolStripMenuItem, Me.StockTrackingToolStripMenuItem, Me.ReportsAnalyticsToolStripMenuItem})
         Me.ToolStripMenuItem3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
         Me.ToolStripMenuItem3.Size = New System.Drawing.Size(355, 44)
@@ -179,7 +178,7 @@ Partial Class AdminDashboard
         Me.ItemManagementToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ItemManagementToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ItemManagementToolStripMenuItem.Name = "ItemManagementToolStripMenuItem"
-        Me.ItemManagementToolStripMenuItem.Size = New System.Drawing.Size(573, 44)
+        Me.ItemManagementToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
         Me.ItemManagementToolStripMenuItem.Text = "Item Management"
         '
         'StockTrackingToolStripMenuItem
@@ -187,7 +186,7 @@ Partial Class AdminDashboard
         Me.StockTrackingToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.StockTrackingToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.StockTrackingToolStripMenuItem.Name = "StockTrackingToolStripMenuItem"
-        Me.StockTrackingToolStripMenuItem.Size = New System.Drawing.Size(573, 44)
+        Me.StockTrackingToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
         Me.StockTrackingToolStripMenuItem.Text = "Stock Tracking/Transaction"
         '
         'ReportsAnalyticsToolStripMenuItem
@@ -195,16 +194,8 @@ Partial Class AdminDashboard
         Me.ReportsAnalyticsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ReportsAnalyticsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ReportsAnalyticsToolStripMenuItem.Name = "ReportsAnalyticsToolStripMenuItem"
-        Me.ReportsAnalyticsToolStripMenuItem.Size = New System.Drawing.Size(573, 44)
+        Me.ReportsAnalyticsToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
         Me.ReportsAnalyticsToolStripMenuItem.Text = "Reports and Analytics"
-        '
-        'IntegrationWithClinicOperationsToolStripMenuItem
-        '
-        Me.IntegrationWithClinicOperationsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.IntegrationWithClinicOperationsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.IntegrationWithClinicOperationsToolStripMenuItem.Name = "IntegrationWithClinicOperationsToolStripMenuItem"
-        Me.IntegrationWithClinicOperationsToolStripMenuItem.Size = New System.Drawing.Size(573, 44)
-        Me.IntegrationWithClinicOperationsToolStripMenuItem.Text = "Integration with Clinic Operations"
         '
         'Guna2CustomGradientPanel1
         '
@@ -218,12 +209,24 @@ Partial Class AdminDashboard
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(349, -2)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1298, 124)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1301, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 20
+        '
+        'lblClinicName
+        '
+        Me.lblClinicName.BackColor = System.Drawing.Color.Transparent
+        Me.lblClinicName.Font = New System.Drawing.Font("Palatino Linotype", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblClinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblClinicName.Location = New System.Drawing.Point(444, 39)
+        Me.lblClinicName.Name = "lblClinicName"
+        Me.lblClinicName.Size = New System.Drawing.Size(407, 49)
+        Me.lblClinicName.TabIndex = 21
+        Me.lblClinicName.Text = "Eme Dental Clinic System"
+        Me.lblClinicName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Guna2Panel1
         '
-        Me.Guna2Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Guna2Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.Guna2Panel1.BorderRadius = 10
         Me.Guna2Panel1.Controls.Add(Me.label5)
         Me.Guna2Panel1.Controls.Add(Me.lblTotalPatients)
@@ -235,7 +238,7 @@ Partial Class AdminDashboard
         'label5
         '
         Me.label5.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.label5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.label5.Location = New System.Drawing.Point(0, 157)
         Me.label5.Name = "label5"
         Me.label5.Size = New System.Drawing.Size(200, 53)
@@ -246,7 +249,7 @@ Partial Class AdminDashboard
         'lblTotalPatients
         '
         Me.lblTotalPatients.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTotalPatients.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblTotalPatients.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblTotalPatients.Location = New System.Drawing.Point(0, 0)
         Me.lblTotalPatients.Name = "lblTotalPatients"
         Me.lblTotalPatients.Size = New System.Drawing.Size(200, 157)
@@ -256,7 +259,7 @@ Partial Class AdminDashboard
         '
         'Guna2Panel2
         '
-        Me.Guna2Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Guna2Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.Guna2Panel2.Controls.Add(Me.label7)
         Me.Guna2Panel2.Controls.Add(Me.lblAppointmentsToday)
         Me.Guna2Panel2.Location = New System.Drawing.Point(1050, 165)
@@ -267,7 +270,7 @@ Partial Class AdminDashboard
         'label7
         '
         Me.label7.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.label7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.label7.Location = New System.Drawing.Point(0, 149)
         Me.label7.Name = "label7"
         Me.label7.Size = New System.Drawing.Size(200, 61)
@@ -278,7 +281,7 @@ Partial Class AdminDashboard
         'lblAppointmentsToday
         '
         Me.lblAppointmentsToday.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblAppointmentsToday.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblAppointmentsToday.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblAppointmentsToday.Location = New System.Drawing.Point(0, 0)
         Me.lblAppointmentsToday.Name = "lblAppointmentsToday"
         Me.lblAppointmentsToday.Size = New System.Drawing.Size(200, 157)
@@ -288,7 +291,7 @@ Partial Class AdminDashboard
         '
         'Guna2Panel3
         '
-        Me.Guna2Panel3.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Guna2Panel3.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.Guna2Panel3.Controls.Add(Me.label6)
         Me.Guna2Panel3.Controls.Add(Me.lblTotalDentists)
         Me.Guna2Panel3.Location = New System.Drawing.Point(740, 165)
@@ -299,7 +302,7 @@ Partial Class AdminDashboard
         'label6
         '
         Me.label6.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.label6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.label6.Location = New System.Drawing.Point(0, 157)
         Me.label6.Name = "label6"
         Me.label6.Size = New System.Drawing.Size(200, 53)
@@ -310,7 +313,7 @@ Partial Class AdminDashboard
         'lblTotalDentists
         '
         Me.lblTotalDentists.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTotalDentists.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblTotalDentists.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblTotalDentists.Location = New System.Drawing.Point(0, 0)
         Me.lblTotalDentists.Name = "lblTotalDentists"
         Me.lblTotalDentists.Size = New System.Drawing.Size(200, 157)
@@ -320,7 +323,7 @@ Partial Class AdminDashboard
         '
         'Guna2Panel4
         '
-        Me.Guna2Panel4.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Guna2Panel4.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.Guna2Panel4.Controls.Add(Me.label8)
         Me.Guna2Panel4.Controls.Add(Me.lblCompletedAppointments)
         Me.Guna2Panel4.Location = New System.Drawing.Point(1368, 165)
@@ -331,7 +334,7 @@ Partial Class AdminDashboard
         'label8
         '
         Me.label8.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.label8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.label8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.label8.Location = New System.Drawing.Point(0, 149)
         Me.label8.Name = "label8"
         Me.label8.Size = New System.Drawing.Size(200, 61)
@@ -342,7 +345,7 @@ Partial Class AdminDashboard
         'lblCompletedAppointments
         '
         Me.lblCompletedAppointments.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblCompletedAppointments.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblCompletedAppointments.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblCompletedAppointments.Location = New System.Drawing.Point(0, 0)
         Me.lblCompletedAppointments.Name = "lblCompletedAppointments"
         Me.lblCompletedAppointments.Size = New System.Drawing.Size(200, 157)
@@ -376,23 +379,11 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
-        'lblClinicName
-        '
-        Me.lblClinicName.BackColor = System.Drawing.Color.Transparent
-        Me.lblClinicName.Font = New System.Drawing.Font("Palatino Linotype", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblClinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblClinicName.Location = New System.Drawing.Point(444, 39)
-        Me.lblClinicName.Name = "lblClinicName"
-        Me.lblClinicName.Size = New System.Drawing.Size(407, 49)
-        Me.lblClinicName.TabIndex = 21
-        Me.lblClinicName.Text = "Eme Dental Clinic System"
-        Me.lblClinicName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
-        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
         Me.ControlBox = False
         Me.Controls.Add(Me.btnLogout)
@@ -450,7 +441,6 @@ Partial Class AdminDashboard
     Friend WithEvents ItemManagementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents StockTrackingToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReportsAnalyticsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents IntegrationWithClinicOperationsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents btnLogout As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lblClinicName As Guna.UI2.WinForms.Guna2HtmlLabel

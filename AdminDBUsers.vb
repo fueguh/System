@@ -18,7 +18,7 @@ Public Class AdminDBUsers
 
     End Sub
     Private Sub LoadUsers()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -80,7 +80,7 @@ Public Class AdminDBUsers
         Dim newUserID As Integer
 
         ' Insert into database and get the new UserID
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
             INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
@@ -120,7 +120,7 @@ Public Class AdminDBUsers
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' Decide query depending on whether password is entered, to avoid updating password with blank.
@@ -197,7 +197,7 @@ Public Class AdminDBUsers
         End If
 
         Try
-            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
                 con.Open()
 
                 ' First, remove any active sessions for this user to avoid locked sessions
@@ -240,7 +240,7 @@ Public Class AdminDBUsers
                 If match.Success Then
                     Dim fkName = match.Groups(1).Value
                     ' Look up parent table
-                    Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                    Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
                         con.Open()
                         Using cmd As New SqlCommand("SELECT OBJECT_NAME(parent_object_id) FROM sys.foreign_keys WHERE name=@fkName", con)
                             cmd.Parameters.AddWithValue("@fkName", fkName)
@@ -270,7 +270,7 @@ Public Class AdminDBUsers
 
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
@@ -280,7 +280,7 @@ Public Class AdminDBUsers
         End Using
     End Function
 
-    Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
+    Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVUsers.Rows(e.RowIndex)
             selectedUserID = CInt(row.Cells("UserID").Value)

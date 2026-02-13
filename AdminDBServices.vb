@@ -3,7 +3,7 @@
 Public Class AdminDBServices
     Private selectedServiceID As Integer = 0
     Private Sub LoadServices()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "SELECT * FROM Services ORDER BY ServiceID"
@@ -21,7 +21,7 @@ Public Class AdminDBServices
         Clearform()
     End Sub
 
-    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellContentClick
+    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex >= 0 Then
             Dim row = DGVService.Rows(e.RowIndex)
 
@@ -88,7 +88,7 @@ Public Class AdminDBServices
             Return
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
             Dim query As String = "
             INSERT INTO Services (ServiceName, Price, Duration)
@@ -118,7 +118,7 @@ Public Class AdminDBServices
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             Dim query As String = "
@@ -156,7 +156,7 @@ Public Class AdminDBServices
         If MessageBox.Show("Are you sure you want to delete this service?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
 
             ' Check if service is used in appointments
@@ -184,7 +184,7 @@ Public Class AdminDBServices
     End Sub
 
 
-    Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DGVService.CellFormatting
+    Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
         If DGVService.Columns(e.ColumnIndex).Name = "Duration" AndAlso e.Value IsNot Nothing AndAlso Not IsDBNull(e.Value) Then
             Dim mins As Integer
             If Integer.TryParse(e.Value.ToString(), mins) Then
@@ -205,7 +205,7 @@ Public Class AdminDBServices
         End If
     End Function
 
-    Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
+    Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex < 0 Then Return
         Dim row = DGVService.Rows(e.RowIndex)
         selectedServiceID = If(IsDBNull(row.Cells("ServiceID").Value), 0, Convert.ToInt32(row.Cells("ServiceID").Value))
