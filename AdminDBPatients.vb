@@ -2,7 +2,7 @@
 
 Public Class AdminDBPatients
     Private selectedPatientID As Integer = 0
-    Dim connectionString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
+    Dim connectionString As String = My.Settings.DentalDBConnection
 
     Private Sub AdminDBPatients_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPatients()
@@ -14,7 +14,7 @@ Public Class AdminDBPatients
         End If
     End Sub
     Private Sub LoadPatients()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -61,7 +61,7 @@ Public Class AdminDBPatients
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -104,7 +104,7 @@ Public Class AdminDBPatients
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -153,7 +153,7 @@ Public Class AdminDBPatients
         If MessageBox.Show("Are you sure you want to delete this patient?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
@@ -179,7 +179,7 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub DeactivatePatient(patientId As Integer)
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
             Dim cmd As New SqlCommand(query, con)

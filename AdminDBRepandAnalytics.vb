@@ -45,7 +45,7 @@ Public Class AdminDBRepandAnalytics
         End If
 
         Dim dt As New DataTable()
-        Using conn As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using conn As New SqlConnection(My.Settings.DentalDBConnection)
             Using cmd As New SqlCommand(query, conn)
                 cmd.Parameters.AddWithValue("@From", DtpFrom.Value.Date)
                 cmd.Parameters.AddWithValue("@To", DtpTo.Value.Date)
@@ -64,7 +64,7 @@ Public Class AdminDBRepandAnalytics
     Private Sub LoadSuppliers()
         Dim query As String = "SELECT DISTINCT SupplierName FROM Suppliers ORDER BY SupplierName"
 
-        Using conn As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using conn As New SqlConnection(My.Settings.DentalDBConnection)
             Using cmd As New SqlCommand(query, conn)
                 conn.Open()
                 Dim reader As SqlDataReader = cmd.ExecuteReader()
@@ -87,7 +87,7 @@ Public Class AdminDBRepandAnalytics
                            FROM StockTransactions t
                            INNER JOIN ItemManagement i ON t.ItemID = i.ItemID"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -104,7 +104,7 @@ Public Class AdminDBRepandAnalytics
         Dim query As String = "SELECT ItemID, ItemName, Quantity, Price 
                            FROM ItemManagement"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -120,7 +120,7 @@ Public Class AdminDBRepandAnalytics
     Private Sub LoadStockLevelsChart()
         Dim query As String = "SELECT ItemName, Quantity FROM ItemManagement"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -141,7 +141,7 @@ Public Class AdminDBRepandAnalytics
                            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID
                            GROUP BY s.SupplierName"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -162,7 +162,7 @@ Public Class AdminDBRepandAnalytics
                            GROUP BY TransactionDate
                            ORDER BY TransactionDate"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -185,7 +185,7 @@ Public Class AdminDBRepandAnalytics
             (SELECT ISNULL(SUM(Quantity),0) FROM ItemManagement) AS CurrentStock
     "
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
               cmd As New SqlCommand(query, connection)
             connection.Open()
             Dim reader As SqlDataReader = cmd.ExecuteReader()

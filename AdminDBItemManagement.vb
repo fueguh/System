@@ -10,7 +10,7 @@ Public Class AdminDBItemManagement
                            INNER JOIN Categories c ON i.CategoryID = c.CategoryID
                            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
               adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -19,7 +19,7 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub LoadSuppliers()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("SELECT SupplierID, SupplierName FROM Suppliers WHERE IsActive=1", con)
             Dim dt As New DataTable()
@@ -31,7 +31,7 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub LoadCategories()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
             Dim da As New SqlDataAdapter("SELECT CategoryID, CategoryName FROM Categories WHERE IsActive=1", con)
             Dim dt As New DataTable()
@@ -74,7 +74,7 @@ Public Class AdminDBItemManagement
         (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, HasExpiry) 
         VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate, @HasExpiry)"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
               cmd As New SqlCommand(query, connection)
 
             cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
@@ -120,7 +120,7 @@ Public Class AdminDBItemManagement
         Quantity=@Quantity, ExpirationDate=@ExpirationDate, HasExpiry=@HasExpiry 
         WHERE ItemID=@ItemID"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
               cmd As New SqlCommand(query, connection)
 
             cmd.Parameters.AddWithValue("@ItemID", selectedItemID)
@@ -158,7 +158,7 @@ Public Class AdminDBItemManagement
 
         Dim query As String = "DELETE FROM ItemManagement WHERE ItemID=@ItemID"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           cmd As New SqlCommand(query, connection)
 
             cmd.Parameters.AddWithValue("@ItemID", selectedItemID)
@@ -190,7 +190,7 @@ Public Class AdminDBItemManagement
         ClearInputs()
         ' Load suppliers into ComboBox
         Dim query As String = "SELECT SupplierID, SupplierName FROM Suppliers"
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -202,7 +202,7 @@ Public Class AdminDBItemManagement
 
         ' Load categories into ComboBox
         Dim queryCat As String = "SELECT CategoryID, CategoryName FROM Categories"
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(queryCat, connection)
             Dim dtCat As New DataTable()
             adapter.Fill(dtCat)

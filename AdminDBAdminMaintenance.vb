@@ -27,7 +27,7 @@ Public Class AdminDBAdminMaintenance
     End Sub
 
     Private Sub LoadAdmins()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -61,7 +61,7 @@ Public Class AdminDBAdminMaintenance
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Insert into Users
@@ -100,7 +100,7 @@ Public Class AdminDBAdminMaintenance
     End Sub
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles AdminSearch.TextChanged
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String

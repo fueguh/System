@@ -221,6 +221,7 @@
     <Compile Include="Reports.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Settings.vb" />
     <Compile Include="StaffDashboard.Designer.vb">
       <DependentUpon>StaffDashboard.vb</DependentUpon>
     </Compile>

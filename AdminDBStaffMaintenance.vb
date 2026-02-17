@@ -17,7 +17,7 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub LoadStaffs()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -62,7 +62,7 @@ Public Class AdminDBStaffMaintenance
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             ' Insert into Users
@@ -101,7 +101,7 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub SearchStaff_TextChanged(sender As Object, e As EventArgs) Handles SearchStaff.TextChanged
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String

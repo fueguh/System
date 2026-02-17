@@ -6,7 +6,7 @@ Public Class AdminDBStockTracking
         Dim query As String = "SELECT ItemID, ItemName, Quantity, Price 
                            FROM ItemManagement"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -16,7 +16,7 @@ Public Class AdminDBStockTracking
     Private Sub LoadItem()
         Dim query As String = "SELECT ItemID, ItemName FROM ItemManagement"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -45,7 +45,7 @@ Public Class AdminDBStockTracking
                            FROM StockTransactions t
                            INNER JOIN ItemManagement i ON t.ItemID = i.ItemID"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -99,7 +99,7 @@ Public Class AdminDBStockTracking
             queryUpdate = "UPDATE ItemManagement SET Quantity = Quantity - @Quantity WHERE ItemID=@ItemID"
         End If
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
           cmdTrans As New SqlCommand(queryTrans, connection),
           cmdUpdate As New SqlCommand(queryUpdate, connection)
 
@@ -152,7 +152,7 @@ Public Class AdminDBStockTracking
         ' Delete transaction record
         Dim queryDelete As String = "DELETE FROM StockTransactions WHERE TransactionID=@TransactionID"
 
-        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
               cmdUpdate As New SqlCommand(queryUpdate, connection),
               cmdDelete As New SqlCommand(queryDelete, connection)
 

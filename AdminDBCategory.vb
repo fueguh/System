@@ -7,7 +7,7 @@ Public Class AdminDBCategory
     End Sub
 
     Private Sub LoadCategories()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -38,7 +38,7 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -64,7 +64,7 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -96,7 +96,7 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String = "
@@ -145,10 +145,10 @@ Public Class AdminDBCategory
         End If
     End Sub
 
-    Dim connectionString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
+    Dim connectionString As String = My.Settings.DentalDBConnection
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles CategorySearch.TextChanged
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
 
             Dim query As String
