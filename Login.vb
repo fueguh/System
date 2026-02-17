@@ -18,7 +18,22 @@ Public Class Login
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
             If adminCount = 0 Then
-                MessageBox.Show("No admin account found. Please create an admin account.")
+                ' No admin found – create default admin
+                Dim defaultUsername As String = "admin"
+                Dim defaultPassword As String = "admin" ' Default password
+                Dim hashedPassword As String = HashPassword(defaultPassword)
+
+                Dim cmdInsert As New SqlCommand("
+                INSERT INTO Users (Username, Password, Role, FullName)
+                VALUES (@username, @password, 'Admin', 'Administrator')", con)
+                cmdInsert.Parameters.AddWithValue("@username", defaultUsername)
+                cmdInsert.Parameters.AddWithValue("@password", hashedPassword)
+                cmdInsert.ExecuteNonQuery()
+
+                MessageBox.Show("No admin found. Default admin created:" & Environment.NewLine &
+                "Username: admin" & Environment.NewLine &
+                "Password: admin")
+
             End If
         End Using
     End Sub
