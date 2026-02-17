@@ -268,10 +268,6 @@ Public Class AdminDBUsers
         End Try
     End Sub
 
-
-
-
-
     Private Function IsUsernameTaken(username As String) As Boolean
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -282,8 +278,17 @@ Public Class AdminDBUsers
             Return count > 0
         End Using
     End Function
+    Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged
+        ' Only show Availability if role is Dentist
+        If CmbRole.Text.Equals("Dentist", StringComparison.OrdinalIgnoreCase) Then
+            cmbAvailability.Enabled = True
+        Else
+            cmbAvailability.Enabled = False
+            cmbAvailability.SelectedIndex = -1 ' Clear selection if hidden
+        End If
+    End Sub
 
-    Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs)
+    Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVUsers.Rows(e.RowIndex)
             selectedUserID = CInt(row.Cells("UserID").Value)
@@ -341,4 +346,5 @@ Public Class AdminDBUsers
             txtConfirmPassword.UseSystemPasswordChar = True
         End If
     End Sub
+
 End Class

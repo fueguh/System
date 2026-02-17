@@ -56,11 +56,16 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub AdminDashboard_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
-        If Me.Visible Then
-            LoadDashboardStats()
-        End If
-    End Sub
+        LoadDashboardStats() ' runs only when activated
 
+        ' Change clinic name based on ClinicInfo table
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
+            Dim clinicName As String = TryCast(cmd.ExecuteScalar(), String)
+            lblClinicName.Text = If(clinicName, "Dental Clinic Management System")
+        End Using
+    End Sub
     Public Sub LoadDashboardStats()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -113,21 +118,6 @@ Public Class AdminDashboard
             Me.Close()
         End If
     End Sub
-
-    'change clinic name into the one from clinifInfo table
-    Private Sub AdminDashboard_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
-            con.Open()
-            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
-            Dim clinicName As Object = cmd.ExecuteScalar()
-            If clinicName IsNot Nothing Then
-                lblClinicName.Text = clinicName.ToString()
-            Else
-                lblClinicName.Text = "Dental Clinic Management System"
-            End If
-        End Using
-    End Sub
-
     Private Sub ToolStripMenuItem3_Click(sender As Object, e As EventArgs)
         AdminDBPayment.Show()
         Me.Hide()
