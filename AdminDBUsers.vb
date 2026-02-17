@@ -180,18 +180,25 @@ Public Class AdminDBUsers
         SystemSession.ShowSuccess("updated")
 
         ' Audit logging
-        If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
-            SystemSession.LogAudit("Last Admin Role Changed", "User Management",
-            selectedUserID, TxtFullName.Text, oldRole)
+        Dim actorID As Integer = SystemSession.LoggedInUserID
+        Dim actorName As String = SystemSession.LoggedInFullName
+        Dim actorRole As String = SystemSession.LoggedInRole
+        Dim targetName As String = TxtFullName.Text
+        Dim targetRole As String = CmbRole.Text
+
+        If oldRole = "Admin" AndAlso targetRole <> "Admin" AndAlso Not SystemSession.AdminExists() Then
+            SystemSession.LogAudit($"Changed last Admin account: {targetName}", "User Management",
+        actorID, actorName, actorRole)
             MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
                     "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        ElseIf CmbRole.Text = "Admin" Then
-            SystemSession.LogAudit("Admin Account Updated", "User Management",
-            selectedUserID, TxtFullName.Text, CmbRole.Text)
+        ElseIf targetRole = "Admin" Then
+            SystemSession.LogAudit($"Updated Admin account: {targetName}", "User Management",
+        actorID, actorName, actorRole)
         Else
-            SystemSession.LogAudit("User Updated", "User Management",
-            selectedUserID, TxtFullName.Text, CmbRole.Text)
+            SystemSession.LogAudit($"Updated user: {targetName}", "User Management",
+        actorID, actorName, actorRole)
         End If
+
 
         ' Enforce session rules if the logged-in user updates their own role
         SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
