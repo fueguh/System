@@ -261,4 +261,58 @@ Public Class AdminDBServices
         End Using
 
     End Sub
+
+    Private Sub txtServiceName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtServiceName.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow letters and spaces only
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True ' Block invalid input
+        End If
+    End Sub
+
+    Private Sub txtPrice_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPrice.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow digits only
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True ' Block invalid input
+        End If
+    End Sub
+
+    Private Sub txtDuration_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtDuration.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow digits only
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True ' Block invalid input
+        End If
+    End Sub
+
+    Private Sub DGVService_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
+        ' Ensure the click is on a valid row (not header)
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DGVService.Rows(e.RowIndex)
+
+            ' Populate your textboxes/combos with values from the grid
+            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
+            txtDuration.Text = row.Cells("Duration").Value.ToString()
+            txtPrice.Text = row.Cells("Price").Value.ToString()
+
+            ' Example for combo box (if you have one for Category)
+            'CmbCategory.Text = row.Cells("Category").Value.ToString()
+            ' Or if bound to IDs:
+            ' CmbCategory.SelectedValue = row.Cells("CategoryID").Value
+        End If
+
+    End Sub
 End Class

@@ -282,12 +282,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
+        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Exit Sub
             End If
-        ElseIf dayOfWeek = DayOfWeek.Saturday Then
+        ElseIf dayOfWeek = dayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Exit Sub
@@ -410,33 +410,38 @@ Public Class AdminDBAppointments
         End Using
     End Sub
 
-
-    Private Sub DGVAppointments_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-    End Sub
-
     Private Sub DGVAppointments_CellClick(sender As Object, e As DataGridViewCellEventArgs) _
     Handles DGVAppointments.CellClick
 
 
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
-
-
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
             CmbPatient.Text = row.Cells("Patient").Value.ToString()
             CmbDent.Text = row.Cells("Dentist").Value.ToString()
-            Dim [date] As Date = CDate(row.Cells("Date").Value)
-            DtpDate.Value = [date]
-            Dim startTime As TimeSpan = CType(row.Cells("StartTime").Value, TimeSpan)
-            Dim endTime As TimeSpan = CType(row.Cells("EndTime").Value, TimeSpan)
+            DtpDate.Value = CDate(row.Cells("Date").Value)
 
-            dtpStartTime.Value = Date.Today.Add(startTime)
-            DtpEndTime.Value = Date.Today.Add(endTime)
+            Try
+                dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
+                DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
+            Catch ex As Exception
+                dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
+                DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
+            End Try
 
-            cmbStatus.Text = row.Cells("Status").Value.ToString()
+            ' Set status
+            Dim statusValue As String = row.Cells("Status").Value.ToString()
+            If cmbStatus.Items.Contains(statusValue) Then
+                cmbStatus.SelectedItem = statusValue
+            Else
+                cmbStatus.SelectedIndex = 0
+            End If
+
+            ' Load services
             LoadCheckedServices(selectedAppointmentID)
         End If
+
     End Sub
 
 
@@ -542,21 +547,19 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Dim appointmentID As Integer =
-            CInt(DGVAppointments.CurrentRow.Cells("AppointmentID").Value)
+        Dim dayOfWeek As DayOfWeek = DtpDate.Value.DayOfWeek
 
-        Dim patientID As Integer =
-            CInt(DGVAppointments.CurrentRow.Cells("PatientID").Value)
-
-        Dim patientName As String =
-            DGVAppointments.CurrentRow.Cells("Patient").Value.ToString()
+        Dim appointmentID As Integer = CInt(DGVAppointments.CurrentRow.Cells("AppointmentID").Value)
+        Dim patientID As Integer = CInt(DGVAppointments.CurrentRow.Cells("PatientID").Value)
+        Dim patientName As String = DGVAppointments.CurrentRow.Cells("Patient").Value.ToString()
 
         Dim paymentForm As New AdminDBPayment With {
-            .selectedAppointmentID = appointmentID,
+            .SelectedAppointmentID = appointmentID,
             .SelectedPatientID = patientID,
             .SelectedPatientName = patientName
         }
         paymentForm.ShowDialog()
+
 
     End Sub
 
@@ -564,12 +567,8 @@ Public Class AdminDBAppointments
         Dim selectedDate As DateTime = DtpDate.Value
         Dim dayOfWeek As DayOfWeek = selectedDate.DayOfWeek
 
-        ' Always re-enable first
-        dtpStartTime.Enabled = True
-        DtpEndTime.Enabled = True
-
         If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
-            ' Monday–Friday: 5:00 PM – 8:00 PM
+            ' Monday to Friday: 5:00 PM – 8:00 PM
             dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
             DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 20, 0, 0)
 

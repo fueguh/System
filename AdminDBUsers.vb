@@ -76,6 +76,13 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
+        If Not ValidateUserFields() Then Exit Sub
+
+        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim()) Then
+            MessageBox.Show("Email or Username already exists. Please choose another.")
+            Exit Sub
+        End If
+
         ' Determine if this is the first admin BEFORE inserting
         Dim isFirstAdmin As Boolean = Not SystemSession.AdminExists()
         Dim roleToAssign As String = If(isFirstAdmin, "Admin", CmbRole.Text)
@@ -130,6 +137,13 @@ Public Class AdminDBUsers
         ' Get old role
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
+
+        If Not ValidateUserFields(selectedUserID) Then Exit Sub
+
+        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedUserID) Then
+            MessageBox.Show("Email or Username already exists. Please choose another.")
+            Exit Sub
+        End If
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
@@ -205,6 +219,7 @@ Public Class AdminDBUsers
         LoadUsers()
         Clearform()
     End Sub
+
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
         ' Only Admin can delete users
         If Not SystemSession.RequireAdmin("delete users") Then Exit Sub
@@ -351,7 +366,7 @@ Public Class AdminDBUsers
         End Using
     End Sub
 
-    Private Sub chkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
+    Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
         If chkShowPassword.Checked Then
             ' Show the password
             txtPassword.UseSystemPasswordChar = False
@@ -361,6 +376,158 @@ Public Class AdminDBUsers
             txtPassword.UseSystemPasswordChar = True
             txtConfirmPassword.UseSystemPasswordChar = True
         End If
+    End Sub
+
+    Private Function ValidateUserFields(Optional userID As Integer = 0) As Boolean
+        ' Full Name: letters only
+        If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
+       Not TxtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
+            MessageBox.Show("Full Name must contain letters only.")
+            TxtFullName.Focus()
+            Return False
+        End If
+
+        ' Phone Number: digits only
+        If String.IsNullOrWhiteSpace(TxtPhoneNumber.Text) OrElse
+       Not TxtPhoneNumber.Text.All(Function(c) Char.IsDigit(c)) Then
+            MessageBox.Show("Phone Number must contain digits only.")
+            TxtPhoneNumber.Focus()
+            Return False
+        End If
+
+        ' Username: letters and numbers only
+        If String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
+       Not TxtUsername.Text.All(Function(c) Char.IsLetterOrDigit(c)) Then
+            MessageBox.Show("Username must contain only letters and numbers.")
+            TxtUsername.Focus()
+            Return False
+        End If
+
+        ' Email: must end with @gmail.com and alphanumeric before domain
+        Dim email As String = TxtEmail.Text.Trim()
+        If String.IsNullOrWhiteSpace(email) OrElse Not email.ToLower().EndsWith("@gmail.com") Then
+            MessageBox.Show("Email must end with '@gmail.com'.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        Dim localPart As String = email.Substring(0, email.Length - 10)
+        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
+            MessageBox.Show("Email username must contain only letters and numbers.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        ' Password: at least 8 characters and 1 uppercase
+        Dim password As String = txtPassword.Text.Trim()
+        Dim confirmPassword As String = txtConfirmPassword.Text.Trim()
+
+        If password.Length < 8 Then
+            MessageBox.Show("Password must be at least 8 characters long.")
+            txtPassword.Focus()
+            Return False
+        End If
+        If Not password.Any(Function(c) Char.IsUpper(c)) Then
+            MessageBox.Show("Password must contain at least one uppercase letter.")
+            txtPassword.Focus()
+            Return False
+        End If
+        If Not password.Equals(confirmPassword) Then
+            MessageBox.Show("Passwords do not match.")
+            txtConfirmPassword.Focus()
+            Return False
+        End If
+
+        ' Duplicate check for Email and Username
+        If IsDuplicateEmailOrUsername(email, TxtUsername.Text.Trim(), userID) Then
+            MessageBox.Show("Email or Username already exists. Please choose another.")
+            Return False
+        End If
+
+        Return True
+    End Function
+    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+
+            ' Query checks if email OR username already exists, excluding the current record if updating
+            Dim query As String = "
+            SELECT COUNT(*) 
+            FROM Users 
+            WHERE (Email = @em OR Username = @un) 
+              AND UserID <> @id
+        "
+
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@em", email)
+                cmd.Parameters.AddWithValue("@un", username)
+                cmd.Parameters.AddWithValue("@id", userID)
+
+                Dim count As Integer = CInt(cmd.ExecuteScalar())
+                Return count > 0
+            End Using
+        End Using
+    End Function
+    Private Sub DGVUsers_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
+        ' Ensure the click is on a valid row (not header)
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DGVUsers.Rows(e.RowIndex)
+
+            ' Populate your textboxes/combos with values from the grid
+            TxtFullName.Text = row.Cells("FullName").Value.ToString()
+            TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
+            TxtUsername.Text = row.Cells("Username").Value.ToString()
+            TxtEmail.Text = row.Cells("Email").Value.ToString()
+            txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
+            txtPassword.Text = row.Cells("Password").Value.ToString()
+            txtConfirmPassword.Text = row.Cells("Password").Value.ToString()
+
+            ' Example for dropdowns
+            CmbRole.Text = row.Cells("Role").Value.ToString()
+            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
+        End If
+    End Sub
+
+    Private Sub TxtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtFullName.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not Char.IsLetterOrDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub TxtPhoneNumber_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhoneNumber.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtSpecialization.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtConfirmPassword_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtConfirmPassword.KeyPress
+
+    End Sub
+    Private Sub txtPassword_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPassword.KeyPress
+
     End Sub
 
 End Class

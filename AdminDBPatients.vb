@@ -68,6 +68,7 @@ Public Class AdminDBPatients
             INSERT INTO Patients (FullName, BirthDate, ContactNumber, Email, Address, NoteAllergy)
             VALUES (@name, @birth, @contact, @email, @address, @allergy)
         "
+            If Not ValidatePatientFields() Then Exit Sub
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@name", txtFullName.Text)
@@ -113,6 +114,7 @@ Public Class AdminDBPatients
                 Email=@email, Address=@address, NoteAllergy=@allergy
             WHERE PatientID=@id
         "
+            If Not ValidatePatientFields(selectedPatientID) Then Exit Sub
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedPatientID)
@@ -232,5 +234,113 @@ Public Class AdminDBPatients
 
             DGVPatients.DataSource = table
         End Using
+    End Sub
+    Private Function ValidatePatientFields(Optional patientID As Integer = 0) As Boolean
+        ' Full Name: letters only
+        If String.IsNullOrWhiteSpace(txtFullName.Text) OrElse
+       Not txtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
+            MessageBox.Show("Full Name must contain letters only.")
+            txtFullName.Focus()
+            Return False
+        End If
+
+        ' Email: must end with @gmail.com, alphanumeric before domain, no duplicates
+        Dim email As String = txtEmail.Text.Trim()
+        If String.IsNullOrWhiteSpace(email) OrElse Not email.ToLower().EndsWith("@gmail.com") Then
+            MessageBox.Show("Email must end with '@gmail.com'.")
+            txtEmail.Focus()
+            Return False
+        End If
+
+        Dim localPart As String = email.Substring(0, email.Length - 10)
+        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
+            MessageBox.Show("Email username must contain only letters and numbers.")
+            txtEmail.Focus()
+            Return False
+        End If
+
+        ' Duplicate check for Email
+        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            con.Open()
+            Dim cmd As New SqlCommand("SELECT COUNT(*) FROM Patients WHERE Email=@em AND PatientID <> @id", con)
+            cmd.Parameters.AddWithValue("@em", email)
+            cmd.Parameters.AddWithValue("@id", patientID)
+            Dim count As Integer = CInt(cmd.ExecuteScalar())
+            If count > 0 Then
+                MessageBox.Show("This email is already registered.")
+                txtEmail.Focus()
+                Return False
+            End If
+        End Using
+
+        ' Address: letters, numbers, spaces, "-" and "@" allowed
+        If String.IsNullOrWhiteSpace(txtAddress.Text) OrElse
+       Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse c = " "c OrElse c = "-"c OrElse c = "@"c) Then
+            MessageBox.Show("Address must contain only letters, numbers, spaces, '-' and '@'.")
+            txtAddress.Focus()
+            Return False
+        End If
+
+        ' Allergy Note: letters only
+        If String.IsNullOrWhiteSpace(txtAllergy.Text) OrElse
+       Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
+            MessageBox.Show("Allergy note must contain letters only.")
+            txtAllergy.Focus()
+            Return False
+        End If
+
+        ' Contact Number: digits only
+        If String.IsNullOrWhiteSpace(txtContact.Text) OrElse
+       Not txtContact.Text.All(Function(c) Char.IsDigit(c)) Then
+            MessageBox.Show("Contact Number must contain digits only.")
+            txtContact.Focus()
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Private Sub txtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtFullName.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow letters and spaces only
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtEmail.KeyPress
+        ' Allow control keys
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow letters, digits, and '@' only
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtAddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAddress.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "-"c OrElse e.KeyChar = "@"c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtAllergy_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAllergy.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtContact_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtContact.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
     End Sub
 End Class
