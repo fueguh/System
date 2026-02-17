@@ -107,7 +107,15 @@ Public Class AdminDBUsers
         If isFirstAdmin Then
             SystemSession.LogAudit("First Admin Created", "Registration", newUserID, TxtFullName.Text, roleToAssign)
         Else
-            SystemSession.LogAudit("Add user", "User Management", newUserID, TxtFullName.Text, roleToAssign)
+            ' Updated
+            SystemSession.LogAudit(
+                $"Added user {TxtFullName.Text}",   ' Message now mentions the new user
+                "User Management",                  ' Module
+                SystemSession.LoggedInUserID,      ' Your admin UserID
+                SystemSession.LoggedInFullName,    ' Your admin name
+                SystemSession.LoggedInRole          ' Your admin role
+            )
+
         End If
 
         SystemSession.ShowSuccess("added")
