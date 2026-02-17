@@ -20,7 +20,6 @@ Public Class AdminDBAdminMaintenance
         TxtPhone.Clear()
         TxtPassword.Clear()
         TxtConfirmPassword.Clear()
-        cmbAvailability.SelectedIndex = -1
         chkShowPassword.Checked = False
         TxtPassword.UseSystemPasswordChar = True
         TxtConfirmPassword.UseSystemPasswordChar = True
@@ -31,7 +30,7 @@ Public Class AdminDBAdminMaintenance
             con.Open()
 
             Dim query As String = "
-            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email, U.Availability
+            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
             FROM Users U
             INNER JOIN Admins A ON U.UserID = A.UserID
             WHERE U.Role = 'Admin'
@@ -66,9 +65,9 @@ Public Class AdminDBAdminMaintenance
 
             ' Insert into Users
             Dim queryUser As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Availability)
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated)
             OUTPUT INSERTED.UserID
-            VALUES (@fullname, @username, @password, 'Admin', @phone, @email, GETDATE(), @availability)
+            VALUES (@fullname, @username, @password, 'Admin', @phone, @email, GETDATE())
         "
 
             Dim userId As Integer
@@ -78,7 +77,6 @@ Public Class AdminDBAdminMaintenance
                 cmdUser.Parameters.AddWithValue("@password", TxtPassword.Text.Trim) ' ideally hash this
                 cmdUser.Parameters.AddWithValue("@phone", TxtPhone.Text.Trim)
                 cmdUser.Parameters.AddWithValue("@email", TxtUsername.Text.Trim & "@admin.com") ' or use a textbox if you want
-                cmdUser.Parameters.AddWithValue("@availability", cmbAvailability.Text)
 
                 userId = Convert.ToInt32(cmdUser.ExecuteScalar())
             End Using
@@ -106,7 +104,7 @@ Public Class AdminDBAdminMaintenance
             Dim query As String
             If AdminSearch.Text.Trim = "" Then
                 query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email, U.Availability
+                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
                 FROM Users U
                 INNER JOIN Admins A ON U.UserID = A.UserID
                 WHERE U.Role = 'Admin'
@@ -114,7 +112,7 @@ Public Class AdminDBAdminMaintenance
             "
             Else
                 query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email, U.Availability
+                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
                 FROM Users U
                 INNER JOIN Admins A ON U.UserID = A.UserID
                 WHERE U.Role = 'Admin'
@@ -123,7 +121,6 @@ Public Class AdminDBAdminMaintenance
                      OR COALESCE(U.Username,'') LIKE @search
                      OR COALESCE(U.PhoneNumber,'') LIKE @search
                      OR COALESCE(U.Email,'') LIKE @search
-                     OR COALESCE(U.Availability,'') LIKE @search
                   )
                 ORDER BY U.FullName
             "
@@ -141,6 +138,10 @@ Public Class AdminDBAdminMaintenance
                 DataGridViewAdmins.DataSource = table
             End Using
         End Using
+
+    End Sub
+
+    Private Sub Guna2HtmlLabel6_Click(sender As Object, e As EventArgs) Handles Guna2HtmlLabel6.Click
 
     End Sub
 End Class
