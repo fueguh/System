@@ -55,9 +55,12 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub AdminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadDashboardStats()
+    Private Sub AdminDashboard_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
+        If Me.Visible Then
+            LoadDashboardStats()
+        End If
     End Sub
+
     Public Sub LoadDashboardStats()
         Using con As New SqlConnection(My.Settings.DentalDBConnection)
             con.Open()
