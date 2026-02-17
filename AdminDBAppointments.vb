@@ -27,11 +27,9 @@ Public Class AdminDBAppointments
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
 
-        cmbStatus.Items.Add("Pending")
-        cmbStatus.Items.Add("Confirmed")
+        cmbStatus.Items.Add("Ongoing")
         cmbStatus.Items.Add("Completed")
         cmbStatus.Items.Add("Cancelled")
-        cmbStatus.Items.Add("No-Show")
         cmbStatus.SelectedIndex = 0 ' start with placeholder
     End Sub
 
@@ -91,6 +89,7 @@ Public Class AdminDBAppointments
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVAppointments.DataSource = dt
+
         End Using
     End Sub
 
@@ -415,7 +414,10 @@ Public Class AdminDBAppointments
     Private Sub DGVAppointments_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
     End Sub
 
-    Private Sub DGVAppointments_CellClick(sender As Object, e As DataGridViewCellEventArgs)
+    Private Sub DGVAppointments_CellClick(sender As Object, e As DataGridViewCellEventArgs) _
+    Handles DGVAppointments.CellClick
+
+
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
 
@@ -426,8 +428,12 @@ Public Class AdminDBAppointments
             CmbDent.Text = row.Cells("Dentist").Value.ToString()
             Dim [date] As Date = CDate(row.Cells("Date").Value)
             DtpDate.Value = [date]
-            dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
-            DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
+            Dim startTime As TimeSpan = CType(row.Cells("StartTime").Value, TimeSpan)
+            Dim endTime As TimeSpan = CType(row.Cells("EndTime").Value, TimeSpan)
+
+            dtpStartTime.Value = Date.Today.Add(startTime)
+            DtpEndTime.Value = Date.Today.Add(endTime)
+
             cmbStatus.Text = row.Cells("Status").Value.ToString()
             LoadCheckedServices(selectedAppointmentID)
         End If
