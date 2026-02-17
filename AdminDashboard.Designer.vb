@@ -29,6 +29,8 @@ Partial Class AdminDashboard
         Me.ManageDentistsForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.ManagePatientsForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.ManageServicesForm = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SupplierMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CategoryMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AuditTrailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SystemOverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -55,6 +57,8 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
+        Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -84,7 +88,7 @@ Partial Class AdminDashboard
         '
         'ManageForm
         '
-        Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm})
+        Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ToolStripMenuItem4, Me.ToolStripMenuItem5, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm, Me.SupplierMaintenanceToolStripMenuItem, Me.CategoryMaintenanceToolStripMenuItem})
         Me.ManageForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageForm.Name = "ManageForm"
         Me.ManageForm.Size = New System.Drawing.Size(210, 44)
@@ -95,23 +99,23 @@ Partial Class AdminDashboard
         Me.ManageUsersForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManageUsersForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageUsersForm.Name = "ManageUsersForm"
-        Me.ManageUsersForm.Size = New System.Drawing.Size(399, 44)
-        Me.ManageUsersForm.Text = "User Maintenance"
+        Me.ManageUsersForm.Size = New System.Drawing.Size(411, 44)
+        Me.ManageUsersForm.Text = "Users Maintenance"
         '
         'ManageDentistsForm
         '
         Me.ManageDentistsForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManageDentistsForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageDentistsForm.Name = "ManageDentistsForm"
-        Me.ManageDentistsForm.Size = New System.Drawing.Size(399, 44)
-        Me.ManageDentistsForm.Text = "Dentist Maintenance"
+        Me.ManageDentistsForm.Size = New System.Drawing.Size(411, 44)
+        Me.ManageDentistsForm.Text = "Staff Maintenance"
         '
         'ManagePatientsForm
         '
         Me.ManagePatientsForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManagePatientsForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManagePatientsForm.Name = "ManagePatientsForm"
-        Me.ManagePatientsForm.Size = New System.Drawing.Size(399, 44)
+        Me.ManagePatientsForm.Size = New System.Drawing.Size(411, 44)
         Me.ManagePatientsForm.Text = "Patient Maintenance"
         '
         'ManageServicesForm
@@ -119,8 +123,24 @@ Partial Class AdminDashboard
         Me.ManageServicesForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManageServicesForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageServicesForm.Name = "ManageServicesForm"
-        Me.ManageServicesForm.Size = New System.Drawing.Size(399, 44)
+        Me.ManageServicesForm.Size = New System.Drawing.Size(411, 44)
         Me.ManageServicesForm.Text = "Services Maintenance"
+        '
+        'SupplierMaintenanceToolStripMenuItem
+        '
+        Me.SupplierMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.SupplierMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.SupplierMaintenanceToolStripMenuItem.Name = "SupplierMaintenanceToolStripMenuItem"
+        Me.SupplierMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(411, 44)
+        Me.SupplierMaintenanceToolStripMenuItem.Text = "Supplier Maintenance"
+        '
+        'CategoryMaintenanceToolStripMenuItem
+        '
+        Me.CategoryMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.CategoryMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.CategoryMaintenanceToolStripMenuItem.Name = "CategoryMaintenanceToolStripMenuItem"
+        Me.CategoryMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(411, 44)
+        Me.CategoryMaintenanceToolStripMenuItem.Text = "Category Maintenance"
         '
         'AuditTrailToolStripMenuItem
         '
@@ -207,9 +227,9 @@ Partial Class AdminDashboard
         Me.Guna2CustomGradientPanel1.FillColor2 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.FillColor3 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(349, -2)
+        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(350, -2)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1301, 124)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1300, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 20
         '
         'lblClinicName
@@ -379,6 +399,22 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
+        'ToolStripMenuItem4
+        '
+        Me.ToolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(411, 44)
+        Me.ToolStripMenuItem4.Text = "Dentist Maintenance"
+        '
+        'ToolStripMenuItem5
+        '
+        Me.ToolStripMenuItem5.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
+        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(411, 44)
+        Me.ToolStripMenuItem5.Text = "Admin Maintenance"
+        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -444,4 +480,8 @@ Partial Class AdminDashboard
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents btnLogout As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lblClinicName As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents SupplierMaintenanceToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents CategoryMaintenanceToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem4 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
 End Class

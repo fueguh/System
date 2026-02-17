@@ -37,7 +37,6 @@ Partial Class AdminDBStockTracking
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
-        Me.TextBoxSupplier = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
@@ -127,7 +126,7 @@ Partial Class AdminDBStockTracking
         Me.TransactionDate.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.TransactionDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.TransactionDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.TransactionDate.Location = New System.Drawing.Point(71, 538)
+        Me.TransactionDate.Location = New System.Drawing.Point(71, 457)
         Me.TransactionDate.Margin = New System.Windows.Forms.Padding(4)
         Me.TransactionDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.TransactionDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -169,7 +168,6 @@ Partial Class AdminDBStockTracking
         Me.ComboBoxItem.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ComboBoxItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ComboBoxItem.ItemHeight = 30
-        Me.ComboBoxItem.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
         Me.ComboBoxItem.Location = New System.Drawing.Point(71, 198)
         Me.ComboBoxItem.Name = "ComboBoxItem"
         Me.ComboBoxItem.Size = New System.Drawing.Size(304, 36)
@@ -191,7 +189,7 @@ Partial Class AdminDBStockTracking
         Me.Guna2HtmlLabel2.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel2.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel2.Location = New System.Drawing.Point(71, 510)
+        Me.Guna2HtmlLabel2.Location = New System.Drawing.Point(71, 429)
         Me.Guna2HtmlLabel2.Name = "Guna2HtmlLabel2"
         Me.Guna2HtmlLabel2.Size = New System.Drawing.Size(149, 28)
         Me.Guna2HtmlLabel2.TabIndex = 38
@@ -211,30 +209,6 @@ Partial Class AdminDBStockTracking
         Me.btnBack.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.btnBack.TabIndex = 39
         Me.btnBack.TabStop = False
-        '
-        'TextBoxSupplier
-        '
-        Me.TextBoxSupplier.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxSupplier.BorderRadius = 10
-        Me.TextBoxSupplier.BorderThickness = 2
-        Me.TextBoxSupplier.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.TextBoxSupplier.DefaultText = ""
-        Me.TextBoxSupplier.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
-        Me.TextBoxSupplier.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
-        Me.TextBoxSupplier.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.TextBoxSupplier.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.TextBoxSupplier.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TextBoxSupplier.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.TextBoxSupplier.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxSupplier.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TextBoxSupplier.Location = New System.Drawing.Point(71, 438)
-        Me.TextBoxSupplier.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
-        Me.TextBoxSupplier.Name = "TextBoxSupplier"
-        Me.TextBoxSupplier.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxSupplier.PlaceholderText = "Supplier"
-        Me.TextBoxSupplier.SelectedText = ""
-        Me.TextBoxSupplier.Size = New System.Drawing.Size(304, 50)
-        Me.TextBoxSupplier.TabIndex = 40
         '
         'Guna2CustomGradientPanel1
         '
@@ -358,7 +332,6 @@ Partial Class AdminDBStockTracking
         Me.Controls.Add(Me.Guna2HtmlLabel4)
         Me.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
-        Me.Controls.Add(Me.TextBoxSupplier)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
         Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.ComboBoxItem)
@@ -390,7 +363,6 @@ Partial Class AdminDBStockTracking
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
-    Friend WithEvents TextBoxSupplier As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel3 As Guna.UI2.WinForms.Guna2HtmlLabel

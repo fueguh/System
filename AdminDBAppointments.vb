@@ -90,36 +90,14 @@ Public Class AdminDBAppointments
             con.Open()
 
             Dim query As String = "
-             SELECT
-    A.AppointmentID,
-    A.PatientID,
-    A.UserID,
-    P.FullName AS Patient,
-    D.FullName AS Dentist,
-    STRING_AGG(S.ServiceName, ', ') AS Services,
-    A.Date,
-    A.StartTime,
-    A.EndTime,
-    A.Status
-FROM Appointments A
-JOIN Patients P ON A.PatientID = P.PatientID
-JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-JOIN Services S ON ASV.ServiceID = S.ServiceID
-GROUP BY
-    A.AppointmentID,
-    A.PatientID,
-    A.UserID,
-    P.FullName,
-    D.FullName,
-    A.Date,
-    A.StartTime,
-    A.EndTime,
-    A.Status
-ORDER BY A.Date DESC;
-
-
-       "
+            SELECT A.AppointmentID, P.FullName AS Patient, D.FullName AS Dentist, STRING_AGG(S.ServiceName, ', ') AS Services, A.Date, A.StartTime, A.EndTime, A.Status
+            FROM Appointments A
+            JOIN Patients P ON A.PatientID = P.PatientID
+            JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+            JOIN Services S ON ASV.ServiceID = S.ServiceID
+            GROUP BY A.AppointmentID, P.FullName, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
+            ORDER BY A.Date DESC;"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
@@ -443,16 +421,42 @@ ORDER BY A.Date DESC;
     End Sub
 
     Private Sub ClearForm()
+        ' Reset dropdowns
         CmbPatient.SelectedIndex = 0
         CmbDent.SelectedIndex = 0
-        DtpDate.Value = Date.Today
-        dtpStartTime.Value = Date.Now
-        DtpEndTime.Value = Date.Now.AddMinutes(30)
         cmbStatus.SelectedIndex = 0
-        selectedAppointmentID = 0
+
+        ' Reset date to today
+        DtpDate.Value = Date.Today
+
+        ' Determine allowed times based on day of week
+        Dim selectedDate As DateTime = DtpDate.Value
+        Dim dayOfWeek As DayOfWeek = selectedDate.DayOfWeek
+
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
+            ' Monday–Friday: 5:00 PM – 8:00 PM
+            dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
+            DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 20, 0, 0)
+
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
+            ' Saturday: 8:00 AM – 5:00 PM
+            dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 8, 0, 0)
+            DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
+
+        Else
+            ' Sunday or invalid day: disable scheduling
+            dtpStartTime.Value = Date.Now
+            DtpEndTime.Value = Date.Now.AddMinutes(30)
+            MessageBox.Show("Appointments are only available Monday–Saturday.")
+        End If
+
+        ' Reset services checklist
         For i As Integer = 0 To clbServices.Items.Count - 1
             clbServices.SetItemChecked(i, False)
         Next
+
+        ' Reset selected appointment ID
+        selectedAppointmentID = 0
     End Sub
 
     Private Sub DGVAppointments_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
@@ -560,5 +564,35 @@ ORDER BY A.Date DESC;
 
     End Sub
 
+    Private Sub DtpDate_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
+        Dim selectedDate As DateTime = DtpDate.Value
+        Dim dayOfWeek As DayOfWeek = selectedDate.DayOfWeek
 
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
+            ' Monday to Friday: 5:00 PM – 8:00 PM
+            dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
+            DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 20, 0, 0)
+
+            dtpStartTime.MinDate = dtpStartTime.Value
+            dtpStartTime.MaxDate = DtpEndTime.Value
+            DtpEndTime.MinDate = dtpStartTime.Value
+            DtpEndTime.MaxDate = DtpEndTime.Value
+
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
+            ' Saturday: 8:00 AM – 5:00 PM
+            dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 8, 0, 0)
+            DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
+
+            dtpStartTime.MinDate = dtpStartTime.Value
+            dtpStartTime.MaxDate = DtpEndTime.Value
+            DtpEndTime.MinDate = dtpStartTime.Value
+            DtpEndTime.MaxDate = DtpEndTime.Value
+
+        Else
+            ' Sunday or invalid day: disable scheduling
+            MessageBox.Show("Appointments are only available Monday–Saturday.")
+            dtpStartTime.Enabled = False
+            DtpEndTime.Enabled = False
+        End If
+    End Sub
 End Class

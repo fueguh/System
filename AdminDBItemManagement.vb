@@ -1,193 +1,215 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class AdminDBItemManagement
+    Private selectedItemID As Integer
 
-    Dim connString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
-    Dim conn As New SqlConnection(connString)
+    Private Sub LoadInventory(Optional searchText As String = "")
+        Dim query As String = "SELECT i.ItemID, i.ItemName, i.Price, c.CategoryName, 
+                                  s.SupplierName, i.Quantity, i.ExpirationDate, i.HasExpiry
+                           FROM ItemManagement i
+                           INNER JOIN Categories c ON i.CategoryID = c.CategoryID
+                           INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID"
 
-    Private Sub LoadInventory()
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-            Dim da As New SqlDataAdapter("SELECT * FROM Inventory", con)
+        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+              adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
-            da.Fill(dt)
-            DGVInventory.DataSource = dt
+            adapter.Fill(dt)
+            DgvItems.DataSource = dt
         End Using
     End Sub
 
     Private Sub LoadSuppliers()
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
-            Dim da As New SqlDataAdapter("SELECT DISTINCT Supplier FROM Inventory WHERE Supplier IS NOT NULL ORDER BY Supplier", con)
+            Dim da As New SqlDataAdapter("SELECT SupplierID, SupplierName FROM Suppliers WHERE IsActive=1", con)
             Dim dt As New DataTable()
             da.Fill(dt)
-
             ComboBoxSupplier.DataSource = dt
-            ComboBoxSupplier.DisplayMember = "Supplier"
-            ComboBoxSupplier.ValueMember = "Supplier"
+            ComboBoxSupplier.DisplayMember = "SupplierName"
+            ComboBoxSupplier.ValueMember = "SupplierID"
+        End Using
+    End Sub
+
+    Private Sub LoadCategories()
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+            Dim da As New SqlDataAdapter("SELECT CategoryID, CategoryName FROM Categories WHERE IsActive=1", con)
+            Dim dt As New DataTable()
+            da.Fill(dt)
+            ComboBoxCategory.DataSource = dt
+            ComboBoxCategory.DisplayMember = "CategoryName"
+            ComboBoxCategory.ValueMember = "CategoryID"
         End Using
     End Sub
 
     Private Sub ClearInputs()
+        ' Clear textboxes
         TextBoxItemName.Clear()
-        ComboBoxCategory.SelectedIndex = -1
-        NumericUpDownQuantity.Value = 0
-        ComboBoxUnit.SelectedIndex = -1
         TextBoxPrice.Clear()
+
+        ' Reset comboboxes
+        ComboBoxCategory.SelectedIndex = -1
         ComboBoxSupplier.SelectedIndex = -1
 
-        ' Reset expiry controls
-        chkHasExpiry.Checked = False
+        ' Reset numeric up-down
+        NumericUpDownQuantity.Value = 0
+
+        ' Reset DateTimePicker
         DateTimePickerExpiry.Value = DateTime.Now
-        DateTimePickerExpiry.Enabled = False
+        DateTimePickerExpiry.Enabled = False ' optional: disable until HasExpiry is checked
+
+        ' Reset checkbox
+        chkHasExpiry.Checked = False
+
+        ' Reset selectedItemID
+        selectedItemID = 0
     End Sub
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BtnAdd.Click
-        Dim qty As Integer
-        If Not Integer.TryParse(NumericUpDownQuantity.Value, qty) Then
-            MessageBox.Show("Enter a valid quantity.")
-            Exit Sub
-        End If
-
+        Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
         Dim price As Decimal
-        If Not Decimal.TryParse(TextBoxPrice.Text, price) Then
-            MessageBox.Show("Enter a valid price.")
-            Exit Sub
-        End If
+        If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then Exit Sub
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-            Dim query As String = "
-            INSERT INTO Inventory (ItemName, Category, Quantity, Unit, Price, Supplier, ExpiryDate)
-            VALUES (@ItemName, @Category, @Quantity, @Unit, @Price, @Supplier, @ExpiryDate)"
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
-                cmd.Parameters.AddWithValue("@Category", ComboBoxCategory.Text)
-                cmd.Parameters.AddWithValue("@Quantity", qty)
-                cmd.Parameters.AddWithValue("@Unit", ComboBoxUnit.Text)
-                cmd.Parameters.AddWithValue("@Price", price)
-                cmd.Parameters.AddWithValue("@Supplier", ComboBoxSupplier.Text)
+        Dim query As String = "INSERT INTO ItemManagement 
+        (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, HasExpiry) 
+        VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate, @HasExpiry)"
 
-                ' ✅ Only save expiry if checkbox is checked
-                If chkHasExpiry.Checked Then
-                    cmd.Parameters.AddWithValue("@ExpiryDate", DateTimePickerExpiry.Value)
-                Else
-                    cmd.Parameters.AddWithValue("@ExpiryDate", DBNull.Value)
-                End If
+        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+              cmd As New SqlCommand(query, connection)
 
-                cmd.ExecuteNonQuery()
-            End Using
+            cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
+            cmd.Parameters.AddWithValue("@Price", price)
+            cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
+            cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
+            cmd.Parameters.AddWithValue("@Quantity", NumericUpDownQuantity.Value)
+            cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
+
+            ' Only add ExpirationDate once, depending on checkbox
+            If chkHasExpiry.Checked Then
+                cmd.Parameters.AddWithValue("@ExpirationDate", DateTimePickerExpiry.Value)
+            Else
+                cmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value)
+            End If
+
+            connection.Open()
+            cmd.ExecuteNonQuery()
+            connection.Close()
         End Using
+
         MessageBox.Show("Item added successfully!")
-        LoadInventory()
         LoadSuppliers()
+        LoadInventory()
+        LoadCategories()
         ClearInputs()
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click, BtnUpdate.Click
-        Dim qty As Integer
-        If Not Integer.TryParse(NumericUpDownQuantity.Value, qty) Then
-            MessageBox.Show("Enter a valid quantity.")
-            Exit Sub
-        End If
-
+        If DgvItems.CurrentRow Is Nothing Then Exit Sub
+        Dim itemID As Integer = CInt(DgvItems.CurrentRow.Cells("ItemID").Value)
+        Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
         Dim price As Decimal
-        If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), Globalization.NumberStyles.Any,
-                        Globalization.CultureInfo.InvariantCulture, price) Then
+        If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then Exit Sub
 
-            Exit Sub
-        End If
-
-        ' Get selected ItemID from DataGridView
-        If DGVInventory.CurrentRow Is Nothing Then
+        If selectedItemID = 0 Then
             MessageBox.Show("Please select an item to update.")
             Exit Sub
         End If
-        Dim itemID As Integer = CInt(DGVInventory.CurrentRow.Cells("ItemID").Value)
 
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-            Dim query As String = "
-            UPDATE Inventory
-            SET ItemName=@ItemName, Category=@Category, Quantity=@Quantity,
-                Unit=@Unit, Price=@Price, Supplier=@Supplier, ExpiryDate=@ExpiryDate
-            WHERE ItemID=@ItemID"
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
-                cmd.Parameters.AddWithValue("@Category", ComboBoxCategory.Text)
-                cmd.Parameters.AddWithValue("@Quantity", qty)
-                cmd.Parameters.AddWithValue("@Unit", ComboBoxUnit.Text)
-                cmd.Parameters.AddWithValue("@Price", price)
-                cmd.Parameters.AddWithValue("@Supplier", ComboBoxSupplier.Text)
+        Dim query As String = "UPDATE ItemManagement SET 
+        ItemName=@ItemName, Price=@Price, CategoryID=@CategoryID, SupplierID=@SupplierID, 
+        Quantity=@Quantity, ExpirationDate=@ExpirationDate, HasExpiry=@HasExpiry 
+        WHERE ItemID=@ItemID"
 
-                ' ✅ Only save expiry if checkbox is checked
-                If chkHasExpiry.Checked Then
-                    cmd.Parameters.AddWithValue("@ExpiryDate", DateTimePickerExpiry.Value)
-                Else
-                    cmd.Parameters.AddWithValue("@ExpiryDate", DBNull.Value)
-                End If
+        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+              cmd As New SqlCommand(query, connection)
 
-                cmd.Parameters.AddWithValue("@ItemID", itemID)
-                cmd.ExecuteNonQuery()
-            End Using
+            cmd.Parameters.AddWithValue("@ItemID", selectedItemID)
+            cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
+            cmd.Parameters.AddWithValue("@Price", price)
+            cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
+            cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue) ' ✅ ensure bound
+            cmd.Parameters.AddWithValue("@Quantity", NumericUpDownQuantity.Value)
+            cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
+
+            ' Only add ExpirationDate once
+            If chkHasExpiry.Checked Then
+                cmd.Parameters.AddWithValue("@ExpirationDate", DateTimePickerExpiry.Value)
+            Else
+                cmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value)
+            End If
+
+            connection.Open()
+            cmd.ExecuteNonQuery()
+            connection.Close()
         End Using
 
+        MessageBox.Show("Item updated successfully!")
         LoadInventory()
         LoadSuppliers()
-        MessageBox.Show("Item updated successfully!")
+        LoadCategories()
         ClearInputs()
     End Sub
 
-    Private Sub NewMethod(qty As Integer, price As Decimal, itemID As Integer, con As SqlConnection, query As String)
-        Using cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
-            cmd.Parameters.AddWithValue("@Category", ComboBoxCategory.Text)
-            cmd.Parameters.AddWithValue("@Quantity", qty)
-            cmd.Parameters.AddWithValue("@Unit", ComboBoxUnit.Text)
-            cmd.Parameters.AddWithValue("@Price", price)
-            cmd.Parameters.AddWithValue("@Supplier", ComboBoxSupplier.Text)
-            cmd.Parameters.AddWithValue("@ExpiryDate", DateTimePickerExpiry.Value)
-            cmd.Parameters.AddWithValue("@ItemID", itemID)
+    Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
+        If selectedItemID = 0 Then
+            MessageBox.Show("Please select an item to delete.")
+            Exit Sub
+        End If
 
-            ' Handle expiry date
+        Dim query As String = "DELETE FROM ItemManagement WHERE ItemID=@ItemID"
+
+        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+          cmd As New SqlCommand(query, connection)
+
+            cmd.Parameters.AddWithValue("@ItemID", selectedItemID)
+
+            connection.Open()
+            cmd.ExecuteNonQuery()
+            connection.Close()
+
             If chkHasExpiry.Checked Then
-                cmd.Parameters.AddWithValue("@ExpiryDate", DateTimePickerExpiry.Value)
+                cmd.Parameters.AddWithValue("@ExpirationDate", DateTimePickerExpiry.Value)
             Else
-                cmd.Parameters.AddWithValue("@ExpiryDate", DBNull.Value)
+                cmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value)
             End If
-
-            cmd.Parameters.AddWithValue("@ItemID", itemID)
         End Using
+
+        MessageBox.Show("Item deleted successfully!")
+        LoadInventory()
+        LoadSuppliers()
+        LoadCategories()
+        ClearInputs()
     End Sub
 
     Private Sub AdminDBItemManagement_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ClearInputs()
+        DateTimePickerExpiry.Enabled = False
+        DateTimePickerExpiry.Value = DateTimePickerExpiry.MinDate
         LoadInventory()
-        LoadSuppliers()
-        ComboBoxSupplier.SelectedIndex = -1
-        chkHasExpiry.Checked = False
-    End Sub
-
-    Private Sub LoadInventory(Optional searchText As String = "")
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-
-            Dim query As String
-            If String.IsNullOrWhiteSpace(searchText) Then
-                query = "SELECT * FROM Inventory"
-            Else
-                query = "SELECT * FROM Inventory WHERE ItemName LIKE @Search OR Category LIKE @Search"
-            End If
-
-            Dim cmd As New SqlCommand(query, con)
-            If Not String.IsNullOrWhiteSpace(searchText) Then
-                cmd.Parameters.AddWithValue("@Search", "%" & searchText & "%")
-            End If
-
-            Dim da As New SqlDataAdapter(cmd)
+        'LoadSuppliers()
+        'LoadCategories()
+        ClearInputs()
+        ' Load suppliers into ComboBox
+        Dim query As String = "SELECT SupplierID, SupplierName FROM Suppliers"
+        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+          adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
-            da.Fill(dt)
-            DGVInventory.DataSource = dt
+            adapter.Fill(dt)
+
+            ComboBoxSupplier.DataSource = dt
+            ComboBoxSupplier.DisplayMember = "SupplierName"
+            ComboBoxSupplier.ValueMember = "SupplierID"
+        End Using
+
+        ' Load categories into ComboBox
+        Dim queryCat As String = "SELECT CategoryID, CategoryName FROM Categories"
+        Using connection As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"),
+          adapter As New SqlDataAdapter(queryCat, connection)
+            Dim dtCat As New DataTable()
+            adapter.Fill(dtCat)
+
+            ComboBoxCategory.DataSource = dtCat
+            ComboBoxCategory.DisplayMember = "CategoryName"
+            ComboBoxCategory.ValueMember = "CategoryID"
         End Using
     End Sub
 
@@ -195,72 +217,60 @@ Public Class AdminDBItemManagement
 
     End Sub
 
-    Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
-        If DGVInventory.CurrentRow Is Nothing Then Exit Sub
-        Dim itemID As Integer = CInt(DGVInventory.CurrentRow.Cells("ItemID").Value)
-
-        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
-            con.Open()
-
-            ' Because of FK with ON DELETE CASCADE, deleting Inventory will auto-delete transactions
-            Dim cmdItem As New SqlCommand("DELETE FROM Inventory WHERE ItemID=@ItemID", con)
-            cmdItem.Parameters.AddWithValue("@ItemID", itemID)
-            cmdItem.ExecuteNonQuery()
-            ' ✅ Only save expiry if checkbox is checked
-            If chkHasExpiry.Checked Then
-                cmdItem.Parameters.AddWithValue("@ExpiryDate", DateTimePickerExpiry.Value)
-            Else
-                cmdItem.Parameters.AddWithValue("@ExpiryDate", DBNull.Value)
-            End If
-        End Using
-
-        LoadInventory()
-        LoadSuppliers()
-        MessageBox.Show("Item deleted successfully!")
-        ClearInputs()
-    End Sub
-
     Private Sub ChkHasExpiry_CheckedChanged(sender As Object, e As EventArgs) Handles chkHasExpiry.CheckedChanged
-        ' Enable/disable DateTimePicker based on checkbox
-        DateTimePickerExpiry.Enabled = chkHasExpiry.Checked
-    End Sub
-
-    Private Sub DGVInventory_SelectionChanged(sender As Object, e As EventArgs) Handles DGVInventory.SelectionChanged
-        If IsDBNull(DGVInventory.CurrentRow.Cells("ExpiryDate").Value) Then
-            chkHasExpiry.Checked = False
-            DateTimePickerExpiry.Enabled = False
+        If chkHasExpiry.Checked Then
+            DateTimePickerExpiry.Enabled = True
+            DateTimePickerExpiry.Value = DateTime.Now ' safe default when enabled
         Else
-            chkHasExpiry.Checked = True
-            DateTimePickerExpiry.Value = CDate(DGVInventory.CurrentRow.Cells("ExpiryDate").Value)
+            DateTimePickerExpiry.Enabled = False
+            ' Reset to MinDate so you don’t hit the ArgumentOutOfRangeException
+            DateTimePickerExpiry.Value = DateTimePickerExpiry.MinDate
         End If
     End Sub
 
-    Private Sub DGVInventory_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVInventory.CellClick
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DGVInventory.Rows(e.RowIndex)
+    Private Sub DgvItems_SelectionChanged(sender As Object, e As EventArgs) Handles DgvItems.SelectionChanged
+        If DgvItems.SelectedRows.Count > 0 Then
+            Dim row As DataGridViewRow = DgvItems.SelectedRows(0)
 
-            ' ✅ Load basic fields
-            TextBoxItemName.Text = row.Cells("ItemName").Value.ToString()
-            ComboBoxCategory.Text = row.Cells("Category").Value.ToString()
-            NumericUpDownQuantity.Value = row.Cells("Quantity").Value.ToString()
-            ComboBoxUnit.Text = row.Cells("Unit").Value.ToString()
+            ' Store the ItemID for Update/Delete operations
+            selectedItemID = Convert.ToInt32(row.Cells("ItemID").Value)
+
+            ' Populate form fields with the selected row’s values
+            TextBoxPrice.Text = row.Cells("ItemName").Value.ToString()
             TextBoxPrice.Text = row.Cells("Price").Value.ToString()
-            ComboBoxSupplier.Text = row.Cells("Supplier").Value.ToString()
+            ComboBoxCategory.Text = row.Cells("CategoryName").Value.ToString()
+            ComboBoxSupplier.Text = row.Cells("SupplierName").Value.ToString()
+            NumericUpDownQuantity.Value = Convert.ToInt32(row.Cells("Quantity").Value)
 
-            ' ✅ Handle expiry toggle
-            If IsDBNull(row.Cells("ExpiryDate").Value) Then
-                chkHasExpiry.Checked = False
-                DateTimePickerExpiry.Enabled = False
+            ' Handle nullable ExpirationDate
+            If IsDBNull(row.Cells("ExpirationDate").Value) Then
+                DateTimePickerExpiry.Value = DateTime.Now
             Else
-                chkHasExpiry.Checked = True
-                DateTimePickerExpiry.Enabled = True
-                DateTimePickerExpiry.Value = CDate(row.Cells("ExpiryDate").Value)
+                DateTimePickerExpiry.Value = Convert.ToDateTime(row.Cells("ExpirationDate").Value)
             End If
+
+            chkHasExpiry.Checked = Convert.ToBoolean(row.Cells("HasExpiry").Value)
+        End If
+    End Sub
+
+    Private Sub DGVInventory_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DgvItems.CellClick
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DgvItems.Rows(e.RowIndex)
+            selectedItemID = Convert.ToInt32(row.Cells("ItemID").Value)
+
+            ' Optional: populate form fields with selected row values
+            TextBoxItemName.Text = row.Cells("ItemName").Value.ToString()
+            TextBoxPrice.Text = row.Cells("Price").Value.ToString()
+            ComboBoxCategory.Text = row.Cells("CategoryName").Value.ToString()
+            ComboBoxCategory.Text = row.Cells("SupplierName").Value.ToString()
+            NumericUpDownQuantity.Value = Convert.ToInt32(row.Cells("Quantity").Value)
+            DateTimePickerExpiry.Value = If(IsDBNull(row.Cells("ExpirationDate").Value), DateTime.Now, Convert.ToDateTime(row.Cells("ExpirationDate").Value))
+            chkHasExpiry.Checked = Convert.ToBoolean(row.Cells("HasExpiry").Value)
         End If
     End Sub
 
     Private Sub ButtonSearch_Click(sender As Object, e As EventArgs) Handles ButtonSearch.Click
-        LoadInventory(TextBoxSearch.Text)   ' ✅ reload grid with filtered results
+        LoadInventory(TextBoxSearch.Text.Trim())
     End Sub
 
     Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
@@ -268,15 +278,30 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub TextBoxPrice_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxPrice.KeyPress
-        ' Allow digits, one decimal point, and control keys
-        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) AndAlso e.KeyChar <> "."c Then
-            e.Handled = True
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
         End If
 
-        ' Only allow one decimal point
-        If e.KeyChar = "."c AndAlso CType(sender, TextBox).Text.Contains(".") Then
-            e.Handled = True
+        ' Allow digits
+        If Char.IsDigit(e.KeyChar) Then
+            Return
         End If
+
+        ' Allow one decimal point
+        If e.KeyChar = "."c AndAlso Not TextBoxPrice.Text.Contains(".") Then
+            Return
+        End If
+
+        ' Block everything else
+        e.Handled = True
+    End Sub
+
+    Private Sub ComboBoxSupplier_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxSupplier.SelectedIndexChanged
+
+    End Sub
+
+    Private Sub DateTimePickerExpiry_CheckedChanged(sender As Object, e As EventArgs) Handles DateTimePickerExpiry.CheckedChanged
 
     End Sub
 End Class

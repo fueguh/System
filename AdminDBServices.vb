@@ -222,4 +222,43 @@ Public Class AdminDBServices
         Dashboard.Show()
         Me.Hide()
     End Sub
+
+    Private Sub ServiceSearch_TextChanged(sender As Object, e As EventArgs) Handles ServiceSearch.TextChanged
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+
+            Dim query As String
+
+            ' Show all services if search box is empty
+            If ServiceSearch.Text.Trim = "" Then
+                query = "
+                SELECT ServiceID, ServiceName, Price, Duration
+                FROM Services
+                ORDER BY ServiceName
+            "
+            Else
+                query = "
+                SELECT ServiceID, ServiceName, Price, Duration
+                FROM Services
+                WHERE COALESCE(ServiceName,'') LIKE @search
+                   OR COALESCE(CAST(Price AS VARCHAR),'') LIKE @search
+                   OR COALESCE(CAST(Duration AS VARCHAR),'') LIKE @search
+                ORDER BY ServiceName
+            "
+            End If
+
+            Using cmd As New SqlCommand(query, con)
+                If ServiceSearch.Text.Trim <> "" Then
+                    cmd.Parameters.AddWithValue("@search", "%" & ServiceSearch.Text.Trim & "%")
+                End If
+
+                Dim adapter As New SqlDataAdapter(cmd)
+                Dim table As New DataTable()
+                adapter.Fill(table)
+
+                DGVService.DataSource = table
+            End Using
+        End Using
+
+    End Sub
 End Class

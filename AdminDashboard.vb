@@ -41,7 +41,7 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub DentistManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManageDentistsForm.Click
-        AdminDBDentists.Show()
+        AdminDBStaffMaintenance.Show()
         Me.Hide()
     End Sub
 
@@ -159,5 +159,29 @@ Public Class AdminDashboard
 
     Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem2.Click
 
+    End Sub
+
+    Private Sub LblTotalPatients_Click(sender As Object, e As EventArgs) Handles lblTotalPatients.Click
+
+    End Sub
+
+    Private Sub SupplierMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SupplierMaintenanceToolStripMenuItem.Click
+        AdminDBSupplier.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub CategoryMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CategoryMaintenanceToolStripMenuItem.Click
+        AdminDBCategory.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ToolStripMenuItem4_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem4.Click
+        AdminDBDentists.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ToolStripMenuItem5_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem5.Click
+        AdminDBAdminMaintenance.Show()
+        Me.Hide()
     End Sub
 End Class

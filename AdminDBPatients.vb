@@ -2,6 +2,7 @@
 
 Public Class AdminDBPatients
     Private selectedPatientID As Integer = 0
+    Dim connectionString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
 
     Private Sub AdminDBPatients_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPatients()
@@ -17,7 +18,7 @@ Public Class AdminDBPatients
             con.Open()
 
             Dim query As String = "
-            SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address,DateRegistered
+            SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address,DateRegistered, NoteAllergy
             FROM Patients
             WHERE IsActive = 1
             ORDER BY PatientID
@@ -37,6 +38,7 @@ Public Class AdminDBPatients
         txtContact.Text = ""
         txtEmail.Text = ""
         txtAddress.Text = ""
+        txtAllergy.Text = ""
     End Sub
     Private Sub DGVPatients_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex >= 0 Then
@@ -48,6 +50,7 @@ Public Class AdminDBPatients
             txtContact.Text = row.Cells("ContactNumber").Value.ToString()
             txtEmail.Text = row.Cells("Email").Value.ToString()
             txtAddress.Text = row.Cells("Address").Value.ToString()
+            txtAllergy.Text = If(row.Cells("NoteAllergy").Value IsNot DBNull.Value, row.Cells("NoteAllergy").Value.ToString(), "")
         End If
 
     End Sub
@@ -62,8 +65,8 @@ Public Class AdminDBPatients
             con.Open()
 
             Dim query As String = "
-            INSERT INTO Patients (FullName, BirthDate, ContactNumber, Email, Address)
-            VALUES (@name, @birth, @contact, @email, @address)
+            INSERT INTO Patients (FullName, BirthDate, ContactNumber, Email, Address, NoteAllergy)
+            VALUES (@name, @birth, @contact, @email, @address, @allergy)
         "
 
             Using cmd As New SqlCommand(query, con)
@@ -72,6 +75,13 @@ Public Class AdminDBPatients
                 cmd.Parameters.AddWithValue("@contact", txtContact.Text)
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text)
                 cmd.Parameters.AddWithValue("@address", txtAddress.Text)
+                ' New allergy note parameter (optional)
+                If txtAllergy.Text.Trim = "" Then
+                    cmd.Parameters.AddWithValue("@allergy", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@allergy", txtAllergy.Text)
+                End If
+
                 cmd.ExecuteNonQuery()
             End Using
         End Using
@@ -100,7 +110,7 @@ Public Class AdminDBPatients
             Dim query As String = "
             UPDATE Patients
             SET FullName=@name, BirthDate=@birth, ContactNumber=@contact,
-                Email=@email, Address=@address
+                Email=@email, Address=@address, NoteAllergy=@allergy
             WHERE PatientID=@id
         "
 
@@ -111,6 +121,13 @@ Public Class AdminDBPatients
                 cmd.Parameters.AddWithValue("@contact", txtContact.Text)
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text)
                 cmd.Parameters.AddWithValue("@address", txtAddress.Text)
+                ' New allergy note parameter (optional)
+                If txtAllergy.Text.Trim = "" Then
+                    cmd.Parameters.AddWithValue("@allergy", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@allergy", txtAllergy.Text)
+                End If
+
                 cmd.ExecuteNonQuery()
             End Using
         End Using
@@ -177,6 +194,43 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub DGVPatients_CellContentClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPatients.CellContentClick
+        ' Prevent errors if user clicks the header row
+        If e.RowIndex < 0 Then Exit Sub
 
+        Dim row As DataGridViewRow = DGVPatients.Rows(e.RowIndex)
+
+        ' Assuming your DataGridView columns match your table fields
+        selectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
+
+        txtFullName.Text = row.Cells("FullName").Value.ToString()
+        dtpBirthDate.Value = Convert.ToDateTime(row.Cells("BirthDate").Value)
+        txtContact.Text = row.Cells("ContactNumber").Value.ToString()
+        txtEmail.Text = row.Cells("Email").Value.ToString()
+        txtAddress.Text = row.Cells("Address").Value.ToString()
+
+        ' New allergy field
+        If row.Cells("NoteAllergy").Value IsNot Nothing Then
+            txtAllergy.Text = row.Cells("NoteAllergy").Value.ToString()
+        Else
+            txtAllergy.Clear()
+        End If
+    End Sub
+
+    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
+        Dim query As String = "SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered, IsActive, NoteAllergy
+                               FROM dbo.Patients 
+                               WHERE FullName LIKE @search OR ContactNumber LIKE @search OR Email LIKE @search OR NoteAllergy LIKE @search"
+
+        Using con As New SqlConnection(connectionString),
+              cmd As New SqlCommand(query, con)
+
+            cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text & "%")
+
+            Dim adapter As New SqlDataAdapter(cmd)
+            Dim table As New DataTable()
+            adapter.Fill(table)
+
+            DGVPatients.DataSource = table
+        End Using
     End Sub
 End Class

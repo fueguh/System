@@ -4,6 +4,7 @@ Imports System.Text
 
 Public Class AdminDBUsers
     Private selectedUserID As Integer = 0
+
     Private Function HashPassword(password As String) As String
         Using sha256 As SHA256 = sha256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
@@ -17,6 +18,7 @@ Public Class AdminDBUsers
         Clearform()
 
     End Sub
+
     Private Sub LoadUsers()
         Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
             con.Open()
@@ -32,6 +34,7 @@ Public Class AdminDBUsers
             DGVUsers.DataSource = dt
         End Using
     End Sub
+
     Private Sub Clearform()
         selectedUserID = 0
         TxtFullName.Text = ""
@@ -43,8 +46,8 @@ Public Class AdminDBUsers
         cmbAvailability.SelectedIndex = -1
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
-
     End Sub
+
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
         ' Validation
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
@@ -308,4 +311,34 @@ Public Class AdminDBUsers
         Me.Hide()
     End Sub
 
+    Dim connectionString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
+
+    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
+        Dim query As String = "SELECT UserID, FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability
+                               FROM dbo.Users
+                               WHERE FullName LIKE @search OR Username LIKE @search OR Role LIKE @search OR PhoneNumber LIKE @search OR Email LIKE @search OR Specialization LIKE @search OR Availability LIKE @search"
+        Using con As New SqlConnection(connectionString),
+              cmd As New SqlCommand(query, con)
+
+            cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text & "%")
+
+            Dim adapter As New SqlDataAdapter(cmd)
+            Dim table As New DataTable()
+            adapter.Fill(table)
+
+            DGVUsers.DataSource = table
+        End Using
+    End Sub
+
+    Private Sub chkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
+        If chkShowPassword.Checked Then
+            ' Show the password
+            txtPassword.UseSystemPasswordChar = False
+            txtConfirmPassword.UseSystemPasswordChar = False
+        Else
+            ' Hide the password
+            txtPassword.UseSystemPasswordChar = True
+            txtConfirmPassword.UseSystemPasswordChar = True
+        End If
+    End Sub
 End Class

@@ -124,4 +124,59 @@ Public Class AdminDBDentists
         End Using
     End Function
 
+    Dim connectionString As String = "Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;"
+
+    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
+        Using con As New SqlConnection("Server=FUEGA\SQLEXPRESS;Database=Dental;Trusted_Connection=True;")
+            con.Open()
+
+            Dim query As String
+
+            ' Show all dentists if search box is empty
+            If Guna2TextBox1.Text.Trim = "" Then
+                query = "
+                SELECT UserID AS DentistID, FullName, Username, PhoneNumber, Email, Specialization
+                FROM Users
+                WHERE Role = 'Dentist'
+            "
+            Else
+                query = "
+                SELECT UserID AS DentistID, FullName, Username, PhoneNumber, Email, Specialization
+                FROM Users
+                WHERE Role = 'Dentist'
+                  AND (
+                        COALESCE(FullName,'') LIKE @search
+                     OR COALESCE(Username,'') LIKE @search
+                     OR COALESCE(PhoneNumber,'') LIKE @search
+                     OR COALESCE(Email,'') LIKE @search
+                     OR COALESCE(Specialization,'') LIKE @search
+                  )
+            "
+            End If
+
+            Using cmd As New SqlCommand(query, con)
+                If Guna2TextBox1.Text.Trim <> "" Then
+                    cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text.Trim & "%")
+                End If
+
+                Dim adapter As New SqlDataAdapter(cmd)
+                Dim table As New DataTable()
+                adapter.Fill(table)
+
+                DGVDentists.DataSource = table
+            End Using
+        End Using
+    End Sub
+
+    Private Sub chkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
+        If chkShowPassword.Checked Then
+            ' Show the password
+            TxtPassword.UseSystemPasswordChar = False
+            TxtConfirmPassword.UseSystemPasswordChar = False
+        Else
+            ' Hide the password
+            TxtPassword.UseSystemPasswordChar = True
+            TxtConfirmPassword.UseSystemPasswordChar = True
+        End If
+    End Sub
 End Class

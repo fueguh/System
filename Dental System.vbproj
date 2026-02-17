@@ -82,6 +82,18 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminDBAdminMaintenance.Designer.vb">
+      <DependentUpon>AdminDBAdminMaintenance.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBAdminMaintenance.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDBCategory.Designer.vb">
+      <DependentUpon>AdminDBCategory.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBCategory.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBItemManagement.Designer.vb">
       <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
     </Compile>
@@ -100,10 +112,22 @@
     <Compile Include="AdminDBRepandAnalytics.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AdminDBStaffMaintenance.Designer.vb">
+      <DependentUpon>AdminDBStaffMaintenance.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBStaffMaintenance.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBStockTracking.Designer.vb">
       <DependentUpon>AdminDBStockTracking.vb</DependentUpon>
     </Compile>
     <Compile Include="AdminDBStockTracking.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDBSupplier.Designer.vb">
+      <DependentUpon>AdminDBSupplier.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBSupplier.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ClinicSettings.Designer.vb">
@@ -220,8 +244,14 @@
     <EmbeddedResource Include="AdminDashboard.resx">
       <DependentUpon>AdminDashboard.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBAdminMaintenance.resx">
+      <DependentUpon>AdminDBAdminMaintenance.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBAppointments.resx">
       <DependentUpon>AdminDBAppointments.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBCategory.resx">
+      <DependentUpon>AdminDBCategory.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBDentists.resx">
       <DependentUpon>AdminDBDentists.vb</DependentUpon>
@@ -244,8 +274,14 @@
     <EmbeddedResource Include="AdminDBServices.resx">
       <DependentUpon>AdminDBServices.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBStaffMaintenance.resx">
+      <DependentUpon>AdminDBStaffMaintenance.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBStockTracking.resx">
       <DependentUpon>AdminDBStockTracking.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBSupplier.resx">
+      <DependentUpon>AdminDBSupplier.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBUsers.resx">
       <DependentUpon>AdminDBUsers.vb</DependentUpon>

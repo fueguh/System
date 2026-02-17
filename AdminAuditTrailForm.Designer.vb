@@ -51,7 +51,7 @@ Partial Class AdminAuditTrailForm
         Me.ClearButton.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ClearButton.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ClearButton.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClearButton.Location = New System.Drawing.Point(660, 217)
+        Me.ClearButton.Location = New System.Drawing.Point(810, 217)
         Me.ClearButton.Name = "ClearButton"
         Me.ClearButton.Size = New System.Drawing.Size(136, 45)
         Me.ClearButton.TabIndex = 10
@@ -73,7 +73,7 @@ Partial Class AdminAuditTrailForm
         Me.txtSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.txtSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSearch.Location = New System.Drawing.Point(502, 147)
+        Me.txtSearch.Location = New System.Drawing.Point(652, 147)
         Me.txtSearch.Margin = New System.Windows.Forms.Padding(4)
         Me.txtSearch.Name = "txtSearch"
         Me.txtSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -89,7 +89,7 @@ Partial Class AdminAuditTrailForm
         Me.btnBack.FillColor = System.Drawing.Color.LightGray
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1367, 32)
+        Me.btnBack.Location = New System.Drawing.Point(1667, 32)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.btnBack.Size = New System.Drawing.Size(60, 58)
@@ -109,7 +109,7 @@ Partial Class AdminAuditTrailForm
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1456, 124)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1756, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 22
         '
         'Guna2HtmlLabel6
@@ -120,7 +120,7 @@ Partial Class AdminAuditTrailForm
         Me.Guna2HtmlLabel6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel6.Location = New System.Drawing.Point(0, 0)
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
-        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1456, 124)
+        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1756, 124)
         Me.Guna2HtmlLabel6.TabIndex = 48
         Me.Guna2HtmlLabel6.Text = "Audit Trail"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -164,8 +164,7 @@ Partial Class AdminAuditTrailForm
         Me.DGVAuditLogs.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.DGVAuditLogs.RowHeadersVisible = False
         Me.DGVAuditLogs.RowHeadersWidth = 51
-        Me.DGVAuditLogs.ScrollBars = System.Windows.Forms.ScrollBars.None
-        Me.DGVAuditLogs.Size = New System.Drawing.Size(1456, 492)
+        Me.DGVAuditLogs.Size = New System.Drawing.Size(1756, 619)
         Me.DGVAuditLogs.TabIndex = 34
         Me.DGVAuditLogs.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVAuditLogs.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -194,7 +193,7 @@ Partial Class AdminAuditTrailForm
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1456, 771)
+        Me.ClientSize = New System.Drawing.Size(1756, 897)
         Me.ControlBox = False
         Me.Controls.Add(Me.DGVAuditLogs)
         Me.Controls.Add(Me.txtSearch)

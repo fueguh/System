@@ -41,6 +41,7 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.txtAllergy = New Guna.UI2.WinForms.Guna2TextBox()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DGVPatients, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -61,7 +62,7 @@ Partial Class AdminDBPatients
         Me.txtFullName.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtFullName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtFullName.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtFullName.Location = New System.Drawing.Point(112, 158)
+        Me.txtFullName.Location = New System.Drawing.Point(32, 155)
         Me.txtFullName.Margin = New System.Windows.Forms.Padding(4)
         Me.txtFullName.Name = "txtFullName"
         Me.txtFullName.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -80,7 +81,7 @@ Partial Class AdminDBPatients
         Me.dtpBirthDate.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.dtpBirthDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.dtpBirthDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpBirthDate.Location = New System.Drawing.Point(503, 158)
+        Me.dtpBirthDate.Location = New System.Drawing.Point(423, 155)
         Me.dtpBirthDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.dtpBirthDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
         Me.dtpBirthDate.Name = "dtpBirthDate"
@@ -103,7 +104,7 @@ Partial Class AdminDBPatients
         Me.txtContact.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtContact.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtContact.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtContact.Location = New System.Drawing.Point(896, 158)
+        Me.txtContact.Location = New System.Drawing.Point(816, 155)
         Me.txtContact.Margin = New System.Windows.Forms.Padding(4)
         Me.txtContact.Name = "txtContact"
         Me.txtContact.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -127,7 +128,7 @@ Partial Class AdminDBPatients
         Me.txtEmail.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtEmail.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtEmail.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtEmail.Location = New System.Drawing.Point(112, 234)
+        Me.txtEmail.Location = New System.Drawing.Point(32, 231)
         Me.txtEmail.Margin = New System.Windows.Forms.Padding(4)
         Me.txtEmail.Name = "txtEmail"
         Me.txtEmail.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -151,7 +152,7 @@ Partial Class AdminDBPatients
         Me.txtAddress.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAddress.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtAddress.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtAddress.Location = New System.Drawing.Point(503, 234)
+        Me.txtAddress.Location = New System.Drawing.Point(423, 231)
         Me.txtAddress.Margin = New System.Windows.Forms.Padding(4)
         Me.txtAddress.Name = "txtAddress"
         Me.txtAddress.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -170,9 +171,9 @@ Partial Class AdminDBPatients
         Me.BTNAdd.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNAdd.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNAdd.Location = New System.Drawing.Point(896, 239)
+        Me.BTNAdd.Location = New System.Drawing.Point(1178, 155)
         Me.BTNAdd.Name = "BTNAdd"
-        Me.BTNAdd.Size = New System.Drawing.Size(106, 45)
+        Me.BTNAdd.Size = New System.Drawing.Size(92, 50)
         Me.BTNAdd.TabIndex = 5
         Me.BTNAdd.Text = "Add"
         '
@@ -186,9 +187,9 @@ Partial Class AdminDBPatients
         Me.BTNUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNUpdate.Location = New System.Drawing.Point(1017, 239)
+        Me.BTNUpdate.Location = New System.Drawing.Point(1276, 155)
         Me.BTNUpdate.Name = "BTNUpdate"
-        Me.BTNUpdate.Size = New System.Drawing.Size(106, 45)
+        Me.BTNUpdate.Size = New System.Drawing.Size(92, 50)
         Me.BTNUpdate.TabIndex = 6
         Me.BTNUpdate.Text = "Update"
         '
@@ -202,9 +203,9 @@ Partial Class AdminDBPatients
         Me.BTNDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNDelete.Location = New System.Drawing.Point(1141, 239)
+        Me.BTNDelete.Location = New System.Drawing.Point(1221, 231)
         Me.BTNDelete.Name = "BTNDelete"
-        Me.BTNDelete.Size = New System.Drawing.Size(106, 45)
+        Me.BTNDelete.Size = New System.Drawing.Size(92, 50)
         Me.BTNDelete.TabIndex = 7
         Me.BTNDelete.Text = "Delete"
         '
@@ -316,7 +317,7 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(503, 128)
+        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(423, 125)
         Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
         Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(89, 28)
         Me.Guna2HtmlLabel3.TabIndex = 43
@@ -348,6 +349,30 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel6.Text = "Patient Maintenance"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'txtAllergy
+        '
+        Me.txtAllergy.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtAllergy.BorderRadius = 10
+        Me.txtAllergy.BorderThickness = 2
+        Me.txtAllergy.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.txtAllergy.DefaultText = ""
+        Me.txtAllergy.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.txtAllergy.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.txtAllergy.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtAllergy.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtAllergy.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtAllergy.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.txtAllergy.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtAllergy.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtAllergy.Location = New System.Drawing.Point(816, 231)
+        Me.txtAllergy.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtAllergy.Name = "txtAllergy"
+        Me.txtAllergy.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtAllergy.PlaceholderText = "Note Allergy"
+        Me.txtAllergy.SelectedText = ""
+        Me.txtAllergy.Size = New System.Drawing.Size(351, 50)
+        Me.txtAllergy.TabIndex = 50
+        '
         'AdminDBPatients
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -355,6 +380,7 @@ Partial Class AdminDBPatients
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1379, 881)
         Me.ControlBox = False
+        Me.Controls.Add(Me.txtAllergy)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Controls.Add(Me.Guna2TextBox1)
@@ -393,4 +419,5 @@ Partial Class AdminDBPatients
     Friend WithEvents Guna2HtmlLabel3 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents txtAllergy As Guna.UI2.WinForms.Guna2TextBox
 End Class

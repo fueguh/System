@@ -37,6 +37,7 @@ Partial Class AdminDBServices
         Me.DGVService = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.ServiceSearch = New Guna.UI2.WinForms.Guna2TextBox()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DGVService, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -203,7 +204,7 @@ Partial Class AdminDBServices
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVService.DefaultCellStyle = DataGridViewCellStyle3
         Me.DGVService.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVService.Location = New System.Drawing.Point(389, 103)
+        Me.DGVService.Location = New System.Drawing.Point(389, 171)
         Me.DGVService.Name = "DGVService"
         Me.DGVService.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -216,7 +217,7 @@ Partial Class AdminDBServices
         Me.DGVService.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.DGVService.RowHeadersVisible = False
         Me.DGVService.RowHeadersWidth = 51
-        Me.DGVService.Size = New System.Drawing.Size(577, 556)
+        Me.DGVService.Size = New System.Drawing.Size(577, 488)
         Me.DGVService.TabIndex = 24
         Me.DGVService.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVService.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -266,6 +267,30 @@ Partial Class AdminDBServices
         Me.Guna2HtmlLabel6.Text = "Service Maintenance"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'ServiceSearch
+        '
+        Me.ServiceSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ServiceSearch.BorderRadius = 10
+        Me.ServiceSearch.BorderThickness = 2
+        Me.ServiceSearch.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.ServiceSearch.DefaultText = ""
+        Me.ServiceSearch.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.ServiceSearch.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.ServiceSearch.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.ServiceSearch.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.ServiceSearch.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ServiceSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.ServiceSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ServiceSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ServiceSearch.Location = New System.Drawing.Point(389, 114)
+        Me.ServiceSearch.Margin = New System.Windows.Forms.Padding(4)
+        Me.ServiceSearch.Name = "ServiceSearch"
+        Me.ServiceSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ServiceSearch.PlaceholderText = "Search service.."
+        Me.ServiceSearch.SelectedText = ""
+        Me.ServiceSearch.Size = New System.Drawing.Size(577, 50)
+        Me.ServiceSearch.TabIndex = 61
+        '
         'AdminDBServices
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -273,6 +298,7 @@ Partial Class AdminDBServices
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(964, 657)
         Me.ControlBox = False
+        Me.Controls.Add(Me.ServiceSearch)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.DGVService)
         Me.Controls.Add(Me.BTNDelete)
@@ -302,4 +328,5 @@ Partial Class AdminDBServices
     Friend WithEvents DGVService As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents ServiceSearch As Guna.UI2.WinForms.Guna2TextBox
 End Class
