@@ -26,6 +26,8 @@ Partial Class AdminDashboard
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.ManageForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.ManageUsersForm = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ManageDentistsForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.ManagePatientsForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.ManageServicesForm = New System.Windows.Forms.ToolStripMenuItem()
@@ -57,8 +59,7 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
-        Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AvailabilityMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -88,7 +89,7 @@ Partial Class AdminDashboard
         '
         'ManageForm
         '
-        Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ToolStripMenuItem4, Me.ToolStripMenuItem5, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm, Me.SupplierMaintenanceToolStripMenuItem, Me.CategoryMaintenanceToolStripMenuItem})
+        Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ToolStripMenuItem4, Me.ToolStripMenuItem5, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm, Me.SupplierMaintenanceToolStripMenuItem, Me.CategoryMaintenanceToolStripMenuItem, Me.AvailabilityMaintenanceToolStripMenuItem})
         Me.ManageForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageForm.Name = "ManageForm"
         Me.ManageForm.Size = New System.Drawing.Size(210, 44)
@@ -99,15 +100,31 @@ Partial Class AdminDashboard
         Me.ManageUsersForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManageUsersForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageUsersForm.Name = "ManageUsersForm"
-        Me.ManageUsersForm.Size = New System.Drawing.Size(411, 44)
+        Me.ManageUsersForm.Size = New System.Drawing.Size(443, 44)
         Me.ManageUsersForm.Text = "Users Maintenance"
+        '
+        'ToolStripMenuItem4
+        '
+        Me.ToolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(443, 44)
+        Me.ToolStripMenuItem4.Text = "Dentist Maintenance"
+        '
+        'ToolStripMenuItem5
+        '
+        Me.ToolStripMenuItem5.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
+        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(443, 44)
+        Me.ToolStripMenuItem5.Text = "Admin Maintenance"
         '
         'ManageDentistsForm
         '
         Me.ManageDentistsForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManageDentistsForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageDentistsForm.Name = "ManageDentistsForm"
-        Me.ManageDentistsForm.Size = New System.Drawing.Size(411, 44)
+        Me.ManageDentistsForm.Size = New System.Drawing.Size(443, 44)
         Me.ManageDentistsForm.Text = "Staff Maintenance"
         '
         'ManagePatientsForm
@@ -115,7 +132,7 @@ Partial Class AdminDashboard
         Me.ManagePatientsForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManagePatientsForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManagePatientsForm.Name = "ManagePatientsForm"
-        Me.ManagePatientsForm.Size = New System.Drawing.Size(411, 44)
+        Me.ManagePatientsForm.Size = New System.Drawing.Size(443, 44)
         Me.ManagePatientsForm.Text = "Patient Maintenance"
         '
         'ManageServicesForm
@@ -123,7 +140,7 @@ Partial Class AdminDashboard
         Me.ManageServicesForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ManageServicesForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ManageServicesForm.Name = "ManageServicesForm"
-        Me.ManageServicesForm.Size = New System.Drawing.Size(411, 44)
+        Me.ManageServicesForm.Size = New System.Drawing.Size(443, 44)
         Me.ManageServicesForm.Text = "Services Maintenance"
         '
         'SupplierMaintenanceToolStripMenuItem
@@ -131,7 +148,7 @@ Partial Class AdminDashboard
         Me.SupplierMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.SupplierMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.SupplierMaintenanceToolStripMenuItem.Name = "SupplierMaintenanceToolStripMenuItem"
-        Me.SupplierMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(411, 44)
+        Me.SupplierMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
         Me.SupplierMaintenanceToolStripMenuItem.Text = "Supplier Maintenance"
         '
         'CategoryMaintenanceToolStripMenuItem
@@ -139,7 +156,7 @@ Partial Class AdminDashboard
         Me.CategoryMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CategoryMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.CategoryMaintenanceToolStripMenuItem.Name = "CategoryMaintenanceToolStripMenuItem"
-        Me.CategoryMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(411, 44)
+        Me.CategoryMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
         Me.CategoryMaintenanceToolStripMenuItem.Text = "Category Maintenance"
         '
         'AuditTrailToolStripMenuItem
@@ -399,21 +416,13 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
-        'ToolStripMenuItem4
+        'AvailabilityMaintenanceToolStripMenuItem
         '
-        Me.ToolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ToolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
-        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(411, 44)
-        Me.ToolStripMenuItem4.Text = "Dentist Maintenance"
-        '
-        'ToolStripMenuItem5
-        '
-        Me.ToolStripMenuItem5.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ToolStripMenuItem5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
-        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(411, 44)
-        Me.ToolStripMenuItem5.Text = "Admin Maintenance"
+        Me.AvailabilityMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.AvailabilityMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.AvailabilityMaintenanceToolStripMenuItem.Name = "AvailabilityMaintenanceToolStripMenuItem"
+        Me.AvailabilityMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
+        Me.AvailabilityMaintenanceToolStripMenuItem.Text = "Availability Maintenance"
         '
         'AdminDashboard
         '
@@ -484,4 +493,5 @@ Partial Class AdminDashboard
     Friend WithEvents CategoryMaintenanceToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem4 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
+    Friend WithEvents AvailabilityMaintenanceToolStripMenuItem As ToolStripMenuItem
 End Class

@@ -34,11 +34,12 @@ Public Class AdminDBDentists
         End Using
     End Sub
 
-    Private Sub DGVDentists_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
+    Private Sub DGVDentists_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellClick
         ' ✅ Make sure the click is valid (not header row)
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVDentists.Rows(e.RowIndex)
-
+            ' ✅ STORE THE ID
+            selectedDentistID = Convert.ToInt32(row.Cells("UserID").Value)
             ' ✅ Populate textboxes/comboboxes with selected row values
             TxtName.Text = row.Cells("FullName").Value.ToString()
             TxtUsername.Text = row.Cells("Username").Value.ToString()
@@ -179,4 +180,5 @@ Public Class AdminDBDentists
             TxtConfirmPassword.UseSystemPasswordChar = True
         End If
     End Sub
+
 End Class

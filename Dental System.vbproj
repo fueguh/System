@@ -136,6 +136,12 @@
     <Compile Include="ClinicSettings.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FrmCustomSchedule.Designer.vb">
+      <DependentUpon>FrmCustomSchedule.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FrmCustomSchedule.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Globals.vb" />
     <Compile Include="AdminDashboard.Designer.vb">
       <DependentUpon>AdminDashboard.vb</DependentUpon>
@@ -295,6 +301,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DentistDashboard.resx">
       <DependentUpon>DentistDashboard.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmCustomSchedule.resx">
+      <DependentUpon>FrmCustomSchedule.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.vb</DependentUpon>

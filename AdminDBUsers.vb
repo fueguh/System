@@ -311,6 +311,7 @@ Public Class AdminDBUsers
             TxtUsername.Text = row.Cells("Username").Value.ToString()
             txtPassword.Text = "" ' optional: don’t show password directly
             txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
+            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
             CmbRole.Text = row.Cells("Role").Value.ToString()
             TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()

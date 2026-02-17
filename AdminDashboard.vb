@@ -177,4 +177,9 @@ Public Class AdminDashboard
         AdminDBAdminMaintenance.Show()
         Me.Hide()
     End Sub
+
+    Private Sub AvailabilityMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AvailabilityMaintenanceToolStripMenuItem.Click
+        FrmCustomSchedule.Show()
+        Me.Hide()
+    End Sub
 End Class
