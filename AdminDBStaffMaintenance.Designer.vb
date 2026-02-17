@@ -30,11 +30,9 @@ Partial Class AdminDBStaffMaintenance
         Me.chkShowPassword = New Guna.UI2.WinForms.Guna2RadioButton()
         Me.SearchStaff = New Guna.UI2.WinForms.Guna2TextBox()
         Me.DgvStaffs = New Guna.UI2.WinForms.Guna2DataGridView()
-        Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.BTNAdd = New Guna.UI2.WinForms.Guna2Button()
         Me.TxtConfirmPassword = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtPassword = New Guna.UI2.WinForms.Guna2TextBox()
-        Me.cmbAvailability = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.TxtEmail = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtPhone = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtUsername = New Guna.UI2.WinForms.Guna2TextBox()
@@ -155,17 +153,6 @@ Partial Class AdminDBStaffMaintenance
         Me.DgvStaffs.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvStaffs.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
-        'Guna2HtmlLabel3
-        '
-        Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
-        Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(1001, 223)
-        Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
-        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(105, 28)
-        Me.Guna2HtmlLabel3.TabIndex = 63
-        Me.Guna2HtmlLabel3.Text = "Availability:"
-        '
         'BTNAdd
         '
         Me.BTNAdd.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -233,25 +220,6 @@ Partial Class AdminDBStaffMaintenance
         Me.TxtPassword.Size = New System.Drawing.Size(280, 50)
         Me.TxtPassword.TabIndex = 60
         Me.TxtPassword.UseSystemPasswordChar = True
-        '
-        'cmbAvailability
-        '
-        Me.cmbAvailability.BackColor = System.Drawing.Color.Transparent
-        Me.cmbAvailability.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.cmbAvailability.BorderRadius = 10
-        Me.cmbAvailability.BorderThickness = 2
-        Me.cmbAvailability.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cmbAvailability.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbAvailability.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbAvailability.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbAvailability.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cmbAvailability.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.cmbAvailability.ItemHeight = 30
-        Me.cmbAvailability.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
-        Me.cmbAvailability.Location = New System.Drawing.Point(1001, 257)
-        Me.cmbAvailability.Name = "cmbAvailability"
-        Me.cmbAvailability.Size = New System.Drawing.Size(280, 36)
-        Me.cmbAvailability.TabIndex = 59
         '
         'TxtEmail
         '
@@ -400,11 +368,9 @@ Partial Class AdminDBStaffMaintenance
         Me.Controls.Add(Me.chkShowPassword)
         Me.Controls.Add(Me.SearchStaff)
         Me.Controls.Add(Me.DgvStaffs)
-        Me.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Controls.Add(Me.BTNAdd)
         Me.Controls.Add(Me.TxtConfirmPassword)
         Me.Controls.Add(Me.TxtPassword)
-        Me.Controls.Add(Me.cmbAvailability)
         Me.Controls.Add(Me.TxtEmail)
         Me.Controls.Add(Me.TxtPhone)
         Me.Controls.Add(Me.TxtUsername)
@@ -424,11 +390,9 @@ Partial Class AdminDBStaffMaintenance
     Friend WithEvents chkShowPassword As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents SearchStaff As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents DgvStaffs As Guna.UI2.WinForms.Guna2DataGridView
-    Friend WithEvents Guna2HtmlLabel3 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents BTNAdd As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents TxtConfirmPassword As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtPassword As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents cmbAvailability As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents TxtEmail As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtPhone As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtUsername As Guna.UI2.WinForms.Guna2TextBox

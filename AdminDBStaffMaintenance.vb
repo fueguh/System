@@ -21,7 +21,7 @@ Public Class AdminDBStaffMaintenance
             con.Open()
 
             Dim query As String = "
-            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email, U.Availability
+            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
             FROM Users U
             INNER JOIN Staffs S ON U.UserID = S.UserID
             WHERE U.Role = 'Staff'
@@ -40,7 +40,6 @@ Public Class AdminDBStaffMaintenance
         TxtPhone.Clear()
         TxtPassword.Clear()
         TxtConfirmPassword.Clear()
-        cmbAvailability.SelectedIndex = -1
         chkShowPassword.Checked = False
         TxtPassword.UseSystemPasswordChar = True
         TxtConfirmPassword.UseSystemPasswordChar = True
@@ -67,9 +66,9 @@ Public Class AdminDBStaffMaintenance
 
             ' Insert into Users
             Dim queryUser As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Availability)
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated)
             OUTPUT INSERTED.UserID
-            VALUES (@fullname, @username, @password, 'Staff', @phone, @email, GETDATE(), @availability)
+            VALUES (@fullname, @username, @password, 'Staff', @phone, @email, GETDATE())
         "
 
             Dim userId As Integer
@@ -79,7 +78,6 @@ Public Class AdminDBStaffMaintenance
                 cmdUser.Parameters.AddWithValue("@password", TxtPassword.Text.Trim) ' ideally hash this
                 cmdUser.Parameters.AddWithValue("@phone", TxtPhone.Text.Trim)
                 cmdUser.Parameters.AddWithValue("@email", TxtUsername.Text.Trim & "@staff.com") ' or use a textbox if you want
-                cmdUser.Parameters.AddWithValue("@availability", cmbAvailability.Text)
 
                 userId = Convert.ToInt32(cmdUser.ExecuteScalar())
             End Using
@@ -107,7 +105,7 @@ Public Class AdminDBStaffMaintenance
             Dim query As String
             If SearchStaff.Text.Trim = "" Then
                 query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email, U.Availability
+                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
                 FROM Users U
                 INNER JOIN Staffs S ON U.UserID = S.UserID
                 WHERE U.Role = 'Staff'
@@ -115,7 +113,7 @@ Public Class AdminDBStaffMaintenance
             "
             Else
                 query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email, U.Availability
+                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
                 FROM Users U
                 INNER JOIN Staffs S ON U.UserID = S.UserID
                 WHERE U.Role = 'Staff'
@@ -124,7 +122,6 @@ Public Class AdminDBStaffMaintenance
                      OR COALESCE(U.Username,'') LIKE @search
                      OR COALESCE(U.PhoneNumber,'') LIKE @search
                      OR COALESCE(U.Email,'') LIKE @search
-                     OR COALESCE(U.Availability,'') LIKE @search
                   )
                 ORDER BY U.FullName
             "
