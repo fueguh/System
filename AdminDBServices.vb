@@ -3,7 +3,7 @@
 Public Class AdminDBServices
     Private selectedServiceID As Integer = 0
     Private Sub LoadServices()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "SELECT * FROM Services ORDER BY ServiceID"
@@ -21,7 +21,7 @@ Public Class AdminDBServices
         Clearform()
     End Sub
 
-    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellContentClick
+    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex >= 0 Then
             Dim row = DGVService.Rows(e.RowIndex)
 
@@ -88,7 +88,7 @@ Public Class AdminDBServices
             Return
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             INSERT INTO Services (ServiceName, Price, Duration)
@@ -118,7 +118,7 @@ Public Class AdminDBServices
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -156,7 +156,7 @@ Public Class AdminDBServices
         If MessageBox.Show("Are you sure you want to delete this service?",
                        "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Check if service is used in appointments
@@ -184,7 +184,7 @@ Public Class AdminDBServices
     End Sub
 
 
-    Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs) Handles DGVService.CellFormatting
+    Private Sub DGVService_CellFormatting(sender As Object, e As DataGridViewCellFormattingEventArgs)
         If DGVService.Columns(e.ColumnIndex).Name = "Duration" AndAlso e.Value IsNot Nothing AndAlso Not IsDBNull(e.Value) Then
             Dim mins As Integer
             If Integer.TryParse(e.Value.ToString(), mins) Then
@@ -205,7 +205,7 @@ Public Class AdminDBServices
         End If
     End Function
 
-    Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
+    Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex < 0 Then Return
         Dim row = DGVService.Rows(e.RowIndex)
         selectedServiceID = If(IsDBNull(row.Cells("ServiceID").Value), 0, Convert.ToInt32(row.Cells("ServiceID").Value))
@@ -221,5 +221,98 @@ Public Class AdminDBServices
 
         Dashboard.Show()
         Me.Hide()
+    End Sub
+
+    Private Sub ServiceSearch_TextChanged(sender As Object, e As EventArgs) Handles ServiceSearch.TextChanged
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+
+            Dim query As String
+
+            ' Show all services if search box is empty
+            If ServiceSearch.Text.Trim = "" Then
+                query = "
+                SELECT ServiceID, ServiceName, Price, Duration
+                FROM Services
+                ORDER BY ServiceName
+            "
+            Else
+                query = "
+                SELECT ServiceID, ServiceName, Price, Duration
+                FROM Services
+                WHERE COALESCE(ServiceName,'') LIKE @search
+                   OR COALESCE(CAST(Price AS VARCHAR),'') LIKE @search
+                   OR COALESCE(CAST(Duration AS VARCHAR),'') LIKE @search
+                ORDER BY ServiceName
+            "
+            End If
+
+            Using cmd As New SqlCommand(query, con)
+                If ServiceSearch.Text.Trim <> "" Then
+                    cmd.Parameters.AddWithValue("@search", "%" & ServiceSearch.Text.Trim & "%")
+                End If
+
+                Dim adapter As New SqlDataAdapter(cmd)
+                Dim table As New DataTable()
+                adapter.Fill(table)
+
+                DGVService.DataSource = table
+            End Using
+        End Using
+
+    End Sub
+
+    Private Sub txtServiceName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtServiceName.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow letters and spaces only
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True ' Block invalid input
+        End If
+    End Sub
+
+    Private Sub txtPrice_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPrice.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow digits only
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True ' Block invalid input
+        End If
+    End Sub
+
+    Private Sub txtDuration_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtDuration.KeyPress
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow digits only
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True ' Block invalid input
+        End If
+    End Sub
+
+    Private Sub DGVService_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
+        ' Ensure the click is on a valid row (not header)
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DGVService.Rows(e.RowIndex)
+
+            ' Populate your textboxes/combos with values from the grid
+            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
+            txtDuration.Text = row.Cells("Duration").Value.ToString()
+            txtPrice.Text = row.Cells("Price").Value.ToString()
+
+            ' Example for combo box (if you have one for Category)
+            'CmbCategory.Text = row.Cells("Category").Value.ToString()
+            ' Or if bound to IDs:
+            ' CmbCategory.SelectedValue = row.Cells("CategoryID").Value
+        End If
+
     End Sub
 End Class

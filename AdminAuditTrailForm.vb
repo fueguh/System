@@ -13,7 +13,7 @@ Public Class AdminAuditTrailForm
     End Sub
     ' Load fresh audit trail from DB
     Private Sub LoadAuditTrail()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -58,8 +58,12 @@ Public Class AdminAuditTrailForm
         LoadAuditTrail()
     End Sub
 
-    Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
         'clean up
+    End Sub
+
+    Private Sub Guna2CustomGradientPanel1_Paint(sender As Object, e As PaintEventArgs) Handles Guna2CustomGradientPanel1.Paint
+
     End Sub
 End Class

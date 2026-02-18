@@ -1,10 +1,10 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class ClinicSettings
-    Private con As New SqlConnection(My.Settings.DentalDBConnection)
+    Private con As New SqlConnection(My.Settings.DentalDBConnection2)
     'fill textboxes with existing data
     Private Sub ClinicSettings_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmd As New SqlCommand("SELECT ClinicName, ClinicAddress, ContactNumber, Email, OperatingHours FROM ClinicInfo WHERE ClinicID=1", con)
             Dim reader As SqlDataReader = cmd.ExecuteReader()
@@ -18,7 +18,7 @@ Public Class ClinicSettings
         End Using
     End Sub
     Private Sub BtnSave_Click(sender As Object, e As EventArgs) Handles BtnSave.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Check if row exists

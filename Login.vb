@@ -13,19 +13,34 @@ Public Class Login
 
     ' --- FORM LOAD ---
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
             If adminCount = 0 Then
-                MessageBox.Show("No admin account found. Please create an admin account.")
+                ' No admin found – create default admin
+                Dim defaultUsername As String = "admin"
+                Dim defaultPassword As String = "admin" ' Default password
+                Dim hashedPassword As String = HashPassword(defaultPassword)
+
+                Dim cmdInsert As New SqlCommand("
+                INSERT INTO Users (Username, Password, Role, FullName)
+                VALUES (@username, @password, 'Admin', 'Administrator')", con)
+                cmdInsert.Parameters.AddWithValue("@username", defaultUsername)
+                cmdInsert.Parameters.AddWithValue("@password", hashedPassword)
+                cmdInsert.ExecuteNonQuery()
+
+                MessageBox.Show("No admin found. Default admin created:" & Environment.NewLine &
+                "Username: admin" & Environment.NewLine &
+                "Password: admin")
+
             End If
         End Using
     End Sub
 
     ' --- FORM SHOWN ---
     Private Sub Login_Shown(sender As Object, e As EventArgs) Handles Me.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Check for active session on this device
@@ -62,7 +77,7 @@ Public Class Login
 
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim cmd As New SqlCommand("
@@ -119,7 +134,7 @@ Public Class Login
 
     ' --- SAVE SESSION (Remember Me) ---
     Private Sub SaveSession(userId As Integer)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' End existing session for this device
@@ -168,7 +183,7 @@ Public Class Login
         txtPassword.UseSystemPasswordChar = Not CheckBoxShowPassword.Checked
     End Sub
 
-    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs) Handles Guna2Button1.Click
+    Private Sub Guna2Button1_Click(sender As Object, e As EventArgs)
         Dim reg As New AdminDBUsers()
         reg.ShowDialog()
     End Sub

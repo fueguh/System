@@ -4,6 +4,7 @@ Imports System.Text
 
 Public Class AdminDBUsers
     Private selectedUserID As Integer = 0
+
     Private Function HashPassword(password As String) As String
         Using sha256 As SHA256 = sha256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
@@ -17,8 +18,9 @@ Public Class AdminDBUsers
         Clearform()
 
     End Sub
+
     Private Sub LoadUsers()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -32,6 +34,7 @@ Public Class AdminDBUsers
             DGVUsers.DataSource = dt
         End Using
     End Sub
+
     Private Sub Clearform()
         selectedUserID = 0
         TxtFullName.Text = ""
@@ -43,8 +46,8 @@ Public Class AdminDBUsers
         cmbAvailability.SelectedIndex = -1
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
-
     End Sub
+
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
         ' Validation
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
@@ -73,6 +76,13 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
+        If Not ValidateUserFields() Then Exit Sub
+
+        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim()) Then
+            MessageBox.Show("Email or Username already exists. Please choose another.")
+            Exit Sub
+        End If
+
         ' Determine if this is the first admin BEFORE inserting
         Dim isFirstAdmin As Boolean = Not SystemSession.AdminExists()
         Dim roleToAssign As String = If(isFirstAdmin, "Admin", CmbRole.Text)
@@ -80,7 +90,7 @@ Public Class AdminDBUsers
         Dim newUserID As Integer
 
         ' Insert into database and get the new UserID
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
@@ -104,7 +114,15 @@ Public Class AdminDBUsers
         If isFirstAdmin Then
             SystemSession.LogAudit("First Admin Created", "Registration", newUserID, TxtFullName.Text, roleToAssign)
         Else
-            SystemSession.LogAudit("Add user", "User Management", newUserID, TxtFullName.Text, roleToAssign)
+            ' Updated
+            SystemSession.LogAudit(
+                $"Added user {TxtFullName.Text}",   ' Message now mentions the new user
+                "User Management",                  ' Module
+                SystemSession.LoggedInUserID,      ' Your admin UserID
+                SystemSession.LoggedInFullName,    ' Your admin name
+                SystemSession.LoggedInRole          ' Your admin role
+            )
+
         End If
 
         SystemSession.ShowSuccess("added")
@@ -120,7 +138,14 @@ Public Class AdminDBUsers
         Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        If Not ValidateUserFields(selectedUserID) Then Exit Sub
+
+        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedUserID) Then
+            MessageBox.Show("Email or Username already exists. Please choose another.")
+            Exit Sub
+        End If
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Decide query depending on whether password is entered, to avoid updating password with blank.
@@ -169,24 +194,32 @@ Public Class AdminDBUsers
         SystemSession.ShowSuccess("updated")
 
         ' Audit logging
-        If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
-            SystemSession.LogAudit("Last Admin Role Changed", "User Management",
-            selectedUserID, TxtFullName.Text, oldRole)
+        Dim actorID As Integer = SystemSession.LoggedInUserID
+        Dim actorName As String = SystemSession.LoggedInFullName
+        Dim actorRole As String = SystemSession.LoggedInRole
+        Dim targetName As String = TxtFullName.Text
+        Dim targetRole As String = CmbRole.Text
+
+        If oldRole = "Admin" AndAlso targetRole <> "Admin" AndAlso Not SystemSession.AdminExists() Then
+            SystemSession.LogAudit($"Changed last Admin account: {targetName}", "User Management",
+        actorID, actorName, actorRole)
             MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
                     "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        ElseIf CmbRole.Text = "Admin" Then
-            SystemSession.LogAudit("Admin Account Updated", "User Management",
-            selectedUserID, TxtFullName.Text, CmbRole.Text)
+        ElseIf targetRole = "Admin" Then
+            SystemSession.LogAudit($"Updated Admin account: {targetName}", "User Management",
+        actorID, actorName, actorRole)
         Else
-            SystemSession.LogAudit("User Updated", "User Management",
-            selectedUserID, TxtFullName.Text, CmbRole.Text)
+            SystemSession.LogAudit($"Updated user: {targetName}", "User Management",
+        actorID, actorName, actorRole)
         End If
+
 
         ' Enforce session rules if the logged-in user updates their own role
         SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
         LoadUsers()
         Clearform()
     End Sub
+
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
         ' Only Admin can delete users
         If Not SystemSession.RequireAdmin("delete users") Then Exit Sub
@@ -197,7 +230,7 @@ Public Class AdminDBUsers
         End If
 
         Try
-            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                 con.Open()
 
                 ' First, remove any active sessions for this user to avoid locked sessions
@@ -240,7 +273,7 @@ Public Class AdminDBUsers
                 If match.Success Then
                     Dim fkName = match.Groups(1).Value
                     ' Look up parent table
-                    Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                    Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                         con.Open()
                         Using cmd As New SqlCommand("SELECT OBJECT_NAME(parent_object_id) FROM sys.foreign_keys WHERE name=@fkName", con)
                             cmd.Parameters.AddWithValue("@fkName", fkName)
@@ -265,12 +298,8 @@ Public Class AdminDBUsers
         End Try
     End Sub
 
-
-
-
-
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
@@ -279,6 +308,15 @@ Public Class AdminDBUsers
             Return count > 0
         End Using
     End Function
+    Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged
+        ' Only show Availability if role is Dentist
+        If CmbRole.Text.Equals("Dentist", StringComparison.OrdinalIgnoreCase) Then
+            cmbAvailability.Enabled = True
+        Else
+            cmbAvailability.Enabled = False
+            cmbAvailability.SelectedIndex = -1 ' Clear selection if hidden
+        End If
+    End Sub
 
     Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
         If e.RowIndex >= 0 Then
@@ -288,6 +326,7 @@ Public Class AdminDBUsers
             TxtUsername.Text = row.Cells("Username").Value.ToString()
             txtPassword.Text = "" ' optional: don’t show password directly
             txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
+            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
             CmbRole.Text = row.Cells("Role").Value.ToString()
             TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()
@@ -306,6 +345,189 @@ Public Class AdminDBUsers
         ' Otherwise, show user dashboard
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
+    End Sub
+
+    Dim connectionString As String = My.Settings.DentalDBConnection2
+
+    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
+        Dim query As String = "SELECT UserID, FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability
+                               FROM dbo.Users
+                               WHERE FullName LIKE @search OR Username LIKE @search OR Role LIKE @search OR PhoneNumber LIKE @search OR Email LIKE @search OR Specialization LIKE @search OR Availability LIKE @search"
+        Using con As New SqlConnection(connectionString),
+              cmd As New SqlCommand(query, con)
+
+            cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text & "%")
+
+            Dim adapter As New SqlDataAdapter(cmd)
+            Dim table As New DataTable()
+            adapter.Fill(table)
+
+            DGVUsers.DataSource = table
+        End Using
+    End Sub
+
+    Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
+        If chkShowPassword.Checked Then
+            ' Show the password
+            txtPassword.UseSystemPasswordChar = False
+            txtConfirmPassword.UseSystemPasswordChar = False
+        Else
+            ' Hide the password
+            txtPassword.UseSystemPasswordChar = True
+            txtConfirmPassword.UseSystemPasswordChar = True
+        End If
+    End Sub
+
+    Private Function ValidateUserFields(Optional userID As Integer = 0) As Boolean
+        ' Full Name: letters only
+        If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
+       Not TxtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
+            MessageBox.Show("Full Name must contain letters only.")
+            TxtFullName.Focus()
+            Return False
+        End If
+
+        ' Phone Number: digits only
+        If String.IsNullOrWhiteSpace(TxtPhoneNumber.Text) OrElse
+       Not TxtPhoneNumber.Text.All(Function(c) Char.IsDigit(c)) Then
+            MessageBox.Show("Phone Number must contain digits only.")
+            TxtPhoneNumber.Focus()
+            Return False
+        End If
+
+        ' Username: letters and numbers only
+        If String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
+       Not TxtUsername.Text.All(Function(c) Char.IsLetterOrDigit(c)) Then
+            MessageBox.Show("Username must contain only letters and numbers.")
+            TxtUsername.Focus()
+            Return False
+        End If
+
+        ' Email: must end with @gmail.com and alphanumeric before domain
+        Dim email As String = TxtEmail.Text.Trim()
+        If String.IsNullOrWhiteSpace(email) OrElse Not email.ToLower().EndsWith("@gmail.com") Then
+            MessageBox.Show("Email must end with '@gmail.com'.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        Dim localPart As String = email.Substring(0, email.Length - 10)
+        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
+            MessageBox.Show("Email username must contain only letters and numbers.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        ' Password: at least 8 characters and 1 uppercase
+        Dim password As String = txtPassword.Text.Trim()
+        Dim confirmPassword As String = txtConfirmPassword.Text.Trim()
+
+        If password.Length < 8 Then
+            MessageBox.Show("Password must be at least 8 characters long.")
+            txtPassword.Focus()
+            Return False
+        End If
+        If Not password.Any(Function(c) Char.IsUpper(c)) Then
+            MessageBox.Show("Password must contain at least one uppercase letter.")
+            txtPassword.Focus()
+            Return False
+        End If
+        If Not password.Equals(confirmPassword) Then
+            MessageBox.Show("Passwords do not match.")
+            txtConfirmPassword.Focus()
+            Return False
+        End If
+
+        ' Duplicate check for Email and Username
+        If IsDuplicateEmailOrUsername(email, TxtUsername.Text.Trim(), userID) Then
+            MessageBox.Show("Email or Username already exists. Please choose another.")
+            Return False
+        End If
+
+        Return True
+    End Function
+    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+
+            ' Query checks if email OR username already exists, excluding the current record if updating
+            Dim query As String = "
+            SELECT COUNT(*) 
+            FROM Users 
+            WHERE (Email = @em OR Username = @un) 
+              AND UserID <> @id
+        "
+
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@em", email)
+                cmd.Parameters.AddWithValue("@un", username)
+                cmd.Parameters.AddWithValue("@id", userID)
+
+                Dim count As Integer = CInt(cmd.ExecuteScalar())
+                Return count > 0
+            End Using
+        End Using
+    End Function
+    Private Sub DGVUsers_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
+        ' Ensure the click is on a valid row (not header)
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DGVUsers.Rows(e.RowIndex)
+
+            ' Populate your textboxes/combos with values from the grid
+            TxtFullName.Text = row.Cells("FullName").Value.ToString()
+            TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
+            TxtUsername.Text = row.Cells("Username").Value.ToString()
+            TxtEmail.Text = row.Cells("Email").Value.ToString()
+            txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
+            txtPassword.Text = row.Cells("Password").Value.ToString()
+            txtConfirmPassword.Text = row.Cells("Password").Value.ToString()
+
+            ' Example for dropdowns
+            CmbRole.Text = row.Cells("Role").Value.ToString()
+            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
+        End If
+    End Sub
+
+    Private Sub TxtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtFullName.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not Char.IsLetterOrDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub TxtPhoneNumber_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhoneNumber.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtSpecialization.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True
+        End If
+    End Sub
+
+    Private Sub txtConfirmPassword_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtConfirmPassword.KeyPress
+
+    End Sub
+    Private Sub txtPassword_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPassword.KeyPress
+
     End Sub
 
 End Class

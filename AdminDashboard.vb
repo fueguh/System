@@ -41,7 +41,7 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub DentistManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManageDentistsForm.Click
-        AdminDBDentists.Show()
+        AdminDBStaffMaintenance.Show()
         Me.Hide()
     End Sub
 
@@ -55,11 +55,19 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub AdminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadDashboardStats()
+    Private Sub AdminDashboard_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
+        LoadDashboardStats() ' runs only when activated
+
+        ' Change clinic name based on ClinicInfo table
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
+            Dim clinicName As String = TryCast(cmd.ExecuteScalar(), String)
+            lblClinicName.Text = If(clinicName, "Dental Clinic Management System")
+        End Using
     End Sub
     Public Sub LoadDashboardStats()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Total Patients
@@ -103,28 +111,13 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
+    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs)
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If result = DialogResult.Yes Then
             SystemSession.PerformLogout(Me.Name)
             Me.Close()
         End If
     End Sub
-
-    'change clinic name into the one from clinifInfo table
-    Private Sub AdminDashboard_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
-            con.Open()
-            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
-            Dim clinicName As Object = cmd.ExecuteScalar()
-            If clinicName IsNot Nothing Then
-                lblClinicName.Text = clinicName.ToString()
-            Else
-                lblClinicName.Text = "Dental Clinic Management System"
-            End If
-        End Using
-    End Sub
-
     Private Sub ToolStripMenuItem3_Click(sender As Object, e As EventArgs)
         AdminDBPayment.Show()
         Me.Hide()
@@ -132,6 +125,61 @@ Public Class AdminDashboard
 
     Private Sub ItemManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ItemManagementToolStripMenuItem.Click
         AdminDBItemManagement.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub StockTrackingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StockTrackingToolStripMenuItem.Click
+        AdminDBStockTracking.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ReportsAnalyticsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsAnalyticsToolStripMenuItem.Click
+        AdminDBRepandAnalytics.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub BtnLogout_Click(sender As Object, e As EventArgs) Handles btnLogout.Click
+        Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If result = DialogResult.Yes Then
+            SystemSession.PerformLogout(Me.Name)
+            Me.Close()
+        End If
+    End Sub
+
+    Private Sub LblClinicName_Click(sender As Object, e As EventArgs) Handles lblClinicName.Click
+
+    End Sub
+
+    Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem2.Click
+
+    End Sub
+
+    Private Sub LblTotalPatients_Click(sender As Object, e As EventArgs) Handles lblTotalPatients.Click
+
+    End Sub
+
+    Private Sub SupplierMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SupplierMaintenanceToolStripMenuItem.Click
+        AdminDBSupplier.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub CategoryMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CategoryMaintenanceToolStripMenuItem.Click
+        AdminDBCategory.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ToolStripMenuItem4_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem4.Click
+        AdminDBDentists.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ToolStripMenuItem5_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem5.Click
+        AdminDBAdminMaintenance.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub AvailabilityMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AvailabilityMaintenanceToolStripMenuItem.Click
+        FrmCustomSchedule.Show()
         Me.Hide()
     End Sub
 End Class

@@ -28,7 +28,7 @@ Public Class AdminDBReports
 
     ' Daily Appointments
     Private Sub LoadDailyAppointments()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -58,7 +58,7 @@ Public Class AdminDBReports
 
     ' Dentist Workload
     Private Sub LoadDentistWorkload()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -79,7 +79,7 @@ Public Class AdminDBReports
 
     ' Service Usage
     Private Sub LoadServiceUsage()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -101,7 +101,7 @@ Public Class AdminDBReports
 
     ' Patient Summary
     Private Sub LoadPatientSummary()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -120,7 +120,7 @@ Public Class AdminDBReports
 
     ' Appointment History (Completed)
     Public Sub LoadAppointmentHistory()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -150,7 +150,7 @@ Public Class AdminDBReports
 
     ' Monthly Revenue
     Private Sub LoadMonthlyRevenue()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -171,7 +171,7 @@ Public Class AdminDBReports
 
     ' Dentist Performance
     Private Sub LoadDentistPerformance()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             SELECT 
@@ -192,7 +192,7 @@ Public Class AdminDBReports
 
     ' Patient Count
     Private Sub LoadPatientCount()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "SELECT COUNT(PatientID) AS TotalPatients FROM Patients"
             Dim da As New SqlDataAdapter(query, con)
@@ -225,4 +225,15 @@ Public Class AdminDBReports
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
+    Private Sub PnlHeader_Paint(sender As Object, e As PaintEventArgs) Handles pnlHeader.Paint
+
+    End Sub
+
+    Private Sub DGVPatientCount_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
+
+    End Sub
+
+    Private Sub DGVDentistPerformance_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
+
+    End Sub
 End Class
