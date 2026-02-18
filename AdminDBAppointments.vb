@@ -34,7 +34,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadComboBoxes()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' ================= PATIENTS =================
@@ -72,7 +72,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadAppointments()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -149,7 +149,7 @@ Public Class AdminDBAppointments
     End Function
 
     Private Function IsConflict(Optional appointmentID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -210,7 +210,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' --- Insert appointment ---
@@ -297,7 +297,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Update appointment
@@ -357,7 +357,7 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             If MessageBox.Show("Are you sure you want to delete this appointment?",
@@ -489,7 +489,7 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub SaveAppointmentServices(appointmentID As Integer)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             For Each item As DataRowView In clbServices.CheckedItems
@@ -512,7 +512,7 @@ Public Class AdminDBAppointments
             clbServices.SetItemChecked(i, False)
         Next
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim cmd As New SqlCommand(

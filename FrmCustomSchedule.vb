@@ -30,7 +30,7 @@ Public Class FrmCustomSchedule
         End If
 
         ' Save to DB
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Delete old schedule
@@ -56,7 +56,7 @@ Public Class FrmCustomSchedule
     End Sub
 
     Private Sub SaveCustomSchedule(dentistID As Integer, schedules As List(Of (day As String, startTime As TimeSpan, endTime As TimeSpan)))
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Delete old availability
@@ -90,7 +90,7 @@ Public Class FrmCustomSchedule
     End Sub
 
     Private Sub LoadPartTimeDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Get all part-time dentists
@@ -137,7 +137,7 @@ WHERE da.DentistID = u.UserID
         Next
 
         ' Load existing schedule from database
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "SELECT DayOfWeek, StartTime, EndTime FROM DentistAvailability WHERE DentistID=@id"
             Using cmd As New SqlCommand(query, con)

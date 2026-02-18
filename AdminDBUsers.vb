@@ -20,7 +20,7 @@ Public Class AdminDBUsers
     End Sub
 
     Private Sub LoadUsers()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -90,7 +90,7 @@ Public Class AdminDBUsers
         Dim newUserID As Integer
 
         ' Insert into database and get the new UserID
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
             INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
@@ -145,7 +145,7 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Decide query depending on whether password is entered, to avoid updating password with blank.
@@ -230,7 +230,7 @@ Public Class AdminDBUsers
         End If
 
         Try
-            Using con As New SqlConnection(My.Settings.DentalDBConnection)
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                 con.Open()
 
                 ' First, remove any active sessions for this user to avoid locked sessions
@@ -273,7 +273,7 @@ Public Class AdminDBUsers
                 If match.Success Then
                     Dim fkName = match.Groups(1).Value
                     ' Look up parent table
-                    Using con As New SqlConnection(My.Settings.DentalDBConnection)
+                    Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                         con.Open()
                         Using cmd As New SqlCommand("SELECT OBJECT_NAME(parent_object_id) FROM sys.foreign_keys WHERE name=@fkName", con)
                             cmd.Parameters.AddWithValue("@fkName", fkName)
@@ -299,7 +299,7 @@ Public Class AdminDBUsers
     End Sub
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
@@ -347,7 +347,7 @@ Public Class AdminDBUsers
         Me.Hide()
     End Sub
 
-    Dim connectionString As String = My.Settings.DentalDBConnection
+    Dim connectionString As String = My.Settings.DentalDBConnection2
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
         Dim query As String = "SELECT UserID, FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability
@@ -447,7 +447,7 @@ Public Class AdminDBUsers
         Return True
     End Function
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Query checks if email OR username already exists, excluding the current record if updating

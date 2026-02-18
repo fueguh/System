@@ -7,7 +7,7 @@ Public Class AdminDBCategory
     End Sub
 
     Private Sub LoadCategories()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -38,7 +38,7 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -64,7 +64,7 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -96,7 +96,7 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -145,10 +145,10 @@ Public Class AdminDBCategory
         End If
     End Sub
 
-    Dim connectionString As String = My.Settings.DentalDBConnection
+    Dim connectionString As String = My.Settings.DentalDBConnection2
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles CategorySearch.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String
