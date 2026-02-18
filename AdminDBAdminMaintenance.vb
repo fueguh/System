@@ -38,7 +38,7 @@ Public Class AdminDBAdminMaintenance
     End Sub
 
     Private Sub LoadAdmins()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -83,7 +83,7 @@ Public Class AdminDBAdminMaintenance
 
         If Not ValidateEmail() Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Insert into Users
@@ -124,7 +124,7 @@ Public Class AdminDBAdminMaintenance
     End Sub
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles AdminSearch.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String
@@ -207,7 +207,7 @@ Public Class AdminDBAdminMaintenance
         End If
 
         ' Duplicate check
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmd As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Email=@em", con)
             cmd.Parameters.AddWithValue("@em", email)
@@ -224,7 +224,7 @@ Public Class AdminDBAdminMaintenance
 
 
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "

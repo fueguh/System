@@ -26,7 +26,7 @@ Public Class AdminDBStaffMaintenance
     End Function
 
     Private Sub LoadStaffs()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -79,7 +79,7 @@ Public Class AdminDBStaffMaintenance
         End If
 
         Dim hashedPassword As String = HashPassword(TxtPassword.Text)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Insert into Users
@@ -117,7 +117,7 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub SearchStaff_TextChanged(sender As Object, e As EventArgs) Handles SearchStaff.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String
@@ -227,7 +227,7 @@ Public Class AdminDBStaffMaintenance
         Return True
     End Function
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional recordID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Query checks if email OR username already exists, excluding the current record if updating

@@ -13,7 +13,7 @@ Public Class Login
 
     ' --- FORM LOAD ---
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
@@ -40,7 +40,7 @@ Public Class Login
 
     ' --- FORM SHOWN ---
     Private Sub Login_Shown(sender As Object, e As EventArgs) Handles Me.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Check for active session on this device
@@ -77,7 +77,7 @@ Public Class Login
 
         Dim hashedPassword As String = HashPassword(txtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim cmd As New SqlCommand("
@@ -134,7 +134,7 @@ Public Class Login
 
     ' --- SAVE SESSION (Remember Me) ---
     Private Sub SaveSession(userId As Integer)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' End existing session for this device
