@@ -28,6 +28,9 @@ Partial Class Login
         Me.Guna2MessageDialog1 = New Guna.UI2.WinForms.Guna2MessageDialog()
         Me.CheckBoxShowPassword = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.chkRememberMe = New Guna.UI2.WinForms.Guna2CheckBox()
+        Me.lbl_login = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
+        Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'txtUsername
@@ -46,7 +49,7 @@ Partial Class Login
         Me.txtUsername.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtUsername.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.txtUsername.Location = New System.Drawing.Point(117, 225)
-        Me.txtUsername.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtUsername.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUsername.Name = "txtUsername"
         Me.txtUsername.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtUsername.PlaceholderText = "Username"
@@ -70,7 +73,7 @@ Partial Class Login
         Me.txtPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.txtPassword.Location = New System.Drawing.Point(117, 317)
-        Me.txtPassword.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtPassword.Margin = New System.Windows.Forms.Padding(4)
         Me.txtPassword.Name = "txtPassword"
         Me.txtPassword.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtPassword.PlaceholderText = "Password"
@@ -145,6 +148,31 @@ Partial Class Login
         Me.chkRememberMe.UncheckedState.BorderThickness = 1
         Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
         '
+        'lbl_login
+        '
+        Me.lbl_login.BackColor = System.Drawing.Color.Transparent
+        Me.lbl_login.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Bold)
+        Me.lbl_login.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lbl_login.Location = New System.Drawing.Point(130, 22)
+        Me.lbl_login.Name = "lbl_login"
+        Me.lbl_login.Size = New System.Drawing.Size(233, 39)
+        Me.lbl_login.TabIndex = 8
+        Me.lbl_login.Text = "Welcome Back"
+        '
+        'Guna2CustomGradientPanel1
+        '
+        Me.Guna2CustomGradientPanel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Guna2CustomGradientPanel1.Controls.Add(Me.lbl_login)
+        Me.Guna2CustomGradientPanel1.Dock = System.Windows.Forms.DockStyle.Top
+        Me.Guna2CustomGradientPanel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Guna2CustomGradientPanel1.FillColor2 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Guna2CustomGradientPanel1.FillColor3 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
+        Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(512, 84)
+        Me.Guna2CustomGradientPanel1.TabIndex = 9
+        '
         'Login
         '
         Me.AcceptButton = Me.btnLogin
@@ -152,6 +180,7 @@ Partial Class Login
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(512, 719)
+        Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.chkRememberMe)
         Me.Controls.Add(Me.btnLogin)
@@ -161,6 +190,8 @@ Partial Class Login
         Me.Name = "Login"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Login"
+        Me.Guna2CustomGradientPanel1.ResumeLayout(False)
+        Me.Guna2CustomGradientPanel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -172,4 +203,6 @@ Partial Class Login
     Friend WithEvents Guna2MessageDialog1 As Guna.UI2.WinForms.Guna2MessageDialog
     Friend WithEvents CheckBoxShowPassword As Guna.UI2.WinForms.Guna2CheckBox
     Friend WithEvents chkRememberMe As Guna.UI2.WinForms.Guna2CheckBox
+    Friend WithEvents lbl_login As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
 End Class
