@@ -26,15 +26,14 @@ Public Class AdminDBStaffMaintenance
     End Function
 
     Private Sub LoadStaffs()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
-            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-            FROM Users U
-            INNER JOIN Staffs S ON U.UserID = S.UserID
-            WHERE U.Role = 'Staff'
-            ORDER BY U.FullName
+            SELECT UserID, FullName, Username, PhoneNumber, Email
+            FROM Users
+            WHERE Role = 'Staff'
+            ORDER BY FullName
         "
 
             Dim da As New SqlDataAdapter(query, con)
@@ -43,6 +42,7 @@ Public Class AdminDBStaffMaintenance
             DgvStaffs.DataSource = dt
         End Using
     End Sub
+
     Private Sub ClearStaffInputs()
         TxtName.Text = ""
         TxtUsername.Text = ""
@@ -79,7 +79,7 @@ Public Class AdminDBStaffMaintenance
         End If
 
         Dim hashedPassword As String = HashPassword(TxtPassword.Text)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Insert into Users
@@ -99,16 +99,6 @@ Public Class AdminDBStaffMaintenance
 
                 userId = Convert.ToInt32(cmdUser.ExecuteScalar())
             End Using
-
-            ' Insert into Staffs
-            Dim queryStaff As String = "
-            INSERT INTO Staffs (UserID)
-            VALUES (@userid)
-        "
-            Using cmdStaff As New SqlCommand(queryStaff, con)
-                cmdStaff.Parameters.AddWithValue("@userid", userId)
-                cmdStaff.ExecuteNonQuery()
-            End Using
         End Using
 
         MessageBox.Show("Staff account added successfully.")
@@ -117,7 +107,7 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub SearchStaff_TextChanged(sender As Object, e As EventArgs) Handles SearchStaff.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String
@@ -227,7 +217,7 @@ Public Class AdminDBStaffMaintenance
         Return True
     End Function
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional recordID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Query checks if email OR username already exists, excluding the current record if updating

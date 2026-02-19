@@ -12,7 +12,7 @@ Public Class AdminDBSupplier
         Dim query As String = "SELECT SupplierID, SupplierName, ContactNumber, Address, Email 
                            FROM Suppliers"
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection),
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
               adapter As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -25,7 +25,7 @@ Public Class AdminDBSupplier
         (SupplierName, ContactNumber, Address, Email, IsActive) 
         VALUES (@SupplierName, @ContactNumber, @Address, @Email, 1)" ' Always active by default
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection),
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, con)
 
             cmd.Parameters.AddWithValue("@SupplierName", TextBoxSupplierName.Text)
@@ -54,7 +54,7 @@ Public Class AdminDBSupplier
         Email=@Email 
         WHERE SupplierID=@SupplierID"
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection),
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
           cmd As New SqlCommand(query, con)
 
             cmd.Parameters.AddWithValue("@SupplierID", selectedSupplierID)
@@ -81,7 +81,7 @@ Public Class AdminDBSupplier
 
         Dim query As String = "DELETE FROM Suppliers WHERE SupplierID=@SupplierID"
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection),
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, con)
 
             cmd.Parameters.AddWithValue("@SupplierID", selectedSupplierID)
@@ -122,7 +122,7 @@ Public Class AdminDBSupplier
     End Sub
 
     Private Sub SupplierSearch_TextChanged(sender As Object, e As EventArgs) Handles SupplierSearch.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String

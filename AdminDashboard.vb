@@ -59,7 +59,7 @@ Public Class AdminDashboard
         LoadDashboardStats() ' runs only when activated
 
         ' Change clinic name based on ClinicInfo table
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
             Dim clinicName As String = TryCast(cmd.ExecuteScalar(), String)
@@ -67,7 +67,7 @@ Public Class AdminDashboard
         End Using
     End Sub
     Public Sub LoadDashboardStats()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Total Patients

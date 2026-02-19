@@ -6,7 +6,7 @@ Public Class StaffDashboard
     End Sub
 
     Public Sub LoadDashboardStats()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Total Patients
@@ -56,7 +56,7 @@ Public Class StaffDashboard
     End Sub
 
     Private Sub StaffDashboard_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
             Dim clinicName As Object = cmd.ExecuteScalar()

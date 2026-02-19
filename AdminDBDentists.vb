@@ -18,7 +18,7 @@ Public Class AdminDBDentists
     End Function
 
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -87,7 +87,7 @@ Public Class AdminDBDentists
         ' ✅ Hash password
         Dim hashedPassword As String = HashPassword(TxtPassword.Text)
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
@@ -122,7 +122,7 @@ Public Class AdminDBDentists
     End Sub
 
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
             Dim cmd As New SqlCommand(query, con)
@@ -132,10 +132,10 @@ Public Class AdminDBDentists
         End Using
     End Function
 
-    Dim connectionString As String = My.Settings.DentalDBConnection
+    Dim connectionString As String = My.Settings.DentalDBConnection2
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String
@@ -265,7 +265,7 @@ Public Class AdminDBDentists
     End Function
 
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Query checks if email OR username already exists, excluding the current record if updating

@@ -38,15 +38,14 @@ Public Class AdminDBAdminMaintenance
     End Sub
 
     Private Sub LoadAdmins()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
-            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-            FROM Users U
-            INNER JOIN Admins A ON U.UserID = A.UserID
-            WHERE U.Role = 'Admin'
-            ORDER BY U.FullName
+            SELECT UserID, FullName, Username, PhoneNumber, Email
+            FROM Users
+            WHERE Role = 'Admin'
+            ORDER BY FullName
         "
 
             Dim da As New SqlDataAdapter(query, con)
@@ -55,6 +54,7 @@ Public Class AdminDBAdminMaintenance
             DataGridViewAdmins.DataSource = dt
         End Using
     End Sub
+
 
     Private Sub AdminDBAdminMaintenance_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadAdmins()
@@ -83,15 +83,14 @@ Public Class AdminDBAdminMaintenance
 
         If Not ValidateEmail() Then Exit Sub
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             ' Insert into Users
             Dim queryUser As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated)
-            OUTPUT INSERTED.UserID
-            VALUES (@fullname, @username, @password, 'Admin', @phone, @email, GETDATE())
-        "
+    INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated)
+    VALUES (@fullname, @username, @password, 'Admin', @phone, @email, GETDATE())
+"
             ' ✅ Hash password
             Dim hashedPassword As String = HashPassword(TxtPassword.Text)
 
@@ -107,15 +106,6 @@ Public Class AdminDBAdminMaintenance
 
             End Using
 
-            ' Insert into Admins
-            Dim queryAdmin As String = "
-            INSERT INTO Admins (UserID)
-            VALUES (@userid)
-        "
-            Using cmdAdmin As New SqlCommand(queryAdmin, con)
-                cmdAdmin.Parameters.AddWithValue("@userid", userId)
-                cmdAdmin.ExecuteNonQuery()
-            End Using
         End Using
 
         MessageBox.Show("Admin account added successfully.")
@@ -123,38 +113,36 @@ Public Class AdminDBAdminMaintenance
         ClearAdminInputs()
     End Sub
 
-    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles AdminSearch.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+    Private Sub AdminSearch_TextChanged(sender As Object, e As EventArgs) Handles AdminSearch.TextChanged
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String
-            If AdminSearch.Text.Trim = "" Then
+            If String.IsNullOrWhiteSpace(AdminSearch.Text) Then
                 query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-                FROM Users U
-                INNER JOIN Admins A ON U.UserID = A.UserID
-                WHERE U.Role = 'Admin'
-                ORDER BY U.FullName
+                SELECT UserID, FullName, Username, PhoneNumber, Email
+                FROM Users
+                WHERE Role = 'Admin'
+                ORDER BY FullName
             "
             Else
                 query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-                FROM Users U
-                INNER JOIN Admins A ON U.UserID = A.UserID
-                WHERE U.Role = 'Admin'
+                SELECT UserID, FullName, Username, PhoneNumber, Email
+                FROM Users
+                WHERE Role = 'Admin'
                   AND (
-                        COALESCE(U.FullName,'') LIKE @search
-                     OR COALESCE(U.Username,'') LIKE @search
-                     OR COALESCE(U.PhoneNumber,'') LIKE @search
-                     OR COALESCE(U.Email,'') LIKE @search
+                        COALESCE(FullName,'') LIKE @search
+                     OR COALESCE(Username,'') LIKE @search
+                     OR COALESCE(PhoneNumber,'') LIKE @search
+                     OR COALESCE(Email,'') LIKE @search
                   )
-                ORDER BY U.FullName
+                ORDER BY FullName
             "
             End If
 
             Using cmd As New SqlCommand(query, con)
-                If AdminSearch.Text.Trim <> "" Then
-                    cmd.Parameters.AddWithValue("@search", "%" & AdminSearch.Text.Trim & "%")
+                If Not String.IsNullOrWhiteSpace(AdminSearch.Text) Then
+                    cmd.Parameters.AddWithValue("@search", "%" & AdminSearch.Text.Trim() & "%")
                 End If
 
                 Dim adapter As New SqlDataAdapter(cmd)
@@ -164,8 +152,8 @@ Public Class AdminDBAdminMaintenance
                 DataGridViewAdmins.DataSource = table
             End Using
         End Using
-
     End Sub
+
 
     '========================================================= VALIDATIONS ======================================================
     Private Function ValidatePassword() As Boolean
@@ -207,7 +195,7 @@ Public Class AdminDBAdminMaintenance
         End If
 
         ' Duplicate check
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmd As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Email=@em", con)
             cmd.Parameters.AddWithValue("@em", email)
@@ -224,7 +212,7 @@ Public Class AdminDBAdminMaintenance
 
 
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
