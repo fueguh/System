@@ -10,7 +10,7 @@ Public Class AdminDBItemManagement
                            INNER JOIN Categories c ON i.CategoryID = c.CategoryID
                            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID"
 
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
               adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
