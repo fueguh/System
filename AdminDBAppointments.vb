@@ -40,7 +40,7 @@ Public Class AdminDBAppointments
             ' ================= PATIENTS =================
             Dim dtPatients As New DataTable()
             Dim daPatients As New SqlDataAdapter(
-            "SELECT PatientID, FullName FROM Patients ORDER BY FullName", con)
+            "SELECT PatientID, FullName FROM Patients WHERE IsActive = 1 ORDER BY FullName", con)
             Dim v1 = daPatients.Fill(dtPatients)
             CmbPatient.DataSource = dtPatients
             CmbPatient.DisplayMember = "FullName"
