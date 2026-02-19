@@ -311,11 +311,11 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub txtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtEmail.KeyPress
-        ' Allow control keys
-        If Char.IsControl(e.KeyChar) Then Return
-
-        ' Allow letters, digits, and '@' only
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c) Then
+        ' Allow letters, digits, control keys, dot, and @
+        If Not Char.IsLetterOrDigit(e.KeyChar) AndAlso
+       Not Char.IsControl(e.KeyChar) AndAlso
+       e.KeyChar <> "."c AndAlso
+       e.KeyChar <> "@"c Then
             e.Handled = True
         End If
     End Sub
@@ -342,5 +342,9 @@ Public Class AdminDBPatients
         If Not Char.IsDigit(e.KeyChar) Then
             e.Handled = True
         End If
+    End Sub
+
+    Private Sub txtEmail_TextChanged(sender As Object, e As EventArgs) Handles txtEmail.TextChanged
+
     End Sub
 End Class

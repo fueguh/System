@@ -286,4 +286,8 @@ Public Class AdminDBStaffMaintenance
             e.Handled = True
         End If
     End Sub
+
+    Private Sub TxtPhone_TextChanged(sender As Object, e As EventArgs) Handles TxtPhone.TextChanged
+
+    End Sub
 End Class

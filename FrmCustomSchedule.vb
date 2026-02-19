@@ -165,5 +165,17 @@ WHERE da.DentistID = u.UserID
         End Using
     End Sub
 
+    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+        ' ✅ If no admin is logged in, go back to Login form
+        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
+            ' No active admin session → just redirect to Login without logging a logout
+            Login.Show()
+            Me.Hide()
+            Exit Sub
+        End If
 
+        ' Otherwise, show user dashboard
+        SystemSession.NavigateToDashboard(Me)
+        Me.Hide()
+    End Sub
 End Class

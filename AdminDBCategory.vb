@@ -196,25 +196,32 @@ Public Class AdminDBCategory
     End Sub
 
     Private Sub TextBoxDescription_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxDescription.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return
-        If Not Char.IsLetterOrDigit(e.KeyChar) Then
-            e.Handled = True
+        ' Allow control keys (Backspace, Delete, etc.)
+        If Char.IsControl(e.KeyChar) Then
+            Return
+        End If
+
+        ' Allow letters and spaces only
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+            e.Handled = True ' Block invalid input
         End If
     End Sub
 
     Private Sub DataGridViewCategories_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewCategories.CellClick
-        ' Ensure the click is on a valid row (not header)
+
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DataGridViewCategories.Rows(e.RowIndex)
 
-            ' Populate your textboxes/combos with values from the grid
+            ' Assign the CategoryID
+            selectedCategoryID = Convert.ToInt32(row.Cells("CategoryID").Value)
+
+            ' Populate textboxes
             TextBoxCategoryName.Text = row.Cells("CategoryName").Value.ToString()
             TextBoxDescription.Text = row.Cells("Description").Value.ToString()
-
-            ' Example for a combo box (if you have one for Status or Type)
-            'CmbStatus.Text = row.Cells("Status").Value.ToString()
-            ' Or if bound to IDs:
-            ' CmbStatus.SelectedValue = row.Cells("StatusID").Value
         End If
+
+
+
+
     End Sub
 End Class

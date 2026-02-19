@@ -27,6 +27,7 @@ Public Class AdminDBAppointments
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
 
+        cmbStatus.Items.Add("Confirmed")
         cmbStatus.Items.Add("Ongoing")
         cmbStatus.Items.Add("Completed")
         cmbStatus.Items.Add("Cancelled")

@@ -164,14 +164,15 @@ Public Class AdminDBSupplier
 
     Private Sub TextBoxSupplierName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxSupplierName.KeyPress
         If Char.IsControl(e.KeyChar) Then Return
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+        ' Allow letters, spaces, and dot
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "."c) Then
             e.Handled = True
         End If
     End Sub
 
     Private Sub TextBoxContact_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxContact.KeyPress
         If Char.IsControl(e.KeyChar) Then Return
-        If Not Char.IsDigit(e.KeyChar) Then
+        If Not Char.IsDigit(e.KeyChar)  Then
             e.Handled = True
         End If
     End Sub
@@ -191,11 +192,14 @@ Public Class AdminDBSupplier
     End Sub
 
     Private Sub DataGridViewSuppliers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewSuppliers.CellClick
-        ' Ensure the click is on a valid row (not header)
+
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DataGridViewSuppliers.Rows(e.RowIndex)
 
-            ' Populate your textboxes/combos with values from the grid
+            ' Assign the SupplierID from the grid
+            selectedSupplierID = Convert.ToInt32(row.Cells("SupplierID").Value)
+
+            ' Populate textboxes
             TextBoxSupplierName.Text = row.Cells("SupplierName").Value.ToString()
             TextBoxEmail.Text = row.Cells("Email").Value.ToString()
             TextBoxAddress.Text = row.Cells("Address").Value.ToString()

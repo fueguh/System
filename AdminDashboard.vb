@@ -83,14 +83,14 @@ Public Class AdminDashboard
             Dim cmd3 As New SqlCommand("
             SELECT COUNT(*) FROM Appointments 
             WHERE Date = CAST(GETDATE() AS DATE)
-        ", con)
+            ", con)
             lblAppointmentsToday.Text = cmd3.ExecuteScalar().ToString()
 
             ' Completed Appointments
             Dim cmd4 As New SqlCommand("
             SELECT COUNT(*) FROM Appointments 
             WHERE Status = 'Completed'
-        ", con)
+            ", con)
             lblCompletedAppointments.Text = cmd4.ExecuteScalar().ToString()
         End Using
     End Sub
