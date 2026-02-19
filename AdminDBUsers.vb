@@ -309,14 +309,22 @@ Public Class AdminDBUsers
         End Using
     End Function
     Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged
-        ' Only show Availability if role is Dentist
+
         If CmbRole.Text.Equals("Dentist", StringComparison.OrdinalIgnoreCase) Then
+            ' Enable dentist-only fields
             cmbAvailability.Enabled = True
+            txtSpecialization.Enabled = True
         Else
+            ' Disable dentist-only fields
             cmbAvailability.Enabled = False
-            cmbAvailability.SelectedIndex = -1 ' Clear selection if hidden
+            cmbAvailability.SelectedIndex = -1
+
+            txtSpecialization.Enabled = False
+            txtSpecialization.Clear()
         End If
+
     End Sub
+
 
     Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
         If e.RowIndex >= 0 Then
