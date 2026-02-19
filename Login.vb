@@ -13,6 +13,8 @@ Public Class Login
 
     ' --- FORM LOAD ---
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Load clinic name first
+        LoadClinicName()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
@@ -187,4 +189,26 @@ Public Class Login
         Dim reg As New AdminDBUsers()
         reg.ShowDialog()
     End Sub
+
+    ' --- Load Clinic Name into Label ---
+    Private Sub LoadClinicName()
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            Dim cmd As New SqlCommand("SELECT TOP 1 ClinicName FROM ClinicInfo", con)
+            Try
+                con.Open()
+                Dim result As Object = cmd.ExecuteScalar()
+                If result IsNot Nothing Then
+                    lbl_clinic.Text = result.ToString()
+                Else
+                    lbl_clinic.Text = "Dental Clinic System" ' fallback if table is empty
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error loading clinic name: " & ex.Message)
+            End Try
+        End Using
+    End Sub
+    Private Sub Login_Activated(sender As Object, e As EventArgs) Handles Me.Activated
+        LoadClinicName()
+    End Sub
+
 End Class
