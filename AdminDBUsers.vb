@@ -422,21 +422,29 @@ Public Class AdminDBUsers
         Dim password As String = txtPassword.Text.Trim()
         Dim confirmPassword As String = txtConfirmPassword.Text.Trim()
 
-        If password.Length < 8 Then
-            MessageBox.Show("Password must be at least 8 characters long.")
-            txtPassword.Focus()
-            Return False
+        ' Only validate password if user entered something (for update)
+        If password <> "" Then
+
+            If password.Length < 8 Then
+                MessageBox.Show("Password must be at least 8 characters long.")
+                txtPassword.Focus()
+                Return False
+            End If
+
+            If Not password.Any(Function(c) Char.IsUpper(c)) Then
+                MessageBox.Show("Password must contain at least one uppercase letter.")
+                txtPassword.Focus()
+                Return False
+            End If
+
+            If Not password.Equals(confirmPassword) Then
+                MessageBox.Show("Passwords do not match.")
+                txtConfirmPassword.Focus()
+                Return False
+            End If
+
         End If
-        If Not password.Any(Function(c) Char.IsUpper(c)) Then
-            MessageBox.Show("Password must contain at least one uppercase letter.")
-            txtPassword.Focus()
-            Return False
-        End If
-        If Not password.Equals(confirmPassword) Then
-            MessageBox.Show("Passwords do not match.")
-            txtConfirmPassword.Focus()
-            Return False
-        End If
+
 
         ' Duplicate check for Email and Username
         If IsDuplicateEmailOrUsername(email, TxtUsername.Text.Trim(), userID) Then
@@ -468,25 +476,7 @@ Public Class AdminDBUsers
             End Using
         End Using
     End Function
-    Private Sub DGVUsers_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
-        ' Ensure the click is on a valid row (not header)
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DGVUsers.Rows(e.RowIndex)
 
-            ' Populate your textboxes/combos with values from the grid
-            TxtFullName.Text = row.Cells("FullName").Value.ToString()
-            TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
-            TxtUsername.Text = row.Cells("Username").Value.ToString()
-            TxtEmail.Text = row.Cells("Email").Value.ToString()
-            txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
-            txtPassword.Text = row.Cells("Password").Value.ToString()
-            txtConfirmPassword.Text = row.Cells("Password").Value.ToString()
-
-            ' Example for dropdowns
-            CmbRole.Text = row.Cells("Role").Value.ToString()
-            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
-        End If
-    End Sub
 
     Private Sub TxtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtFullName.KeyPress
         If Char.IsControl(e.KeyChar) Then Return
