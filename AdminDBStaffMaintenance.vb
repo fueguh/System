@@ -30,11 +30,10 @@ Public Class AdminDBStaffMaintenance
             con.Open()
 
             Dim query As String = "
-            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-            FROM Users U
-            INNER JOIN Staffs S ON U.UserID = S.UserID
-            WHERE U.Role = 'Staff'
-            ORDER BY U.FullName
+            SELECT UserID, FullName, Username, PhoneNumber, Email
+            FROM Users
+            WHERE Role = 'Staff'
+            ORDER BY FullName
         "
 
             Dim da As New SqlDataAdapter(query, con)
@@ -43,6 +42,7 @@ Public Class AdminDBStaffMaintenance
             DgvStaffs.DataSource = dt
         End Using
     End Sub
+
     Private Sub ClearStaffInputs()
         TxtName.Text = ""
         TxtUsername.Text = ""
@@ -98,16 +98,6 @@ Public Class AdminDBStaffMaintenance
                 cmdUser.Parameters.AddWithValue("@email", TxtUsername.Text.Trim & "@staff.com") ' or use a textbox if you want
 
                 userId = Convert.ToInt32(cmdUser.ExecuteScalar())
-            End Using
-
-            ' Insert into Staffs
-            Dim queryStaff As String = "
-            INSERT INTO Staffs (UserID)
-            VALUES (@userid)
-        "
-            Using cmdStaff As New SqlCommand(queryStaff, con)
-                cmdStaff.Parameters.AddWithValue("@userid", userId)
-                cmdStaff.ExecuteNonQuery()
             End Using
         End Using
 
