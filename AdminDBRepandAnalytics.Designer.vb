@@ -31,9 +31,6 @@ Partial Class AdminDBRepandAnalytics
         Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim ChartArea3 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series3 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
         Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
@@ -60,7 +57,6 @@ Partial Class AdminDBRepandAnalytics
         Me.DGVStockTrackTransaction = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2BorderlessForm1 = New Guna.UI2.WinForms.Guna2BorderlessForm(Me.components)
         Me.ChartStockLevels = New System.Windows.Forms.DataVisualization.Charting.Chart()
-        Me.ChartSupplierContributions = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.ChartTransactionTrends = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.LBLTotalIn = New System.Windows.Forms.Label()
         Me.LBLTotalOut = New System.Windows.Forms.Label()
@@ -78,7 +74,6 @@ Partial Class AdminDBRepandAnalytics
         Me.TabPage2.SuspendLayout()
         CType(Me.DGVStockTrackTransaction, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ChartStockLevels, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.ChartSupplierContributions, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ChartTransactionTrends, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -141,6 +136,7 @@ Partial Class AdminDBRepandAnalytics
         'RBAll
         '
         Me.RBAll.AutoSize = True
+        Me.RBAll.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.RBAll.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.RBAll.CheckedState.BorderThickness = 0
         Me.RBAll.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -157,6 +153,7 @@ Partial Class AdminDBRepandAnalytics
         Me.RBAll.UncheckedState.BorderThickness = 2
         Me.RBAll.UncheckedState.FillColor = System.Drawing.Color.Transparent
         Me.RBAll.UncheckedState.InnerColor = System.Drawing.Color.Transparent
+        Me.RBAll.UseVisualStyleBackColor = False
         '
         'BtnGenerateReport
         '
@@ -188,6 +185,7 @@ Partial Class AdminDBRepandAnalytics
         'RBOut
         '
         Me.RBOut.AutoSize = True
+        Me.RBOut.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.RBOut.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.RBOut.CheckedState.BorderThickness = 0
         Me.RBOut.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -204,6 +202,7 @@ Partial Class AdminDBRepandAnalytics
         Me.RBOut.UncheckedState.BorderThickness = 2
         Me.RBOut.UncheckedState.FillColor = System.Drawing.Color.Transparent
         Me.RBOut.UncheckedState.InnerColor = System.Drawing.Color.Transparent
+        Me.RBOut.UseVisualStyleBackColor = False
         '
         'BRIn
         '
@@ -293,7 +292,7 @@ Partial Class AdminDBRepandAnalytics
         Me.TebReports.Location = New System.Drawing.Point(0, 350)
         Me.TebReports.Name = "TebReports"
         Me.TebReports.SelectedIndex = 0
-        Me.TebReports.Size = New System.Drawing.Size(1052, 678)
+        Me.TebReports.Size = New System.Drawing.Size(927, 678)
         Me.TebReports.TabButtonHoverState.BorderColor = System.Drawing.Color.Empty
         Me.TebReports.TabButtonHoverState.FillColor = System.Drawing.Color.FromArgb(CType(CType(40, Byte), Integer), CType(CType(52, Byte), Integer), CType(CType(70, Byte), Integer))
         Me.TebReports.TabButtonHoverState.Font = New System.Drawing.Font("Segoe UI Semibold", 10.0!)
@@ -311,7 +310,7 @@ Partial Class AdminDBRepandAnalytics
         Me.TebReports.TabButtonSelectedState.InnerColor = System.Drawing.Color.FromArgb(CType(CType(76, Byte), Integer), CType(CType(132, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.TebReports.TabButtonSize = New System.Drawing.Size(180, 40)
         Me.TebReports.TabIndex = 47
-        Me.TebReports.TabMenuBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.TebReports.TabMenuBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.TebReports.TabMenuOrientation = Guna.UI2.WinForms.TabMenuOrientation.HorizontalTop
         '
         'TabPage1
@@ -321,7 +320,7 @@ Partial Class AdminDBRepandAnalytics
         Me.TabPage1.Location = New System.Drawing.Point(4, 44)
         Me.TabPage1.Name = "TabPage1"
         Me.TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage1.Size = New System.Drawing.Size(1044, 630)
+        Me.TabPage1.Size = New System.Drawing.Size(919, 630)
         Me.TabPage1.TabIndex = 0
         Me.TabPage1.Text = "Item Management"
         '
@@ -366,7 +365,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DGVItemManagement.RowHeadersVisible = False
         Me.DGVItemManagement.RowHeadersWidth = 51
         Me.DGVItemManagement.ScrollBars = System.Windows.Forms.ScrollBars.None
-        Me.DGVItemManagement.Size = New System.Drawing.Size(1038, 624)
+        Me.DGVItemManagement.Size = New System.Drawing.Size(913, 624)
         Me.DGVItemManagement.TabIndex = 35
         Me.DGVItemManagement.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVItemManagement.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -398,7 +397,7 @@ Partial Class AdminDBRepandAnalytics
         Me.TabPage2.Location = New System.Drawing.Point(4, 44)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(1044, 630)
+        Me.TabPage2.Size = New System.Drawing.Size(919, 630)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "Stock Tracking/Transaction"
         '
@@ -443,7 +442,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DGVStockTrackTransaction.RowHeadersVisible = False
         Me.DGVStockTrackTransaction.RowHeadersWidth = 51
         Me.DGVStockTrackTransaction.ScrollBars = System.Windows.Forms.ScrollBars.None
-        Me.DGVStockTrackTransaction.Size = New System.Drawing.Size(1038, 624)
+        Me.DGVStockTrackTransaction.Size = New System.Drawing.Size(913, 624)
         Me.DGVStockTrackTransaction.TabIndex = 36
         Me.DGVStockTrackTransaction.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVStockTrackTransaction.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -475,44 +474,26 @@ Partial Class AdminDBRepandAnalytics
         '
         'ChartStockLevels
         '
-        Me.ChartStockLevels.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ChartStockLevels.BorderlineColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.ChartStockLevels.BorderlineWidth = 3
-        ChartArea3.AlignmentOrientation = System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal
-        ChartArea3.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        ChartArea3.Name = "ChartArea1"
-        Me.ChartStockLevels.ChartAreas.Add(ChartArea3)
-        Legend3.Name = "Legend1"
-        Me.ChartStockLevels.Legends.Add(Legend3)
-        Me.ChartStockLevels.Location = New System.Drawing.Point(1066, 350)
+        ChartArea2.AlignmentOrientation = System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal
+        ChartArea2.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        ChartArea2.Name = "ChartArea1"
+        Me.ChartStockLevels.ChartAreas.Add(ChartArea2)
+        Legend2.Name = "Legend1"
+        Me.ChartStockLevels.Legends.Add(Legend2)
+        Me.ChartStockLevels.Location = New System.Drawing.Point(926, 531)
         Me.ChartStockLevels.Name = "ChartStockLevels"
         Me.ChartStockLevels.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Bright
-        Series3.ChartArea = "ChartArea1"
-        Series3.Font = New System.Drawing.Font("Mongolian Baiti", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Series3.LabelForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Series3.Legend = "Legend1"
-        Series3.Name = "Stocks"
-        Me.ChartStockLevels.Series.Add(Series3)
-        Me.ChartStockLevels.Size = New System.Drawing.Size(245, 175)
+        Series2.ChartArea = "ChartArea1"
+        Series2.Font = New System.Drawing.Font("Mongolian Baiti", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Series2.LabelForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Series2.Legend = "Legend1"
+        Series2.Name = "Stocks"
+        Me.ChartStockLevels.Series.Add(Series2)
+        Me.ChartStockLevels.Size = New System.Drawing.Size(366, 255)
         Me.ChartStockLevels.TabIndex = 49
         Me.ChartStockLevels.Text = "Chart1"
-        '
-        'ChartSupplierContributions
-        '
-        ChartArea2.Name = "ChartArea1"
-        Me.ChartSupplierContributions.ChartAreas.Add(ChartArea2)
-        Legend2.Name = "Legend1"
-        Me.ChartSupplierContributions.Legends.Add(Legend2)
-        Me.ChartSupplierContributions.Location = New System.Drawing.Point(1391, 350)
-        Me.ChartSupplierContributions.Name = "ChartSupplierContributions"
-        Me.ChartSupplierContributions.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Excel
-        Series2.ChartArea = "ChartArea1"
-        Series2.Legend = "Legend1"
-        Series2.Name = "Series1"
-        Me.ChartSupplierContributions.Series.Add(Series2)
-        Me.ChartSupplierContributions.Size = New System.Drawing.Size(245, 175)
-        Me.ChartSupplierContributions.TabIndex = 50
-        Me.ChartSupplierContributions.Text = "Chart2"
         '
         'ChartTransactionTrends
         '
@@ -520,46 +501,49 @@ Partial Class AdminDBRepandAnalytics
         Me.ChartTransactionTrends.ChartAreas.Add(ChartArea1)
         Legend1.Name = "Legend1"
         Me.ChartTransactionTrends.Legends.Add(Legend1)
-        Me.ChartTransactionTrends.Location = New System.Drawing.Point(1066, 568)
+        Me.ChartTransactionTrends.Location = New System.Drawing.Point(926, 786)
         Me.ChartTransactionTrends.Name = "ChartTransactionTrends"
         Me.ChartTransactionTrends.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Berry
         Series1.ChartArea = "ChartArea1"
         Series1.Legend = "Legend1"
         Series1.Name = "Series1"
         Me.ChartTransactionTrends.Series.Add(Series1)
-        Me.ChartTransactionTrends.Size = New System.Drawing.Size(569, 160)
+        Me.ChartTransactionTrends.Size = New System.Drawing.Size(733, 242)
         Me.ChartTransactionTrends.TabIndex = 51
         Me.ChartTransactionTrends.Text = "Chart3"
         '
         'LBLTotalIn
         '
+        Me.LBLTotalIn.BackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
         Me.LBLTotalIn.Font = New System.Drawing.Font("Mongolian Baiti", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LBLTotalIn.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.LBLTotalIn.Location = New System.Drawing.Point(1066, 785)
+        Me.LBLTotalIn.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.LBLTotalIn.Location = New System.Drawing.Point(945, 379)
         Me.LBLTotalIn.Name = "LBLTotalIn"
-        Me.LBLTotalIn.Size = New System.Drawing.Size(271, 75)
+        Me.LBLTotalIn.Size = New System.Drawing.Size(331, 50)
         Me.LBLTotalIn.TabIndex = 50
         Me.LBLTotalIn.Text = "Label1"
         Me.LBLTotalIn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'LBLTotalOut
         '
+        Me.LBLTotalOut.BackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
         Me.LBLTotalOut.Font = New System.Drawing.Font("Mongolian Baiti", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LBLTotalOut.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.LBLTotalOut.Location = New System.Drawing.Point(1359, 785)
+        Me.LBLTotalOut.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.LBLTotalOut.Location = New System.Drawing.Point(1299, 379)
         Me.LBLTotalOut.Name = "LBLTotalOut"
-        Me.LBLTotalOut.Size = New System.Drawing.Size(276, 75)
+        Me.LBLTotalOut.Size = New System.Drawing.Size(337, 50)
         Me.LBLTotalOut.TabIndex = 52
         Me.LBLTotalOut.Text = "Label2"
         Me.LBLTotalOut.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'LBLCurrentStock
         '
+        Me.LBLCurrentStock.BackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
         Me.LBLCurrentStock.Font = New System.Drawing.Font("Mongolian Baiti", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LBLCurrentStock.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.LBLCurrentStock.Location = New System.Drawing.Point(1067, 881)
+        Me.LBLCurrentStock.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.LBLCurrentStock.Location = New System.Drawing.Point(945, 469)
         Me.LBLCurrentStock.Name = "LBLCurrentStock"
-        Me.LBLCurrentStock.Size = New System.Drawing.Size(569, 126)
+        Me.LBLCurrentStock.Size = New System.Drawing.Size(691, 50)
         Me.LBLCurrentStock.TabIndex = 53
         Me.LBLCurrentStock.Text = "Label3"
         Me.LBLCurrentStock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -607,36 +591,36 @@ Partial Class AdminDBRepandAnalytics
         '
         'Label1
         '
-        Me.Label1.BackColor = System.Drawing.Color.Transparent
+        Me.Label1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Label1.Font = New System.Drawing.Font("Mongolian Baiti", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Label1.Location = New System.Drawing.Point(1066, 768)
+        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Label1.Location = New System.Drawing.Point(945, 349)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(271, 35)
+        Me.Label1.Size = New System.Drawing.Size(331, 31)
         Me.Label1.TabIndex = 55
         Me.Label1.Text = "Total IN:"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Label2
         '
-        Me.Label2.BackColor = System.Drawing.Color.Transparent
+        Me.Label2.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Label2.Font = New System.Drawing.Font("Mongolian Baiti", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Label2.Location = New System.Drawing.Point(1360, 768)
+        Me.Label2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Label2.Location = New System.Drawing.Point(1299, 349)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(275, 35)
+        Me.Label2.Size = New System.Drawing.Size(337, 31)
         Me.Label2.TabIndex = 56
         Me.Label2.Text = "Total OUT:"
         Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Label3
         '
-        Me.Label3.BackColor = System.Drawing.Color.Transparent
+        Me.Label3.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Label3.Font = New System.Drawing.Font("Mongolian Baiti", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Label3.Location = New System.Drawing.Point(1066, 881)
+        Me.Label3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Label3.Location = New System.Drawing.Point(945, 442)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(570, 35)
+        Me.Label3.Size = New System.Drawing.Size(691, 31)
         Me.Label3.TabIndex = 57
         Me.Label3.Text = "Current Stock:"
         Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -649,16 +633,15 @@ Partial Class AdminDBRepandAnalytics
         Me.ClientSize = New System.Drawing.Size(1659, 1029)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
-        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
-        Me.Controls.Add(Me.LBLCurrentStock)
-        Me.Controls.Add(Me.LBLTotalOut)
-        Me.Controls.Add(Me.LBLTotalIn)
         Me.Controls.Add(Me.ChartTransactionTrends)
-        Me.Controls.Add(Me.ChartSupplierContributions)
+        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.ChartStockLevels)
+        Me.Controls.Add(Me.LBLTotalOut)
         Me.Controls.Add(Me.TebReports)
         Me.Controls.Add(Me.GrpFilters)
+        Me.Controls.Add(Me.LBLCurrentStock)
+        Me.Controls.Add(Me.LBLTotalIn)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBRepandAnalytics"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
@@ -671,7 +654,6 @@ Partial Class AdminDBRepandAnalytics
         Me.TabPage2.ResumeLayout(False)
         CType(Me.DGVStockTrackTransaction, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ChartStockLevels, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.ChartSupplierContributions, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ChartTransactionTrends, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
@@ -694,7 +676,6 @@ Partial Class AdminDBRepandAnalytics
     Friend WithEvents Guna2BorderlessForm1 As Guna.UI2.WinForms.Guna2BorderlessForm
     Friend WithEvents ChartStockLevels As DataVisualization.Charting.Chart
     Friend WithEvents ChartTransactionTrends As DataVisualization.Charting.Chart
-    Friend WithEvents ChartSupplierContributions As DataVisualization.Charting.Chart
     Friend WithEvents RBAll As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents Guna2HtmlLabel5 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents CmbSupplier As Guna.UI2.WinForms.Guna2ComboBox

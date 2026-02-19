@@ -2,6 +2,7 @@
 
 Public Class AdminDBServices
     Private selectedServiceID As Integer = 0
+
     Private Sub LoadServices()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
@@ -22,16 +23,16 @@ Public Class AdminDBServices
     End Sub
 
     Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex >= 0 Then
-            Dim row = DGVService.Rows(e.RowIndex)
-
-            selectedServiceID = row.Cells("ServiceID").Value
-            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
-            txtPrice.Text = row.Cells("Price").Value.ToString()
-            txtDuration.Text = row.Cells("Duration").Value.ToString()
-        End If
-
+        'If e.RowIndex >= 0 Then
+        'Dim row = DGVService.Rows(e.RowIndex)
+        '
+        'selectedServiceID = row.Cells("ServiceID").Value
+        'txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
+        'txtPrice.Text = row.Cells("Price").Value.ToString()
+        'txtDuration.Text = row.Cells("Duration").Value.ToString()
+        'End If
     End Sub
+
     Private Function TryParseDuration(input As String, ByRef minutes As Integer) As Boolean
         minutes = 0
         If String.IsNullOrWhiteSpace(input) Then Return False
@@ -141,6 +142,7 @@ Public Class AdminDBServices
         LoadServices()
         Clearform()
     End Sub
+
     Private Sub Clearform()
         txtServiceName.Text = ""
         txtPrice.Text = ""
@@ -206,12 +208,15 @@ Public Class AdminDBServices
     End Function
 
     Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex < 0 Then Return
-        Dim row = DGVService.Rows(e.RowIndex)
-        selectedServiceID = If(IsDBNull(row.Cells("ServiceID").Value), 0, Convert.ToInt32(row.Cells("ServiceID").Value))
-        txtServiceName.Text = If(IsDBNull(row.Cells("ServiceName").Value), "", row.Cells("ServiceName").Value.ToString())
-        txtPrice.Text = If(IsDBNull(row.Cells("Price").Value), "", row.Cells("Price").Value.ToString())
-        txtDuration.Text = If(IsDBNull(row.Cells("Duration").Value), "", row.Cells("Duration").Value.ToString())
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DGVService.Rows(e.RowIndex)
+
+            selectedServiceID = Convert.ToInt32(row.Cells("ServiceID").Value)
+
+            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
+            txtPrice.Text = row.Cells("Price").Value.ToString()
+            txtDuration.Text = row.Cells("Duration").Value.ToString()
+        End If
     End Sub
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
@@ -299,20 +304,20 @@ Public Class AdminDBServices
     End Sub
 
     Private Sub DGVService_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
-        ' Ensure the click is on a valid row (not header)
+
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVService.Rows(e.RowIndex)
 
-            ' Populate your textboxes/combos with values from the grid
-            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
-            txtDuration.Text = row.Cells("Duration").Value.ToString()
-            txtPrice.Text = row.Cells("Price").Value.ToString()
+            selectedServiceID = Convert.ToInt32(row.Cells("ServiceID").Value)
 
-            ' Example for combo box (if you have one for Category)
-            'CmbCategory.Text = row.Cells("Category").Value.ToString()
-            ' Or if bound to IDs:
-            ' CmbCategory.SelectedValue = row.Cells("CategoryID").Value
+            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
+            txtPrice.Text = row.Cells("Price").Value.ToString()
+            txtDuration.Text = row.Cells("Duration").Value.ToString()
         End If
+
+    End Sub
+
+    Private Sub txtDuration_TextChanged(sender As Object, e As EventArgs) Handles txtDuration.TextChanged
 
     End Sub
 End Class

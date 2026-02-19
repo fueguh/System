@@ -284,4 +284,8 @@ Public Class AdminDBAdminMaintenance
     Private Sub DataGridViewAdmins_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewAdmins.CellClick
 
     End Sub
+
+    Private Sub TxtPhone_TextChanged(sender As Object, e As EventArgs) Handles TxtPhone.TextChanged
+
+    End Sub
 End Class

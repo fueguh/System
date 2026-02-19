@@ -528,4 +528,7 @@ Public Class AdminDBUsers
 
     End Sub
 
+    Private Sub TxtUsername_TextChanged(sender As Object, e As EventArgs) Handles TxtUsername.TextChanged
+
+    End Sub
 End Class

@@ -334,4 +334,8 @@ Public Class AdminDBPatients
             e.Handled = True
         End If
     End Sub
+
+    Private Sub txtEmail_TextChanged(sender As Object, e As EventArgs) Handles txtEmail.TextChanged
+
+    End Sub
 End Class

@@ -141,6 +141,7 @@ Partial Class AdminDBSupplier
         Me.DataGridViewSuppliers.AllowUserToResizeRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DataGridViewSuppliers.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        Me.DataGridViewSuppliers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         DataGridViewCellStyle2.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -237,9 +238,10 @@ Partial Class AdminDBSupplier
         Me.TextBoxContact.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.TextBoxContact.Location = New System.Drawing.Point(36, 228)
         Me.TextBoxContact.Margin = New System.Windows.Forms.Padding(4)
+        Me.TextBoxContact.MaxLength = 11
         Me.TextBoxContact.Name = "TextBoxContact"
         Me.TextBoxContact.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxContact.PlaceholderText = "Contact"
+        Me.TextBoxContact.PlaceholderText = "Contact number"
         Me.TextBoxContact.SelectedText = ""
         Me.TextBoxContact.Size = New System.Drawing.Size(257, 50)
         Me.TextBoxContact.TabIndex = 55

@@ -133,7 +133,7 @@ Partial Class AdminDBStockTracking
         Me.TransactionDate.Name = "TransactionDate"
         Me.TransactionDate.Size = New System.Drawing.Size(304, 46)
         Me.TransactionDate.TabIndex = 33
-        Me.TransactionDate.Value = New Date(2025, 12, 18, 11, 1, 1, 395)
+        Me.TransactionDate.Value = New Date(2026, 2, 19, 0, 0, 0, 0)
         '
         'RadioOut
         '

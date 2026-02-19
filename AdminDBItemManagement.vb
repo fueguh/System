@@ -10,7 +10,7 @@ Public Class AdminDBItemManagement
                            INNER JOIN Categories c ON i.CategoryID = c.CategoryID
                            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID"
 
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection),
               adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
@@ -19,11 +19,12 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub LoadSuppliers()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim da As New SqlDataAdapter("SELECT SupplierID, SupplierName FROM Suppliers WHERE IsActive=1", con)
+        Dim query As String = "SELECT SupplierID, SupplierName FROM Suppliers"
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
+          adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
-            da.Fill(dt)
+            adapter.Fill(dt)
+
             ComboBoxSupplier.DataSource = dt
             ComboBoxSupplier.DisplayMember = "SupplierName"
             ComboBoxSupplier.ValueMember = "SupplierID"
@@ -31,12 +32,13 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub LoadCategories()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim da As New SqlDataAdapter("SELECT CategoryID, CategoryName FROM Categories WHERE IsActive=1", con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            ComboBoxCategory.DataSource = dt
+        Dim queryCat As String = "SELECT CategoryID, CategoryName FROM Categories"
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
+          adapter As New SqlDataAdapter(queryCat, connection)
+            Dim dtCat As New DataTable()
+            adapter.Fill(dtCat)
+
+            ComboBoxCategory.DataSource = dtCat
             ComboBoxCategory.DisplayMember = "CategoryName"
             ComboBoxCategory.ValueMember = "CategoryID"
         End Using
@@ -52,7 +54,7 @@ Public Class AdminDBItemManagement
         ComboBoxSupplier.SelectedIndex = -1
 
         ' Reset numeric up-down
-        NumericUpDownQuantity.Value = 0
+        'NumericUpDownQuantity.Value = 0
 
         ' Reset DateTimePicker
         DateTimePickerExpiry.Value = DateTime.Now
@@ -66,13 +68,14 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BtnAdd.Click
-        Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
         Dim price As Decimal
         If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then Exit Sub
 
-        Dim query As String = "INSERT INTO ItemManagement 
-        (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, HasExpiry) 
-        VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate, @HasExpiry)"
+        Dim query As String = "
+        INSERT INTO ItemManagement 
+        (ItemName, Price, CategoryID, SupplierID, ExpirationDate, HasExpiry) 
+        VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @ExpirationDate, @HasExpiry)
+    "
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, connection)
@@ -81,7 +84,7 @@ Public Class AdminDBItemManagement
             cmd.Parameters.AddWithValue("@Price", price)
             cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
             cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
-            cmd.Parameters.AddWithValue("@Quantity", NumericUpDownQuantity.Value)
+
             cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
 
             ' Only add ExpirationDate once, depending on checkbox
@@ -101,12 +104,13 @@ Public Class AdminDBItemManagement
         LoadInventory()
         LoadCategories()
         ClearInputs()
+
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click, BtnUpdate.Click
         If DgvItems.CurrentRow Is Nothing Then Exit Sub
         Dim itemID As Integer = CInt(DgvItems.CurrentRow.Cells("ItemID").Value)
-        Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
+        'Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
         Dim price As Decimal
         If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then Exit Sub
 
@@ -116,8 +120,7 @@ Public Class AdminDBItemManagement
         End If
 
         Dim query As String = "UPDATE ItemManagement SET 
-        ItemName=@ItemName, Price=@Price, CategoryID=@CategoryID, SupplierID=@SupplierID, 
-        Quantity=@Quantity, ExpirationDate=@ExpirationDate, HasExpiry=@HasExpiry 
+        ItemName=@ItemName, Price=@Price, CategoryID=@CategoryID, SupplierID=@SupplierID, ExpirationDate=@ExpirationDate, HasExpiry=@HasExpiry 
         WHERE ItemID=@ItemID"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
@@ -127,8 +130,8 @@ Public Class AdminDBItemManagement
             cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
             cmd.Parameters.AddWithValue("@Price", price)
             cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
-            cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue) ' ✅ ensure bound
-            cmd.Parameters.AddWithValue("@Quantity", NumericUpDownQuantity.Value)
+            cmd.Parameters.AddWithValue("@SupplierID", Convert.ToInt32(ComboBoxSupplier.SelectedValue))
+            'cmd.Parameters.AddWithValue("@Quantity", NumericUpDownQuantity.Value)
             cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
 
             ' Only add ExpirationDate once
@@ -185,32 +188,33 @@ Public Class AdminDBItemManagement
         DateTimePickerExpiry.Enabled = False
         DateTimePickerExpiry.Value = DateTimePickerExpiry.MinDate
         LoadInventory()
-        'LoadSuppliers()
-        'LoadCategories()
+        LoadSuppliers()
+        LoadCategories()
         ClearInputs()
-        ' Load suppliers into ComboBox
-        Dim query As String = "SELECT SupplierID, SupplierName FROM Suppliers"
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          adapter As New SqlDataAdapter(query, connection)
-            Dim dt As New DataTable()
-            adapter.Fill(dt)
 
-            ComboBoxSupplier.DataSource = dt
-            ComboBoxSupplier.DisplayMember = "SupplierName"
-            ComboBoxSupplier.ValueMember = "SupplierID"
-        End Using
+        ' Load suppliers into ComboBox
+        'Dim query As String = "SELECT SupplierID, SupplierName FROM Suppliers"
+        'Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
+        'adapter As New SqlDataAdapter(query, connection)
+        'Dim dt As New DataTable()
+        'adapter.Fill(dt)
+
+        'ComboBoxSupplier.DataSource = dt
+        'ComboBoxSupplier.DisplayMember = "SupplierName"
+        'ComboBoxSupplier.ValueMember = "SupplierID"
+        'End Using
 
         ' Load categories into ComboBox
-        Dim queryCat As String = "SELECT CategoryID, CategoryName FROM Categories"
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          adapter As New SqlDataAdapter(queryCat, connection)
-            Dim dtCat As New DataTable()
-            adapter.Fill(dtCat)
+        'Dim queryCat As String = "SELECT CategoryID, CategoryName FROM Categories"
+        'Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
+        'adapter As New SqlDataAdapter(queryCat, connection)
+        'Dim dtCat As New DataTable()
+        'adapter.Fill(dtCat)
 
-            ComboBoxCategory.DataSource = dtCat
-            ComboBoxCategory.DisplayMember = "CategoryName"
-            ComboBoxCategory.ValueMember = "CategoryID"
-        End Using
+        'ComboBoxCategory.DataSource = dtCat
+        'ComboBoxCategory.DisplayMember = "CategoryName"
+        'ComboBoxCategory.ValueMember = "CategoryID"
+        'End Using
     End Sub
 
     Private Sub ComboBoxSupplier_TextChanged(sender As Object, e As EventArgs) Handles ComboBoxSupplier.TextChanged
@@ -240,7 +244,7 @@ Public Class AdminDBItemManagement
             TextBoxPrice.Text = row.Cells("Price").Value.ToString()
             ComboBoxCategory.Text = row.Cells("CategoryName").Value.ToString()
             ComboBoxSupplier.Text = row.Cells("SupplierName").Value.ToString()
-            NumericUpDownQuantity.Value = Convert.ToInt32(row.Cells("Quantity").Value)
+            'NumericUpDownQuantity.Value = Convert.ToInt32(row.Cells("Quantity").Value)
 
             ' Handle nullable ExpirationDate
             If IsDBNull(row.Cells("ExpirationDate").Value) Then
@@ -262,8 +266,8 @@ Public Class AdminDBItemManagement
             TextBoxItemName.Text = row.Cells("ItemName").Value.ToString()
             TextBoxPrice.Text = row.Cells("Price").Value.ToString()
             ComboBoxCategory.Text = row.Cells("CategoryName").Value.ToString()
-            ComboBoxCategory.Text = row.Cells("SupplierName").Value.ToString()
-            NumericUpDownQuantity.Value = Convert.ToInt32(row.Cells("Quantity").Value)
+            ComboBoxSupplier.Text = row.Cells("SupplierName").Value.ToString()
+            'NumericUpDownQuantity.Value = Convert.ToInt32(row.Cells("Quantity").Value)
             DateTimePickerExpiry.Value = If(IsDBNull(row.Cells("ExpirationDate").Value), DateTime.Now, Convert.ToDateTime(row.Cells("ExpirationDate").Value))
             chkHasExpiry.Checked = Convert.ToBoolean(row.Cells("HasExpiry").Value)
         End If
