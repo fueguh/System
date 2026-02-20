@@ -193,15 +193,25 @@ Public Class Login
     ' --- Load Clinic Name into Label ---
     Private Sub LoadClinicName()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            Dim cmd As New SqlCommand("SELECT TOP 1 ClinicName FROM ClinicInfo", con)
+            Dim cmd As New SqlCommand("SELECT TOP 1 ClinicName, ClinicAddress, ContactNumber, Email, OperatingHours FROM ClinicInfo", con)
             Try
                 con.Open()
-                Dim result As Object = cmd.ExecuteScalar()
-                If result IsNot Nothing Then
-                    lbl_clinic.Text = result.ToString()
-                Else
-                    lbl_clinic.Text = "Dental Clinic System" ' fallback if table is empty
-                End If
+                Using reader As SqlDataReader = cmd.ExecuteReader()
+                    If reader.Read() Then
+                        lbl_clinicName.Text = reader("ClinicName").ToString()
+                        lbl_email.Text = reader("Email").ToString()
+                        lbl_contact.Text = reader("ContactNumber").ToString()
+                        lbl_Location.Text = reader("ClinicAddress").ToString()
+                        lbl_schedule.Text = reader("OperatingHours").ToString()
+                    Else
+                        ' Fallback if table is empty
+                        lbl_clinicName.Text = "Dental Clinic System"
+                        lbl_contact.Text = "Contact Info:"
+                        lbl_email.Text = "Email address:"
+                        lbl_Location.Text = "Location:"
+                        lbl_schedule.Text = "Schedule:"
+                    End If
+                End Using
             Catch ex As Exception
                 MessageBox.Show("Error loading clinic name: " & ex.Message)
             End Try

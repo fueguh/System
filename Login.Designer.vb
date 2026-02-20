@@ -165,7 +165,7 @@ Partial Class Login
         '
         Me.lbl_Location.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lbl_Location.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_Location.Location = New System.Drawing.Point(3, 90)
+        Me.lbl_Location.Location = New System.Drawing.Point(3, 101)
         Me.lbl_Location.Name = "lbl_Location"
         Me.lbl_Location.Size = New System.Drawing.Size(510, 46)
         Me.lbl_Location.TabIndex = 8
@@ -198,7 +198,7 @@ Partial Class Login
         '
         Me.lbl_schedule.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lbl_schedule.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_schedule.Location = New System.Drawing.Point(3, 136)
+        Me.lbl_schedule.Location = New System.Drawing.Point(3, 147)
         Me.lbl_schedule.Name = "lbl_schedule"
         Me.lbl_schedule.Size = New System.Drawing.Size(510, 53)
         Me.lbl_schedule.TabIndex = 8
