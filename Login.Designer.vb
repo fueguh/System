@@ -174,7 +174,7 @@ Partial Class Login
         '
         'lbl_contact
         '
-        Me.lbl_contact.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_contact.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lbl_contact.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.lbl_contact.Location = New System.Drawing.Point(3, 645)
         Me.lbl_contact.Name = "lbl_contact"
@@ -185,7 +185,7 @@ Partial Class Login
         '
         'lbl_email
         '
-        Me.lbl_email.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_email.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lbl_email.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.lbl_email.Location = New System.Drawing.Point(3, 682)
         Me.lbl_email.Name = "lbl_email"
@@ -196,7 +196,7 @@ Partial Class Login
         '
         'lbl_schedule
         '
-        Me.lbl_schedule.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_schedule.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lbl_schedule.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.lbl_schedule.Location = New System.Drawing.Point(3, 147)
         Me.lbl_schedule.Name = "lbl_schedule"
