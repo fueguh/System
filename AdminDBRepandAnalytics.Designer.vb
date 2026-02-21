@@ -252,7 +252,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DtpTo.Name = "DtpTo"
         Me.DtpTo.Size = New System.Drawing.Size(388, 39)
         Me.DtpTo.TabIndex = 39
-        Me.DtpTo.Value = New Date(2026, 2, 16, 0, 0, 0, 0)
+        Me.DtpTo.Value = New Date(2026, 2, 19, 0, 0, 0, 0)
         '
         'Guna2HtmlLabel1
         '
@@ -282,7 +282,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DtpFrom.Name = "DtpFrom"
         Me.DtpFrom.Size = New System.Drawing.Size(388, 39)
         Me.DtpFrom.TabIndex = 5
-        Me.DtpFrom.Value = New Date(2026, 2, 16, 0, 0, 0, 0)
+        Me.DtpFrom.Value = New Date(2026, 2, 19, 0, 0, 0, 0)
         '
         'TebReports
         '
@@ -411,7 +411,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DGVStockTrackTransaction.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
         DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle6.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle6.Font = New System.Drawing.Font("Mongolian Baiti", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         DataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
         DataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
@@ -420,7 +420,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DGVStockTrackTransaction.ColumnHeadersHeight = 30
         DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle7.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle7.Font = New System.Drawing.Font("Mongolian Baiti", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         DataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         DataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
@@ -433,7 +433,7 @@ Partial Class AdminDBRepandAnalytics
         Me.DGVStockTrackTransaction.ReadOnly = True
         DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle8.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle8.Font = New System.Drawing.Font("Mongolian Baiti", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         DataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         DataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
@@ -491,7 +491,7 @@ Partial Class AdminDBRepandAnalytics
         Series2.Legend = "Legend1"
         Series2.Name = "Stocks"
         Me.ChartStockLevels.Series.Add(Series2)
-        Me.ChartStockLevels.Size = New System.Drawing.Size(366, 255)
+        Me.ChartStockLevels.Size = New System.Drawing.Size(733, 255)
         Me.ChartStockLevels.TabIndex = 49
         Me.ChartStockLevels.Text = "Chart1"
         '

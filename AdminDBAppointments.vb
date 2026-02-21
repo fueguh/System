@@ -77,21 +77,35 @@ Public Class AdminDBAppointments
             con.Open()
 
             Dim query As String = "
-            SELECT A.AppointmentID, P.FullName AS Patient, D.FullName AS Dentist, STRING_AGG(S.ServiceName, ', ') AS Services, A.Date, A.StartTime, A.EndTime, A.Status
+            SELECT 
+            A.AppointmentID, 
+            P.PatientID,              
+            P.FullName AS Patient, 
+            D.FullName AS Dentist, 
+            STRING_AGG(S.ServiceName, ', ') AS Services, 
+            A.Date, 
+            A.StartTime, 
+            A.EndTime, 
+            A.Status
             FROM Appointments A
             JOIN Patients P ON A.PatientID = P.PatientID
             JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
             JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
             JOIN Services S ON ASV.ServiceID = S.ServiceID
-            GROUP BY A.AppointmentID, P.FullName, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-            ORDER BY A.Date DESC;"
+            GROUP BY A.AppointmentID, P.PatientID, P.FullName, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
+            ORDER BY A.Date DESC;
+            "
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVAppointments.DataSource = dt
-
         End Using
+
+        ' Hide internal IDs so users only see friendly columns
+        If DGVAppointments.Columns.Contains("PatientID") Then
+            DGVAppointments.Columns("PatientID").Visible = False
+        End If
     End Sub
 
     Private Function ValidateFields() As Boolean

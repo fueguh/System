@@ -170,7 +170,7 @@ Public Class AdminDBRepandAnalytics
 
             ChartTransactionTrends.Series.Clear()
             ChartTransactionTrends.Series.Add("Trends")
-            ChartTransactionTrends.Series("Trends").ChartType = DataVisualization.Charting.SeriesChartType.Bar
+            ChartTransactionTrends.Series("Trends").ChartType = DataVisualization.Charting.SeriesChartType.Column
 
             For Each row As DataRow In dt.Rows
                 ChartTransactionTrends.Series("Trends").Points.AddXY(row("TransactionDate"), row("NetChange"))
@@ -238,9 +238,9 @@ Public Class AdminDBRepandAnalytics
         ' Prepare chart series
         ChartTransactionTrends.Series.Clear()
         ChartTransactionTrends.Series.Add("InTransactions")
-        ChartTransactionTrends.Series("InTransactions").ChartType = DataVisualization.Charting.SeriesChartType.Bar
+        ChartTransactionTrends.Series("InTransactions").ChartType = DataVisualization.Charting.SeriesChartType.Column
         ChartTransactionTrends.Series.Add("OutTransactions")
-        ChartTransactionTrends.Series("OutTransactions").ChartType = DataVisualization.Charting.SeriesChartType.Bar
+        ChartTransactionTrends.Series("OutTransactions").ChartType = DataVisualization.Charting.SeriesChartType.Column
 
         ' Populate IN series
         Dim inRows = dtTrans.Select("TransactionType = 'IN'")
