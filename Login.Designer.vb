@@ -28,9 +28,11 @@ Partial Class Login
         Me.Guna2MessageDialog1 = New Guna.UI2.WinForms.Guna2MessageDialog()
         Me.CheckBoxShowPassword = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.chkRememberMe = New Guna.UI2.WinForms.Guna2CheckBox()
-        Me.lbl_login = New Guna.UI2.WinForms.Guna2HtmlLabel()
-        Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
-        Me.Guna2CustomGradientPanel1.SuspendLayout()
+        Me.lbl_clinicName = New System.Windows.Forms.Label()
+        Me.lbl_Location = New System.Windows.Forms.Label()
+        Me.lbl_contact = New System.Windows.Forms.Label()
+        Me.lbl_email = New System.Windows.Forms.Label()
+        Me.lbl_schedule = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'txtUsername
@@ -148,30 +150,60 @@ Partial Class Login
         Me.chkRememberMe.UncheckedState.BorderThickness = 1
         Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
         '
-        'lbl_login
+        'lbl_clinicName
         '
-        Me.lbl_login.BackColor = System.Drawing.Color.Transparent
-        Me.lbl_login.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Bold)
-        Me.lbl_login.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lbl_login.Location = New System.Drawing.Point(130, 22)
-        Me.lbl_login.Name = "lbl_login"
-        Me.lbl_login.Size = New System.Drawing.Size(233, 39)
-        Me.lbl_login.TabIndex = 8
-        Me.lbl_login.Text = "Welcome Back"
+        Me.lbl_clinicName.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_clinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.lbl_clinicName.Location = New System.Drawing.Point(-4, 42)
+        Me.lbl_clinicName.Name = "lbl_clinicName"
+        Me.lbl_clinicName.Size = New System.Drawing.Size(517, 59)
+        Me.lbl_clinicName.TabIndex = 8
+        Me.lbl_clinicName.Text = "Clinic Name:"
+        Me.lbl_clinicName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'Guna2CustomGradientPanel1
+        'lbl_Location
         '
-        Me.Guna2CustomGradientPanel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.Controls.Add(Me.lbl_login)
-        Me.Guna2CustomGradientPanel1.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Guna2CustomGradientPanel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.FillColor2 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.FillColor3 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
-        Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(512, 84)
-        Me.Guna2CustomGradientPanel1.TabIndex = 9
+        Me.lbl_Location.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_Location.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.lbl_Location.Location = New System.Drawing.Point(3, 101)
+        Me.lbl_Location.Name = "lbl_Location"
+        Me.lbl_Location.Size = New System.Drawing.Size(510, 46)
+        Me.lbl_Location.TabIndex = 8
+        Me.lbl_Location.Text = "Location:"
+        Me.lbl_Location.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lbl_contact
+        '
+        Me.lbl_contact.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_contact.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.lbl_contact.Location = New System.Drawing.Point(3, 645)
+        Me.lbl_contact.Name = "lbl_contact"
+        Me.lbl_contact.Size = New System.Drawing.Size(510, 37)
+        Me.lbl_contact.TabIndex = 8
+        Me.lbl_contact.Text = "Contact number:"
+        Me.lbl_contact.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lbl_email
+        '
+        Me.lbl_email.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_email.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.lbl_email.Location = New System.Drawing.Point(3, 682)
+        Me.lbl_email.Name = "lbl_email"
+        Me.lbl_email.Size = New System.Drawing.Size(510, 37)
+        Me.lbl_email.TabIndex = 8
+        Me.lbl_email.Text = "Email address:"
+        Me.lbl_email.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lbl_schedule
+        '
+        Me.lbl_schedule.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lbl_schedule.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.lbl_schedule.Location = New System.Drawing.Point(3, 147)
+        Me.lbl_schedule.Name = "lbl_schedule"
+        Me.lbl_schedule.Size = New System.Drawing.Size(510, 53)
+        Me.lbl_schedule.TabIndex = 8
+        Me.lbl_schedule.Text = "Schedule:"
+        Me.lbl_schedule.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Login
         '
@@ -180,7 +212,11 @@ Partial Class Login
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(512, 719)
-        Me.Controls.Add(Me.Guna2CustomGradientPanel1)
+        Me.Controls.Add(Me.lbl_email)
+        Me.Controls.Add(Me.lbl_contact)
+        Me.Controls.Add(Me.lbl_schedule)
+        Me.Controls.Add(Me.lbl_Location)
+        Me.Controls.Add(Me.lbl_clinicName)
         Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.chkRememberMe)
         Me.Controls.Add(Me.btnLogin)
@@ -190,8 +226,6 @@ Partial Class Login
         Me.Name = "Login"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Login"
-        Me.Guna2CustomGradientPanel1.ResumeLayout(False)
-        Me.Guna2CustomGradientPanel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -203,6 +237,9 @@ Partial Class Login
     Friend WithEvents Guna2MessageDialog1 As Guna.UI2.WinForms.Guna2MessageDialog
     Friend WithEvents CheckBoxShowPassword As Guna.UI2.WinForms.Guna2CheckBox
     Friend WithEvents chkRememberMe As Guna.UI2.WinForms.Guna2CheckBox
-    Friend WithEvents lbl_login As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
+    Friend WithEvents lbl_clinicName As Label
+    Friend WithEvents lbl_Location As Label
+    Friend WithEvents lbl_contact As Label
+    Friend WithEvents lbl_email As Label
+    Friend WithEvents lbl_schedule As Label
 End Class
