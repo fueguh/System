@@ -113,7 +113,7 @@ Public Class Login
                     Me.Hide()
                 Else
                     ' --- FAILED LOGIN ---
-                    SystemSession.LogAudit("Login Failed", "Login", 0, txtUsername.Text, "Unknown")
+                    SystemSession.LogUnknownLogin(txtUsername.Text.Trim())
                     MessageBox.Show("Invalid username or password.")
                     ClearForm()
                 End If

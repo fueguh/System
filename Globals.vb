@@ -218,4 +218,26 @@ Public Module SystemSession
             End If
         Next
     End Sub
+    Public Sub LogUnknownLogin(attemptedUsername As String)
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                Dim cmd As New SqlCommand("
+                INSERT INTO AuditTrail
+                (UserID, FullName, Role, Action, Module, Timestamp)
+                VALUES
+                (@UserID, @FullName, @Role, @Action, @Module, GETDATE())", con)
+
+                cmd.Parameters.AddWithValue("@UserID", -1) ' System / unknown
+                cmd.Parameters.AddWithValue("@FullName", "Unknown User")
+                cmd.Parameters.AddWithValue("@Role", "Unknown")
+                cmd.Parameters.AddWithValue("@Action", "Login Failed - " & attemptedUsername)
+                cmd.Parameters.AddWithValue("@Module", "Login")
+
+                cmd.ExecuteNonQuery()
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Failed to log unknown login: " & ex.Message)
+        End Try
+    End Sub
 End Module
