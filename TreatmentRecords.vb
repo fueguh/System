@@ -139,11 +139,6 @@ VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
     End Sub
 
     Private Sub Guna2CirclePictureBox2_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox2.Click
-        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
-            Login.Show()
-            Me.Hide()
-            Exit Sub
-        End If
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
     End Sub
