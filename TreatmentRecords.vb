@@ -120,6 +120,7 @@ JOIN Users U ON PD.UserID = U.UserID
             End Using
 
             MessageBox.Show("Treatment record saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            SystemSession.LogAudit("Insert Treatment Record", "TreatmentRecords", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
             LoadRecords()
             ClearForm()
         Catch ex As SqlException
