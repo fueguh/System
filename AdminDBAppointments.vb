@@ -5,13 +5,13 @@ Public Class AdminDBAppointments
     Private selectedAppointmentID As Integer = 0
     Public Shared Dashboard As AdminDashboard
     Public Shared AdminDBReports As AdminDBReports
-
+    Private isFormLoading As Boolean = True
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupStatusCombo()
         LoadComboBoxes()
         LoadAppointments()
         ClearForm()
-
+        isFormLoading = False
 
         If Not (SystemSession.LoggedInRole = "Admin" OrElse SystemSession.LoggedInRole = "Staff") Then
             SystemSession.SetFormReadOnly(Me)
@@ -466,13 +466,14 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub ClearForm()
+        If isFormLoading Then Exit Sub
         CmbPatient.SelectedIndex = -1
         CmbDent.SelectedIndex = -1
         cmbStatus.SelectedIndex = -1
         DtpDate.Value = Date.Today
 
         ' Apply default times based on today
-        DtpDate_ValueChanged(Nothing, Nothing)
+
         For i As Integer = 0 To clbServices.Items.Count - 1
             clbServices.SetItemChecked(i, False)
         Next
@@ -579,28 +580,28 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub DtpDate_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
+
+        If isFormLoading Then Exit Sub
+        ' Always re-enable first
+        dtpStartTime.Enabled = True
+        DtpEndTime.Enabled = True
         Dim selectedDate As DateTime = DtpDate.Value
         Dim dayOfWeek As DayOfWeek = selectedDate.DayOfWeek
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             ' Monday to Friday: 5:00 PM – 8:00 PM
             dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
             DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 20, 0, 0)
 
-
-
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             ' Saturday: 8:00 AM – 5:00 PM
             dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 8, 0, 0)
             DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
-
-
 
         Else
             ' Sunday: disable scheduling
             dtpStartTime.Enabled = False
             DtpEndTime.Enabled = False
-            MessageBox.Show("Appointments are not allowed on Sundays.")
         End If
     End Sub
 End Class
