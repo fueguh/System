@@ -46,6 +46,12 @@ Public Class AdminDBUsers
         cmbAvailability.SelectedIndex = -1
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
+        ' Unselect any row in the DataGridView
+        DGVUsers.ClearSelection()
+        ' Enable/disable buttons
+        BtnAddUser.Enabled = True
+        BtnUpdate.Enabled = False
+        BtnDelete.Enabled = False
     End Sub
 
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
@@ -338,6 +344,11 @@ Public Class AdminDBUsers
             CmbRole.Text = row.Cells("Role").Value.ToString()
             TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()
+
+            ' Update button states
+            BtnAddUser.Enabled = False      ' Disable adding while editing
+            BtnUpdate.Enabled = True        ' Enable update
+            BtnDelete.Enabled = True        ' Enable delete
         End If
     End Sub
 
@@ -581,5 +592,10 @@ Public Class AdminDBUsers
 
     Private Sub TxtUsername_TextChanged(sender As Object, e As EventArgs) Handles TxtUsername.TextChanged
 
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        'reset input fields and selected user ID
+        Clearform()
     End Sub
 End Class
