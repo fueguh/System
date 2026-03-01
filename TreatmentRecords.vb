@@ -30,38 +30,26 @@ Public Class TreatmentRecords
         End If
     End Sub
 
-    Private Sub LoadPatients()
+    Private Sub LoadComboBox(combo As ComboBox, query As String, display As String, value As String)
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
-            Dim query As String = "SELECT PatientID, FullName FROM Patients"
-            Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
-            da.Fill(dt)
-
-            CmbPatient.DataSource = dt
-            CmbPatient.DisplayMember = "FullName"
-            CmbPatient.ValueMember = "PatientID"
+            Using da As New SqlDataAdapter(query, con)
+                da.Fill(dt)
+            End Using
+            combo.DataSource = dt
+            combo.DisplayMember = display
+            combo.ValueMember = value
+            combo.SelectedIndex = -1
         End Using
     End Sub
+
+    Private Sub LoadPatients()
+        LoadComboBox(CmbPatient, "SELECT PatientID, FullName FROM Patients", "FullName", "PatientID")
+    End Sub
+
     Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim query As String = "
-            SELECT UserID, FullName
-            FROM Users
-            WHERE Role = 'Dentist'
-        "
-
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-
-            CmbDentist.DataSource = dt
-            CmbDentist.DisplayMember = "FullName"
-            CmbDentist.ValueMember = "UserID"
-        End Using
+        LoadComboBox(CmbDentist, "SELECT UserID, FullName FROM Users WHERE Role='Dentist'", "FullName", "UserID")
     End Sub
     Private Sub LoadRecords()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
@@ -90,39 +78,60 @@ JOIN Users U ON PD.UserID = U.UserID
     Private imagePath As String = ""
 
     Private Sub BtnSaveRecord_Click(sender As Object, e As EventArgs) Handles BtnSaveRecord.Click
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+        If CmbPatient.SelectedIndex = -1 Or CmbDentist.SelectedIndex = -1 Then
+            MessageBox.Show("Please select a patient and dentist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
 
-            Dim query As String = "
-    INSERT INTO TreatmentRecords (PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
-VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                Using cmd As New SqlCommand("
+                INSERT INTO TreatmentRecords 
+                    (PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
+                VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
+            ", con)
+                    cmd.Parameters.AddWithValue("@patient", CInt(CmbPatient.SelectedValue))
+                    cmd.Parameters.AddWithValue("@dentist", CInt(CmbDentist.SelectedValue))
+                    cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text.Trim())
+                    cmd.Parameters.AddWithValue("@prescriptions", TxtPrescriptions.Text.Trim())
+                    cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text.Trim())
+                    cmd.Parameters.AddWithValue("@image", imagePath)
 
-"
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
 
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@patient", CInt(CmbPatient.SelectedValue))
-            cmd.Parameters.AddWithValue("@dentist", CInt(CmbDentist.SelectedValue))
-            cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text)   ' maps to TreatmentNotes
-            cmd.Parameters.AddWithValue("@prescriptions", TxtPrescriptions.Text)
-            cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text)  ' maps to ProceduresDone
-            cmd.Parameters.AddWithValue("@image", imagePath)
-
-            cmd.ExecuteNonQuery()
-        End Using
-
-        MessageBox.Show("Treatment record saved.")
-        LoadRecords()
-        ClearForm()
+            MessageBox.Show("Treatment record saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            LoadRecords()
+            ClearForm()
+        Catch ex As SqlException
+            MessageBox.Show($"Database error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Catch ex As Exception
+            MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub BtnAttachImage_Click(sender As Object, e As EventArgs) Handles BtnAttachImage.Click
         Dim ofd As New OpenFileDialog With {
-            .Filter = "Image Files|*.jpg;*.png;*.jpeg"
-        }
+        .Filter = "Image Files|*.jpg;*.png;*.jpeg"
+    }
 
         If ofd.ShowDialog() = DialogResult.OK Then
-            imagePath = ofd.FileName
-            PicXrayPreview.Image = Image.FromFile(imagePath)
+            ' Load image safely into memory (avoids locking the original file)
+            Dim tempImage As Image = Image.FromFile(ofd.FileName)
+            PicXrayPreview.Image = New Bitmap(tempImage)
+            tempImage.Dispose()  ' release file lock
+
+            ' Optional: save a copy to a dedicated folder for your app
+            Dim imagesFolder As String = "C:\DentalRecords\Images"
+            If Not IO.Directory.Exists(imagesFolder) Then IO.Directory.CreateDirectory(imagesFolder)
+
+            Dim destPath As String = IO.Path.Combine(imagesFolder, IO.Path.GetFileName(ofd.FileName))
+            IO.File.Copy(ofd.FileName, destPath, True)  ' overwrite if exists
+
+            ' Store the path of the copied image for saving in the database
+            imagePath = destPath
         End If
     End Sub
 
