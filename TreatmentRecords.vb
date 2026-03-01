@@ -1,18 +1,15 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class TreatmentRecords
-    Public Property CurrentUserRole As String
-    Public Property CurrentUserID As Integer
-
     Private Sub TreatmentRecords_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadRecords()
         LoadPatients()
         LoadDentists()
         ClearForm()
 
-        ' Apply role-based behavior
-        If currentUserRole = "Dentist" Then
-            CmbDentist.SelectedValue = currentUserID
+        ' Apply role-based behavior using SystemSession directly
+        If SystemSession.LoggedInRole = "Dentist" Then
+            CmbDentist.SelectedValue = SystemSession.LoggedInUserID
             CmbDentist.Enabled = False
         End If
     End Sub
@@ -25,11 +22,12 @@ Public Class TreatmentRecords
 
         ' Reset combo boxes
         CmbPatient.SelectedIndex = -1
-        If currentUserRole <> "Dentist" Then
+
+        ' Only reset dentist combo if NOT dentist
+        If SystemSession.LoggedInRole <> "Dentist" Then
             CmbDentist.SelectedIndex = -1
         End If
     End Sub
-
     Private Sub LoadComboBox(combo As ComboBox, query As String, display As String, value As String)
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
@@ -49,7 +47,26 @@ Public Class TreatmentRecords
     End Sub
 
     Private Sub LoadDentists()
-        LoadComboBox(CmbDentist, "SELECT UserID, FullName FROM Users WHERE Role='Dentist'", "FullName", "UserID")
+        Dim query As String = ""
+
+        If SystemSession.LoggedInRole = "Dentist" Then
+            query = $"SELECT UserID, FullName FROM Users WHERE UserID = {SystemSession.LoggedInUserID}"
+        ElseIf SystemSession.LoggedInRole = "Admin" Then
+            query = "SELECT UserID, FullName FROM Users WHERE Role='Dentist'"
+        Else
+            ' fallback empty
+            query = "SELECT TOP 0 UserID, FullName FROM Users"
+        End If
+
+        LoadComboBox(CmbDentist, query, "FullName", "UserID")
+
+        ' Lock or enable
+        If SystemSession.LoggedInRole = "Dentist" Then
+            CmbDentist.SelectedValue = SystemSession.LoggedInUserID
+            CmbDentist.Enabled = False
+        Else
+            CmbDentist.Enabled = True
+        End If
     End Sub
     Private Sub LoadRecords()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
