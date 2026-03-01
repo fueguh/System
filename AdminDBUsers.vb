@@ -387,15 +387,40 @@ Public Class AdminDBUsers
     End Sub
 
     Private Function ValidateUserFields(Optional userID As Integer = 0) As Boolean
-        ' Full Name: letters only
-        If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
-       Not TxtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-            MessageBox.Show("Full Name must contain letters only.")
+        ' --- FULL NAME VALIDATION ---
+        ' Trim leading/trailing spaces
+        Dim fullName As String = TxtFullName.Text.Trim()
+
+        ' Regex explanation:
+        ' ^[A-Za-zÀ-ÖØ-öø-ÿ]+                  -> First segment must start with a letter
+        ' (?:                                  -> Start of non-capturing group for additional segments
+        '   [ .'-]                             -> Single space, dot, hyphen, or apostrophe
+        '   (?:[A-Za-zÀ-ÖØ-öø-ÿ]+|[A-Za-z]\.) -> Either a normal word or a single-letter initial with dot
+        ' )*                                   -> Zero or more additional segments
+        ' $                                    -> End of string
+        If String.IsNullOrWhiteSpace(fullName) OrElse
+   Not System.Text.RegularExpressions.Regex.IsMatch(fullName, "^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ .'-](?:[A-Za-zÀ-ÖØ-öø-ÿ]+|[A-Za-z]\.))*$") Then
+            MessageBox.Show("Full Name must start and end with a letter. You can use single-letter initials with a dot, spaces, hyphens, or apostrophes. No consecutive special chars.")
             TxtFullName.Focus()
             Return False
         End If
 
-        ' Phone Number: digits only
+        ' --- USERNAME VALIDATION ---
+        ' Trim leading/trailing spaces
+        Dim username As String = TxtUsername.Text.Trim()
+        ' Regex explanation:
+        ' ^[A-Za-z]                   -> Must start with a letter
+        ' (?!.*[._]{2})               -> No consecutive dot/underscore
+        ' [A-Za-z0-9._]{2,19}         -> Allow letters, digits, dot, underscore (total 3-20 chars)
+        ' $                            -> End of string
+        If String.IsNullOrWhiteSpace(username) OrElse
+   Not System.Text.RegularExpressions.Regex.IsMatch(username, "^[A-Za-z](?!.*[._]{2})[A-Za-z0-9._]{2,19}$") Then
+            MessageBox.Show("Username must start with a letter, 3-20 chars, letters/digits/dot/underscore only, no consecutive dots/underscores, cannot end with dot/underscore.")
+            TxtUsername.Focus()
+            Return False
+        End If
+
+        ' --- PHONE NUMBER VALIDATION ---
         If String.IsNullOrWhiteSpace(TxtPhoneNumber.Text) OrElse
        Not TxtPhoneNumber.Text.All(Function(c) Char.IsDigit(c)) Then
             MessageBox.Show("Phone Number must contain digits only.")
@@ -403,59 +428,53 @@ Public Class AdminDBUsers
             Return False
         End If
 
-        ' Username: letters and numbers only
-        If String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
-       Not TxtUsername.Text.All(Function(c) Char.IsLetterOrDigit(c)) Then
-            MessageBox.Show("Username must contain only letters and numbers.")
-            TxtUsername.Focus()
-            Return False
-        End If
-
-        ' Email: must end with @gmail.com and alphanumeric before domain
+        ' --- EMAIL VALIDATION ---
         Dim email As String = TxtEmail.Text.Trim()
-        If String.IsNullOrWhiteSpace(email) OrElse Not email.ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must end with '@gmail.com'.")
+
+        ' General rules:
+        ' - Must have one @ symbol
+        ' - Local part: letters, digits, dot, underscore, hyphen (no consecutive dots)
+        ' - Domain: letters, digits, hyphen, dot, at least 2 segments (e.g., gmail.com)
+        ' - No starting or ending with special chars in local part
+
+        Dim emailRegex As String = "^[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z]{2,})+$"
+
+        If String.IsNullOrWhiteSpace(email) OrElse
+   Not System.Text.RegularExpressions.Regex.IsMatch(email, emailRegex) Then
+            MessageBox.Show("Email is invalid. It must be in a proper format, e.g., name.lastname@gmail.com")
             TxtEmail.Focus()
             Return False
         End If
-
         Dim localPart As String = email.Substring(0, email.Length - 10)
         If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
-            MessageBox.Show("Email username must contain only letters and numbers.")
+            MessageBox.Show("Email username must contain letters or digits only.")
             TxtEmail.Focus()
             Return False
         End If
 
-        ' Password: at least 8 characters and 1 uppercase
+        ' --- PASSWORD VALIDATION ---
         Dim password As String = txtPassword.Text.Trim()
         Dim confirmPassword As String = txtConfirmPassword.Text.Trim()
-
-        ' Only validate password if user entered something (for update)
         If password <> "" Then
-
             If password.Length < 8 Then
                 MessageBox.Show("Password must be at least 8 characters long.")
                 txtPassword.Focus()
                 Return False
             End If
-
             If Not password.Any(Function(c) Char.IsUpper(c)) Then
                 MessageBox.Show("Password must contain at least one uppercase letter.")
                 txtPassword.Focus()
                 Return False
             End If
-
-            If Not password.Equals(confirmPassword) Then
+            If password <> confirmPassword Then
                 MessageBox.Show("Passwords do not match.")
                 txtConfirmPassword.Focus()
                 Return False
             End If
-
         End If
 
-
-        ' Duplicate check for Email and Username
-        If IsDuplicateEmailOrUsername(email, TxtUsername.Text.Trim(), userID) Then
+        ' --- DUPLICATE CHECK ---
+        If IsDuplicateEmailOrUsername(email, username, userID) Then
             MessageBox.Show("Email or Username already exists. Please choose another.")
             Return False
         End If
@@ -487,17 +506,49 @@ Public Class AdminDBUsers
 
 
     Private Sub TxtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtFullName.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True
+        If Char.IsControl(e.KeyChar) Then Return ' Allow backspace, delete
+
+        Dim allowedChars As String = " .'-" ' space, dot, hyphen, apostrophe
+        Dim lastChar As Char = If(TxtFullName.Text.Length > 0, TxtFullName.Text(TxtFullName.Text.Length - 1), ChrW(0))
+
+        ' Allow letters
+        If Char.IsLetter(e.KeyChar) Then Return
+
+        ' Allow special chars but prevent consecutive ones
+        If allowedChars.Contains(e.KeyChar) Then
+            If lastChar = e.KeyChar Then
+                e.Handled = True ' Block consecutive special chars
+            ElseIf TxtFullName.Text.Length = 0 AndAlso e.KeyChar = " "c Then
+                e.Handled = True ' Cannot start with space
+            End If
+            Return
         End If
+
+        ' Block everything else
+        e.Handled = True
     End Sub
 
     Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return
-        If Not Char.IsLetterOrDigit(e.KeyChar) Then
-            e.Handled = True
+        If Char.IsControl(e.KeyChar) Then Return ' Allow backspace
+
+        Dim allowedChars As String = "._" ' dot, underscore
+        Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text(TxtUsername.Text.Length - 1), ChrW(0))
+
+        ' Allow letters and digits
+        If Char.IsLetterOrDigit(e.KeyChar) Then Return
+
+        ' Allow dot or underscore but prevent consecutive ones or starting char
+        If allowedChars.Contains(e.KeyChar) Then
+            If TxtUsername.Text.Length = 0 Then
+                e.Handled = True ' Cannot start with dot/underscore
+            ElseIf lastChar = e.KeyChar Then
+                e.Handled = True ' No consecutive dot/underscore
+            End If
+            Return
         End If
+
+        ' Block everything else
+        e.Handled = True
     End Sub
 
     Private Sub TxtPhoneNumber_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhoneNumber.KeyPress
