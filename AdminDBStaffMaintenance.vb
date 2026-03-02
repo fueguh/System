@@ -40,6 +40,7 @@ Public Class AdminDBStaffMaintenance
             Dim dt As New DataTable()
             da.Fill(dt)
             DgvStaffs.DataSource = dt
+            DgvStaffs.Columns("UserID").Visible = False
         End Using
     End Sub
 

@@ -13,6 +13,7 @@ Public Class AdminDBServices
                 Dim dt As New DataTable()
                 da.Fill(dt)
                 DGVService.DataSource = dt
+                DGVService.Columns("ServiceID").Visible = False
             End Using
         End Using
     End Sub
@@ -21,18 +22,6 @@ Public Class AdminDBServices
         LoadServices()
         Clearform()
     End Sub
-
-    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-        'If e.RowIndex >= 0 Then
-        'Dim row = DGVService.Rows(e.RowIndex)
-        '
-        'selectedServiceID = row.Cells("ServiceID").Value
-        'txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
-        'txtPrice.Text = row.Cells("Price").Value.ToString()
-        'txtDuration.Text = row.Cells("Duration").Value.ToString()
-        'End If
-    End Sub
-
     Private Function TryParseDuration(input As String, ByRef minutes As Integer) As Boolean
         minutes = 0
         If String.IsNullOrWhiteSpace(input) Then Return False
@@ -314,10 +303,6 @@ Public Class AdminDBServices
             txtPrice.Text = row.Cells("Price").Value.ToString()
             txtDuration.Text = row.Cells("Duration").Value.ToString()
         End If
-
-    End Sub
-
-    Private Sub txtDuration_TextChanged(sender As Object, e As EventArgs) Handles txtDuration.TextChanged
 
     End Sub
 End Class

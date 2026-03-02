@@ -17,6 +17,7 @@ Public Class AdminDBSupplier
             Dim dt As New DataTable()
             adapter.Fill(dt)
             DataGridViewSuppliers.DataSource = dt
+            DataGridViewSuppliers.Columns("SupplierID").Visible = False
         End Using
     End Sub
 

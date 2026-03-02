@@ -52,6 +52,7 @@ Public Class AdminDBAdminMaintenance
             Dim dt As New DataTable()
             da.Fill(dt)
             DataGridViewAdmins.DataSource = dt
+            DataGridViewAdmins.Columns("UserID").Visible = False
         End Using
     End Sub
 

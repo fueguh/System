@@ -26,12 +26,11 @@ Public Class AdminDBDentists
             FROM Users
             WHERE Role = 'Dentist'
         "
-
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
-
             DGVDentists.DataSource = dt
+            DGVDentists.Columns("UserID").Visible = False
         End Using
     End Sub
 

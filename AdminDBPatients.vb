@@ -28,6 +28,7 @@ Public Class AdminDBPatients
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVPatients.DataSource = dt
+            DGVPatients.Columns("PatientID").Visible = False
         End Using
     End Sub
 

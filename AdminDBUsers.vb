@@ -32,6 +32,7 @@ Public Class AdminDBUsers
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVUsers.DataSource = dt
+            DGVUsers.Columns("UserID").Visible = False
         End Using
     End Sub
 
@@ -41,8 +42,8 @@ Public Class AdminDBUsers
         TxtUsername.Text = ""
         txtPassword.Text = ""
         txtConfirmPassword.Text = ""
-        CmbRole.SelectedIndex = -1
         txtSpecialization.Text = ""
+        CmbRole.SelectedIndex = -1
         cmbAvailability.SelectedIndex = -1
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
