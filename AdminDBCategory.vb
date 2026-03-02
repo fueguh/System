@@ -20,6 +20,7 @@ Public Class AdminDBCategory
             Dim dt As New DataTable()
             da.Fill(dt)
             DataGridViewCategories.DataSource = dt
+            DataGridViewCategories.Columns("CategoryID").Visible = False
         End Using
     End Sub
     Private Sub ClearCategoryInputs()

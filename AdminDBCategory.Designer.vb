@@ -44,6 +44,8 @@ Partial Class AdminDBCategory
         '
         'Guna2CustomGradientPanel1
         '
+        Me.Guna2CustomGradientPanel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.Guna2HtmlLabel6)
         Me.Guna2CustomGradientPanel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -52,7 +54,7 @@ Partial Class AdminDBCategory
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(986, 107)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1001, 107)
         Me.Guna2CustomGradientPanel1.TabIndex = 50
         '
         'Guna2CirclePictureBox1
@@ -62,7 +64,7 @@ Partial Class AdminDBCategory
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(902, 24)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(917, 24)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
@@ -72,13 +74,15 @@ Partial Class AdminDBCategory
         '
         'Guna2HtmlLabel6
         '
+        Me.Guna2HtmlLabel6.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2HtmlLabel6.AutoSize = False
         Me.Guna2HtmlLabel6.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel6.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel6.Location = New System.Drawing.Point(0, -1)
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
-        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(986, 107)
+        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1001, 107)
         Me.Guna2HtmlLabel6.TabIndex = 47
         Me.Guna2HtmlLabel6.Text = "Category Maintenance"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -271,7 +275,7 @@ Partial Class AdminDBCategory
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(985, 729)
+        Me.ClientSize = New System.Drawing.Size(1000, 744)
         Me.Controls.Add(Me.CategorySearch)
         Me.Controls.Add(Me.TextBoxDescription)
         Me.Controls.Add(Me.TextBoxCategoryName)
