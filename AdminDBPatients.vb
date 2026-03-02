@@ -34,12 +34,22 @@ Public Class AdminDBPatients
 
     Private Sub Clearform()
         selectedPatientID = 0
-        txtFullName.Text = ""
+        txtFullName.Clear()
         dtpBirthDate.Value = DateTime.Now
-        txtContact.Text = ""
-        txtEmail.Text = ""
-        txtAddress.Text = ""
-        txtAllergy.Text = ""
+        txtContact.Clear()
+        txtEmail.Clear()
+        txtAddress.Clear()
+        txtAllergy.Clear()
+        Guna2TextBox1.Clear() ' This is your search box
+
+        DGVPatients.ClearSelection()
+
+        ' Reset Button States
+        BTNAdd.Enabled = True
+        BTNUpdate.Enabled = False
+        BTNDelete.Enabled = False
+
+        txtFullName.Focus()
     End Sub
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
@@ -134,37 +144,21 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
-        If selectedPatientID = 0 Then
-            MessageBox.Show("Please select a patient to delete.")
-            Exit Sub
+        If selectedPatientID = 0 Then Return
+
+        If MessageBox.Show("Are you sure you want to deactivate this patient record?",
+                       "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+
+            DeactivatePatient(selectedPatientID) ' Call the helper sub you already wrote
+
+            MessageBox.Show("Patient record deactivated.")
+
+            ' Logging and Refreshing
+            SystemSession.LogAudit("Patient Deleted", "Patient Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            LoadPatients()
+            Clearform()
+            Dashboard?.LoadDashboardStats()
         End If
-
-        If MessageBox.Show("Are you sure you want to delete this patient?",
-                       "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
-
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@PatientID", selectedPatientID)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-
-        MessageBox.Show("Patient deleted successfully.")
-        SystemSession.LogAudit("Patient Deleted", "Patient Management",
-                       SystemSession.LoggedInUserID,
-                       SystemSession.LoggedInFullName,
-                       SystemSession.LoggedInRole)
-
-
-        LoadPatients()
-        Clearform()
-
-        'to reload the system overview in admin dashboard after input
-        Dashboard?.LoadDashboardStats()
     End Sub
 
     Private Sub DeactivatePatient(patientId As Integer)
@@ -183,12 +177,9 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub DGVPatients_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPatients.CellClick
-        ' Prevent header clicks
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row As DataGridViewRow = DGVPatients.Rows(e.RowIndex)
-
-        ' Assuming your DataGridView columns match your table fields
         selectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
 
         txtFullName.Text = row.Cells("FullName").Value.ToString()
@@ -196,13 +187,12 @@ Public Class AdminDBPatients
         txtContact.Text = row.Cells("ContactNumber").Value.ToString()
         txtEmail.Text = row.Cells("Email").Value.ToString()
         txtAddress.Text = row.Cells("Address").Value.ToString()
+        txtAllergy.Text = If(row.Cells("NoteAllergy").Value Is DBNull.Value, "", row.Cells("NoteAllergy").Value.ToString())
 
-        ' New allergy field
-        If row.Cells("NoteAllergy").Value IsNot Nothing Then
-            txtAllergy.Text = row.Cells("NoteAllergy").Value.ToString()
-        Else
-            txtAllergy.Clear()
-        End If
+        ' Switch UI to Update Mode
+        BTNAdd.Enabled = False
+        BTNUpdate.Enabled = True
+        BTNDelete.Enabled = True
     End Sub
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
@@ -338,5 +328,9 @@ Public Class AdminDBPatients
 
     Private Sub txtEmail_TextChanged(sender As Object, e As EventArgs) Handles txtEmail.TextChanged
 
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        Clearform()
     End Sub
 End Class

@@ -281,12 +281,16 @@ Public Class AdminDBAdminMaintenance
             e.Handled = True ' Block invalid input
         End If
     End Sub
-
     Private Sub DataGridViewAdmins_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewAdmins.CellClick
-
+        If e.RowIndex >= 0 Then
+            ClearAdminInputs()
+        End If
     End Sub
 
-    Private Sub TxtPhone_TextChanged(sender As Object, e As EventArgs) Handles TxtPhone.TextChanged
-
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ClearAdminInputs()
+        AdminSearch.Text = ""
+        DataGridViewAdmins.ClearSelection()
+        TxtName.Focus()
     End Sub
 End Class

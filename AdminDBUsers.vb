@@ -47,12 +47,14 @@ Public Class AdminDBUsers
         cmbAvailability.SelectedIndex = -1
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
-        ' Unselect any row in the DataGridView
+        txtSearchUsers.Text = ""
         DGVUsers.ClearSelection()
         ' Enable/disable buttons
         BtnAddUser.Enabled = True
         BtnUpdate.Enabled = False
         BtnDelete.Enabled = False
+        ' ✅ Moves the focus (blinking cursor) to the first box
+        TxtFullName.Focus()
     End Sub
 
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
@@ -369,14 +371,14 @@ Public Class AdminDBUsers
 
     Dim connectionString As String = My.Settings.DentalDBConnection2
 
-    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
+    Private Sub txtSearchUsers_TextChanged(sender As Object, e As EventArgs) Handles txtSearchUsers.TextChanged, txtSearchUsers.TextChanged
         Dim query As String = "SELECT UserID, FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability
                                FROM dbo.Users
                                WHERE FullName LIKE @search OR Username LIKE @search OR Role LIKE @search OR PhoneNumber LIKE @search OR Email LIKE @search OR Specialization LIKE @search OR Availability LIKE @search"
         Using con As New SqlConnection(connectionString),
               cmd As New SqlCommand(query, con)
 
-            cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text & "%")
+            cmd.Parameters.AddWithValue("@search", "%" & txtSearchUsers.Text.Trim() & "%")
 
             Dim adapter As New SqlDataAdapter(cmd)
             Dim table As New DataTable()
@@ -569,32 +571,18 @@ Public Class AdminDBUsers
             e.Handled = True
         End If
     End Sub
-
     Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
         If Char.IsControl(e.KeyChar) Then Return
         If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
             e.Handled = True
         End If
     End Sub
-
     Private Sub txtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtSpecialization.KeyPress
         If Char.IsControl(e.KeyChar) Then Return
         If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
             e.Handled = True
         End If
     End Sub
-
-    Private Sub txtConfirmPassword_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtConfirmPassword.KeyPress
-
-    End Sub
-    Private Sub txtPassword_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPassword.KeyPress
-
-    End Sub
-
-    Private Sub TxtUsername_TextChanged(sender As Object, e As EventArgs) Handles TxtUsername.TextChanged
-
-    End Sub
-
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         'reset input fields and selected user ID
         Clearform()
