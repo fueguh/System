@@ -31,7 +31,7 @@ Public Class AdminDBAppointments
         cmbStatus.Items.Add("Ongoing")
         cmbStatus.Items.Add("Completed")
         cmbStatus.Items.Add("Cancelled")
-        cmbStatus.SelectedIndex = 0 ' start with placeholder
+        cmbStatus.SelectedIndex = -1 ' start with placeholder
     End Sub
 
     Private Sub LoadComboBoxes()
@@ -594,5 +594,9 @@ Public Class AdminDBAppointments
             dtpStartTime.Enabled = False
             DtpEndTime.Enabled = False
         End If
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ClearForm()
     End Sub
 End Class
