@@ -139,12 +139,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Return False
             End If
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Return False
@@ -210,12 +210,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Exit Sub
             End If
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Exit Sub
@@ -297,12 +297,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Exit Sub
             End If
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Exit Sub

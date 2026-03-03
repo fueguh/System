@@ -228,7 +228,7 @@ Partial Class AdminDBAppointments
         Me.clbServices.FormattingEnabled = True
         Me.clbServices.Location = New System.Drawing.Point(0, 40)
         Me.clbServices.Name = "clbServices"
-        Me.clbServices.Size = New System.Drawing.Size(361, 113)
+        Me.clbServices.Size = New System.Drawing.Size(361, 195)
         Me.clbServices.TabIndex = 20
         '
         'Guna2GroupBox1
@@ -239,7 +239,7 @@ Partial Class AdminDBAppointments
         Me.Guna2GroupBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2GroupBox1.Location = New System.Drawing.Point(44, 213)
         Me.Guna2GroupBox1.Name = "Guna2GroupBox1"
-        Me.Guna2GroupBox1.Size = New System.Drawing.Size(361, 153)
+        Me.Guna2GroupBox1.Size = New System.Drawing.Size(361, 235)
         Me.Guna2GroupBox1.TabIndex = 21
         Me.Guna2GroupBox1.Text = "Services to be Performed"
         '
