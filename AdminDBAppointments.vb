@@ -74,15 +74,33 @@ Public Class AdminDBAppointments
 
     Private Sub LoadAppointments()
         Dim query As String = "
-        SELECT A.AppointmentID, P.PatientID, P.FullName AS Patient, D.FullName AS Dentist, 
-               STRING_AGG(S.ServiceName, ', ') AS Services, A.Date, A.StartTime, A.EndTime, A.Status
-        FROM Appointments A
-        JOIN Patients P ON A.PatientID = P.PatientID
-        JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-        JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-        JOIN Services S ON ASV.ServiceID = S.ServiceID
-        GROUP BY A.AppointmentID, P.PatientID, P.FullName, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-        ORDER BY A.Date DESC"
+    SELECT 
+        A.AppointmentID, 
+        P.PatientID, 
+        P.FullName AS Patient, 
+        D.UserID AS DentistID,
+        D.FullName AS Dentist, 
+        STRING_AGG(S.ServiceName, ', ') AS Services, 
+        A.Date, 
+        A.StartTime, 
+        A.EndTime, 
+        A.Status
+    FROM Appointments A
+    JOIN Patients P ON A.PatientID = P.PatientID
+    JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+    JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+    JOIN Services S ON ASV.ServiceID = S.ServiceID
+    GROUP BY 
+        A.AppointmentID, 
+        P.PatientID, 
+        P.FullName, 
+        D.UserID,
+        D.FullName, 
+        A.Date, 
+        A.StartTime, 
+        A.EndTime, 
+        A.Status
+    ORDER BY A.Date DESC"
 
         Using da As New SqlDataAdapter(query, My.Settings.DentalDBConnection2)
             Dim dt As New DataTable()
@@ -424,8 +442,8 @@ Public Class AdminDBAppointments
             Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDent.Text = row.Cells("Dentist").Value.ToString()
+            CmbDent.SelectedValue = row.Cells("DentistID").Value ' Use the actual dentist's ID
+            CmbPatient.SelectedValue = row.Cells("PatientID").Value  ' Use the actual patient's ID
             DtpDate.Value = CDate(row.Cells("Date").Value)
 
             Try
@@ -441,7 +459,7 @@ Public Class AdminDBAppointments
             If cmbStatus.Items.Contains(statusValue) Then
                 cmbStatus.SelectedItem = statusValue
             Else
-                cmbStatus.SelectedIndex = 0
+                cmbStatus.SelectedIndex = -1
             End If
 
             ' Load services
@@ -458,41 +476,35 @@ Public Class AdminDBAppointments
 
     Private Sub ClearForm()
         If isFormLoading Then Exit Sub
-        CmbPatient.SelectedIndex = -1
-        CmbDent.SelectedIndex = -1
+
+        ' -------------------
+        ' Clear DataBound ComboBoxes fully
+        ' -------------------
+        ' Reset Patient
+        If CmbPatient.DataSource IsNot Nothing Then
+            CmbPatient.BindingContext = New BindingContext() ' resets CurrencyManager
+            CmbPatient.SelectedIndex = -1
+        End If
+
+        ' Reset Dentist
+        If CmbDent.DataSource IsNot Nothing Then
+            CmbDent.BindingContext = New BindingContext() ' resets CurrencyManager
+            CmbDent.SelectedIndex = -1
+        End If
+
+        ' Reset Status (not databound)
         cmbStatus.SelectedIndex = -1
+
+        ' Reset Date to Today
         DtpDate.Value = Date.Today
 
-        ' Apply default times based on today
-
+        ' Clear all checkboxes in the CheckedListBox
         For i As Integer = 0 To clbServices.Items.Count - 1
             clbServices.SetItemChecked(i, False)
         Next
 
-
+        ' Reset the tracking ID
         selectedAppointmentID = 0
-    End Sub
-
-
-    Private Sub DGVAppointments_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
-            selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
-
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDent.Text = row.Cells("Dentist").Value.ToString()
-            DtpDate.Value = CDate(row.Cells("Date").Value)
-
-            dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
-            DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
-
-
-            cmbStatus.Text = row.Cells("Status").Value.ToString()
-
-
-            LoadCheckedServices(selectedAppointmentID)
-        End If
-
     End Sub
 
     Private Sub SaveAppointmentServices(appointmentID As Integer)
