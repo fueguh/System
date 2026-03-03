@@ -2,6 +2,7 @@
 
 Public Class AdminDBServices
     Private selectedServiceID As Integer = 0
+
     Private Sub LoadServices()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
@@ -12,25 +13,25 @@ Public Class AdminDBServices
                 Dim dt As New DataTable()
                 da.Fill(dt)
                 DGVService.DataSource = dt
+                DGVService.Columns("ServiceID").Visible = False
             End Using
         End Using
     End Sub
-
+    Private Function IsDuplicateService(name As String, id As Integer) As Boolean
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            ' Checks if the name exists, excluding the current service ID
+            Dim query As String = "SELECT COUNT(*) FROM Services WHERE ServiceName = @name AND ServiceID <> @id"
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@name", name.Trim())
+                cmd.Parameters.AddWithValue("@id", id)
+                con.Open()
+                Return CInt(cmd.ExecuteScalar()) > 0
+            End Using
+        End Using
+    End Function
     Private Sub AdminDBServices_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadServices()
         Clearform()
-    End Sub
-
-    Private Sub DGVService_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex >= 0 Then
-            Dim row = DGVService.Rows(e.RowIndex)
-
-            selectedServiceID = row.Cells("ServiceID").Value
-            txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
-            txtPrice.Text = row.Cells("Price").Value.ToString()
-            txtDuration.Text = row.Cells("Duration").Value.ToString()
-        End If
-
     End Sub
     Private Function TryParseDuration(input As String, ByRef minutes As Integer) As Boolean
         minutes = 0
@@ -70,12 +71,22 @@ Public Class AdminDBServices
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
         Dim price As Decimal
         Dim durationMinutes As Integer
+        Dim serviceName As String = txtServiceName.Text.Trim()
 
-        If txtServiceName.Text.Trim() = "" Then
+        ' 1. Basic Validation
+        If serviceName = "" Then
             MessageBox.Show("Service name is required.")
             Return
         End If
 
+        ' 2. DUPLICATE CHECK
+        If IsDuplicateService(serviceName, 0) Then
+            MessageBox.Show("A service with this name already exists.")
+            txtServiceName.Focus()
+            Return
+        End If
+
+        ' 3. Format Validation
         If Not Decimal.TryParse(txtPrice.Text.Trim(), price) Then
             MessageBox.Show("Please enter a valid price.")
             txtPrice.Focus()
@@ -88,28 +99,30 @@ Public Class AdminDBServices
             Return
         End If
 
+        ' 4. Database Insertion
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            Dim query As String = "
-            INSERT INTO Services (ServiceName, Price, Duration)
-            VALUES (@name, @price, @duration)
-        "
+            Dim query As String = "INSERT INTO Services (ServiceName, Price, Duration) VALUES (@name, @price, @duration)"
+
             Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.Add("@name", SqlDbType.VarChar, 100).Value = txtServiceName.Text.Trim()
+                cmd.Parameters.Add("@name", SqlDbType.VarChar, 100).Value = serviceName
+
                 Dim pParam = cmd.Parameters.Add("@price", SqlDbType.Decimal)
                 pParam.Precision = 10
                 pParam.Scale = 2
                 pParam.Value = price
+
+                ' Use the parsed minutes, not the raw text
                 cmd.Parameters.Add("@duration", SqlDbType.Int).Value = durationMinutes
+
                 cmd.ExecuteNonQuery()
             End Using
         End Using
 
         MessageBox.Show("Service added successfully.")
-        'audit log
-        LogAudit("Added new service: ", "Service Management")
+        LogAudit("Added new service: " & serviceName, "Service Management")
         LoadServices()
-        Clearform()
+        Clearform() ' This will reset the UI and buttons
     End Sub
 
     Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
@@ -141,11 +154,22 @@ Public Class AdminDBServices
         LoadServices()
         Clearform()
     End Sub
+
     Private Sub Clearform()
-        txtServiceName.Text = ""
-        txtPrice.Text = ""
-        txtDuration.Text = ""
+        txtServiceName.Clear()
+        txtPrice.Clear()
+        txtDuration.Clear()
+        ServiceSearch.Clear()
         selectedServiceID = 0
+
+        DGVService.ClearSelection()
+
+        ' Ensure these exact names match your Design view
+        BTNAdd.Enabled = True      ' Add should be clickable for a new service
+        BTNUpdate.Enabled = False  ' Cannot update nothing
+        BTNDelete.Enabled = False  ' Cannot delete nothing
+
+        txtServiceName.Focus()
     End Sub
     Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
         If selectedServiceID = 0 Then
@@ -204,16 +228,6 @@ Public Class AdminDBServices
             Return $"{h}h {m}m"
         End If
     End Function
-
-    Private Sub DGVService_CellClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex < 0 Then Return
-        Dim row = DGVService.Rows(e.RowIndex)
-        selectedServiceID = If(IsDBNull(row.Cells("ServiceID").Value), 0, Convert.ToInt32(row.Cells("ServiceID").Value))
-        txtServiceName.Text = If(IsDBNull(row.Cells("ServiceName").Value), "", row.Cells("ServiceName").Value.ToString())
-        txtPrice.Text = If(IsDBNull(row.Cells("Price").Value), "", row.Cells("Price").Value.ToString())
-        txtDuration.Text = If(IsDBNull(row.Cells("Duration").Value), "", row.Cells("Duration").Value.ToString())
-    End Sub
-
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         If Dashboard Is Nothing Then
             Dashboard = New AdminDashboard()
@@ -275,14 +289,22 @@ Public Class AdminDBServices
     End Sub
 
     Private Sub txtPrice_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtPrice.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        ' 1. Allow Backspace and other control keys
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' 2. If the user types a DOT
+        If e.KeyChar = "."c Then
+            ' If the textbox already has a dot, block the second one (prevent spam)
+            If txtPrice.Text.Contains(".") Then
+                e.Handled = True
+            End If
+            ' If it's the first dot, let it pass
             Return
         End If
 
-        ' Allow digits only
+        ' 3. If it's not a digit, block it
         If Not Char.IsDigit(e.KeyChar) Then
-            e.Handled = True ' Block invalid input
+            e.Handled = True
         End If
     End Sub
 
@@ -299,20 +321,23 @@ Public Class AdminDBServices
     End Sub
 
     Private Sub DGVService_CellClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVService.CellClick
-        ' Ensure the click is on a valid row (not header)
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVService.Rows(e.RowIndex)
 
-            ' Populate your textboxes/combos with values from the grid
+            selectedServiceID = Convert.ToInt32(row.Cells("ServiceID").Value)
+
             txtServiceName.Text = row.Cells("ServiceName").Value.ToString()
-            txtDuration.Text = row.Cells("Duration").Value.ToString()
             txtPrice.Text = row.Cells("Price").Value.ToString()
+            txtDuration.Text = row.Cells("Duration").Value.ToString()
 
-            ' Example for combo box (if you have one for Category)
-            'CmbCategory.Text = row.Cells("Category").Value.ToString()
-            ' Or if bound to IDs:
-            ' CmbCategory.SelectedValue = row.Cells("CategoryID").Value
+            ' FIX: Toggle button states for "Edit Mode"
+            BTNAdd.Enabled = False
+            BTNUpdate.Enabled = True
+            BTNDelete.Enabled = True
         End If
+    End Sub
 
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        Clearform()
     End Sub
 End Class

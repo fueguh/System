@@ -66,6 +66,7 @@ Public Class AdminDBStockTracking
     End Sub
 
     Private Sub ButtonRecord_Click(sender As Object, e As EventArgs) Handles ButtonRecord.Click
+
         If ComboBoxItem.SelectedValue Is Nothing Then
             MessageBox.Show("Please select an item.")
             Exit Sub
@@ -99,6 +100,10 @@ Public Class AdminDBStockTracking
             queryUpdate = "UPDATE ItemManagement SET Quantity = Quantity - @Quantity WHERE ItemID=@ItemID"
         End If
 
+        If qty <= 0 Then
+            MessageBox.Show("Quantity must be greater than zero.")
+            Exit Sub
+        End If
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
           cmdTrans As New SqlCommand(queryTrans, connection),
           cmdUpdate As New SqlCommand(queryUpdate, connection)
@@ -115,6 +120,7 @@ Public Class AdminDBStockTracking
             cmdTrans.ExecuteNonQuery()
             cmdUpdate.ExecuteNonQuery()
             connection.Close()
+
         End Using
 
         MessageBox.Show("Transaction recorded successfully!")

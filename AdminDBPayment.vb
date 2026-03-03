@@ -1,5 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Drawing.Printing
+Imports System.Management
 
 Public Class AdminDBPayment
 
@@ -165,41 +166,150 @@ Public Class AdminDBPayment
 
     ' ================= PRINT RECEIPT =================
     Private Sub ButtonPrintReceipt_Click(sender As Object, e As EventArgs) Handles ButtonPrintReceipt.Click
+
         Dim pd As New PrintDocument()
-        pd.PrinterSettings.PrinterName = "Receipt-Printer-58"
-        AddHandler pd.PrintPage, AddressOf PrintPageHandler
-        pd.Print()
+        Dim dlg As New PrintDialog()
+
+        dlg.Document = pd
+
+        ' Show printer selection dialog
+        If dlg.ShowDialog() = DialogResult.OK Then
+
+            Dim selectedPrinter As String = pd.PrinterSettings.PrinterName
+
+            ' Check if printer exists
+            If Not IsPrinterInstalled(selectedPrinter) Then
+                MessageBox.Show("The selected printer is not installed.",
+                            "Printer Not Found",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            ' Check if printer is online
+            If Not IsPrinterOnline(selectedPrinter) Then
+                MessageBox.Show("The selected printer is offline or not available.",
+                            "Printer Offline",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning)
+                Exit Sub
+            End If
+
+            AddHandler pd.PrintPage, AddressOf PrintPageHandler
+
+            Try
+                pd.Print()
+            Catch ex As Exception
+                MessageBox.Show("Printing failed: " & ex.Message,
+                            "Print Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error)
+            End Try
+
+        End If
+
     End Sub
 
+
+    ' =========================
+    ' CHECK IF PRINTER INSTALLED
+    ' =========================
+    Private Function IsPrinterInstalled(printerName As String) As Boolean
+        For Each p As String In PrinterSettings.InstalledPrinters
+            If p = printerName Then
+                Return True
+            End If
+        Next
+        Return False
+    End Function
+
+
+    ' =========================
+    ' CHECK IF PRINTER ONLINE
+    ' =========================
+    Private Function IsPrinterOnline(printerName As String) As Boolean
+        Try
+            Dim searcher As New ManagementObjectSearcher(
+            "SELECT * FROM Win32_Printer WHERE Name = '" & printerName.Replace("\", "\\") & "'")
+
+            For Each printer As ManagementObject In searcher.Get()
+                Return Not CBool(printer("WorkOffline"))
+            Next
+
+            Return False
+        Catch
+            Return False
+        End Try
+    End Function
+
+
+    ' =========================
+    ' RECEIPT LAYOUT
+    ' =========================
     Private Sub PrintPageHandler(sender As Object, e As PrintPageEventArgs)
-        Dim g = e.Graphics
+
+        Dim g As Graphics = e.Graphics
         Dim y As Integer = 10
 
         Dim fontTitle As New Font("Arial", 12, FontStyle.Bold)
-        Dim fontBody As New Font("Arial", 9)
+        Dim fontBody As New Font("Consolas", 9)
 
-        g.DrawString("Dental Clinic Receipt", fontTitle, Brushes.Black, 5, y)
+        Dim leftMargin As Integer = 5
+        Dim rightMargin As Integer = 180
+
+        g.DrawString("Dental Clinic Receipt", fontTitle, Brushes.Black, leftMargin, y)
         y += 25
 
-        g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, 5, y)
-        y += 20
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, y)
+        y += 15
+
+        g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, leftMargin, y)
+        y += 15
+
+        g.DrawString("Date: " & DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                 fontBody, Brushes.Black, leftMargin, y)
+        y += 15
+
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, y)
+        y += 15
 
         For Each row As DataGridViewRow In DGVServices.Rows
             If Not row.IsNewRow Then
-                g.DrawString(
-                    $"{row.Cells("ServiceName").Value}  ₱{row.Cells("Price").Value}",
-                    fontBody, Brushes.Black, 5, y)
+
+                Dim serviceName As String = row.Cells("ServiceName").Value.ToString()
+                Dim price As String = "₱" & row.Cells("Price").Value.ToString()
+
+                g.DrawString(serviceName, fontBody, Brushes.Black, leftMargin, y)
+
+                Dim priceSize = g.MeasureString(price, fontBody)
+                g.DrawString(price, fontBody, Brushes.Black,
+                         rightMargin - priceSize.Width, y)
+
                 y += 15
             End If
         Next
 
         y += 10
-        g.DrawString("Total: ₱" & TextBoxTotal.Text, fontBody, Brushes.Black, 5, y)
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, y)
         y += 15
-        g.DrawString("Payment: " & ComboBoxPaymentMethod.Text, fontBody, Brushes.Black, 5, y)
+
+        Dim totalText As String = "TOTAL:"
+        Dim totalAmount As String = "₱" & TextBoxTotal.Text
+
+        g.DrawString(totalText, fontBody, Brushes.Black, leftMargin, y)
+
+        Dim totalSize = g.MeasureString(totalAmount, fontBody)
+        g.DrawString(totalAmount, fontBody, Brushes.Black,
+                 rightMargin - totalSize.Width, y)
+
         y += 15
-        g.DrawString("Date: " & DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                     fontBody, Brushes.Black, 5, y)
+
+        g.DrawString("Payment: " & ComboBoxPaymentMethod.Text,
+                 fontBody, Brushes.Black, leftMargin, y)
+
+        y += 20
+        g.DrawString("Thank you for visiting!", fontBody, Brushes.Black, leftMargin, y)
+
     End Sub
 
     ' ================= NAVIGATION =================

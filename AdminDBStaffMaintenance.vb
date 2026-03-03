@@ -30,19 +30,20 @@ Public Class AdminDBStaffMaintenance
             con.Open()
 
             Dim query As String = "
-            SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-            FROM Users U
-            INNER JOIN Staffs S ON U.UserID = S.UserID
-            WHERE U.Role = 'Staff'
-            ORDER BY U.FullName
+            SELECT UserID, FullName, Username, PhoneNumber, Email
+            FROM Users
+            WHERE Role = 'Staff'
+            ORDER BY FullName
         "
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             DgvStaffs.DataSource = dt
+            DgvStaffs.Columns("UserID").Visible = False
         End Using
     End Sub
+
     Private Sub ClearStaffInputs()
         TxtName.Text = ""
         TxtUsername.Text = ""
@@ -99,16 +100,6 @@ Public Class AdminDBStaffMaintenance
 
                 userId = Convert.ToInt32(cmdUser.ExecuteScalar())
             End Using
-
-            ' Insert into Staffs
-            Dim queryStaff As String = "
-            INSERT INTO Staffs (UserID)
-            VALUES (@userid)
-        "
-            Using cmdStaff As New SqlCommand(queryStaff, con)
-                cmdStaff.Parameters.AddWithValue("@userid", userId)
-                cmdStaff.ExecuteNonQuery()
-            End Using
         End Using
 
         MessageBox.Show("Staff account added successfully.")
@@ -119,30 +110,13 @@ Public Class AdminDBStaffMaintenance
     Private Sub SearchStaff_TextChanged(sender As Object, e As EventArgs) Handles SearchStaff.TextChanged
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
             Dim query As String
             If SearchStaff.Text.Trim = "" Then
-                query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-                FROM Users U
-                INNER JOIN Staffs S ON U.UserID = S.UserID
-                WHERE U.Role = 'Staff'
-                ORDER BY U.FullName
-            "
+                query = "SELECT UserID, FullName, Username, PhoneNumber, Email FROM Users WHERE Role = 'Staff' ORDER BY FullName"
             Else
-                query = "
-                SELECT U.UserID, U.FullName, U.Username, U.PhoneNumber, U.Email
-                FROM Users U
-                INNER JOIN Staffs S ON U.UserID = S.UserID
-                WHERE U.Role = 'Staff'
-                  AND (
-                        COALESCE(U.FullName,'') LIKE @search
-                     OR COALESCE(U.Username,'') LIKE @search
-                     OR COALESCE(U.PhoneNumber,'') LIKE @search
-                     OR COALESCE(U.Email,'') LIKE @search
-                  )
-                ORDER BY U.FullName
-            "
+                query = "SELECT UserID, FullName, Username, PhoneNumber, Email FROM Users " &
+            "WHERE Role = 'Staff' AND (FullName LIKE @search OR Username LIKE @search OR PhoneNumber LIKE @search OR Email LIKE @search) " &
+            "ORDER BY FullName"
             End If
 
             Using cmd As New SqlCommand(query, con)
@@ -285,5 +259,23 @@ Public Class AdminDBStaffMaintenance
         If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
             e.Handled = True
         End If
+    End Sub
+
+    Private Sub TxtPhone_TextChanged(sender As Object, e As EventArgs) Handles TxtPhone.TextChanged
+
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ' 1. Clear all textboxes and reset password security
+        ClearStaffInputs()
+
+        ' 2. Clear the search box to refresh the full staff list
+        SearchStaff.Text = ""
+
+        ' 3. Remove selection from the DataGridView
+        DgvStaffs.ClearSelection()
+
+        ' 4. Focus back on the first field
+        TxtName.Focus()
     End Sub
 End Class

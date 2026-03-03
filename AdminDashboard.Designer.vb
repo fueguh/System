@@ -33,6 +33,7 @@ Partial Class AdminDashboard
         Me.ManageServicesForm = New System.Windows.Forms.ToolStripMenuItem()
         Me.SupplierMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CategoryMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AvailabilityMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AuditTrailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SystemOverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -59,7 +60,6 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
-        Me.AvailabilityMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -159,6 +159,14 @@ Partial Class AdminDashboard
         Me.CategoryMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
         Me.CategoryMaintenanceToolStripMenuItem.Text = "Category Maintenance"
         '
+        'AvailabilityMaintenanceToolStripMenuItem
+        '
+        Me.AvailabilityMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.AvailabilityMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.AvailabilityMaintenanceToolStripMenuItem.Name = "AvailabilityMaintenanceToolStripMenuItem"
+        Me.AvailabilityMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
+        Me.AvailabilityMaintenanceToolStripMenuItem.Text = "Availability Maintenance"
+        '
         'AuditTrailToolStripMenuItem
         '
         Me.AuditTrailToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
@@ -251,12 +259,13 @@ Partial Class AdminDashboard
         '
         'lblClinicName
         '
+        Me.lblClinicName.AutoSize = False
         Me.lblClinicName.BackColor = System.Drawing.Color.Transparent
         Me.lblClinicName.Font = New System.Drawing.Font("Palatino Linotype", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblClinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblClinicName.Location = New System.Drawing.Point(444, 39)
+        Me.lblClinicName.Location = New System.Drawing.Point(3, 3)
         Me.lblClinicName.Name = "lblClinicName"
-        Me.lblClinicName.Size = New System.Drawing.Size(407, 49)
+        Me.lblClinicName.Size = New System.Drawing.Size(1297, 121)
         Me.lblClinicName.TabIndex = 21
         Me.lblClinicName.Text = "Eme Dental Clinic System"
         Me.lblClinicName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -416,14 +425,6 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
-        'AvailabilityMaintenanceToolStripMenuItem
-        '
-        Me.AvailabilityMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.AvailabilityMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.AvailabilityMaintenanceToolStripMenuItem.Name = "AvailabilityMaintenanceToolStripMenuItem"
-        Me.AvailabilityMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
-        Me.AvailabilityMaintenanceToolStripMenuItem.Text = "Availability Maintenance"
-        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -448,7 +449,6 @@ Partial Class AdminDashboard
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
-        Me.Guna2CustomGradientPanel1.PerformLayout()
         Me.Guna2Panel1.ResumeLayout(False)
         Me.Guna2Panel2.ResumeLayout(False)
         Me.Guna2Panel3.ResumeLayout(False)

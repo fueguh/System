@@ -5,13 +5,13 @@ Public Class AdminDBAppointments
     Private selectedAppointmentID As Integer = 0
     Public Shared Dashboard As AdminDashboard
     Public Shared AdminDBReports As AdminDBReports
-
+    Private isFormLoading As Boolean = True
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupStatusCombo()
         LoadComboBoxes()
         LoadAppointments()
         ClearForm()
-
+        isFormLoading = False
 
         If Not (SystemSession.LoggedInRole = "Admin" OrElse SystemSession.LoggedInRole = "Staff") Then
             SystemSession.SetFormReadOnly(Me)
@@ -27,10 +27,11 @@ Public Class AdminDBAppointments
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
 
+        cmbStatus.Items.Add("Confirmed")
         cmbStatus.Items.Add("Ongoing")
         cmbStatus.Items.Add("Completed")
         cmbStatus.Items.Add("Cancelled")
-        cmbStatus.SelectedIndex = 0 ' start with placeholder
+        cmbStatus.SelectedIndex = -1 ' start with placeholder
     End Sub
 
     Private Sub LoadComboBoxes()
@@ -40,7 +41,7 @@ Public Class AdminDBAppointments
             ' ================= PATIENTS =================
             Dim dtPatients As New DataTable()
             Dim daPatients As New SqlDataAdapter(
-            "SELECT PatientID, FullName FROM Patients ORDER BY FullName", con)
+            "SELECT PatientID, FullName FROM Patients WHERE IsActive = 1 ORDER BY FullName", con)
             Dim v1 = daPatients.Fill(dtPatients)
             CmbPatient.DataSource = dtPatients
             CmbPatient.DisplayMember = "FullName"
@@ -72,25 +73,48 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub LoadAppointments()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+        Dim query As String = "
+    SELECT 
+        A.AppointmentID, 
+        P.PatientID, 
+        P.FullName AS Patient, 
+        D.UserID AS DentistID,
+        D.FullName AS Dentist, 
+        STRING_AGG(S.ServiceName, ', ') AS Services, 
+        A.Date, 
+        A.StartTime, 
+        A.EndTime, 
+        A.Status
+    FROM Appointments A
+    JOIN Patients P ON A.PatientID = P.PatientID
+    JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+    JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+    JOIN Services S ON ASV.ServiceID = S.ServiceID
+    GROUP BY 
+        A.AppointmentID, 
+        P.PatientID, 
+        P.FullName, 
+        D.UserID,
+        D.FullName, 
+        A.Date, 
+        A.StartTime, 
+        A.EndTime, 
+        A.Status
+    ORDER BY A.Date DESC"
 
-            Dim query As String = "
-            SELECT A.AppointmentID, P.FullName AS Patient, D.FullName AS Dentist, STRING_AGG(S.ServiceName, ', ') AS Services, A.Date, A.StartTime, A.EndTime, A.Status
-            FROM Appointments A
-            JOIN Patients P ON A.PatientID = P.PatientID
-            JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-            JOIN Services S ON ASV.ServiceID = S.ServiceID
-            GROUP BY A.AppointmentID, P.FullName, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-            ORDER BY A.Date DESC;"
-
-            Dim da As New SqlDataAdapter(query, con)
+        Using da As New SqlDataAdapter(query, My.Settings.DentalDBConnection2)
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVAppointments.DataSource = dt
-
         End Using
+
+        ' Hide internal IDs (AppointmentID and PatientID)
+        Dim hiddenColumns As String() = {"AppointmentID", "PatientID"}
+        For Each colName In hiddenColumns
+            If DGVAppointments.Columns.Contains(colName) Then
+                DGVAppointments.Columns(colName).Visible = False
+            End If
+        Next
     End Sub
 
     Private Function ValidateFields() As Boolean
@@ -124,12 +148,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Return False
             End If
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Return False
@@ -195,12 +219,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Exit Sub
             End If
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Exit Sub
@@ -282,12 +306,12 @@ Public Class AdminDBAppointments
         Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
         Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
                 MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
                 Exit Sub
             End If
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
                 MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
                 Exit Sub
@@ -418,8 +442,8 @@ Public Class AdminDBAppointments
             Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
             selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDent.Text = row.Cells("Dentist").Value.ToString()
+            CmbDent.SelectedValue = row.Cells("DentistID").Value ' Use the actual dentist's ID
+            CmbPatient.SelectedValue = row.Cells("PatientID").Value  ' Use the actual patient's ID
             DtpDate.Value = CDate(row.Cells("Date").Value)
 
             Try
@@ -435,7 +459,7 @@ Public Class AdminDBAppointments
             If cmbStatus.Items.Contains(statusValue) Then
                 cmbStatus.SelectedItem = statusValue
             Else
-                cmbStatus.SelectedIndex = 0
+                cmbStatus.SelectedIndex = -1
             End If
 
             ' Load services
@@ -451,41 +475,36 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub ClearForm()
-        CmbPatient.SelectedIndex = -1
-        CmbDent.SelectedIndex = -1
+        If isFormLoading Then Exit Sub
+
+        ' -------------------
+        ' Clear DataBound ComboBoxes fully
+        ' -------------------
+        ' Reset Patient
+        If CmbPatient.DataSource IsNot Nothing Then
+            CmbPatient.BindingContext = New BindingContext() ' resets CurrencyManager
+            CmbPatient.SelectedIndex = -1
+        End If
+
+        ' Reset Dentist
+        If CmbDent.DataSource IsNot Nothing Then
+            CmbDent.BindingContext = New BindingContext() ' resets CurrencyManager
+            CmbDent.SelectedIndex = -1
+        End If
+
+        ' Reset Status (not databound)
         cmbStatus.SelectedIndex = -1
+
+        ' Reset Date to Today
         DtpDate.Value = Date.Today
 
-        ' Apply default times based on today
-        DtpDate_ValueChanged(Nothing, Nothing)
+        ' Clear all checkboxes in the CheckedListBox
         For i As Integer = 0 To clbServices.Items.Count - 1
             clbServices.SetItemChecked(i, False)
         Next
 
-
+        ' Reset the tracking ID
         selectedAppointmentID = 0
-    End Sub
-
-
-    Private Sub DGVAppointments_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
-            selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
-
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDent.Text = row.Cells("Dentist").Value.ToString()
-            DtpDate.Value = CDate(row.Cells("Date").Value)
-
-            dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
-            DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
-
-
-            cmbStatus.Text = row.Cells("Status").Value.ToString()
-
-
-            LoadCheckedServices(selectedAppointmentID)
-        End If
-
     End Sub
 
     Private Sub SaveAppointmentServices(appointmentID As Integer)
@@ -564,28 +583,32 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub DtpDate_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
+
+        If isFormLoading Then Exit Sub
+        ' Always re-enable first
+        dtpStartTime.Enabled = True
+        DtpEndTime.Enabled = True
         Dim selectedDate As DateTime = DtpDate.Value
         Dim dayOfWeek As DayOfWeek = selectedDate.DayOfWeek
 
-        If dayOfWeek >= dayOfWeek.Monday AndAlso dayOfWeek <= dayOfWeek.Friday Then
+        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
             ' Monday to Friday: 5:00 PM – 8:00 PM
             dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
             DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 20, 0, 0)
 
-
-
-        ElseIf dayOfWeek = dayOfWeek.Saturday Then
+        ElseIf dayOfWeek = DayOfWeek.Saturday Then
             ' Saturday: 8:00 AM – 5:00 PM
             dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 8, 0, 0)
             DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
-
-
 
         Else
             ' Sunday: disable scheduling
             dtpStartTime.Enabled = False
             DtpEndTime.Enabled = False
-            MessageBox.Show("Appointments are not allowed on Sundays.")
         End If
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ClearForm()
     End Sub
 End Class

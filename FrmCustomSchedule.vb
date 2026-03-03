@@ -165,5 +165,9 @@ WHERE da.DentistID = u.UserID
         End Using
     End Sub
 
-
+    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+        'direct to dashboard role dashboard
+        SystemSession.NavigateToDashboard(Me)
+        Me.Hide()
+    End Sub
 End Class

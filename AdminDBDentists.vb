@@ -26,30 +26,21 @@ Public Class AdminDBDentists
             FROM Users
             WHERE Role = 'Dentist'
         "
-
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
-
             DGVDentists.DataSource = dt
+            DGVDentists.Columns("UserID").Visible = False
         End Using
     End Sub
 
-    Private Sub DGVDentists_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellClick
-        ' ✅ Make sure the click is valid (not header row)
+    Private Sub DGVDentists_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellClick
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVDentists.Rows(e.RowIndex)
-            ' ✅ STORE THE ID
+            ' ✅ ONLY STORE THE ID (Useful for Deleting later)
             selectedDentistID = Convert.ToInt32(row.Cells("UserID").Value)
-            ' ✅ Populate textboxes/comboboxes with selected row values
-            TxtName.Text = row.Cells("FullName").Value.ToString()
-            TxtUsername.Text = row.Cells("Username").Value.ToString()
-            TxtPhone.Text = row.Cells("PhoneNumber").Value.ToString()
-            TxtEmail.Text = row.Cells("Email").Value.ToString()
-            TxtSpecialization.Text = row.Cells("Specialization").Value.ToString()
-            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
+            Clearform()
         End If
-
     End Sub
 
     Private Sub Clearform()
@@ -139,27 +130,11 @@ Public Class AdminDBDentists
             con.Open()
 
             Dim query As String
-
-            ' Show all dentists if search box is empty
+            ' 1. Removed "AS DentistID" so it stays "UserID"
             If Guna2TextBox1.Text.Trim = "" Then
-                query = "
-                SELECT UserID AS DentistID, FullName, Username, PhoneNumber, Email, Specialization
-                FROM Users
-                WHERE Role = 'Dentist'
-            "
+                query = "SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization FROM Users WHERE Role = 'Dentist'"
             Else
-                query = "
-                SELECT UserID AS DentistID, FullName, Username, PhoneNumber, Email, Specialization
-                FROM Users
-                WHERE Role = 'Dentist'
-                  AND (
-                        COALESCE(FullName,'') LIKE @search
-                     OR COALESCE(Username,'') LIKE @search
-                     OR COALESCE(PhoneNumber,'') LIKE @search
-                     OR COALESCE(Email,'') LIKE @search
-                     OR COALESCE(Specialization,'') LIKE @search
-                  )
-            "
+                query = "SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization FROM Users WHERE Role = 'Dentist' AND (COALESCE(FullName,'') LIKE @search OR COALESCE(Username,'') LIKE @search OR COALESCE(PhoneNumber,'') LIKE @search OR COALESCE(Email,'') LIKE @search OR COALESCE(Specialization,'') LIKE @search)"
             End If
 
             Using cmd As New SqlCommand(query, con)
@@ -171,7 +146,13 @@ Public Class AdminDBDentists
                 Dim table As New DataTable()
                 adapter.Fill(table)
 
+                ' 2. Bind the data
                 DGVDentists.DataSource = table
+
+                ' 3. Re-hide the column every time the search runs
+                If DGVDentists.Columns.Contains("UserID") Then
+                    DGVDentists.Columns("UserID").Visible = False
+                End If
             End Using
         End Using
     End Sub
@@ -330,5 +311,19 @@ Public Class AdminDBDentists
         If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
             e.Handled = True
         End If
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ' 1. Reset all textboxes and variables via your existing method
+        Clearform()
+
+        ' 2. Unselect any rows in the DataGridView so no record remains "active"
+        DGVDentists.ClearSelection()
+
+        ' 3. Optional: Reset the search box if you want a total reset
+        Guna2TextBox1.Text = ""
+
+        ' 4. Set focus back to the first field for better UX
+        TxtName.Focus()
     End Sub
 End Class

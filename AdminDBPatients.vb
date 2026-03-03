@@ -28,31 +28,28 @@ Public Class AdminDBPatients
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVPatients.DataSource = dt
+            DGVPatients.Columns("PatientID").Visible = False
         End Using
     End Sub
 
     Private Sub Clearform()
         selectedPatientID = 0
-        txtFullName.Text = ""
+        txtFullName.Clear()
         dtpBirthDate.Value = DateTime.Now
-        txtContact.Text = ""
-        txtEmail.Text = ""
-        txtAddress.Text = ""
-        txtAllergy.Text = ""
-    End Sub
-    Private Sub DGVPatients_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-        If e.RowIndex >= 0 Then
-            Dim row = DGVPatients.Rows(e.RowIndex)
+        txtContact.Clear()
+        txtEmail.Clear()
+        txtAddress.Clear()
+        txtAllergy.Clear()
+        Guna2TextBox1.Clear() ' This is your search box
 
-            selectedPatientID = row.Cells("PatientID").Value
-            txtFullName.Text = row.Cells("FullName").Value.ToString()
-            dtpBirthDate.Value = row.Cells("BirthDate").Value
-            txtContact.Text = row.Cells("ContactNumber").Value.ToString()
-            txtEmail.Text = row.Cells("Email").Value.ToString()
-            txtAddress.Text = row.Cells("Address").Value.ToString()
-            txtAllergy.Text = If(row.Cells("NoteAllergy").Value IsNot DBNull.Value, row.Cells("NoteAllergy").Value.ToString(), "")
-        End If
+        DGVPatients.ClearSelection()
 
+        ' Reset Button States
+        BTNAdd.Enabled = True
+        BTNUpdate.Enabled = False
+        BTNDelete.Enabled = False
+
+        txtFullName.Focus()
     End Sub
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
@@ -147,37 +144,21 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
-        If selectedPatientID = 0 Then
-            MessageBox.Show("Please select a patient to delete.")
-            Exit Sub
+        If selectedPatientID = 0 Then Return
+
+        If MessageBox.Show("Are you sure you want to deactivate this patient record?",
+                       "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+
+            DeactivatePatient(selectedPatientID) ' Call the helper sub you already wrote
+
+            MessageBox.Show("Patient record deactivated.")
+
+            ' Logging and Refreshing
+            SystemSession.LogAudit("Patient Deleted", "Patient Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            LoadPatients()
+            Clearform()
+            Dashboard?.LoadDashboardStats()
         End If
-
-        If MessageBox.Show("Are you sure you want to delete this patient?",
-                       "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
-
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim query As String = "UPDATE Patients SET IsActive = 0 WHERE PatientID = @PatientID"
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@PatientID", selectedPatientID)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-
-        MessageBox.Show("Patient deleted successfully.")
-        SystemSession.LogAudit("Patient Deleted", "Patient Management",
-                       SystemSession.LoggedInUserID,
-                       SystemSession.LoggedInFullName,
-                       SystemSession.LoggedInRole)
-
-
-        LoadPatients()
-        Clearform()
-
-        'to reload the system overview in admin dashboard after input
-        Dashboard?.LoadDashboardStats()
     End Sub
 
     Private Sub DeactivatePatient(patientId As Integer)
@@ -195,13 +176,10 @@ Public Class AdminDBPatients
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
-    Private Sub DGVPatients_CellContentClick_1(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPatients.CellContentClick
-        ' Prevent errors if user clicks the header row
+    Private Sub DGVPatients_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPatients.CellClick
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row As DataGridViewRow = DGVPatients.Rows(e.RowIndex)
-
-        ' Assuming your DataGridView columns match your table fields
         selectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
 
         txtFullName.Text = row.Cells("FullName").Value.ToString()
@@ -209,13 +187,12 @@ Public Class AdminDBPatients
         txtContact.Text = row.Cells("ContactNumber").Value.ToString()
         txtEmail.Text = row.Cells("Email").Value.ToString()
         txtAddress.Text = row.Cells("Address").Value.ToString()
+        txtAllergy.Text = If(row.Cells("NoteAllergy").Value Is DBNull.Value, "", row.Cells("NoteAllergy").Value.ToString())
 
-        ' New allergy field
-        If row.Cells("NoteAllergy").Value IsNot Nothing Then
-            txtAllergy.Text = row.Cells("NoteAllergy").Value.ToString()
-        Else
-            txtAllergy.Clear()
-        End If
+        ' Switch UI to Update Mode
+        BTNAdd.Enabled = False
+        BTNUpdate.Enabled = True
+        BTNDelete.Enabled = True
     End Sub
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
@@ -238,8 +215,8 @@ Public Class AdminDBPatients
     Private Function ValidatePatientFields(Optional patientID As Integer = 0) As Boolean
         ' Full Name: letters only
         If String.IsNullOrWhiteSpace(txtFullName.Text) OrElse
-       Not txtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-            MessageBox.Show("Full Name must contain letters only.")
+         Not txtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c OrElse c = "-"c OrElse c = "'"c OrElse c = "."c) Then
+            MessageBox.Show("Full Name must contain letters, spaces, '-', ''' or '.' only.")
             txtFullName.Focus()
             Return False
         End If
@@ -273,10 +250,12 @@ Public Class AdminDBPatients
             End If
         End Using
 
-        ' Address: letters, numbers, spaces, "-" and "@" allowed
+        ' Address: letters, numbers, spaces, "-", "@", ".", ",", "/" allowed
         If String.IsNullOrWhiteSpace(txtAddress.Text) OrElse
-       Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse c = " "c OrElse c = "-"c OrElse c = "@"c) Then
-            MessageBox.Show("Address must contain only letters, numbers, spaces, '-' and '@'.")
+   Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse
+                            c = " "c OrElse c = "-"c OrElse c = "@"c OrElse
+                            c = "."c OrElse c = ","c OrElse c = "/"c) Then
+            MessageBox.Show("Address must contain only letters, numbers, spaces, '-', '@', '.', ',' or '/'.")
             txtAddress.Focus()
             Return False
         End If
@@ -304,26 +283,29 @@ Public Class AdminDBPatients
         ' Allow control keys (Backspace, Delete, etc.)
         If Char.IsControl(e.KeyChar) Then Return
 
-        ' Allow letters and spaces only
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+        ' Allow letters, spaces, hyphens, apostrophes, and dots
+        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "-"c OrElse e.KeyChar = "'"c OrElse e.KeyChar = "."c) Then
             e.Handled = True
         End If
     End Sub
 
     Private Sub txtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtEmail.KeyPress
-        ' Allow control keys
+        ' Allow control keys like Backspace
         If Char.IsControl(e.KeyChar) Then Return
 
-        ' Allow letters, digits, and '@' only
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c) Then
+        ' Allow letters, digits, @ and .
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
             e.Handled = True
         End If
     End Sub
 
     Private Sub txtAddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAddress.KeyPress
+        ' Allow control keys (Backspace, Delete)
         If Char.IsControl(e.KeyChar) Then Return
 
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "-"c OrElse e.KeyChar = "@"c) Then
+        ' Allow letters, digits, spaces, and common address symbols
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "-"c OrElse e.KeyChar = "@"c _
+        OrElse e.KeyChar = "."c OrElse e.KeyChar = ","c OrElse e.KeyChar = "/"c) Then
             e.Handled = True
         End If
     End Sub
@@ -342,5 +324,13 @@ Public Class AdminDBPatients
         If Not Char.IsDigit(e.KeyChar) Then
             e.Handled = True
         End If
+    End Sub
+
+    Private Sub txtEmail_TextChanged(sender As Object, e As EventArgs) Handles txtEmail.TextChanged
+
+    End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        Clearform()
     End Sub
 End Class
