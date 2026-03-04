@@ -2,70 +2,62 @@
 
 Public Class AdminDBAppointments
 
+    ' ==========================================
+    ' FIELDS & PROPERTIES
+    ' ==========================================
     Private selectedAppointmentID As Integer = 0
+    Private isFormLoading As Boolean = True
+    Private selectedEndTime As TimeSpan
+
     Public Shared Dashboard As AdminDashboard
     Public Shared AdminDBReports As AdminDBReports
-    Private isFormLoading As Boolean = True
+
+    ' ==========================================
+    ' INITIALIZATION & LOAD
+    ' ==========================================
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         SetupStatusCombo()
         LoadComboBoxes()
+        LoadAvailableDentistsForDay()
         LoadAppointments()
         ClearForm()
         isFormLoading = False
+        BTNAdd.Enabled = True
+        BTNUpdate.Enabled = False
+        BTNDelete.Enabled = False
+        BTNPayment.Enabled = False
 
         If Not (SystemSession.LoggedInRole = "Admin" OrElse SystemSession.LoggedInRole = "Staff") Then
             SystemSession.SetFormReadOnly(Me)
         End If
-
-        dtpStartTime.Format = DateTimePickerFormat.Time
-        dtpStartTime.ShowUpDown = True
-
-        DtpEndTime.Format = DateTimePickerFormat.Time
-        DtpEndTime.ShowUpDown = True
     End Sub
 
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
-
-        cmbStatus.Items.Add("Confirmed")
-        cmbStatus.Items.Add("Ongoing")
-        cmbStatus.Items.Add("Completed")
-        cmbStatus.Items.Add("Cancelled")
-        cmbStatus.SelectedIndex = -1 ' start with placeholder
+        cmbStatus.Items.AddRange({"Confirmed", "Ongoing", "Completed", "Cancelled"})
+        cmbStatus.SelectedIndex = -1
     End Sub
 
+    ' ==========================================
+    ' DATA LOADING (READ)
+    ' ==========================================
     Private Sub LoadComboBoxes()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            ' ================= PATIENTS =================
+            ' Patients
             Dim dtPatients As New DataTable()
-            Dim daPatients As New SqlDataAdapter(
-            "SELECT PatientID, FullName FROM Patients WHERE IsActive = 1 ORDER BY FullName", con)
-            Dim v1 = daPatients.Fill(dtPatients)
+            Dim daPatients As New SqlDataAdapter("SELECT PatientID, FullName FROM Patients WHERE IsActive = 1 ORDER BY FullName", con)
+            daPatients.Fill(dtPatients)
             CmbPatient.DataSource = dtPatients
             CmbPatient.DisplayMember = "FullName"
             CmbPatient.ValueMember = "PatientID"
-            CmbPatient.SelectedIndex = -1   ' no default selection
+            CmbPatient.SelectedIndex = -1
 
-
-            ' ================= DENTISTS =================
-            Dim dtDentists As New DataTable()
-            Dim daDentists As New SqlDataAdapter(
-            "SELECT UserID, FullName FROM Users WHERE Role = 'Dentist' ORDER BY FullName", con)
-            Dim v = daDentists.Fill(dtDentists)
-            CmbDent.DataSource = dtDentists
-            CmbDent.DisplayMember = "FullName"
-            CmbDent.ValueMember = "UserID"
-            CmbDent.SelectedIndex = -1      ' no default selection
-
-
-            ' ================= SERVICES (MULTI) =================
+            ' Services
             Dim dtServices As New DataTable()
-            Dim daServices As New SqlDataAdapter(
-                "SELECT ServiceID, ServiceName, Duration FROM Services ORDER BY ServiceName", con) 'See if the duration thing works
+            Dim daServices As New SqlDataAdapter("SELECT ServiceID, ServiceName, Duration FROM Services ORDER BY ServiceName", con)
             daServices.Fill(dtServices)
-
             clbServices.DataSource = dtServices
             clbServices.DisplayMember = "ServiceName"
             clbServices.ValueMember = "ServiceID"
@@ -74,33 +66,16 @@ Public Class AdminDBAppointments
 
     Private Sub LoadAppointments()
         Dim query As String = "
-    SELECT 
-        A.AppointmentID, 
-        P.PatientID, 
-        P.FullName AS Patient, 
-        D.UserID AS DentistID,
-        D.FullName AS Dentist, 
-        STRING_AGG(S.ServiceName, ', ') AS Services, 
-        A.Date, 
-        A.StartTime, 
-        A.EndTime, 
-        A.Status
-    FROM Appointments A
-    JOIN Patients P ON A.PatientID = P.PatientID
-    JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-    JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-    JOIN Services S ON ASV.ServiceID = S.ServiceID
-    GROUP BY 
-        A.AppointmentID, 
-        P.PatientID, 
-        P.FullName, 
-        D.UserID,
-        D.FullName, 
-        A.Date, 
-        A.StartTime, 
-        A.EndTime, 
-        A.Status
-    ORDER BY A.Date DESC"
+            SELECT A.AppointmentID, P.PatientID, P.FullName AS Patient, D.UserID AS DentistID,
+                   D.FullName AS Dentist, STRING_AGG(S.ServiceName, ', ') AS Services, 
+                   A.Date, A.StartTime, A.EndTime, A.Status
+            FROM Appointments A
+            JOIN Patients P ON A.PatientID = P.PatientID
+            JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+            JOIN Services S ON ASV.ServiceID = S.ServiceID
+            GROUP BY A.AppointmentID, P.PatientID, P.FullName, D.UserID, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
+            ORDER BY A.Date DESC"
 
         Using da As New SqlDataAdapter(query, My.Settings.DentalDBConnection2)
             Dim dt As New DataTable()
@@ -108,504 +83,461 @@ Public Class AdminDBAppointments
             DGVAppointments.DataSource = dt
         End Using
 
-        ' Hide internal IDs (AppointmentID and PatientID)
-        Dim hiddenColumns As String() = {"AppointmentID", "PatientID", "DentistID"}
-        For Each colName In hiddenColumns
-            If DGVAppointments.Columns.Contains(colName) Then
-                DGVAppointments.Columns(colName).Visible = False
-            End If
+        For Each colName In {"AppointmentID", "PatientID", "DentistID"}
+            If DGVAppointments.Columns.Contains(colName) Then DGVAppointments.Columns(colName).Visible = False
         Next
     End Sub
 
+    ' ==========================================
+    ' CORE ACTIONS (ADD, UPDATE, DELETE)
+    ' ==========================================
+    Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
+        ' Enforce status is set
+
+        If Not ValidateFields() Then Exit Sub
+        Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
+
+        If IsConflict(0, startTimeValue, selectedEndTime) Then
+            MessageBox.Show("This dentist already has an appointment during this time.")
+            Exit Sub
+        End If
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim query As String = "INSERT INTO Appointments (PatientID, UserID, Date, StartTime, EndTime, Status) 
+                                   OUTPUT INSERTED.AppointmentID VALUES (@p, @d, @date, @start, @end, @status)"
+            Dim cmd As New SqlCommand(query, con)
+            cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
+            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
+            cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+            cmd.Parameters.AddWithValue("@start", startTimeValue)
+            cmd.Parameters.AddWithValue("@end", selectedEndTime)
+            cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
+
+            Try
+                Dim newID As Integer = CInt(cmd.ExecuteScalar())
+                SaveAppointmentServices(newID)
+                MessageBox.Show("Appointment added.")
+                SystemSession.LogAudit("Appointment " & cmbStatus.Text, "Appointment Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            Catch ex As Exception
+                MessageBox.Show("Error: " & ex.Message)
+                Exit Sub
+            End Try
+        End Using
+
+        RefreshUI()
+    End Sub
+
+    Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
+        If selectedAppointmentID = 0 Then Exit Sub
+        If Not ValidateFields() Then Exit Sub
+        Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
+
+        If IsConflict(selectedAppointmentID, startTimeValue, selectedEndTime) Then
+            MessageBox.Show("Conflict detected.")
+            Exit Sub
+        End If
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim query As String = "UPDATE Appointments SET PatientID=@p, UserID=@d, Date=@date, StartTime=@start, EndTime=@end, Status=@status WHERE AppointmentID=@id"
+            Dim cmd As New SqlCommand(query, con)
+            cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
+            cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
+            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
+            cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+            cmd.Parameters.AddWithValue("@start", startTimeValue)
+            cmd.Parameters.AddWithValue("@end", selectedEndTime)
+            cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
+
+            Try
+                cmd.ExecuteNonQuery()
+                Using cmdDel As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con)
+                    cmdDel.Parameters.AddWithValue("@aid", selectedAppointmentID)
+                    cmdDel.ExecuteNonQuery()
+                End Using
+                SaveAppointmentServices(selectedAppointmentID)
+                MessageBox.Show("Updated Appointment.")
+            Catch ex As Exception
+                MessageBox.Show("Error: " & ex.Message)
+            End Try
+        End Using
+
+        RefreshUI()
+    End Sub
+
+    Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
+        If selectedAppointmentID = 0 Then Exit Sub
+        If MessageBox.Show("Delete this appointment?", "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Using trans = con.BeginTransaction()
+                Try
+                    Dim cmd1 As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@id", con, trans)
+                    cmd1.Parameters.AddWithValue("@id", selectedAppointmentID)
+                    cmd1.ExecuteNonQuery()
+
+                    Dim cmd2 As New SqlCommand("DELETE FROM Appointments WHERE AppointmentID=@id", con, trans)
+                    cmd2.Parameters.AddWithValue("@id", selectedAppointmentID)
+                    cmd2.ExecuteNonQuery()
+
+                    trans.Commit()
+                    MessageBox.Show("Deleted Appointment.")
+                Catch ex As Exception
+                    trans.Rollback()
+                    MessageBox.Show("Error: " & ex.Message)
+                End Try
+            End Using
+        End Using
+
+        RefreshUI()
+    End Sub
+
+    ' ==========================================
+    ' VALIDATION & CONFLICT LOGIC
+    ' ==========================================
     Private Function ValidateFields() As Boolean
-        If CmbPatient.SelectedValue Is Nothing Then
-            MessageBox.Show("Please select a patient.")
+        If isFormLoading Then Return False
 
+        ' 1. Check basic dropdowns
+        If CmbPatient.SelectedValue Is Nothing Or CmbDent.SelectedValue Is Nothing Or cmbStartTime.SelectedIndex = -1 Then
+            MessageBox.Show("Please fill all required fields.")
             Return False
         End If
 
-        If CmbDent.SelectedValue Is Nothing Then
-            MessageBox.Show("Please select a dentist.")
-
-            Return False
+        ' 2. Check Status (The fix is here!)
+        If cmbStatus.SelectedIndex = -1 Then
+            MessageBox.Show("Please select an appointment status.")
+            Return False ' <--- ADD THIS LINE
         End If
 
-
+        ' 3. Check Services
         If clbServices.CheckedItems.Count = 0 Then
-            MessageBox.Show("Please select at least one service.")
-
+            MessageBox.Show("Select at least one service.")
             Return False
         End If
 
-
-        If DtpEndTime.Value <= dtpStartTime.Value Then
-            MessageBox.Show("End time must be later than start time.")
-
+        ' 4. Clinic Hours Check
+        If DtpDate.Value.DayOfWeek = DayOfWeek.Sunday Then
+            MessageBox.Show("Closed on Sundays.")
             Return False
         End If
 
-        Dim dayOfWeek As DayOfWeek = DtpDate.Value.DayOfWeek
-        Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
-        Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
+        If selectedEndTime > New TimeSpan(19, 0, 0) Then
+            MessageBox.Show("Appointment exceeds clinic hours.")
+            Return False
+        End If
+        ' Get the specific shift end for this dentist on this day
+        Dim shiftEnd As TimeSpan = New TimeSpan(19, 30, 0) ' Default clinic max
+        Dim dentistID As Integer = CInt(CmbDent.SelectedValue)
+        Dim dayName = DtpDate.Value.ToString("dddd")
 
-        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
-            If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
-                MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
-                Return False
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+
+            ' 1. Get Shift Type
+            Dim shiftType As String = ""
+            Using cmdShift As New SqlCommand("SELECT Availability FROM Users WHERE UserID = @id", con)
+                cmdShift.Parameters.AddWithValue("@id", dentistID)
+                Dim res = cmdShift.ExecuteScalar()
+                shiftType = If(res IsNot Nothing, res.ToString(), "")
+            End Using
+
+            ' 2. Determine the actual end of their workday
+            If shiftType = "Part-time" Then
+                Using cmdPart As New SqlCommand("SELECT EndTime FROM DentistAvailability WHERE DentistID = @id AND DayOfWeek = @day", con)
+                    cmdPart.Parameters.AddWithValue("@id", dentistID)
+                    cmdPart.Parameters.AddWithValue("@day", dayName)
+                    Dim resEnd = cmdPart.ExecuteScalar()
+                    If resEnd IsNot Nothing Then shiftEnd = DirectCast(resEnd, TimeSpan)
+                End Using
+            Else
+                Select Case shiftType.ToLower()
+                    Case "morning shift" : shiftEnd = New TimeSpan(12, 0, 0)
+                    Case "afternoon shift", "full-time" : shiftEnd = New TimeSpan(19, 30, 0)
+                End Select
             End If
-        ElseIf dayOfWeek = DayOfWeek.Saturday Then
-            If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
-                MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
-                Return False
-            End If
-        Else
-            MessageBox.Show("Appointments are only available Monday–Saturday.")
-            Return False
-        End If
+        End Using
 
-        If String.IsNullOrWhiteSpace(cmbStatus.Text) Then
-            MessageBox.Show("Please select a status.")
-
+        ' FINAL ENFORCEMENT
+        If selectedEndTime > shiftEnd Then
+            MessageBox.Show("The total duration of services exceeds the dentist's work schedule. " &
+                        "The dentist finishes at " & DateTime.Today.Add(shiftEnd).ToString("hh:mm tt") & ".")
             Return False
         End If
 
         Return True
     End Function
 
-    Private Function IsConflict(Optional appointmentID As Integer = 0) As Boolean
+    Private Function IsConflict(appointmentID As Integer, startT As TimeSpan, endT As TimeSpan) As Boolean
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
-            Dim query As String = "
-            SELECT 1
-            FROM Appointments
-            WHERE UserID = @dentist
-              AND Date = @date
-              AND AppointmentID <> @id
-              AND (
-                    (@start BETWEEN StartTime AND EndTime)
-                 OR (@end BETWEEN StartTime AND EndTime)
-                 OR (StartTime BETWEEN @start AND @end)
-                 OR (EndTime BETWEEN @start AND @end)
-                  )
-        "
-
+            Dim query As String = "SELECT 1 FROM Appointments WHERE UserID = @dentist AND Date = @date AND AppointmentID <> @id AND Status <> 'Cancelled' AND (@start < EndTime AND @end > StartTime)"
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@dentist", CInt(CmbDent.SelectedValue))
                 cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-                cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
-                cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
                 cmd.Parameters.AddWithValue("@id", appointmentID)
-
-                Using dr As SqlDataReader = cmd.ExecuteReader()
-                    Return dr.HasRows
-                End Using
+                cmd.Parameters.AddWithValue("@start", startT)
+                cmd.Parameters.AddWithValue("@end", endT)
+                Return cmd.ExecuteScalar() IsNot Nothing
             End Using
         End Using
     End Function
 
-    Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
-        ' ✅ Validate required fields
-        If Not ValidateFields() Then Exit Sub
+    ' ==========================================
+    ' UI EVENT HANDLERS
+    ' ==========================================
+    Private Sub DGVAppointments_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointments.CellClick
+        If e.RowIndex < 0 Then Exit Sub
+        isFormLoading = True
+        Dim row = DGVAppointments.Rows(e.RowIndex)
+        selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-        ' ✅ Check for conflicts
-        If IsConflict() Then
-            MessageBox.Show("This dentist already has an appointment at this time.")
-            Exit Sub
-        End If
+        CmbDent.SelectedValue = row.Cells("DentistID").Value
+        CmbPatient.SelectedValue = row.Cells("PatientID").Value
+        DtpDate.Value = CDate(row.Cells("Date").Value)
 
-        ' ✅ Validate allowed time ranges
-        Dim dayOfWeek As DayOfWeek = DtpDate.Value.DayOfWeek
-        Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
-        Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
+        isFormLoading = False
+        PopulateTimeSlots()
 
-        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
-            If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
-                MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
-                Exit Sub
-            End If
-        ElseIf dayOfWeek = DayOfWeek.Saturday Then
-            If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
-                MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
-                Exit Sub
-            End If
-        Else
-            MessageBox.Show("Appointments are only available every Monday to Saturday.")
-            Exit Sub
-        End If
+        ' Set Time
+        Dim savedStart = TimeSpan.Parse(row.Cells("StartTime").Value.ToString())
+        Dim formatted = DateTime.Today.Add(savedStart).ToString("hh:mm tt")
+        If Not cmbStartTime.Items.Contains(formatted) Then cmbStartTime.Items.Add(formatted)
+        cmbStartTime.SelectedItem = formatted
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+        ' Set Status
+        cmbStatus.Text = row.Cells("Status").Value.ToString()
+        LoadCheckedServices(selectedAppointmentID)
 
-            ' --- Insert appointment ---
-            Dim query As String = "
-            INSERT INTO Appointments (PatientID, UserID, Date, StartTime, EndTime, Status)
-            OUTPUT INSERTED.AppointmentID
-            VALUES (@p, @d, @date, @start, @end, @status)
-        "
-
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
-            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
-            cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-            cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
-            cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
-            cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
-
-            Try
-                ' ✅ Get the new AppointmentID
-                Dim newAppointmentID As Integer = CInt(cmd.ExecuteScalar())
-
-                ' ✅ Save all checked services for this appointment
-                SaveAppointmentServices(newAppointmentID)
-
-                MessageBox.Show("Appointment added successfully.")
-
-                ' ✅ Audit log entry
-                SystemSession.LogAudit("Appointment " & cmbStatus.Text,
-                                       "Appointment Management",
-                                       SystemSession.LoggedInUserID,
-                                       SystemSession.LoggedInFullName,
-                                       SystemSession.LoggedInRole)
-
-            Catch ex As Exception
-                MessageBox.Show("Error adding appointment: " & ex.Message)
-            End Try
-        End Using
-
-        ' ✅ Refresh UI
-        LoadAppointments()
-
-        ' ✅ Refresh reports
-        Dim historyForm As New AdminDBReports()
-        historyForm.RefreshHistory()
-
-        ' ✅ Reload dashboard stats
-        Dashboard?.LoadDashboardStats()
-
-        ' ✅ Clear form inputs
-        ClearForm()
-
+        ' UI State
+        BTNAdd.Enabled = False
+        BTNDelete.Enabled = True
+        BTNUpdate.Enabled = (cmbStatus.Text <> "Cancelled")
     End Sub
 
+    Private Sub DtpDate_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
+        LoadAvailableDentistsForDay()
+        PopulateTimeSlots()
+    End Sub
 
-    Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
-        If selectedAppointmentID = 0 Then
-            MessageBox.Show("Please select an appointment to update.")
-            Exit Sub
-        End If
+    Private Sub CmbDent_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbDent.SelectedIndexChanged
+        PopulateTimeSlots()
+    End Sub
 
-        If Not ValidateFields() Then Exit Sub
-        If IsConflict(selectedAppointmentID) Then
-            MessageBox.Show("This dentist already has an appointment at this time.")
-            Exit Sub
-        End If
+    Private Sub clbServices_ItemCheck(sender As Object, e As ItemCheckEventArgs) Handles clbServices.ItemCheck
+        Me.BeginInvoke(Sub() CalculateTotalDuration())
+    End Sub
 
-        ' ✅ Validate allowed time ranges
-        Dim dayOfWeek As DayOfWeek = DtpDate.Value.DayOfWeek
-        Dim startTime As TimeSpan = dtpStartTime.Value.TimeOfDay
-        Dim endTime As TimeSpan = DtpEndTime.Value.TimeOfDay
+    Private Sub cmbStartTime_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbStartTime.SelectedIndexChanged
+        CalculateTotalDuration()
+    End Sub
 
-        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
-            If startTime < New TimeSpan(17, 0, 0) OrElse endTime > New TimeSpan(20, 0, 0) Then
-                MessageBox.Show("Appointments from Monday to Friday are only Available between 5:00 PM and 8:00 PM.")
-                Exit Sub
-            End If
-        ElseIf dayOfWeek = DayOfWeek.Saturday Then
-            If startTime < New TimeSpan(8, 0, 0) OrElse endTime > New TimeSpan(17, 0, 0) Then
-                MessageBox.Show("Appointments on Saturday is only Available between 8:00 AM and 5:00 PM.")
-                Exit Sub
-            End If
-        Else
-            MessageBox.Show("Appointments are only available every Monday to Saturday.")
-            Exit Sub
-        End If
-
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            ' Update appointment
-            Dim query As String = "
-            UPDATE Appointments
-            SET PatientID=@p, UserID=@d, Date=@date,
-                StartTime=@start, EndTime=@end, Status=@status
-            WHERE AppointmentID=@id
-        "
-
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
-            cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
-            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
-            cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-            cmd.Parameters.AddWithValue("@start", dtpStartTime.Value.TimeOfDay)
-            cmd.Parameters.AddWithValue("@end", DtpEndTime.Value.TimeOfDay)
-            cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
-
-            Try
-                cmd.ExecuteNonQuery()
-
-                ' --- Delete old services ---
-                Using cmdDelete As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con)
-                    cmdDelete.Parameters.AddWithValue("@aid", selectedAppointmentID)
-                    cmdDelete.ExecuteNonQuery()
-                End Using
-
-                ' --- Insert new checked services ---
-                SaveAppointmentServices(selectedAppointmentID)
-
-                MessageBox.Show("Appointment updated successfully.")
-
-                ' Audit log
-                SystemSession.LogAudit("Appointment " & cmbStatus.Text & " (Updated)",
-                                   "Appointment Management",
-                                   SystemSession.LoggedInUserID,
-                                   SystemSession.LoggedInFullName,
-                                   SystemSession.LoggedInRole)
-            Catch ex As Exception
-                MessageBox.Show("Error updating appointment: " & ex.Message)
-            End Try
-        End Using
-
-
-        ' ✅ Refresh UI
+    ' ==========================================
+    ' REUSABLE HELPERS
+    ' ==========================================
+    Private Sub RefreshUI()
         LoadAppointments()
         Dashboard?.LoadDashboardStats()
         AdminDBReports?.LoadAppointmentHistory()
         ClearForm()
-
-    End Sub
-
-    Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
-        If selectedAppointmentID = 0 Then
-            MessageBox.Show("Please select an appointment to delete.")
-            Exit Sub
-        End If
-
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            If MessageBox.Show("Are you sure you want to delete this appointment?",
-                           "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then Exit Sub
-
-            Using trans = con.BeginTransaction()
-                Try
-                    ' 1️⃣ Delete linked services first
-                    Using cmdServices As New SqlCommand(
-                    "DELETE FROM AppointmentServices WHERE AppointmentID=@id", con, trans)
-                        cmdServices.Parameters.AddWithValue("@id", selectedAppointmentID)
-                        cmdServices.ExecuteNonQuery()
-                    End Using
-
-                    ' 2️⃣ Delete appointment
-                    Using cmdAppt As New SqlCommand(
-                    "DELETE FROM Appointments WHERE AppointmentID=@id", con, trans)
-                        cmdAppt.Parameters.AddWithValue("@id", selectedAppointmentID)
-                        cmdAppt.ExecuteNonQuery()
-                    End Using
-
-                    ' ✅ Commit transaction
-                    trans.Commit()
-
-                    ' Log audit after commit
-                    Try
-                        SystemSession.LogAudit(
-                        "Appointment Deleted",
-                        "Appointment Management",
-                        SystemSession.LoggedInUserID,
-                        SystemSession.LoggedInFullName,
-                        SystemSession.LoggedInRole)
-                    Catch ex As Exception
-                        MessageBox.Show("Error logging audit: " & ex.Message)
-                    End Try
-
-                    MessageBox.Show("Appointment deleted successfully.")
-
-                Catch ex As Exception
-                    ' Rollback if anything fails
-                    trans.Rollback()
-                    MessageBox.Show("Error deleting appointment: " & ex.Message)
-                End Try
-            End Using
-
-            ' ✅ Refresh UI
-            LoadAppointments()
-            Dashboard?.LoadDashboardStats()
-            ClearForm()
-        End Using
-    End Sub
-
-    Private Sub DGVAppointments_CellClick(sender As Object, e As DataGridViewCellEventArgs) _
-    Handles DGVAppointments.CellClick
-
-
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DGVAppointments.Rows(e.RowIndex)
-            selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
-
-            CmbDent.SelectedValue = row.Cells("DentistID").Value ' Use the actual dentist's ID
-            CmbPatient.SelectedValue = row.Cells("PatientID").Value  ' Use the actual patient's ID
-            DtpDate.Value = CDate(row.Cells("Date").Value)
-
-            Try
-                dtpStartTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("StartTime").Value.ToString()))
-                DtpEndTime.Value = Date.Today.Add(TimeSpan.Parse(row.Cells("EndTime").Value.ToString()))
-            Catch ex As Exception
-                dtpStartTime.Value = CDate(row.Cells("StartTime").Value)
-                DtpEndTime.Value = CDate(row.Cells("EndTime").Value)
-            End Try
-
-            ' Set status
-            Dim statusValue As String = row.Cells("Status").Value.ToString()
-            If cmbStatus.Items.Contains(statusValue) Then
-                cmbStatus.SelectedItem = statusValue
-            Else
-                cmbStatus.SelectedIndex = -1
-            End If
-
-            ' Load services
-            LoadCheckedServices(selectedAppointmentID)
-        End If
-
-    End Sub
-
-
-
-    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        SystemSession.NavigateToDashboard(Me)
     End Sub
 
     Private Sub ClearForm()
         If isFormLoading Then Exit Sub
-
-        ' -------------------
-        ' Clear DataBound ComboBoxes fully
-        ' -------------------
-        ' Reset Patient
-        If CmbPatient.DataSource IsNot Nothing Then
-            CmbPatient.BindingContext = New BindingContext() ' resets CurrencyManager
-            CmbPatient.SelectedIndex = -1
-        End If
-
-        ' Reset Dentist
-        If CmbDent.DataSource IsNot Nothing Then
-            CmbDent.BindingContext = New BindingContext() ' resets CurrencyManager
-            CmbDent.SelectedIndex = -1
-        End If
-
-        ' Reset Status (not databound)
+        CmbPatient.SelectedIndex = -1
+        CmbDent.SelectedIndex = -1
         cmbStatus.SelectedIndex = -1
-
-        ' Reset Date to Today
+        cmbStartTime.Items.Clear()
         DtpDate.Value = Date.Today
+        For i = 0 To clbServices.Items.Count - 1 : clbServices.SetItemChecked(i, False) : Next
+        clbServices.ClearSelected()
 
-        ' Clear all checkboxes in the CheckedListBox
-        For i As Integer = 0 To clbServices.Items.Count - 1
-            clbServices.SetItemChecked(i, False)
+        selectedAppointmentID = 0
+        selectedEndTime = TimeSpan.Zero
+        lblEndTime.Text = "End Time: --:--"
+        lblTotalDuration.Text = "Total Duration: 0 mins"
+
+        BTNAdd.Enabled = True
+        BTNUpdate.Enabled = False
+        BTNDelete.Enabled = False
+        BTNPayment.Enabled = False
+    End Sub
+
+    Private Sub PopulateTimeSlots()
+        ' 1. Guard against loading states and null selections
+        If isFormLoading OrElse CmbDent.SelectedValue Is Nothing Then Exit Sub
+
+        ' Handle the common DataRowView binding delay in WinForms
+        Dim dentistID As Integer
+        If TypeOf CmbDent.SelectedValue Is DataRowView Then
+            dentistID = CInt(CType(CmbDent.SelectedValue, DataRowView)("UserID"))
+        Else
+            dentistID = CInt(CmbDent.SelectedValue)
+        End If
+
+        cmbStartTime.Items.Clear()
+        Dim selectedDate = DtpDate.Value.Date
+        Dim dayName = selectedDate.ToString("dddd") ' Matches "Monday", "Tuesday", etc.
+
+        Dim startLoop, endLoop As TimeSpan
+        Dim foundSchedule As Boolean = False
+        Dim shiftType As String = ""
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+
+            ' 2. Get the general shift type
+            Using cmdShift As New SqlCommand("SELECT Availability FROM Users WHERE UserID = @id", con)
+                cmdShift.Parameters.AddWithValue("@id", dentistID)
+                ' This is the safe, compatible way to handle potential NULL values
+                Dim result = cmdShift.ExecuteScalar()
+                If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                    shiftType = result.ToString().Trim()
+                Else
+                    shiftType = ""
+                End If
+            End Using
+
+            ' 3. Identify the window of time
+            If shiftType.Equals("Part-time", StringComparison.OrdinalIgnoreCase) Then
+                ' Pull from your DentistAvailability table
+                Dim query = "SELECT StartTime, EndTime FROM DentistAvailability WHERE DentistID = @id AND DayOfWeek = @day"
+                Using cmdPart As New SqlCommand(query, con)
+                    cmdPart.Parameters.AddWithValue("@id", dentistID)
+                    cmdPart.Parameters.AddWithValue("@day", dayName)
+                    Using dr = cmdPart.ExecuteReader()
+                        If dr.Read() Then
+                            ' DirectCast is required for SQL TIME -> TimeSpan
+                            startLoop = DirectCast(dr("StartTime"), TimeSpan)
+                            endLoop = DirectCast(dr("EndTime"), TimeSpan)
+                            foundSchedule = True
+                        End If
+                    End Using
+                End Using
+            Else
+                ' Handle Fixed Shifts
+                Select Case shiftType.ToLower()
+                    Case "morning shift" : startLoop = New TimeSpan(8, 0, 0) : endLoop = New TimeSpan(12, 0, 0) : foundSchedule = True
+                    Case "afternoon shift" : startLoop = New TimeSpan(13, 0, 0) : endLoop = New TimeSpan(19, 0, 0) : foundSchedule = True
+                    Case "full-time" : startLoop = New TimeSpan(8, 0, 0) : endLoop = New TimeSpan(19, 0, 0) : foundSchedule = True
+                End Select
+            End If
+
+            ' 4. Exit if no schedule found for this specific day
+            If Not foundSchedule Then Exit Sub
+
+            ' 5. Get Booked Slots
+            Dim booked As New List(Of TimeSpan)
+            Dim bQuery = "SELECT StartTime FROM Appointments WHERE UserID = @d AND Date = @date AND Status <> 'Cancelled' AND AppointmentID <> @id"
+            Using bCmd As New SqlCommand(bQuery, con)
+                bCmd.Parameters.AddWithValue("@d", dentistID)
+                bCmd.Parameters.AddWithValue("@date", selectedDate)
+                bCmd.Parameters.AddWithValue("@id", selectedAppointmentID)
+                Using dr = bCmd.ExecuteReader()
+                    While dr.Read() : booked.Add(DirectCast(dr("StartTime"), TimeSpan)) : End While
+                End Using
+            End Using
+
+            ' 6. Populate ComboBox (30-min intervals)
+            Dim current = startLoop
+            While current < endLoop
+                ' Exclude Lunch for Full-Time (12pm-1pm)
+                Dim isLunch = (shiftType.ToLower() = "full-time" AndAlso current >= New TimeSpan(12, 0, 0) AndAlso current < New TimeSpan(13, 0, 0))
+
+                If Not isLunch AndAlso Not booked.Contains(current) Then
+                    cmbStartTime.Items.Add(DateTime.Today.Add(current).ToString("hh:mm tt"))
+                End If
+                current = current.Add(TimeSpan.FromMinutes(30))
+            End While
+        End Using
+    End Sub
+
+    Private Sub LoadAvailableDentistsForDay()
+        If isFormLoading Then Exit Sub
+        Dim dayName = DtpDate.Value.DayOfWeek.ToString()
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            Dim query = "SELECT DISTINCT U.UserID, U.FullName FROM Users U LEFT JOIN DentistAvailability DA ON U.UserID = DA.DentistID 
+                         WHERE U.Role = 'Dentist' AND ((U.Availability IN ('Morning Shift', 'Afternoon Shift', 'Full-time') AND @day != 'Sunday') 
+                         OR (U.Availability = 'Part-time' AND DA.DayOfWeek = @day)) ORDER BY U.FullName"
+
+            Dim dt As New DataTable()
+            Dim da As New SqlDataAdapter(query, con)
+            da.SelectCommand.Parameters.AddWithValue("@day", dayName)
+            da.Fill(dt)
+
+            ' Fixed Handler Name: Match the actual sub name
+            RemoveHandler CmbDent.SelectedIndexChanged, AddressOf CmbDent_SelectedIndexChanged
+            CmbDent.DataSource = dt
+            CmbDent.DisplayMember = "FullName"
+            CmbDent.ValueMember = "UserID"
+            CmbDent.SelectedIndex = -1
+            AddHandler CmbDent.SelectedIndexChanged, AddressOf CmbDent_SelectedIndexChanged
+        End Using
+        cmbStartTime.Items.Clear()
+    End Sub
+
+    Private Sub CalculateTotalDuration()
+        selectedEndTime = TimeSpan.Zero
+        If cmbStartTime.SelectedIndex = -1 Then
+            lblTotalDuration.Text = "Total Duration: 0 mins"
+            lblEndTime.Text = "End Time: --:--"
+            Exit Sub
+        End If
+
+        Dim startTime As DateTime
+        If Not DateTime.TryParse(cmbStartTime.Text, startTime) Then Exit Sub
+
+        Dim totalMinutes As Integer = 0
+        For Each item As DataRowView In clbServices.CheckedItems
+            totalMinutes += CInt(item("Duration"))
         Next
 
-        ' Reset the tracking ID
-        selectedAppointmentID = 0
+        If totalMinutes > 0 Then
+            Dim endTime = startTime.AddMinutes(totalMinutes)
+            selectedEndTime = endTime.TimeOfDay
+
+            lblTotalDuration.Text = "Total Duration: " & totalMinutes & " mins"
+            lblEndTime.Text = "End Time: " & endTime.ToString("hh:mm tt")
+        End If
     End Sub
 
     Private Sub SaveAppointmentServices(appointmentID As Integer)
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
             For Each item As DataRowView In clbServices.CheckedItems
-                Using cmd As New SqlCommand(
-                "INSERT INTO AppointmentServices (AppointmentID, ServiceID)
-                 VALUES (@aid, @sid)", con)
-
-                    cmd.Parameters.AddWithValue("@aid", appointmentID)
-                    cmd.Parameters.AddWithValue("@sid", item("ServiceID"))
-
-                    cmd.ExecuteNonQuery()
-                End Using
+                Dim cmd As New SqlCommand("INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES (@aid, @sid)", con)
+                cmd.Parameters.AddWithValue("@aid", appointmentID)
+                cmd.Parameters.AddWithValue("@sid", item("ServiceID"))
+                cmd.ExecuteNonQuery()
             Next
         End Using
     End Sub
 
     Private Sub LoadCheckedServices(appointmentID As Integer)
-        ' Clear first
-        For i As Integer = 0 To clbServices.Items.Count - 1
-            clbServices.SetItemChecked(i, False)
-        Next
-
+        For i = 0 To clbServices.Items.Count - 1 : clbServices.SetItemChecked(i, False) : Next
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
-            Dim cmd As New SqlCommand(
-            "SELECT ServiceID FROM AppointmentServices WHERE AppointmentID=@aid", con)
+            Dim cmd As New SqlCommand("SELECT ServiceID FROM AppointmentServices WHERE AppointmentID=@aid", con)
             cmd.Parameters.AddWithValue("@aid", appointmentID)
-            Dim reader = cmd.ExecuteReader()
-
-            Dim serviceIDs As New List(Of Integer)
-            While reader.Read()
-                serviceIDs.Add(CInt(reader("ServiceID")))
-            End While
-            reader.Close()
-
-            ' Check the items
-            For i As Integer = 0 To clbServices.Items.Count - 1
-                Dim item As DataRowView = CType(clbServices.Items(i), DataRowView)
-                If serviceIDs.Contains(CInt(item("ServiceID"))) Then
-                    clbServices.SetItemChecked(i, True)
-                End If
-            Next
+            Using dr = cmd.ExecuteReader()
+                While dr.Read()
+                    Dim id = CInt(dr("ServiceID"))
+                    For i = 0 To clbServices.Items.Count - 1
+                        If CInt(CType(clbServices.Items(i), DataRowView)("ServiceID")) = id Then clbServices.SetItemChecked(i, True)
+                    Next
+                End While
+            End Using
         End Using
     End Sub
 
-    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
+    ' ==========================================
+    ' NAVIGATION
+    ' ==========================================
+    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click, Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
-    End Sub
-
-    Private Sub BTNPayment_Click(sender As Object, e As EventArgs) Handles BTNPayment.Click
-
-        If DGVAppointments.CurrentRow Is Nothing Then
-            MessageBox.Show("Please select an appointment first.")
-            Exit Sub
-        End If
-
-        Dim dayOfWeek As DayOfWeek = DtpDate.Value.DayOfWeek
-
-        Dim appointmentID As Integer = CInt(DGVAppointments.CurrentRow.Cells("AppointmentID").Value)
-        Dim patientID As Integer = CInt(DGVAppointments.CurrentRow.Cells("PatientID").Value)
-        Dim patientName As String = DGVAppointments.CurrentRow.Cells("Patient").Value.ToString()
-
-        Dim paymentForm As New AdminDBPayment With {
-            .SelectedAppointmentID = appointmentID,
-            .SelectedPatientID = patientID,
-            .SelectedPatientName = patientName
-        }
-        paymentForm.ShowDialog()
-
-
-    End Sub
-
-    Private Sub DtpDate_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
-
-        If isFormLoading Then Exit Sub
-        ' Always re-enable first
-        dtpStartTime.Enabled = True
-        DtpEndTime.Enabled = True
-        Dim selectedDate As DateTime = DtpDate.Value
-        Dim dayOfWeek As DayOfWeek = selectedDate.DayOfWeek
-
-        If dayOfWeek >= DayOfWeek.Monday AndAlso dayOfWeek <= DayOfWeek.Friday Then
-            ' Monday to Friday: 5:00 PM – 8:00 PM
-            dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
-            DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 20, 0, 0)
-
-        ElseIf dayOfWeek = DayOfWeek.Saturday Then
-            ' Saturday: 8:00 AM – 5:00 PM
-            dtpStartTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 8, 0, 0)
-            DtpEndTime.Value = New DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, 17, 0, 0)
-
-        Else
-            ' Sunday: disable scheduling
-            dtpStartTime.Enabled = False
-            DtpEndTime.Enabled = False
-        End If
     End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click

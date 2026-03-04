@@ -23,14 +23,12 @@ Partial Class AdminDBAppointments
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBAppointments))
-        Dim DataGridViewCellStyle5 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle21 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle22 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle23 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle24 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.CmbPatient = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.DtpDate = New Guna.UI2.WinForms.Guna2DateTimePicker()
-        Me.dtpStartTime = New Guna.UI2.WinForms.Guna2DateTimePicker()
-        Me.DtpEndTime = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.BTNAdd = New Guna.UI2.WinForms.Guna2Button()
         Me.BTNUpdate = New Guna.UI2.WinForms.Guna2Button()
         Me.BTNDelete = New Guna.UI2.WinForms.Guna2Button()
@@ -45,11 +43,14 @@ Partial Class AdminDBAppointments
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.DGVAppointments = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
-        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel4 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel5 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
+        Me.lblEndTime = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.cmbStartTime = New Guna.UI2.WinForms.Guna2ComboBox()
+        Me.lblTotalDuration = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2GroupBox1.SuspendLayout()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -85,7 +86,7 @@ Partial Class AdminDBAppointments
         Me.DtpDate.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.DtpDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.DtpDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpDate.Location = New System.Drawing.Point(432, 320)
+        Me.DtpDate.Location = New System.Drawing.Point(426, 192)
         Me.DtpDate.Margin = New System.Windows.Forms.Padding(4)
         Me.DtpDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.DtpDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -93,44 +94,6 @@ Partial Class AdminDBAppointments
         Me.DtpDate.Size = New System.Drawing.Size(365, 46)
         Me.DtpDate.TabIndex = 3
         Me.DtpDate.Value = New Date(2025, 12, 18, 11, 1, 1, 395)
-        '
-        'dtpStartTime
-        '
-        Me.dtpStartTime.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.dtpStartTime.BorderRadius = 10
-        Me.dtpStartTime.BorderThickness = 2
-        Me.dtpStartTime.Checked = True
-        Me.dtpStartTime.FillColor = System.Drawing.Color.White
-        Me.dtpStartTime.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.dtpStartTime.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpStartTime.Location = New System.Drawing.Point(432, 237)
-        Me.dtpStartTime.Margin = New System.Windows.Forms.Padding(4)
-        Me.dtpStartTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        Me.dtpStartTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        Me.dtpStartTime.Name = "dtpStartTime"
-        Me.dtpStartTime.Size = New System.Drawing.Size(365, 46)
-        Me.dtpStartTime.TabIndex = 4
-        Me.dtpStartTime.Value = New Date(2025, 12, 18, 11, 1, 1, 395)
-        '
-        'DtpEndTime
-        '
-        Me.DtpEndTime.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.DtpEndTime.BorderRadius = 10
-        Me.DtpEndTime.BorderThickness = 2
-        Me.DtpEndTime.Checked = True
-        Me.DtpEndTime.FillColor = System.Drawing.Color.White
-        Me.DtpEndTime.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DtpEndTime.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.DtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.DtpEndTime.Location = New System.Drawing.Point(827, 237)
-        Me.DtpEndTime.Margin = New System.Windows.Forms.Padding(4)
-        Me.DtpEndTime.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        Me.DtpEndTime.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        Me.DtpEndTime.Name = "DtpEndTime"
-        Me.DtpEndTime.Size = New System.Drawing.Size(365, 46)
-        Me.DtpEndTime.TabIndex = 5
-        Me.DtpEndTime.Value = New Date(2025, 12, 18, 11, 1, 1, 395)
         '
         'BTNAdd
         '
@@ -200,7 +163,7 @@ Partial Class AdminDBAppointments
         Me.cmbStatus.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.cmbStatus.ItemHeight = 30
-        Me.cmbStatus.Location = New System.Drawing.Point(827, 159)
+        Me.cmbStatus.Location = New System.Drawing.Point(1224, 387)
         Me.cmbStatus.Margin = New System.Windows.Forms.Padding(4)
         Me.cmbStatus.Name = "cmbStatus"
         Me.cmbStatus.Size = New System.Drawing.Size(365, 36)
@@ -274,7 +237,7 @@ Partial Class AdminDBAppointments
         Me.CmbDent.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.CmbDent.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CmbDent.ItemHeight = 30
-        Me.CmbDent.Location = New System.Drawing.Point(432, 159)
+        Me.CmbDent.Location = New System.Drawing.Point(426, 297)
         Me.CmbDent.Margin = New System.Windows.Forms.Padding(4)
         Me.CmbDent.Name = "CmbDent"
         Me.CmbDent.Size = New System.Drawing.Size(365, 36)
@@ -330,38 +293,38 @@ Partial Class AdminDBAppointments
         Me.DGVAppointments.AllowUserToDeleteRows = False
         Me.DGVAppointments.AllowUserToResizeColumns = False
         Me.DGVAppointments.AllowUserToResizeRows = False
-        DataGridViewCellStyle5.BackColor = System.Drawing.Color.White
-        Me.DGVAppointments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
+        DataGridViewCellStyle21.BackColor = System.Drawing.Color.White
+        Me.DGVAppointments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle21
         Me.DGVAppointments.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells
-        DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle6.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DGVAppointments.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle22.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle22.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle22.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle22.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle22.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle22.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DGVAppointments.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle22
         Me.DGVAppointments.ColumnHeadersHeight = 30
-        DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle7.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVAppointments.DefaultCellStyle = DataGridViewCellStyle7
+        DataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle23.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle23.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle23.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle23.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle23.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVAppointments.DefaultCellStyle = DataGridViewCellStyle23
         Me.DGVAppointments.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVAppointments.Location = New System.Drawing.Point(0, 465)
         Me.DGVAppointments.Name = "DGVAppointments"
         Me.DGVAppointments.ReadOnly = True
-        DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle8.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVAppointments.RowHeadersDefaultCellStyle = DataGridViewCellStyle8
+        DataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle24.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle24.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle24.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle24.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle24.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVAppointments.RowHeadersDefaultCellStyle = DataGridViewCellStyle24
         Me.DGVAppointments.RowHeadersVisible = False
         Me.DGVAppointments.RowHeadersWidth = 51
         Me.DGVAppointments.ScrollBars = System.Windows.Forms.ScrollBars.None
@@ -394,22 +357,11 @@ Partial Class AdminDBAppointments
         Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(432, 209)
+        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(426, 341)
         Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
         Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(88, 28)
         Me.Guna2HtmlLabel3.TabIndex = 50
         Me.Guna2HtmlLabel3.Text = "Start time:"
-        '
-        'Guna2HtmlLabel1
-        '
-        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
-        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(827, 209)
-        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
-        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(84, 28)
-        Me.Guna2HtmlLabel1.TabIndex = 51
-        Me.Guna2HtmlLabel1.Text = "End time:"
         '
         'Guna2HtmlLabel2
         '
@@ -427,7 +379,7 @@ Partial Class AdminDBAppointments
         Me.Guna2HtmlLabel4.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel4.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel4.Location = New System.Drawing.Point(432, 131)
+        Me.Guna2HtmlLabel4.Location = New System.Drawing.Point(426, 262)
         Me.Guna2HtmlLabel4.Name = "Guna2HtmlLabel4"
         Me.Guna2HtmlLabel4.Size = New System.Drawing.Size(160, 28)
         Me.Guna2HtmlLabel4.TabIndex = 53
@@ -438,7 +390,7 @@ Partial Class AdminDBAppointments
         Me.Guna2HtmlLabel5.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel5.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel5.Location = New System.Drawing.Point(827, 131)
+        Me.Guna2HtmlLabel5.Location = New System.Drawing.Point(1224, 352)
         Me.Guna2HtmlLabel5.Name = "Guna2HtmlLabel5"
         Me.Guna2HtmlLabel5.Size = New System.Drawing.Size(108, 28)
         Me.Guna2HtmlLabel5.TabIndex = 54
@@ -454,11 +406,63 @@ Partial Class AdminDBAppointments
         Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnClear.Location = New System.Drawing.Point(827, 317)
+        Me.btnClear.Location = New System.Drawing.Point(888, 146)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(174, 49)
         Me.btnClear.TabIndex = 83
         Me.btnClear.Text = "Clear"
+        '
+        'lblEndTime
+        '
+        Me.lblEndTime.BackColor = System.Drawing.Color.Transparent
+        Me.lblEndTime.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblEndTime.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblEndTime.Location = New System.Drawing.Point(840, 341)
+        Me.lblEndTime.Name = "lblEndTime"
+        Me.lblEndTime.Size = New System.Drawing.Size(91, 28)
+        Me.lblEndTime.TabIndex = 84
+        Me.lblEndTime.Text = "End Time:"
+        '
+        'cmbStartTime
+        '
+        Me.cmbStartTime.BackColor = System.Drawing.Color.Transparent
+        Me.cmbStartTime.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.cmbStartTime.BorderRadius = 10
+        Me.cmbStartTime.BorderThickness = 2
+        Me.cmbStartTime.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cmbStartTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbStartTime.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.cmbStartTime.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.cmbStartTime.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.cmbStartTime.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.cmbStartTime.ItemHeight = 30
+        Me.cmbStartTime.Location = New System.Drawing.Point(426, 376)
+        Me.cmbStartTime.Margin = New System.Windows.Forms.Padding(4)
+        Me.cmbStartTime.Name = "cmbStartTime"
+        Me.cmbStartTime.Size = New System.Drawing.Size(365, 36)
+        Me.cmbStartTime.TabIndex = 85
+        '
+        'lblTotalDuration
+        '
+        Me.lblTotalDuration.BackColor = System.Drawing.Color.Transparent
+        Me.lblTotalDuration.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTotalDuration.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblTotalDuration.Location = New System.Drawing.Point(840, 262)
+        Me.lblTotalDuration.Name = "lblTotalDuration"
+        Me.lblTotalDuration.Size = New System.Drawing.Size(130, 28)
+        Me.lblTotalDuration.TabIndex = 86
+        Me.lblTotalDuration.Text = "Total Duration:"
+        '
+        'Guna2HtmlLabel1
+        '
+        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
+        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(426, 157)
+        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
+        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(160, 28)
+        Me.Guna2HtmlLabel1.TabIndex = 87
+        Me.Guna2HtmlLabel1.Text = "Appointment Day:"
         '
         'AdminDBAppointments
         '
@@ -467,11 +471,14 @@ Partial Class AdminDBAppointments
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1625, 996)
         Me.ControlBox = False
+        Me.Controls.Add(Me.Guna2HtmlLabel1)
+        Me.Controls.Add(Me.lblTotalDuration)
+        Me.Controls.Add(Me.cmbStartTime)
+        Me.Controls.Add(Me.lblEndTime)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Guna2HtmlLabel5)
         Me.Controls.Add(Me.Guna2HtmlLabel4)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
-        Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Controls.Add(Me.DGVAppointments)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
@@ -483,8 +490,6 @@ Partial Class AdminDBAppointments
         Me.Controls.Add(Me.BTNDelete)
         Me.Controls.Add(Me.BTNUpdate)
         Me.Controls.Add(Me.BTNAdd)
-        Me.Controls.Add(Me.DtpEndTime)
-        Me.Controls.Add(Me.dtpStartTime)
         Me.Controls.Add(Me.DtpDate)
         Me.Controls.Add(Me.CmbPatient)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
@@ -504,8 +509,6 @@ Partial Class AdminDBAppointments
 
     Friend WithEvents CmbPatient As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents DtpDate As Guna.UI2.WinForms.Guna2DateTimePicker
-    Friend WithEvents dtpStartTime As Guna.UI2.WinForms.Guna2DateTimePicker
-    Friend WithEvents DtpEndTime As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents BTNAdd As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents BTNUpdate As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents BTNDelete As Guna.UI2.WinForms.Guna2Button
@@ -520,9 +523,12 @@ Partial Class AdminDBAppointments
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents DGVAppointments As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents Guna2HtmlLabel3 As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel4 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel5 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents lblEndTime As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents cmbStartTime As Guna.UI2.WinForms.Guna2ComboBox
+    Friend WithEvents lblTotalDuration As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class
