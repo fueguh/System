@@ -109,7 +109,7 @@ Public Class AdminDBAppointments
         End Using
 
         ' Hide internal IDs (AppointmentID and PatientID)
-        Dim hiddenColumns As String() = {"AppointmentID", "PatientID"}
+        Dim hiddenColumns As String() = {"AppointmentID", "PatientID", "DentistID"}
         For Each colName In hiddenColumns
             If DGVAppointments.Columns.Contains(colName) Then
                 DGVAppointments.Columns(colName).Visible = False
