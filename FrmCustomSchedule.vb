@@ -53,6 +53,7 @@ Public Class FrmCustomSchedule
 
         MessageBox.Show("Schedule updated successfully")
         LoadPartTimeDentists() ' refresh grid
+        ClearForm() ' reset form for next selection
     End Sub
 
     Private Sub SaveCustomSchedule(dentistID As Integer, schedules As List(Of (day As String, startTime As TimeSpan, endTime As TimeSpan)))
@@ -164,10 +165,31 @@ WHERE da.DentistID = u.UserID
             End Using
         End Using
     End Sub
+    Private Sub ClearForm()
+        ' 1. Reset Internal State
+        DentistID = 0
+        schedules.Clear()
 
+        ' 2. Reset CheckedListBox
+        For i As Integer = 0 To ClbDays.Items.Count - 1
+            ClbDays.SetItemChecked(i, False)
+        Next
+
+        ' 3. Reset TimePickers to default (e.g., 8:00 AM to 5:00 PM)
+        dtpStartTime.Value = DateTime.Today.AddHours(8)
+        dtpEndTime.Value = DateTime.Today.AddHours(17)
+
+        ' 4. UI Polish
+        DGVPartTimers.ClearSelection()
+    End Sub
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         'direct to dashboard role dashboard
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
+    End Sub
+
+    ' The Clear Button
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ClearForm()
     End Sub
 End Class
