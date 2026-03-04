@@ -74,46 +74,44 @@ Public Class DentistDashboard
     End Sub
 
     ' === Load Appointments into DataGridView ===
+    ' === Load Appointments into DataGridView ===
     Private Sub LoadAppointmentsGrid()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
+            ' FIX: Changed to LEFT JOIN and removed the 'Dentist' role filter 
+            ' so appointments handled by staff or admins aren't excluded.
             Dim query As String = "
-             SELECT
-    A.AppointmentID,
-    A.PatientID,
-    A.UserID,
-    P.FullName AS Patient,
-    D.FullName AS Dentist,
-    STRING_AGG(S.ServiceName, ', ') AS Services,
-    A.Date,
-    A.StartTime,
-    A.EndTime,
-    A.Status
-FROM Appointments A
-JOIN Patients P ON A.PatientID = P.PatientID
-JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-JOIN Services S ON ASV.ServiceID = S.ServiceID
-GROUP BY
-    A.AppointmentID,
-    A.PatientID,
-    A.UserID,
-    P.FullName,
-    D.FullName,
-    A.Date,
-    A.StartTime,
-    A.EndTime,
-    A.Status
-ORDER BY A.Date DESC;
-
-
-       "
+                SELECT 
+                    A.AppointmentID, 
+                    A.PatientID, 
+                    A.UserID, 
+                    P.FullName AS Patient, 
+                    D.FullName AS [Handled By], 
+                    STRING_AGG(S.ServiceName, ', ') AS Services, 
+                    A.Date, 
+                    A.StartTime, 
+                    A.EndTime, 
+                    A.Status
+                FROM Appointments A
+                LEFT JOIN Patients P ON A.PatientID = P.PatientID
+                LEFT JOIN Users D ON A.UserID = D.UserID
+                LEFT JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+                LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
+                GROUP BY 
+                    A.AppointmentID, A.PatientID, A.UserID, P.FullName, 
+                    D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
+                ORDER BY A.Date DESC;"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             dgvAppointments.DataSource = dt
+
+            ' HIDING THE IDs (They remain in the DataSource, just not the UI)
+            If dgvAppointments.Columns.Contains("AppointmentID") Then dgvAppointments.Columns("AppointmentID").Visible = False
+            If dgvAppointments.Columns.Contains("PatientID") Then dgvAppointments.Columns("PatientID").Visible = False
+            If dgvAppointments.Columns.Contains("UserID") Then dgvAppointments.Columns("UserID").Visible = False
         End Using
     End Sub
 
@@ -123,15 +121,18 @@ ORDER BY A.Date DESC;
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
-                SELECT PatientID, FullName, BirthDate, ContactNumber, Email,Address,DateRegistered
-                FROM Patients
-                where IsActive=1
-                ORDER BY PatientID
-            "
+                SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered 
+                FROM Patients 
+                WHERE IsActive=1 
+                ORDER BY FullName ASC"
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             dgvPatients.DataSource = dt
+
+            ' HIDING THE ID
+            If dgvPatients.Columns.Contains("PatientID") Then dgvPatients.Columns("PatientID").Visible = False
         End Using
     End Sub
 

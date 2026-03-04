@@ -71,24 +71,38 @@ Public Class TreatmentRecords
     Private Sub LoadRecords()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
+            ' Keeping all columns in the SQL so you can access them if needed
             Dim query As String = "
- SELECT PD.RecordID,
-        P.FullName AS Patient,
-        U.FullName AS Dentist,
-        PD.TreatmentNotes,
-        PD.Prescriptions,
-        PD.ProceduresDone,
-        PD.ImagePath,
-        PD.DateCreated
- FROM TreatmentRecords PD
-JOIN Patients P ON PD.PatientID = P.PatientID
-JOIN Users U ON PD.UserID = U.UserID
+                SELECT PD.RecordID,
+                       P.FullName AS Patient,
+                       U.FullName AS Dentist,
+                       PD.TreatmentNotes,
+                       PD.Prescriptions,
+                       PD.ProceduresDone,
+                       PD.ImagePath,
+                       PD.DateCreated
+                FROM TreatmentRecords PD
+                JOIN Patients P ON PD.PatientID = P.PatientID
+                JOIN Users U ON PD.UserID = U.UserID
+                ORDER BY PD.DateCreated DESC"
 
-"
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
+
+            ' Bind the data
             Guna2DataGridView1.DataSource = dt
+
+            ' --- HIDE COLUMNS FROM DISPLAY ---
+            ' We hide RecordID because users don't need to see primary keys
+            If Guna2DataGridView1.Columns.Contains("RecordID") Then
+                Guna2DataGridView1.Columns("RecordID").Visible = False
+            End If
+
+            ' We hide ImagePath because a long file path (C:\...) looks messy in a table
+            If Guna2DataGridView1.Columns.Contains("ImagePath") Then
+                Guna2DataGridView1.Columns("ImagePath").Visible = False
+            End If
         End Using
     End Sub
 
@@ -168,5 +182,33 @@ JOIN Users U ON PD.UserID = U.UserID
     Private Sub Guna2CirclePictureBox2_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox2.Click
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
+    End Sub
+    Private Sub Guna2DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles Guna2DataGridView1.CellClick
+        ' Ensure the user clicked a data row, not the header
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = Guna2DataGridView1.Rows(e.RowIndex)
+
+            ' Populate the TextBoxes directly from the row cells
+            TxtTreatmentNotes.Text = row.Cells("TreatmentNotes").Value.ToString()
+            TxtPrescriptions.Text = row.Cells("Prescriptions").Value.ToString()
+            TxtProceduresDone.Text = row.Cells("ProceduresDone").Value.ToString()
+
+            ' Populate ComboBoxes by matching the text shown in the grid
+            CmbPatient.Text = row.Cells("Patient").Value.ToString()
+            CmbDentist.Text = row.Cells("Dentist").Value.ToString()
+
+            ' Handle Image Path and Preview
+            imagePath = row.Cells("ImagePath").Value.ToString()
+            If Not String.IsNullOrEmpty(imagePath) AndAlso IO.File.Exists(imagePath) Then
+                Using tempImg As Image = Image.FromFile(imagePath)
+                    PicXrayPreview.Image = New Bitmap(tempImg)
+                End Using
+            Else
+                PicXrayPreview.Image = Nothing
+            End If
+        End If
+    End Sub
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+
     End Sub
 End Class
