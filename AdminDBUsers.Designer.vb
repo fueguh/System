@@ -94,7 +94,7 @@ Partial Class AdminDBUsers
         Me.CmbRole.Location = New System.Drawing.Point(53, 340)
         Me.CmbRole.Name = "CmbRole"
         Me.CmbRole.Size = New System.Drawing.Size(257, 36)
-        Me.CmbRole.TabIndex = 1
+        Me.CmbRole.TabIndex = 2
         '
         'txtSpecialization
         '
@@ -118,7 +118,7 @@ Partial Class AdminDBUsers
         Me.txtSpecialization.PlaceholderText = "Specialization"
         Me.txtSpecialization.SelectedText = ""
         Me.txtSpecialization.Size = New System.Drawing.Size(257, 50)
-        Me.txtSpecialization.TabIndex = 2
+        Me.txtSpecialization.TabIndex = 3
         '
         'TxtPhoneNumber
         '
@@ -143,7 +143,7 @@ Partial Class AdminDBUsers
         Me.TxtPhoneNumber.PlaceholderText = "Phone number"
         Me.TxtPhoneNumber.SelectedText = ""
         Me.TxtPhoneNumber.Size = New System.Drawing.Size(257, 50)
-        Me.TxtPhoneNumber.TabIndex = 4
+        Me.TxtPhoneNumber.TabIndex = 5
         '
         'TxtEmail
         '
@@ -167,7 +167,7 @@ Partial Class AdminDBUsers
         Me.TxtEmail.PlaceholderText = "Email"
         Me.TxtEmail.SelectedText = ""
         Me.TxtEmail.Size = New System.Drawing.Size(257, 50)
-        Me.TxtEmail.TabIndex = 5
+        Me.TxtEmail.TabIndex = 6
         '
         'txtPassword
         '
@@ -191,7 +191,7 @@ Partial Class AdminDBUsers
         Me.txtPassword.PlaceholderText = "Password"
         Me.txtPassword.SelectedText = ""
         Me.txtPassword.Size = New System.Drawing.Size(257, 50)
-        Me.txtPassword.TabIndex = 6
+        Me.txtPassword.TabIndex = 7
         Me.txtPassword.UseSystemPasswordChar = True
         '
         'txtConfirmPassword
@@ -216,7 +216,7 @@ Partial Class AdminDBUsers
         Me.txtConfirmPassword.PlaceholderText = "Confirm Password"
         Me.txtConfirmPassword.SelectedText = ""
         Me.txtConfirmPassword.Size = New System.Drawing.Size(257, 50)
-        Me.txtConfirmPassword.TabIndex = 7
+        Me.txtConfirmPassword.TabIndex = 8
         Me.txtConfirmPassword.UseSystemPasswordChar = True
         '
         'BtnAddUser
@@ -232,12 +232,12 @@ Partial Class AdminDBUsers
         Me.BtnAddUser.Location = New System.Drawing.Point(53, 622)
         Me.BtnAddUser.Name = "BtnAddUser"
         Me.BtnAddUser.Size = New System.Drawing.Size(136, 45)
-        Me.BtnAddUser.TabIndex = 8
+        Me.BtnAddUser.TabIndex = 9
         Me.BtnAddUser.Text = "Save"
         '
         'BtnUpdate
         '
-        Me.BtnUpdate.BorderRadius = 10
+        Me.BtnUpdate.BorderRadius = 12
         Me.BtnUpdate.DisabledState.BorderColor = System.Drawing.Color.DarkGray
         Me.BtnUpdate.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.BtnUpdate.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
@@ -248,12 +248,12 @@ Partial Class AdminDBUsers
         Me.BtnUpdate.Location = New System.Drawing.Point(270, 622)
         Me.BtnUpdate.Name = "BtnUpdate"
         Me.BtnUpdate.Size = New System.Drawing.Size(136, 45)
-        Me.BtnUpdate.TabIndex = 9
+        Me.BtnUpdate.TabIndex = 10
         Me.BtnUpdate.Text = "Update"
         '
         'BtnDelete
         '
-        Me.BtnDelete.BorderRadius = 10
+        Me.BtnDelete.BorderRadius = 13
         Me.BtnDelete.DisabledState.BorderColor = System.Drawing.Color.DarkGray
         Me.BtnDelete.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.BtnDelete.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
@@ -264,7 +264,7 @@ Partial Class AdminDBUsers
         Me.BtnDelete.Location = New System.Drawing.Point(481, 622)
         Me.BtnDelete.Name = "BtnDelete"
         Me.BtnDelete.Size = New System.Drawing.Size(136, 45)
-        Me.BtnDelete.TabIndex = 10
+        Me.BtnDelete.TabIndex = 12
         Me.BtnDelete.Text = "Delete"
         '
         'Guna2CirclePictureBox1
@@ -304,7 +304,7 @@ Partial Class AdminDBUsers
         Me.TxtUsername.PlaceholderText = "Username"
         Me.TxtUsername.SelectedText = ""
         Me.TxtUsername.Size = New System.Drawing.Size(257, 50)
-        Me.TxtUsername.TabIndex = 21
+        Me.TxtUsername.TabIndex = 1
         '
         'DGVUsers
         '
@@ -347,7 +347,7 @@ Partial Class AdminDBUsers
         Me.DGVUsers.RowHeadersVisible = False
         Me.DGVUsers.RowHeadersWidth = 51
         Me.DGVUsers.Size = New System.Drawing.Size(1110, 710)
-        Me.DGVUsers.TabIndex = 23
+        Me.DGVUsers.TabIndex = 10
         Me.DGVUsers.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVUsers.ThemeStyle.AlternatingRowsStyle.Font = Nothing
         Me.DGVUsers.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty
@@ -481,11 +481,11 @@ Partial Class AdminDBUsers
         Me.cmbAvailability.Location = New System.Drawing.Point(53, 504)
         Me.cmbAvailability.Name = "cmbAvailability"
         Me.cmbAvailability.Size = New System.Drawing.Size(257, 36)
-        Me.cmbAvailability.TabIndex = 3
+        Me.cmbAvailability.TabIndex = 4
         '
         'btnClear
         '
-        Me.btnClear.BorderRadius = 10
+        Me.btnClear.BorderRadius = 11
         Me.btnClear.DisabledState.BorderColor = System.Drawing.Color.DarkGray
         Me.btnClear.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
         Me.btnClear.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
@@ -496,7 +496,7 @@ Partial Class AdminDBUsers
         Me.btnClear.Location = New System.Drawing.Point(364, 504)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(136, 45)
-        Me.btnClear.TabIndex = 50
+        Me.btnClear.TabIndex = 11
         Me.btnClear.Text = "Clear"
         '
         'AdminDBUsers

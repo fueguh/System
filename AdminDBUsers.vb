@@ -459,8 +459,17 @@ Public Class AdminDBUsers
             TxtEmail.Focus()
             Return False
         End If
-        Dim localPart As String = email.Substring(0, email.Length - 10)
-        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
+
+        ' Validate presence and position of '@' then get local part safely
+        Dim atIndex As Integer = email.IndexOf("@"c)
+        If atIndex <= 0 Then
+            MessageBox.Show("Email is invalid. Missing or misplaced '@'.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        Dim localPart As String = email.Substring(0, atIndex)
+        If String.IsNullOrEmpty(localPart) OrElse Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
             MessageBox.Show("Email username must contain letters or digits only.")
             TxtEmail.Focus()
             Return False

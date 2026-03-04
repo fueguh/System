@@ -63,7 +63,7 @@ Public Class AdminDBAppointments
             ' ================= SERVICES (MULTI) =================
             Dim dtServices As New DataTable()
             Dim daServices As New SqlDataAdapter(
-                "SELECT ServiceID, ServiceName FROM Services ORDER BY ServiceName", con)
+                "SELECT ServiceID, ServiceName, Duration FROM Services ORDER BY ServiceName", con) 'See if the duration thing works
             daServices.Fill(dtServices)
 
             clbServices.DataSource = dtServices
@@ -611,4 +611,5 @@ Public Class AdminDBAppointments
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearForm()
     End Sub
+
 End Class
