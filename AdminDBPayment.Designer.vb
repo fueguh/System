@@ -35,7 +35,6 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.ButtonGenerateReceipt = New Guna.UI2.WinForms.Guna2Button()
         Me.ButtonPrintReceipt = New Guna.UI2.WinForms.Guna2Button()
-        Me.CmbPatient = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.clbServices = New System.Windows.Forms.CheckedListBox()
@@ -43,6 +42,7 @@ Partial Class AdminDBPayment
         Me.DGVServices = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.patient_name = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpServices.SuspendLayout()
         CType(Me.DGVServices, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -146,31 +146,12 @@ Partial Class AdminDBPayment
         Me.ButtonPrintReceipt.TabIndex = 25
         Me.ButtonPrintReceipt.Text = "Print"
         '
-        'CmbPatient
-        '
-        Me.CmbPatient.BackColor = System.Drawing.Color.Transparent
-        Me.CmbPatient.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.CmbPatient.BorderRadius = 10
-        Me.CmbPatient.BorderThickness = 2
-        Me.CmbPatient.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.CmbPatient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.CmbPatient.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.CmbPatient.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.CmbPatient.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.CmbPatient.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.CmbPatient.ItemHeight = 30
-        Me.CmbPatient.Location = New System.Drawing.Point(32, 185)
-        Me.CmbPatient.Margin = New System.Windows.Forms.Padding(4)
-        Me.CmbPatient.Name = "CmbPatient"
-        Me.CmbPatient.Size = New System.Drawing.Size(279, 36)
-        Me.CmbPatient.TabIndex = 27
-        '
         'Guna2HtmlLabel2
         '
         Me.Guna2HtmlLabel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel2.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel2.Location = New System.Drawing.Point(32, 150)
+        Me.Guna2HtmlLabel2.Location = New System.Drawing.Point(32, 194)
         Me.Guna2HtmlLabel2.Name = "Guna2HtmlLabel2"
         Me.Guna2HtmlLabel2.Size = New System.Drawing.Size(122, 28)
         Me.Guna2HtmlLabel2.TabIndex = 28
@@ -236,7 +217,7 @@ Partial Class AdminDBPayment
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.DGVServices.DefaultCellStyle = DataGridViewCellStyle3
         Me.DGVServices.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVServices.Location = New System.Drawing.Point(353, 100)
+        Me.DGVServices.Location = New System.Drawing.Point(391, 100)
         Me.DGVServices.Name = "DGVServices"
         Me.DGVServices.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -249,7 +230,7 @@ Partial Class AdminDBPayment
         Me.DGVServices.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.DGVServices.RowHeadersVisible = False
         Me.DGVServices.RowHeadersWidth = 51
-        Me.DGVServices.Size = New System.Drawing.Size(829, 722)
+        Me.DGVServices.Size = New System.Drawing.Size(791, 722)
         Me.DGVServices.TabIndex = 32
         Me.DGVServices.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVServices.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -299,6 +280,17 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel6.Text = "Payment"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'patient_name
+        '
+        Me.patient_name.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.patient_name.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.patient_name.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.patient_name.Location = New System.Drawing.Point(160, 194)
+        Me.patient_name.Name = "patient_name"
+        Me.patient_name.Size = New System.Drawing.Size(61, 28)
+        Me.patient_name.TabIndex = 50
+        Me.patient_name.Text = "Patient"
+        '
         'AdminDBPayment
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -306,11 +298,11 @@ Partial Class AdminDBPayment
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1179, 823)
         Me.ControlBox = False
+        Me.Controls.Add(Me.patient_name)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.DGVServices)
         Me.Controls.Add(Me.grpServices)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
-        Me.Controls.Add(Me.CmbPatient)
         Me.Controls.Add(Me.ButtonPrintReceipt)
         Me.Controls.Add(Me.ButtonGenerateReceipt)
         Me.Controls.Add(Me.Guna2HtmlLabel1)
@@ -337,7 +329,6 @@ Partial Class AdminDBPayment
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents ButtonGenerateReceipt As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents ButtonPrintReceipt As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents CmbPatient As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents clbServices As CheckedListBox
@@ -345,4 +336,5 @@ Partial Class AdminDBPayment
     Friend WithEvents DGVServices As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents patient_name As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class

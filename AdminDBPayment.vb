@@ -8,6 +8,7 @@ Public Class AdminDBPayment
     Public SelectedAppointmentID As Integer
     Public SelectedPatientID As Integer
     Public SelectedPatientName As String
+    Private SelectedDentistName As String = ""
 
     ' ================= FORM LOAD =================
     Private Sub AdminDBPayment_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -17,7 +18,22 @@ Public Class AdminDBPayment
             Me.Close()
             Exit Sub
         End If
+        ' --- PUT THE FETCH LOGIC HERE ---
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim cmd As New SqlCommand("
+                SELECT U.FullName 
+                FROM Appointments A 
+                INNER JOIN Users U ON A.UserID = U.UserID 
+                WHERE A.AppointmentID = @AID", con)
+            cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
 
+            Dim result = cmd.ExecuteScalar()
+            If result IsNot Nothing Then
+                SelectedDentistName = result.ToString()
+            End If
+        End Using
+        ' --------------------------------
         LoadPatients()
         LoadAllServices()              ' for ComboBox
         LoadAppointmentServices()      ' for DataGridView
@@ -30,22 +46,7 @@ Public Class AdminDBPayment
 
     ' ================= LOAD PATIENT =================
     Private Sub LoadPatients()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim da As New SqlDataAdapter(
-                "SELECT PatientID, FullName FROM Patients", con)
-
-            Dim dt As New DataTable()
-            da.Fill(dt)
-
-            CmbPatient.DataSource = dt
-            CmbPatient.DisplayMember = "FullName"
-            CmbPatient.ValueMember = "PatientID"
-            CmbPatient.SelectedValue = SelectedPatientID
-
-            SelectedPatientName = CmbPatient.Text
-        End Using
+        patient_name.Text = SelectedPatientName
     End Sub
 
     ' ================= LOAD ALL SERVICES (COMBOBOX) =================
@@ -53,7 +54,7 @@ Public Class AdminDBPayment
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            Dim da As New SqlDataAdapter("SELECT ServiceID, ServiceName, Price FROM Services", con)
+            Dim da As New SqlDataAdapter("SELECT ServiceID, ServiceName, Price FROM Services ORDER BY ServiceName ASC", con)
             Dim dt As New DataTable()
             da.Fill(dt)
 
@@ -88,11 +89,12 @@ Public Class AdminDBPayment
             Dim da As New SqlDataAdapter(cmd)
             Dim dt As New DataTable()
             da.Fill(dt)
-
             ' Show in DataGridView (read-only)
             DGVServices.DataSource = dt
             DGVServices.ReadOnly = True
-
+            If DGVServices.Columns.Contains("ServiceID") Then
+                DGVServices.Columns("ServiceID").Visible = False
+            End If
             ' Check services in CheckedListBox
             For i As Integer = 0 To clbServices.Items.Count - 1
                 Dim item As DataRowView = CType(clbServices.Items(i), DataRowView)
@@ -108,8 +110,6 @@ Public Class AdminDBPayment
         End Using
     End Sub
 
-
-
     ' ================= PAYMENT METHODS =================
     Private Sub LoadPaymentMethods()
         ComboBoxPaymentMethod.Items.Clear()
@@ -120,78 +120,96 @@ Public Class AdminDBPayment
     ' ================= TOTAL CALCULATION =================
     Private Sub CalculateTotal()
         Dim total As Decimal = 0
-        For Each row As DataGridViewRow In DGVServices.Rows
-            If Not row.IsNewRow AndAlso row.Cells("Price").Value IsNot DBNull.Value Then
-                total += Convert.ToDecimal(row.Cells("Price").Value)
-            End If
+
+        ' Loop through all checked items in the CheckedListBox
+        For Each item In clbServices.CheckedItems
+            Dim row As DataRowView = CType(item, DataRowView)
+            total += Convert.ToDecimal(row("Price"))
         Next
+
         TextBoxTotal.Text = total.ToString("F2")
     End Sub
 
 
     ' ================= SAVE RECEIPT =================
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-
-        If ComboBoxPaymentMethod.SelectedIndex = -1 Then
-            MessageBox.Show("Please select a payment method.")
-            Exit Sub
-        End If
-
-        Dim totalAmount As Decimal
-        If Not Decimal.TryParse(TextBoxTotal.Text, totalAmount) Then
-            MessageBox.Show("Invalid total amount.")
-            Exit Sub
-        End If
+        ' ... [Keep your existing validation] ...
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
+            Dim transaction = con.BeginTransaction() ' Use a transaction for safety
 
-            Dim cmd As New SqlCommand("
-                INSERT INTO Receipts
-                (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod)
-                VALUES
-                (@AppointmentID, @PatientID, @UserID, @TotalAmount, @PaymentMethod)", con)
+            Try
+                ' 1. Insert the Receipt
+                Dim cmdRec As New SqlCommand("
+                    INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod)
+                    VALUES (@AID, @PID, @UID, @Total, @Method)", con, transaction)
 
-            cmd.Parameters.AddWithValue("@AppointmentID", SelectedAppointmentID)
-            cmd.Parameters.AddWithValue("@PatientID", SelectedPatientID)
-            cmd.Parameters.AddWithValue("@UserID", SystemSession.LoggedInUserID)
-            cmd.Parameters.AddWithValue("@TotalAmount", totalAmount)
-            cmd.Parameters.AddWithValue("@PaymentMethod", ComboBoxPaymentMethod.Text)
+                cmdRec.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+                cmdRec.Parameters.AddWithValue("@PID", SelectedPatientID)
+                cmdRec.Parameters.AddWithValue("@UID", SystemSession.LoggedInUserID)
+                cmdRec.Parameters.AddWithValue("@Total", CDec(TextBoxTotal.Text))
+                cmdRec.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
+                cmdRec.ExecuteNonQuery()
 
-            cmd.ExecuteNonQuery()
+                ' 2. (Optional) Sync AppointmentServices 
+                ' If you want the DB to remember the services checked here:
+                Dim cmdDel As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID = @AID", con, transaction)
+                cmdDel.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+                cmdDel.ExecuteNonQuery()
+
+                For Each item In clbServices.CheckedItems
+                    Dim row As DataRowView = CType(item, DataRowView)
+                    Dim cmdIns As New SqlCommand("INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES (@AID, @SID)", con, transaction)
+                    cmdIns.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+                    cmdIns.Parameters.AddWithValue("@SID", row("ServiceID"))
+                    cmdIns.ExecuteNonQuery()
+                Next
+
+                transaction.Commit()
+                MessageBox.Show("Receipt generated and services synced!")
+                ' ==========================================
+                ' ADD THE AUDIT TRAIL LOG HERE
+                ' ==========================================
+                SystemSession.LogAudit("Generated Receipt for " & SelectedPatientName & " (Amt: " & TextBoxTotal.Text & ")",
+                               "Payment Management",
+                               SystemSession.LoggedInUserID,
+                               SystemSession.LoggedInFullName,
+                               SystemSession.LoggedInRole)
+                ' ==========================================
+            Catch ex As Exception
+                transaction.Rollback()
+                MessageBox.Show("Error: " & ex.Message)
+            End Try
         End Using
-
-        MessageBox.Show("Receipt saved successfully!")
     End Sub
 
     ' ================= PRINT RECEIPT =================
     Private Sub ButtonPrintReceipt_Click(sender As Object, e As EventArgs) Handles ButtonPrintReceipt.Click
 
         Dim pd As New PrintDocument()
+        ' --- FORCE THE PAPER SIZE ---
+        ' 300 is roughly 80mm width. 1000 is length (it will auto-cut if your printer supports it)
+        Dim ps As New PaperSize("Custom", 300, 1000)
+        pd.DefaultPageSettings.PaperSize = ps
+        ' ----------------------------
         Dim dlg As New PrintDialog()
 
         dlg.Document = pd
 
         ' Show printer selection dialog
         If dlg.ShowDialog() = DialogResult.OK Then
-
             Dim selectedPrinter As String = pd.PrinterSettings.PrinterName
 
             ' Check if printer exists
             If Not IsPrinterInstalled(selectedPrinter) Then
-                MessageBox.Show("The selected printer is not installed.",
-                            "Printer Not Found",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error)
+                MessageBox.Show("The selected printer is not installed.", "Printer Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Exit Sub
             End If
 
             ' Check if printer is online
             If Not IsPrinterOnline(selectedPrinter) Then
-                MessageBox.Show("The selected printer is offline or not available.",
-                            "Printer Offline",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning)
+                MessageBox.Show("The selected printer is offline.", "Printer Offline", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Exit Sub
             End If
 
@@ -199,15 +217,21 @@ Public Class AdminDBPayment
 
             Try
                 pd.Print()
+
+                ' ==========================================
+                ' ADD AUDIT LOG FOR PRINTING ACTION
+                ' ==========================================
+                SystemSession.LogAudit("Printed Receipt for " & SelectedPatientName & " (Appt ID: " & SelectedAppointmentID & ")",
+                                   "Payment Management",
+                                   SystemSession.LoggedInUserID,
+                                   SystemSession.LoggedInFullName,
+                                   SystemSession.LoggedInRole)
+                ' ==========================================
+
             Catch ex As Exception
-                MessageBox.Show("Printing failed: " & ex.Message,
-                            "Print Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error)
+                MessageBox.Show("Printing failed: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
-
         End If
-
     End Sub
 
 
@@ -247,69 +271,58 @@ Public Class AdminDBPayment
     ' RECEIPT LAYOUT
     ' =========================
     Private Sub PrintPageHandler(sender As Object, e As PrintPageEventArgs)
-
         Dim g As Graphics = e.Graphics
-        Dim y As Integer = 10
-
-        Dim fontTitle As New Font("Arial", 12, FontStyle.Bold)
+        Dim currentY As Integer = 10
         Dim fontBody As New Font("Consolas", 9)
-
         Dim leftMargin As Integer = 5
         Dim rightMargin As Integer = 180
 
-        g.DrawString("Dental Clinic Receipt", fontTitle, Brushes.Black, leftMargin, y)
-        y += 25
+        ' 1. Header & Info (Condensed to save space)
+        g.DrawString("Dental Clinic Receipt", New Font("Arial", 12, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        currentY += 25
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        g.DrawString("Dentist: " & SelectedDentistName, fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        g.DrawString("Date: " & DateTime.Now.ToString("yyyy-MM-dd HH:mm"), fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
 
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, y)
-        y += 15
-
-        g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, leftMargin, y)
-        y += 15
-
-        g.DrawString("Date: " & DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                 fontBody, Brushes.Black, leftMargin, y)
-        y += 15
-
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, y)
-        y += 15
-
-        For Each row As DataGridViewRow In DGVServices.Rows
-            If Not row.IsNewRow Then
-
-                Dim serviceName As String = row.Cells("ServiceName").Value.ToString()
-                Dim price As String = "₱" & row.Cells("Price").Value.ToString()
-
-                g.DrawString(serviceName, fontBody, Brushes.Black, leftMargin, y)
-
-                Dim priceSize = g.MeasureString(price, fontBody)
-                g.DrawString(price, fontBody, Brushes.Black,
-                         rightMargin - priceSize.Width, y)
-
-                y += 15
-            End If
+        ' 2. Services (Alphabetical loop)
+        For Each item In clbServices.CheckedItems
+            Dim row As DataRowView = CType(item, DataRowView)
+            Dim serviceName As String = row("ServiceName").ToString()
+            Dim price As String = "₱" & Convert.ToDecimal(row("Price")).ToString("F2")
+            g.DrawString(serviceName, fontBody, Brushes.Black, leftMargin, currentY)
+            Dim priceSize = g.MeasureString(price, fontBody)
+            g.DrawString(price, fontBody, Brushes.Black, rightMargin - priceSize.Width, currentY)
+            currentY += 15
         Next
 
-        y += 10
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, y)
-        y += 15
+        ' 3. Totals & Payment (FIXED CORRUPTION)
+        currentY += 10
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        Dim totalAmt = "₱" & TextBoxTotal.Text
+        g.DrawString("TOTAL:", New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        g.DrawString(totalAmt, fontBody, Brushes.Black, rightMargin - g.MeasureString(totalAmt, fontBody).Width, currentY)
 
-        Dim totalText As String = "TOTAL:"
-        Dim totalAmount As String = "₱" & TextBoxTotal.Text
+        currentY += 25
+        ' Combined into one line to stop overlapping "corrupted" text
+        g.DrawString("Method: " & ComboBoxPaymentMethod.Text, fontBody, Brushes.Black, leftMargin, currentY)
 
-        g.DrawString(totalText, fontBody, Brushes.Black, leftMargin, y)
+        ' 4. Footer
+        currentY += 25
+        g.DrawString("Thank you for visiting!", fontBody, Brushes.Black, leftMargin, currentY)
 
-        Dim totalSize = g.MeasureString(totalAmount, fontBody)
-        g.DrawString(totalAmount, fontBody, Brushes.Black,
-                 rightMargin - totalSize.Width, y)
-
-        y += 15
-
-        g.DrawString("Payment: " & ComboBoxPaymentMethod.Text,
-                 fontBody, Brushes.Black, leftMargin, y)
-
-        y += 20
-        g.DrawString("Thank you for visiting!", fontBody, Brushes.Black, leftMargin, y)
-
+        ' 5. THE "FORCE FEED" TAIL
+        ' We add a tiny dot 150 units down. This forces the printer to roll the 
+        ' paper past the cutter so the "Thank You" isn't trapped inside.
+        currentY += 45
+        g.DrawString(".", New Font("Arial", 1), Brushes.Black, leftMargin, currentY)
     End Sub
 
     ' ================= NAVIGATION =================
