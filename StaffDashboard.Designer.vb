@@ -24,13 +24,14 @@ Partial Class StaffDashboard
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(StaffDashboard))
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.LogoutPictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.PatientManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.AppointmentToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.BillingAssistance = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.ClinicSettingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2Panel4 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
@@ -44,9 +45,9 @@ Partial Class StaffDashboard
         Me.label5 = New System.Windows.Forms.Label()
         Me.lblTotalPatients = New System.Windows.Forms.Label()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2Panel4.SuspendLayout()
         Me.Guna2Panel3.SuspendLayout()
         Me.Guna2Panel2.SuspendLayout()
@@ -68,6 +69,16 @@ Partial Class StaffDashboard
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
         Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1672, 124)
         Me.Guna2CustomGradientPanel1.TabIndex = 31
+        '
+        'PictureBox1
+        '
+        Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
+        Me.PictureBox1.Location = New System.Drawing.Point(0, 1)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(327, 123)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.PictureBox1.TabIndex = 33
+        Me.PictureBox1.TabStop = False
         '
         'LogoutPictureBox1
         '
@@ -105,7 +116,7 @@ Partial Class StaffDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.BillingAssistance})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.BillingAssistance, Me.ClinicSettingToolStripMenuItem})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 124)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -135,15 +146,12 @@ Partial Class StaffDashboard
         Me.BillingAssistance.Size = New System.Drawing.Size(290, 41)
         Me.BillingAssistance.Text = "Billing Assistance"
         '
-        'PictureBox1
+        'ClinicSettingToolStripMenuItem
         '
-        Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
-        Me.PictureBox1.Location = New System.Drawing.Point(0, 1)
-        Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(327, 123)
-        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.PictureBox1.TabIndex = 33
-        Me.PictureBox1.TabStop = False
+        Me.ClinicSettingToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ClinicSettingToolStripMenuItem.Name = "ClinicSettingToolStripMenuItem"
+        Me.ClinicSettingToolStripMenuItem.Size = New System.Drawing.Size(226, 41)
+        Me.ClinicSettingToolStripMenuItem.Text = "Clinic Setting"
         '
         'Guna2Panel4
         '
@@ -291,10 +299,10 @@ Partial Class StaffDashboard
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "StaffDashboard"
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Guna2Panel4.ResumeLayout(False)
         Me.Guna2Panel3.ResumeLayout(False)
         Me.Guna2Panel2.ResumeLayout(False)
@@ -336,4 +344,5 @@ Partial Class StaffDashboard
     Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents label5 As Label
     Friend WithEvents lblTotalPatients As Label
+    Friend WithEvents ClinicSettingToolStripMenuItem As ToolStripMenuItem
 End Class

@@ -67,4 +67,9 @@ Public Class StaffDashboard
             End If
         End Using
     End Sub
+
+    Private Sub ClinicSettingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClinicSettingToolStripMenuItem.Click
+        ClinicSettings.Show()
+        Me.Hide()
+    End Sub
 End Class

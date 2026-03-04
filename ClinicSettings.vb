@@ -48,11 +48,6 @@ Public Class ClinicSettings
         MessageBox.Show("Clinic settings saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
-            Login.Show()
-            Me.Hide()
-            Exit Sub
-        End If
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
     End Sub
