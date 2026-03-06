@@ -423,7 +423,7 @@ Partial Class AdminDBUsers
         Me.txtSearchUsers.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.txtSearchUsers.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtSearchUsers.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSearchUsers.Location = New System.Drawing.Point(673, 114)
+        Me.txtSearchUsers.Location = New System.Drawing.Point(666, 114)
         Me.txtSearchUsers.Margin = New System.Windows.Forms.Padding(4)
         Me.txtSearchUsers.Name = "txtSearchUsers"
         Me.txtSearchUsers.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
