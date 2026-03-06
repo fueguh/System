@@ -1,5 +1,10 @@
 ﻿Public Class AdminDBPatientSelection
-    Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click, frmLabel.Click
-
+    Public Property SelectedPatientId As Integer
+    Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
+        ' Example: get ID from selected row
+        SelectedPatientId = CInt(DGVPatients.CurrentRow.Cells("PatientID").Value)
+        Me.DialogResult = DialogResult.OK
+        Me.Close()
     End Sub
+
 End Class

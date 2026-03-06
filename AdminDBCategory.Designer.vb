@@ -98,9 +98,9 @@ Partial Class AdminDBCategory
         Me.BtnDeleteCategory.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnDeleteCategory.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnDeleteCategory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnDeleteCategory.Location = New System.Drawing.Point(104, 422)
+        Me.BtnDeleteCategory.Location = New System.Drawing.Point(36, 478)
         Me.BtnDeleteCategory.Name = "BtnDeleteCategory"
-        Me.BtnDeleteCategory.Size = New System.Drawing.Size(123, 45)
+        Me.BtnDeleteCategory.Size = New System.Drawing.Size(257, 45)
         Me.BtnDeleteCategory.TabIndex = 55
         Me.BtnDeleteCategory.Text = "Delete"
         '
@@ -114,9 +114,9 @@ Partial Class AdminDBCategory
         Me.BtnUpdateCategory.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnUpdateCategory.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnUpdateCategory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnUpdateCategory.Location = New System.Drawing.Point(180, 347)
+        Me.BtnUpdateCategory.Location = New System.Drawing.Point(36, 415)
         Me.BtnUpdateCategory.Name = "BtnUpdateCategory"
-        Me.BtnUpdateCategory.Size = New System.Drawing.Size(123, 45)
+        Me.BtnUpdateCategory.Size = New System.Drawing.Size(257, 45)
         Me.BtnUpdateCategory.TabIndex = 54
         Me.BtnUpdateCategory.Text = "Update"
         '
@@ -132,7 +132,7 @@ Partial Class AdminDBCategory
         Me.BtnAddCategory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.BtnAddCategory.Location = New System.Drawing.Point(36, 347)
         Me.BtnAddCategory.Name = "BtnAddCategory"
-        Me.BtnAddCategory.Size = New System.Drawing.Size(123, 45)
+        Me.BtnAddCategory.Size = New System.Drawing.Size(257, 45)
         Me.BtnAddCategory.TabIndex = 53
         Me.BtnAddCategory.Text = "Add"
         '
@@ -281,9 +281,9 @@ Partial Class AdminDBCategory
         Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnClear.Location = New System.Drawing.Point(191, 684)
+        Me.btnClear.Location = New System.Drawing.Point(36, 684)
         Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(123, 45)
+        Me.btnClear.Size = New System.Drawing.Size(257, 45)
         Me.btnClear.TabIndex = 84
         Me.btnClear.Text = "Clear"
         '

@@ -175,7 +175,7 @@ Partial Class AdminDBPatients
         Me.BTNAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.BTNAdd.Location = New System.Drawing.Point(1178, 155)
         Me.BTNAdd.Name = "BTNAdd"
-        Me.BTNAdd.Size = New System.Drawing.Size(92, 50)
+        Me.BTNAdd.Size = New System.Drawing.Size(172, 50)
         Me.BTNAdd.TabIndex = 5
         Me.BTNAdd.Text = "Add"
         '
@@ -189,9 +189,9 @@ Partial Class AdminDBPatients
         Me.BTNUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNUpdate.Location = New System.Drawing.Point(1276, 155)
+        Me.BTNUpdate.Location = New System.Drawing.Point(1178, 220)
         Me.BTNUpdate.Name = "BTNUpdate"
-        Me.BTNUpdate.Size = New System.Drawing.Size(92, 50)
+        Me.BTNUpdate.Size = New System.Drawing.Size(172, 50)
         Me.BTNUpdate.TabIndex = 6
         Me.BTNUpdate.Text = "Update"
         '
@@ -205,9 +205,9 @@ Partial Class AdminDBPatients
         Me.BTNDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BTNDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNDelete.Location = New System.Drawing.Point(1221, 231)
+        Me.BTNDelete.Location = New System.Drawing.Point(1178, 288)
         Me.BTNDelete.Name = "BTNDelete"
-        Me.BTNDelete.Size = New System.Drawing.Size(92, 50)
+        Me.BTNDelete.Size = New System.Drawing.Size(172, 50)
         Me.BTNDelete.TabIndex = 7
         Me.BTNDelete.Text = "Delete"
         '
@@ -305,13 +305,13 @@ Partial Class AdminDBPatients
         Me.Guna2TextBox1.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.Guna2TextBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2TextBox1.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.Guna2TextBox1.Location = New System.Drawing.Point(13, 325)
+        Me.Guna2TextBox1.Location = New System.Drawing.Point(32, 325)
         Me.Guna2TextBox1.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox1.Name = "Guna2TextBox1"
         Me.Guna2TextBox1.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2TextBox1.PlaceholderText = "Search patient.."
         Me.Guna2TextBox1.SelectedText = ""
-        Me.Guna2TextBox1.Size = New System.Drawing.Size(530, 50)
+        Me.Guna2TextBox1.Size = New System.Drawing.Size(511, 50)
         Me.Guna2TextBox1.TabIndex = 34
         '
         'Guna2HtmlLabel3

@@ -308,4 +308,12 @@ Public Class AdminDBItemManagement
     Private Sub DateTimePickerExpiry_CheckedChanged(sender As Object, e As EventArgs) Handles DateTimePickerExpiry.CheckedChanged
 
     End Sub
+
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ClearInputs()
+        ' Optional: Reset the search box if you have one
+        TextBoxSearch.Clear()
+        ' Optional: Clear selection in the DataGridView
+        DgvItems.ClearSelection()
+    End Sub
 End Class

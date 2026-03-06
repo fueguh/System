@@ -95,9 +95,9 @@ Partial Class Login
         Me.btnLogin.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnLogin.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnLogin.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnLogin.Location = New System.Drawing.Point(153, 456)
+        Me.btnLogin.Location = New System.Drawing.Point(117, 456)
         Me.btnLogin.Name = "btnLogin"
-        Me.btnLogin.Size = New System.Drawing.Size(180, 45)
+        Me.btnLogin.Size = New System.Drawing.Size(257, 45)
         Me.btnLogin.TabIndex = 3
         Me.btnLogin.Text = "Login"
         '

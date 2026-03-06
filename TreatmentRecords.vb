@@ -144,7 +144,7 @@ Public Class TreatmentRecords
         End Try
     End Sub
 
-    Private Sub BtnAttachImage_Click(sender As Object, e As EventArgs) Handles BtnAttachImage.Click
+    Private Sub BtnAttachImage_Click(sender As Object, e As EventArgs) 
         Dim ofd As New OpenFileDialog With {
         .Filter = "Image Files|*.jpg;*.png;*.jpeg"
     }

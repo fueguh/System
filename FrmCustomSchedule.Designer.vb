@@ -57,9 +57,9 @@ Partial Class FrmCustomSchedule
         Me.btnUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.btnUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnUpdate.Location = New System.Drawing.Point(29, 612)
+        Me.btnUpdate.Location = New System.Drawing.Point(29, 630)
         Me.btnUpdate.Name = "btnUpdate"
-        Me.btnUpdate.Size = New System.Drawing.Size(141, 50)
+        Me.btnUpdate.Size = New System.Drawing.Size(365, 50)
         Me.btnUpdate.TabIndex = 29
         Me.btnUpdate.Text = "Update"
         '
@@ -228,9 +228,9 @@ Partial Class FrmCustomSchedule
         Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnClear.Location = New System.Drawing.Point(229, 613)
+        Me.btnClear.Location = New System.Drawing.Point(29, 283)
         Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(174, 49)
+        Me.btnClear.Size = New System.Drawing.Size(89, 49)
         Me.btnClear.TabIndex = 84
         Me.btnClear.Text = "Clear"
         '

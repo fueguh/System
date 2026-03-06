@@ -229,9 +229,9 @@ Partial Class AdminDBUsers
         Me.BtnAddUser.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnAddUser.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnAddUser.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnAddUser.Location = New System.Drawing.Point(53, 622)
+        Me.BtnAddUser.Location = New System.Drawing.Point(53, 597)
         Me.BtnAddUser.Name = "BtnAddUser"
-        Me.BtnAddUser.Size = New System.Drawing.Size(136, 45)
+        Me.BtnAddUser.Size = New System.Drawing.Size(257, 45)
         Me.BtnAddUser.TabIndex = 9
         Me.BtnAddUser.Text = "Save"
         '
@@ -245,9 +245,9 @@ Partial Class AdminDBUsers
         Me.BtnUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnUpdate.Location = New System.Drawing.Point(270, 622)
+        Me.BtnUpdate.Location = New System.Drawing.Point(53, 657)
         Me.BtnUpdate.Name = "BtnUpdate"
-        Me.BtnUpdate.Size = New System.Drawing.Size(136, 45)
+        Me.BtnUpdate.Size = New System.Drawing.Size(257, 45)
         Me.BtnUpdate.TabIndex = 10
         Me.BtnUpdate.Text = "Update"
         '
@@ -261,9 +261,9 @@ Partial Class AdminDBUsers
         Me.BtnDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BtnDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnDelete.Location = New System.Drawing.Point(481, 622)
+        Me.BtnDelete.Location = New System.Drawing.Point(53, 717)
         Me.BtnDelete.Name = "BtnDelete"
-        Me.BtnDelete.Size = New System.Drawing.Size(136, 45)
+        Me.BtnDelete.Size = New System.Drawing.Size(257, 45)
         Me.BtnDelete.TabIndex = 12
         Me.BtnDelete.Text = "Delete"
         '
@@ -495,7 +495,7 @@ Partial Class AdminDBUsers
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.btnClear.Location = New System.Drawing.Point(364, 504)
         Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(136, 45)
+        Me.btnClear.Size = New System.Drawing.Size(253, 45)
         Me.btnClear.TabIndex = 11
         Me.btnClear.Text = "Clear"
         '

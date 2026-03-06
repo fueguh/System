@@ -32,20 +32,16 @@ Partial Class TreatmentRecords
         Me.TxtTreatmentNotes = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtPrescriptions = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtProceduresDone = New Guna.UI2.WinForms.Guna2TextBox()
-        Me.BtnAttachImage = New Guna.UI2.WinForms.Guna2Button()
-        Me.PicXrayPreview = New Guna.UI2.WinForms.Guna2PictureBox()
         Me.BtnSaveRecord = New Guna.UI2.WinForms.Guna2Button()
         Me.Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
-        Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2DataGridView1 = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2CirclePictureBox2 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
-        CType(Me.PicXrayPreview, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Guna2DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -131,7 +127,7 @@ Partial Class TreatmentRecords
         Me.TxtPrescriptions.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.TxtPrescriptions.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.TxtPrescriptions.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TxtPrescriptions.Location = New System.Drawing.Point(343, 168)
+        Me.TxtPrescriptions.Location = New System.Drawing.Point(348, 291)
         Me.TxtPrescriptions.Margin = New System.Windows.Forms.Padding(6, 7, 6, 7)
         Me.TxtPrescriptions.Multiline = True
         Me.TxtPrescriptions.Name = "TxtPrescriptions"
@@ -156,7 +152,7 @@ Partial Class TreatmentRecords
         Me.TxtProceduresDone.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.TxtProceduresDone.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.TxtProceduresDone.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TxtProceduresDone.Location = New System.Drawing.Point(343, 282)
+        Me.TxtProceduresDone.Location = New System.Drawing.Point(348, 405)
         Me.TxtProceduresDone.Margin = New System.Windows.Forms.Padding(6, 7, 6, 7)
         Me.TxtProceduresDone.Multiline = True
         Me.TxtProceduresDone.Name = "TxtProceduresDone"
@@ -165,37 +161,6 @@ Partial Class TreatmentRecords
         Me.TxtProceduresDone.SelectedText = ""
         Me.TxtProceduresDone.Size = New System.Drawing.Size(287, 84)
         Me.TxtProceduresDone.TabIndex = 4
-        '
-        'BtnAttachImage
-        '
-        Me.BtnAttachImage.BorderColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.BtnAttachImage.BorderRadius = 10
-        Me.BtnAttachImage.DisabledState.BorderColor = System.Drawing.Color.DarkGray
-        Me.BtnAttachImage.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
-        Me.BtnAttachImage.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
-        Me.BtnAttachImage.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.BtnAttachImage.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.BtnAttachImage.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.BtnAttachImage.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnAttachImage.Location = New System.Drawing.Point(399, 704)
-        Me.BtnAttachImage.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
-        Me.BtnAttachImage.Name = "BtnAttachImage"
-        Me.BtnAttachImage.Size = New System.Drawing.Size(188, 50)
-        Me.BtnAttachImage.TabIndex = 5
-        Me.BtnAttachImage.Text = "Attach image"
-        '
-        'PicXrayPreview
-        '
-        Me.PicXrayPreview.BorderRadius = 2
-        Me.PicXrayPreview.FillColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        Me.PicXrayPreview.ImageRotate = 0!
-        Me.PicXrayPreview.Location = New System.Drawing.Point(343, 438)
-        Me.PicXrayPreview.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
-        Me.PicXrayPreview.Name = "PicXrayPreview"
-        Me.PicXrayPreview.Size = New System.Drawing.Size(301, 256)
-        Me.PicXrayPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        Me.PicXrayPreview.TabIndex = 6
-        Me.PicXrayPreview.TabStop = False
         '
         'BtnSaveRecord
         '
@@ -207,10 +172,10 @@ Partial Class TreatmentRecords
         Me.BtnSaveRecord.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnSaveRecord.Font = New System.Drawing.Font("Mongolian Baiti", 15.75!, System.Drawing.FontStyle.Bold)
         Me.BtnSaveRecord.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnSaveRecord.Location = New System.Drawing.Point(69, 525)
+        Me.BtnSaveRecord.Location = New System.Drawing.Point(25, 525)
         Me.BtnSaveRecord.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
         Me.BtnSaveRecord.Name = "BtnSaveRecord"
-        Me.BtnSaveRecord.Size = New System.Drawing.Size(161, 45)
+        Me.BtnSaveRecord.Size = New System.Drawing.Size(260, 45)
         Me.BtnSaveRecord.TabIndex = 7
         Me.BtnSaveRecord.Text = "Save"
         '
@@ -252,18 +217,6 @@ Partial Class TreatmentRecords
         Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(124, 28)
         Me.Guna2HtmlLabel1.TabIndex = 30
         Me.Guna2HtmlLabel1.Text = "Dentist Name:"
-        '
-        'Guna2HtmlLabel3
-        '
-        Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
-        Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(343, 390)
-        Me.Guna2HtmlLabel3.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
-        Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
-        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(133, 28)
-        Me.Guna2HtmlLabel3.TabIndex = 31
-        Me.Guna2HtmlLabel3.Text = "Image Preview:"
         '
         'btnBack
         '
@@ -413,13 +366,10 @@ Partial Class TreatmentRecords
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.Guna2DataGridView1)
-        Me.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
         Me.Controls.Add(Me.Guna2CirclePictureBox1)
         Me.Controls.Add(Me.BtnSaveRecord)
-        Me.Controls.Add(Me.PicXrayPreview)
-        Me.Controls.Add(Me.BtnAttachImage)
         Me.Controls.Add(Me.TxtProceduresDone)
         Me.Controls.Add(Me.TxtPrescriptions)
         Me.Controls.Add(Me.TxtTreatmentNotes)
@@ -431,7 +381,6 @@ Partial Class TreatmentRecords
         Me.Name = "TreatmentRecords"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "TreatmentRecords"
-        CType(Me.PicXrayPreview, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Guna2DataGridView1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -447,13 +396,10 @@ Partial Class TreatmentRecords
     Friend WithEvents TxtTreatmentNotes As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtPrescriptions As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtProceduresDone As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents BtnAttachImage As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents PicXrayPreview As Guna.UI2.WinForms.Guna2PictureBox
     Friend WithEvents BtnSaveRecord As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents Guna2HtmlLabel3 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents Guna2DataGridView1 As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel

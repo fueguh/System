@@ -45,6 +45,7 @@ Partial Class AdminDBItemManagement
         Me.Guna2HtmlLabel5 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
         CType(Me.DgvItems, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -84,9 +85,9 @@ Partial Class AdminDBItemManagement
         Me.BtnAdd.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnAdd.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BtnAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnAdd.Location = New System.Drawing.Point(1083, 152)
+        Me.BtnAdd.Location = New System.Drawing.Point(924, 131)
         Me.BtnAdd.Name = "BtnAdd"
-        Me.BtnAdd.Size = New System.Drawing.Size(158, 36)
+        Me.BtnAdd.Size = New System.Drawing.Size(278, 36)
         Me.BtnAdd.TabIndex = 6
         Me.BtnAdd.Text = "Add"
         '
@@ -163,9 +164,9 @@ Partial Class AdminDBItemManagement
         Me.BtnUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnUpdate.Location = New System.Drawing.Point(1281, 152)
+        Me.BtnUpdate.Location = New System.Drawing.Point(924, 187)
         Me.BtnUpdate.Name = "BtnUpdate"
-        Me.BtnUpdate.Size = New System.Drawing.Size(158, 36)
+        Me.BtnUpdate.Size = New System.Drawing.Size(278, 36)
         Me.BtnUpdate.TabIndex = 10
         Me.BtnUpdate.Text = "Update"
         '
@@ -179,9 +180,9 @@ Partial Class AdminDBItemManagement
         Me.BtnDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BtnDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnDelete.Location = New System.Drawing.Point(1185, 226)
+        Me.BtnDelete.Location = New System.Drawing.Point(924, 245)
         Me.BtnDelete.Name = "BtnDelete"
-        Me.BtnDelete.Size = New System.Drawing.Size(158, 36)
+        Me.BtnDelete.Size = New System.Drawing.Size(278, 36)
         Me.BtnDelete.TabIndex = 11
         Me.BtnDelete.Text = "Delete"
         '
@@ -312,7 +313,7 @@ Partial Class AdminDBItemManagement
         Me.ButtonSearch.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.ButtonSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ButtonSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ButtonSearch.Location = New System.Drawing.Point(1421, 326)
+        Me.ButtonSearch.Location = New System.Drawing.Point(768, 326)
         Me.ButtonSearch.Name = "ButtonSearch"
         Me.ButtonSearch.Size = New System.Drawing.Size(101, 50)
         Me.ButtonSearch.TabIndex = 39
@@ -400,12 +401,29 @@ Partial Class AdminDBItemManagement
         Me.Guna2HtmlLabel6.Text = "Item Management"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'btnClear
+        '
+        Me.btnClear.BorderRadius = 10
+        Me.btnClear.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.btnClear.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.btnClear.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.btnClear.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.btnClear.Location = New System.Drawing.Point(969, 326)
+        Me.btnClear.Name = "btnClear"
+        Me.btnClear.Size = New System.Drawing.Size(191, 50)
+        Me.btnClear.TabIndex = 47
+        Me.btnClear.Text = "Clear"
+        '
         'AdminDBItemManagement
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1544, 926)
+        Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.Guna2HtmlLabel5)
         Me.Controls.Add(Me.Guna2HtmlLabel3)
@@ -452,4 +470,5 @@ Partial Class AdminDBItemManagement
     Friend WithEvents Guna2HtmlLabel5 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
 End Class
