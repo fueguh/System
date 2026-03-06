@@ -166,7 +166,7 @@ Public Class AdminDBAppointments
         RefreshUI()
     End Sub
 
-    Private Sub BTNDelete_Click(sender As Object, e As EventArgs) Handles BTNDelete.Click
+    Private Sub BTNDelete_Click(sender As Object, e As EventArgs)
         If selectedAppointmentID = 0 Then Exit Sub
         If MessageBox.Show("Delete this appointment?", "Confirm", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
 
