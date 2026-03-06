@@ -28,7 +28,7 @@ Partial Class AdminDBPatientSelection
         Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Guna2GradientPanel1 = New Guna.UI2.WinForms.Guna2GradientPanel()
         Me.frmLabel = New System.Windows.Forms.Label()
-        Me.txtSearchPatients = New Guna.UI2.WinForms.Guna2TextBox()
+        Me.txtSearch = New Guna.UI2.WinForms.Guna2TextBox()
         Me.BTNAdd = New Guna.UI2.WinForms.Guna2Button()
         Me.BtnClear = New Guna.UI2.WinForms.Guna2Button()
         Me.DGVPatients = New Guna.UI2.WinForms.Guna2DataGridView()
@@ -59,30 +59,30 @@ Partial Class AdminDBPatientSelection
         Me.frmLabel.Text = "Patients Selection"
         Me.frmLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'txtSearchPatients
+        'txtSearch
         '
-        Me.txtSearchPatients.Anchor = CType((System.Windows.Forms.AnchorStyles.Left Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtSearchPatients.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtSearchPatients.BorderRadius = 10
-        Me.txtSearchPatients.BorderThickness = 2
-        Me.txtSearchPatients.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.txtSearchPatients.DefaultText = ""
-        Me.txtSearchPatients.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
-        Me.txtSearchPatients.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
-        Me.txtSearchPatients.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.txtSearchPatients.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.txtSearchPatients.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSearchPatients.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.txtSearchPatients.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtSearchPatients.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSearchPatients.Location = New System.Drawing.Point(13, 96)
-        Me.txtSearchPatients.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtSearchPatients.Name = "txtSearchPatients"
-        Me.txtSearchPatients.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtSearchPatients.PlaceholderText = "Search Patient"
-        Me.txtSearchPatients.SelectedText = ""
-        Me.txtSearchPatients.Size = New System.Drawing.Size(374, 50)
-        Me.txtSearchPatients.TabIndex = 51
+        Me.txtSearch.Anchor = CType((System.Windows.Forms.AnchorStyles.Left Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtSearch.BorderRadius = 10
+        Me.txtSearch.BorderThickness = 2
+        Me.txtSearch.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.txtSearch.DefaultText = ""
+        Me.txtSearch.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.txtSearch.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.txtSearch.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtSearch.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtSearch.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.txtSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtSearch.Location = New System.Drawing.Point(13, 96)
+        Me.txtSearch.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtSearch.Name = "txtSearch"
+        Me.txtSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtSearch.PlaceholderText = "Search Patient"
+        Me.txtSearch.SelectedText = ""
+        Me.txtSearch.Size = New System.Drawing.Size(374, 50)
+        Me.txtSearch.TabIndex = 51
         '
         'BTNAdd
         '
@@ -197,7 +197,7 @@ Partial Class AdminDBPatientSelection
         Me.Controls.Add(Me.DGVPatients)
         Me.Controls.Add(Me.BtnClear)
         Me.Controls.Add(Me.BTNAdd)
-        Me.Controls.Add(Me.txtSearchPatients)
+        Me.Controls.Add(Me.txtSearch)
         Me.Controls.Add(Me.Guna2GradientPanel1)
         Me.Cursor = System.Windows.Forms.Cursors.Default
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
@@ -214,7 +214,7 @@ Partial Class AdminDBPatientSelection
     End Sub
     Friend WithEvents Guna2GradientPanel1 As Guna.UI2.WinForms.Guna2GradientPanel
     Friend WithEvents frmLabel As Label
-    Friend WithEvents txtSearchPatients As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents txtSearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents BTNAdd As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents BtnClear As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents DGVPatients As Guna.UI2.WinForms.Guna2DataGridView

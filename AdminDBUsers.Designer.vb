@@ -29,7 +29,6 @@ Partial Class AdminDBUsers
         Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.TxtFullName = New Guna.UI2.WinForms.Guna2TextBox()
         Me.CmbRole = New Guna.UI2.WinForms.Guna2ComboBox()
-        Me.txtSpecialization = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtPhoneNumber = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtEmail = New Guna.UI2.WinForms.Guna2TextBox()
         Me.txtPassword = New Guna.UI2.WinForms.Guna2TextBox()
@@ -45,8 +44,6 @@ Partial Class AdminDBUsers
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.txtSearchUsers = New Guna.UI2.WinForms.Guna2TextBox()
         Me.chkShowPassword = New Guna.UI2.WinForms.Guna2RadioButton()
-        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
-        Me.cmbAvailability = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DGVUsers, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -90,35 +87,11 @@ Partial Class AdminDBUsers
         Me.CmbRole.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.CmbRole.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CmbRole.ItemHeight = 30
-        Me.CmbRole.Items.AddRange(New Object() {"Admin", "Dentist", "Staff"})
+        Me.CmbRole.Items.AddRange(New Object() {"Admin", "Staff"})
         Me.CmbRole.Location = New System.Drawing.Point(53, 340)
         Me.CmbRole.Name = "CmbRole"
         Me.CmbRole.Size = New System.Drawing.Size(257, 36)
         Me.CmbRole.TabIndex = 2
-        '
-        'txtSpecialization
-        '
-        Me.txtSpecialization.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtSpecialization.BorderRadius = 10
-        Me.txtSpecialization.BorderThickness = 2
-        Me.txtSpecialization.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.txtSpecialization.DefaultText = ""
-        Me.txtSpecialization.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
-        Me.txtSpecialization.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
-        Me.txtSpecialization.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.txtSpecialization.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.txtSpecialization.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSpecialization.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtSpecialization.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtSpecialization.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSpecialization.Location = New System.Drawing.Point(53, 407)
-        Me.txtSpecialization.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtSpecialization.Name = "txtSpecialization"
-        Me.txtSpecialization.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtSpecialization.PlaceholderText = "Specialization"
-        Me.txtSpecialization.SelectedText = ""
-        Me.txtSpecialization.Size = New System.Drawing.Size(257, 50)
-        Me.txtSpecialization.TabIndex = 3
         '
         'TxtPhoneNumber
         '
@@ -229,7 +202,7 @@ Partial Class AdminDBUsers
         Me.BtnAddUser.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnAddUser.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnAddUser.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnAddUser.Location = New System.Drawing.Point(53, 597)
+        Me.BtnAddUser.Location = New System.Drawing.Point(53, 412)
         Me.BtnAddUser.Name = "BtnAddUser"
         Me.BtnAddUser.Size = New System.Drawing.Size(257, 45)
         Me.BtnAddUser.TabIndex = 9
@@ -245,7 +218,7 @@ Partial Class AdminDBUsers
         Me.BtnUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.BtnUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnUpdate.Location = New System.Drawing.Point(53, 657)
+        Me.BtnUpdate.Location = New System.Drawing.Point(53, 472)
         Me.BtnUpdate.Name = "BtnUpdate"
         Me.BtnUpdate.Size = New System.Drawing.Size(257, 45)
         Me.BtnUpdate.TabIndex = 10
@@ -261,7 +234,7 @@ Partial Class AdminDBUsers
         Me.BtnDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BtnDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnDelete.Location = New System.Drawing.Point(53, 717)
+        Me.BtnDelete.Location = New System.Drawing.Point(53, 532)
         Me.BtnDelete.Name = "BtnDelete"
         Me.BtnDelete.Size = New System.Drawing.Size(257, 45)
         Me.BtnDelete.TabIndex = 12
@@ -452,37 +425,6 @@ Partial Class AdminDBUsers
         Me.chkShowPassword.UncheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.chkShowPassword.UncheckedState.InnerColor = System.Drawing.Color.Transparent
         '
-        'Guna2HtmlLabel1
-        '
-        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
-        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(53, 475)
-        Me.Guna2HtmlLabel1.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
-        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
-        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(110, 28)
-        Me.Guna2HtmlLabel1.TabIndex = 31
-        Me.Guna2HtmlLabel1.Text = "Availabillity:"
-        '
-        'cmbAvailability
-        '
-        Me.cmbAvailability.BackColor = System.Drawing.Color.Transparent
-        Me.cmbAvailability.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.cmbAvailability.BorderRadius = 10
-        Me.cmbAvailability.BorderThickness = 2
-        Me.cmbAvailability.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cmbAvailability.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbAvailability.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbAvailability.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbAvailability.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cmbAvailability.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.cmbAvailability.ItemHeight = 30
-        Me.cmbAvailability.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
-        Me.cmbAvailability.Location = New System.Drawing.Point(53, 504)
-        Me.cmbAvailability.Name = "cmbAvailability"
-        Me.cmbAvailability.Size = New System.Drawing.Size(257, 36)
-        Me.cmbAvailability.TabIndex = 4
-        '
         'btnClear
         '
         Me.btnClear.BorderRadius = 11
@@ -510,7 +452,6 @@ Partial Class AdminDBUsers
         Me.Controls.Add(Me.chkShowPassword)
         Me.Controls.Add(Me.txtSearchUsers)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
-        Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
         Me.Controls.Add(Me.DGVUsers)
         Me.Controls.Add(Me.TxtUsername)
@@ -521,8 +462,6 @@ Partial Class AdminDBUsers
         Me.Controls.Add(Me.txtPassword)
         Me.Controls.Add(Me.TxtEmail)
         Me.Controls.Add(Me.TxtPhoneNumber)
-        Me.Controls.Add(Me.cmbAvailability)
-        Me.Controls.Add(Me.txtSpecialization)
         Me.Controls.Add(Me.CmbRole)
         Me.Controls.Add(Me.TxtFullName)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
@@ -539,7 +478,6 @@ Partial Class AdminDBUsers
 
     Friend WithEvents TxtFullName As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents CmbRole As Guna.UI2.WinForms.Guna2ComboBox
-    Friend WithEvents txtSpecialization As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtPhoneNumber As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtEmail As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtPassword As Guna.UI2.WinForms.Guna2TextBox
@@ -555,7 +493,5 @@ Partial Class AdminDBUsers
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents txtSearchUsers As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents chkShowPassword As Guna.UI2.WinForms.Guna2RadioButton
-    Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents cmbAvailability As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
 End Class

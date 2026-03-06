@@ -1,214 +1,123 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class TreatmentRecords
+    ' Variables to hold passed-in context from the Appointment selection
+    Private PassedAppointmentID As Integer = 0
+    Private PassedPatientID As Integer = 0
+    Private PassedDentistID As Integer = 0
+    Public Sub New()
+        InitializeComponent()
+    End Sub
+
+    ' Constructor: Receive the names and IDs when the form opens
+    ' Usage: Dim frm As New TreatmentRecords(101, 5, "John Doe", 2, "Dr. Smith")
+    Public Sub New(ByVal apptID As Integer, ByVal patID As Integer, ByVal patName As String, ByVal denID As Integer, ByVal denName As String)
+        InitializeComponent()
+
+        Me.PassedAppointmentID = apptID
+        Me.PassedPatientID = patID
+        Me.PassedDentistID = denID
+
+        ' Set the Labels directly
+        lblPatientName.Text = patName
+        lblDentistName.Text = denName
+    End Sub
+
     Private Sub TreatmentRecords_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadRecords()
-        LoadPatients()
-        LoadDentists()
         ClearForm()
-
-        ' Apply role-based behavior using SystemSession directly
-        If SystemSession.LoggedInRole = "Dentist" Then
-            CmbDentist.SelectedValue = SystemSession.LoggedInUserID
-            CmbDentist.Enabled = False
-        End If
     End Sub
+
     Private Sub ClearForm()
         TxtTreatmentNotes.Clear()
         TxtPrescriptions.Clear()
         TxtProceduresDone.Clear()
-        PicXrayPreview.Image = Nothing
-        imagePath = ""
-
-        ' Reset combo boxes
-        CmbPatient.SelectedIndex = -1
-
-        ' Only reset dentist combo if NOT dentist
-        If SystemSession.LoggedInRole <> "Dentist" Then
-            CmbDentist.SelectedIndex = -1
-        End If
-    End Sub
-    Private Sub LoadComboBox(combo As ComboBox, query As String, display As String, value As String)
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim dt As New DataTable()
-            Using da As New SqlDataAdapter(query, con)
-                da.Fill(dt)
-            End Using
-            combo.DataSource = dt
-            combo.DisplayMember = display
-            combo.ValueMember = value
-            combo.SelectedIndex = -1
-        End Using
+        ' Labels remain set to the current patient/dentist from the constructor
     End Sub
 
-    Private Sub LoadPatients()
-        LoadComboBox(CmbPatient, "SELECT PatientID, FullName FROM Patients", "FullName", "PatientID")
-    End Sub
-
-    Private Sub LoadDentists()
-        Dim query As String = ""
-
-        If SystemSession.LoggedInRole = "Dentist" Then
-            query = $"SELECT UserID, FullName FROM Users WHERE UserID = {SystemSession.LoggedInUserID}"
-        ElseIf SystemSession.LoggedInRole = "Admin" Then
-            query = "SELECT UserID, FullName FROM Users WHERE Role='Dentist'"
-        Else
-            ' fallback empty
-            query = "SELECT TOP 0 UserID, FullName FROM Users"
-        End If
-
-        LoadComboBox(CmbDentist, query, "FullName", "UserID")
-
-        ' Lock or enable
-        If SystemSession.LoggedInRole = "Dentist" Then
-            CmbDentist.SelectedValue = SystemSession.LoggedInUserID
-            CmbDentist.Enabled = False
-        Else
-            CmbDentist.Enabled = True
-        End If
-    End Sub
     Private Sub LoadRecords()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            ' Keeping all columns in the SQL so you can access them if needed
+            ' Joining Appointments to show the visit date in the grid
             Dim query As String = "
-                SELECT PD.RecordID,
+                SELECT TR.RecordID,
                        P.FullName AS Patient,
                        U.FullName AS Dentist,
-                       PD.TreatmentNotes,
-                       PD.Prescriptions,
-                       PD.ProceduresDone,
-                       PD.ImagePath,
-                       PD.DateCreated
-                FROM TreatmentRecords PD
-                JOIN Patients P ON PD.PatientID = P.PatientID
-                JOIN Users U ON PD.UserID = U.UserID
-                ORDER BY PD.DateCreated DESC"
+                       TR.TreatmentNotes,
+                       TR.Prescriptions,
+                       TR.ProceduresDone,
+                       TR.DateCreated
+                FROM TreatmentRecords TR
+                JOIN Patients P ON TR.PatientID = P.PatientID
+                JOIN Users U ON TR.UserID = U.UserID
+                ORDER BY TR.DateCreated DESC"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
 
-            ' Bind the data
             Guna2DataGridView1.DataSource = dt
 
-            ' --- HIDE COLUMNS FROM DISPLAY ---
-            ' We hide RecordID because users don't need to see primary keys
+            ' Hide the Primary Key
             If Guna2DataGridView1.Columns.Contains("RecordID") Then
                 Guna2DataGridView1.Columns("RecordID").Visible = False
-            End If
-
-            ' We hide ImagePath because a long file path (C:\...) looks messy in a table
-            If Guna2DataGridView1.Columns.Contains("ImagePath") Then
-                Guna2DataGridView1.Columns("ImagePath").Visible = False
             End If
         End Using
     End Sub
 
-    Private imagePath As String = ""
-
     Private Sub BtnSaveRecord_Click(sender As Object, e As EventArgs) Handles BtnSaveRecord.Click
-        If CmbPatient.SelectedIndex = -1 Or CmbDentist.SelectedIndex = -1 Then
-            MessageBox.Show("Please select a patient and dentist.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        ' Validation: Ensure notes aren't empty
+        If String.IsNullOrWhiteSpace(TxtTreatmentNotes.Text) Then
+            MessageBox.Show("Please enter treatment notes.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
         Try
             Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                 con.Open()
-                Using cmd As New SqlCommand("
-                INSERT INTO TreatmentRecords 
-                    (PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, ImagePath)
-                VALUES (@patient, @dentist, @treatment, @prescriptions, @procedures, @image)
-            ", con)
-                    cmd.Parameters.AddWithValue("@patient", CInt(CmbPatient.SelectedValue))
-                    cmd.Parameters.AddWithValue("@dentist", CInt(CmbDentist.SelectedValue))
+
+                ' 1. Insert the Treatment Record using the IDs passed to the labels
+                Dim sqlInsert As String = "
+                    INSERT INTO TreatmentRecords 
+                        (AppointmentID, PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, DateCreated)
+                    VALUES (@apptID, @patient, @dentist, @treatment, @prescriptions, @procedures, GETDATE())"
+
+                Using cmd As New SqlCommand(sqlInsert, con)
+                    cmd.Parameters.AddWithValue("@apptID", PassedAppointmentID)
+                    cmd.Parameters.AddWithValue("@patient", PassedPatientID)
+                    cmd.Parameters.AddWithValue("@dentist", PassedDentistID)
                     cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text.Trim())
                     cmd.Parameters.AddWithValue("@prescriptions", TxtPrescriptions.Text.Trim())
                     cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text.Trim())
-                    cmd.Parameters.AddWithValue("@image", imagePath)
-
                     cmd.ExecuteNonQuery()
+                End Using
+
+                ' 2. Optional: Automatically mark the appointment as 'Completed'
+                Dim sqlUpdate As String = "UPDATE Appointments SET Status = 'Completed' WHERE AppointmentID = @apptID"
+                Using cmdUpdate As New SqlCommand(sqlUpdate, con)
+                    cmdUpdate.Parameters.AddWithValue("@apptID", PassedAppointmentID)
+                    cmdUpdate.ExecuteNonQuery()
                 End Using
             End Using
 
-            MessageBox.Show("Treatment record saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("Treatment record saved and appointment completed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+            ' Audit Log
             SystemSession.LogAudit("Insert Treatment Record", "TreatmentRecords", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
             LoadRecords()
             ClearForm()
-        Catch ex As SqlException
-            MessageBox.Show($"Database error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+
         Catch ex As Exception
-            MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
-    Private Sub BtnAttachImage_Click(sender As Object, e As EventArgs) 
-        Dim ofd As New OpenFileDialog With {
-        .Filter = "Image Files|*.jpg;*.png;*.jpeg"
-    }
-
-        If ofd.ShowDialog() = DialogResult.OK Then
-            ' Load image safely into memory (avoids locking the original file)
-            Dim tempImage As Image = Image.FromFile(ofd.FileName)
-            PicXrayPreview.Image = New Bitmap(tempImage)
-            tempImage.Dispose()  ' release file lock
-
-            ' Optional: save a copy to a dedicated folder for your app
-            Dim imagesFolder As String = "C:\DentalRecords\Images"
-            If Not IO.Directory.Exists(imagesFolder) Then IO.Directory.CreateDirectory(imagesFolder)
-
-            Dim destPath As String = IO.Path.Combine(imagesFolder, IO.Path.GetFileName(ofd.FileName))
-            IO.File.Copy(ofd.FileName, destPath, True)  ' overwrite if exists
-
-            ' Store the path of the copied image for saving in the database
-            imagePath = destPath
-        End If
-    End Sub
-
-    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+    Private Sub btnBack1_Click(sender As Object, e As EventArgs) Handles btnBack1.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
-    Private Sub Guna2HtmlLabel1_Click(sender As Object, e As EventArgs) Handles Guna2HtmlLabel1.Click
+    ' Rest of your navigation logic (Back buttons, etc.)
 
-    End Sub
 
-    Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
-        SystemSession.NavigateToDashboard(Me)
-    End Sub
-
-    Private Sub Guna2CirclePictureBox2_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox2.Click
-        SystemSession.NavigateToDashboard(Me)
-        Me.Hide()
-    End Sub
-    Private Sub Guna2DataGridView1_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles Guna2DataGridView1.CellClick
-        ' Ensure the user clicked a data row, not the header
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = Guna2DataGridView1.Rows(e.RowIndex)
-
-            ' Populate the TextBoxes directly from the row cells
-            TxtTreatmentNotes.Text = row.Cells("TreatmentNotes").Value.ToString()
-            TxtPrescriptions.Text = row.Cells("Prescriptions").Value.ToString()
-            TxtProceduresDone.Text = row.Cells("ProceduresDone").Value.ToString()
-
-            ' Populate ComboBoxes by matching the text shown in the grid
-            CmbPatient.Text = row.Cells("Patient").Value.ToString()
-            CmbDentist.Text = row.Cells("Dentist").Value.ToString()
-
-            ' Handle Image Path and Preview
-            imagePath = row.Cells("ImagePath").Value.ToString()
-            If Not String.IsNullOrEmpty(imagePath) AndAlso IO.File.Exists(imagePath) Then
-                Using tempImg As Image = Image.FromFile(imagePath)
-                    PicXrayPreview.Image = New Bitmap(tempImg)
-                End Using
-            Else
-                PicXrayPreview.Image = Nothing
-            End If
-        End If
-    End Sub
-    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        ClearForm()
-    End Sub
 End Class

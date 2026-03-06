@@ -198,7 +198,7 @@ Partial Class AdminDBDentists
         Me.cmbAvailability.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmbAvailability.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.cmbAvailability.ItemHeight = 30
-        Me.cmbAvailability.Items.AddRange(New Object() {"Full-time", "Part-time", "Morning Shift", "Afternoon Shift"})
+        Me.cmbAvailability.Items.AddRange(New Object() {"Full-time", "Part-time"})
         Me.cmbAvailability.Location = New System.Drawing.Point(677, 257)
         Me.cmbAvailability.Name = "cmbAvailability"
         Me.cmbAvailability.Size = New System.Drawing.Size(280, 36)
@@ -388,13 +388,13 @@ Partial Class AdminDBDentists
         Me.Guna2TextBox1.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.Guna2TextBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2TextBox1.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.Guna2TextBox1.Location = New System.Drawing.Point(13, 342)
+        Me.Guna2TextBox1.Location = New System.Drawing.Point(52, 342)
         Me.Guna2TextBox1.Margin = New System.Windows.Forms.Padding(4)
         Me.Guna2TextBox1.Name = "Guna2TextBox1"
         Me.Guna2TextBox1.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2TextBox1.PlaceholderText = "Search dentist.."
         Me.Guna2TextBox1.SelectedText = ""
-        Me.Guna2TextBox1.Size = New System.Drawing.Size(653, 50)
+        Me.Guna2TextBox1.Size = New System.Drawing.Size(614, 50)
         Me.Guna2TextBox1.TabIndex = 52
         '
         'chkShowPassword

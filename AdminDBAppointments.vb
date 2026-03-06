@@ -8,6 +8,7 @@ Public Class AdminDBAppointments
     Private selectedAppointmentID As Integer = 0
     Private isFormLoading As Boolean = True
     Private selectedEndTime As TimeSpan
+    Private selectedPatientID As Integer = 0
 
     Public Shared Dashboard As AdminDashboard
     Public Shared AdminDBReports As AdminDBReports
@@ -16,16 +17,23 @@ Public Class AdminDBAppointments
     ' INITIALIZATION & LOAD
     ' ==========================================
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' 1. Initialize variables
+        isFormLoading = True
+
+        ' 2. Setup the UI
         SetupStatusCombo()
         LoadComboBoxes()
-        LoadAvailableDentistsForDay()
-        LoadAppointments()
-        ClearForm()
+
+        ' 3. FORCE the initial load by temporarily bypassing the flag
         isFormLoading = False
+        LoadAvailableDentistsForDay()
+        isFormLoading = True ' Turn it back on for the rest of the setup
+
+        LoadAppointments()
+        ClearForm() ' This will eventually set isFormLoading to False
+
         BTNAdd.Enabled = True
         BTNUpdate.Enabled = False
-        BTNDelete.Enabled = False
-        BTNPayment.Enabled = False
 
         If Not (SystemSession.LoggedInRole = "Admin" OrElse SystemSession.LoggedInRole = "Staff") Then
             SystemSession.SetFormReadOnly(Me)
@@ -49,11 +57,6 @@ Public Class AdminDBAppointments
             Dim dtPatients As New DataTable()
             Dim daPatients As New SqlDataAdapter("SELECT PatientID, FullName FROM Patients WHERE IsActive = 1 ORDER BY FullName", con)
             daPatients.Fill(dtPatients)
-            CmbPatient.DataSource = dtPatients
-            CmbPatient.DisplayMember = "FullName"
-            CmbPatient.ValueMember = "PatientID"
-            CmbPatient.SelectedIndex = -1
-
             ' Services
             Dim dtServices As New DataTable()
             Dim daServices As New SqlDataAdapter("SELECT ServiceID, ServiceName, Duration FROM Services ORDER BY ServiceName", con)
@@ -107,7 +110,7 @@ Public Class AdminDBAppointments
             Dim query As String = "INSERT INTO Appointments (PatientID, UserID, Date, StartTime, EndTime, Status) 
                                    OUTPUT INSERTED.AppointmentID VALUES (@p, @d, @date, @start, @end, @status)"
             Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
+            cmd.Parameters.AddWithValue("@p", selectedPatientID)
             cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
             cmd.Parameters.AddWithValue("@start", startTimeValue)
@@ -130,20 +133,25 @@ Public Class AdminDBAppointments
 
     Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
         If selectedAppointmentID = 0 Then Exit Sub
+
+        ' 1. ValidateFields checks: Nulls, Status, and if EndTime > ShiftEnd
         If Not ValidateFields() Then Exit Sub
+
         Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
 
+        ' 2. IsConflict checks if OTHER appointments overlap with this new time range
         If IsConflict(selectedAppointmentID, startTimeValue, selectedEndTime) Then
-            MessageBox.Show("Conflict detected.")
+            MessageBox.Show("This dentist has another appointment that overlaps with this time range. Please choose a different slot.")
             Exit Sub
         End If
 
+        ' 3. Proceed with Database Update
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "UPDATE Appointments SET PatientID=@p, UserID=@d, Date=@date, StartTime=@start, EndTime=@end, Status=@status WHERE AppointmentID=@id"
             Dim cmd As New SqlCommand(query, con)
             cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
-            cmd.Parameters.AddWithValue("@p", CInt(CmbPatient.SelectedValue))
+            cmd.Parameters.AddWithValue("@p", selectedPatientID)
             cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
             cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
             cmd.Parameters.AddWithValue("@start", startTimeValue)
@@ -152,14 +160,17 @@ Public Class AdminDBAppointments
 
             Try
                 cmd.ExecuteNonQuery()
+                ' Clear and Refresh Services
                 Using cmdDel As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con)
                     cmdDel.Parameters.AddWithValue("@aid", selectedAppointmentID)
                     cmdDel.ExecuteNonQuery()
                 End Using
                 SaveAppointmentServices(selectedAppointmentID)
-                MessageBox.Show("Updated Appointment.")
+
+                MessageBox.Show("Appointment updated successfully.")
+                SystemSession.LogAudit("Updated Appointment ID: " & selectedAppointmentID, "Appointment Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
             Catch ex As Exception
-                MessageBox.Show("Error: " & ex.Message)
+                MessageBox.Show("Error updating appointment: " & ex.Message)
             End Try
         End Using
 
@@ -201,7 +212,7 @@ Public Class AdminDBAppointments
         If isFormLoading Then Return False
 
         ' 1. Check basic dropdowns
-        If CmbPatient.SelectedValue Is Nothing Or CmbDent.SelectedValue Is Nothing Or cmbStartTime.SelectedIndex = -1 Then
+        If selectedPatientID = 0 Or CmbDent.SelectedValue Is Nothing Or cmbStartTime.SelectedIndex = -1 Then
             MessageBox.Show("Please fill all required fields.")
             Return False
         End If
@@ -290,33 +301,74 @@ Public Class AdminDBAppointments
     ' ==========================================
     Private Sub DGVAppointments_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVAppointments.CellClick
         If e.RowIndex < 0 Then Exit Sub
-        isFormLoading = True
-        Dim row = DGVAppointments.Rows(e.RowIndex)
-        selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
 
-        CmbDent.SelectedValue = row.Cells("DentistID").Value
-        CmbPatient.SelectedValue = row.Cells("PatientID").Value
-        DtpDate.Value = CDate(row.Cells("Date").Value)
+        Try
+            ' 1. Lock the form events
+            isFormLoading = True
 
-        isFormLoading = False
-        PopulateTimeSlots()
+            Dim row = DGVAppointments.Rows(e.RowIndex)
+            selectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
+            selectedPatientID = CInt(row.Cells("PatientID").Value)
+            Dim dentistIDFromGrid = CInt(row.Cells("DentistID").Value)
 
-        ' Set Time
-        Dim savedStart = TimeSpan.Parse(row.Cells("StartTime").Value.ToString())
-        Dim formatted = DateTime.Today.Add(savedStart).ToString("hh:mm tt")
-        If Not cmbStartTime.Items.Contains(formatted) Then cmbStartTime.Items.Add(formatted)
-        cmbStartTime.SelectedItem = formatted
+            ' 2. Set the Date (This triggers ValueChanged, but isFormLoading is True, so it's safe)
+            DtpDate.Value = CDate(row.Cells("Date").Value)
 
-        ' Set Status
-        cmbStatus.Text = row.Cells("Status").Value.ToString()
-        LoadCheckedServices(selectedAppointmentID)
+            ' 3. Load the Dentists for that specific day, forcing the current one to stay in the list
+            ' Temporarily flip the flag to allow the DB query to run inside the sub
+            isFormLoading = False
+            LoadAvailableDentistsForDay(dentistIDFromGrid)
+            isFormLoading = True
 
-        ' UI State
-        BTNAdd.Enabled = False
-        BTNDelete.Enabled = True
-        BTNUpdate.Enabled = (cmbStatus.Text <> "Cancelled")
+            ' 4. Select the Dentist in the UI
+            CmbDent.SelectedValue = dentistIDFromGrid
+            lblPatient.Text = row.Cells("Patient").Value.ToString()
+
+            ' 5. NOW generate the full list of time slots
+            ' We flip the flag again so PopulateTimeSlots doesn't "Exit Sub"
+            isFormLoading = False
+            PopulateTimeSlots()
+            isFormLoading = True
+
+            ' 6. Handle the specific saved Start Time
+            Dim savedStart = TimeSpan.Parse(row.Cells("StartTime").Value.ToString())
+            Dim formatted = DateTime.Today.Add(savedStart).ToString("hh:mm tt")
+
+            ' If the saved time isn't in the list (e.g., it's a conflict or weird offset), add it
+            If Not cmbStartTime.Items.Contains(formatted) Then
+                cmbStartTime.Items.Add(formatted)
+            End If
+
+            cmbStartTime.SelectedItem = formatted
+            cmbStatus.Text = row.Cells("Status").Value.ToString()
+
+            LoadCheckedServices(selectedAppointmentID)
+
+            BTNAdd.Enabled = False
+            BTNUpdate.Enabled = (cmbStatus.Text <> "Cancelled")
+
+        Catch ex As Exception
+            MessageBox.Show("Error loading selection: " & ex.Message)
+        Finally
+            ' 7. Always unlock the form
+            isFormLoading = False
+        End Try
     End Sub
 
+    Private Sub btnChoosePatient_Click(sender As Object, e As EventArgs) Handles btnChoosePatient.Click
+        ' Create an instance of the selection form
+        Using selectionForm As New AdminDBPatientSelection()
+            ' Show the form and wait for the user to click "Add" (DialogResult.OK)
+            If selectionForm.ShowDialog() = DialogResult.OK Then
+                ' Get the ID from the property you defined
+                selectedPatientID = selectionForm.SelectedPatientId
+
+                ' IMPORTANT: You also need the Name for the label! 
+                ' Update this line to pull the name from the selection form's grid
+                lblPatient.Text = selectionForm.SelectedPatientName
+            End If
+        End Using
+    End Sub
     Private Sub DtpDate_ValueChanged(sender As Object, e As EventArgs) Handles DtpDate.ValueChanged
         LoadAvailableDentistsForDay()
         PopulateTimeSlots()
@@ -346,28 +398,52 @@ Public Class AdminDBAppointments
 
     Private Sub ClearForm()
         If isFormLoading Then Exit Sub
-        CmbPatient.SelectedIndex = -1
+
+        ' Lock events to prevent cascading triggers during clear
+        isFormLoading = True
+
+        lblPatient.Text = ""
+
+        ' 1. Clear Dentist Selection properly
+        CmbDent.DataSource = Nothing ' Optional: if you want it totally empty
+        ' OR if keeping the list, do this:
         CmbDent.SelectedIndex = -1
+        CmbDent.SelectedValue = DBNull.Value
+
         cmbStatus.SelectedIndex = -1
         cmbStartTime.Items.Clear()
-        DtpDate.Value = Date.Today
-        For i = 0 To clbServices.Items.Count - 1 : clbServices.SetItemChecked(i, False) : Next
-        clbServices.ClearSelected()
+        cmbStartTime.Text = "" ' Ensure text area is empty
 
+        DtpDate.Value = Date.Today
+
+        ' 2. Uncheck services
+        For i As Integer = 0 To clbServices.Items.Count - 1
+            clbServices.SetItemChecked(i, False)
+        Next
+
+        clbServices.ClearSelected()
+        DGVAppointments.ClearSelection()
+
+        ' 3. Reset Variables
         selectedAppointmentID = 0
+        selectedPatientID = 0
         selectedEndTime = TimeSpan.Zero
         lblEndTime.Text = "End Time: --:--"
         lblTotalDuration.Text = "Total Duration: 0 mins"
 
         BTNAdd.Enabled = True
         BTNUpdate.Enabled = False
-        BTNDelete.Enabled = False
-        BTNPayment.Enabled = False
+
+        ' Unlock events
+        isFormLoading = False
     End Sub
 
     Private Sub PopulateTimeSlots()
-        ' 1. Guard against loading states and null selections
-        If isFormLoading OrElse CmbDent.SelectedValue Is Nothing Then Exit Sub
+        ' If the form is clearing/loading, or nothing is actually selected, STOP.
+        If isFormLoading OrElse CmbDent.SelectedIndex = -1 OrElse CmbDent.SelectedValue Is Nothing Then
+            cmbStartTime.Items.Clear()
+            Exit Sub
+        End If
 
         ' Handle the common DataRowView binding delay in WinForms
         Dim dentistID As Integer
@@ -409,44 +485,54 @@ Public Class AdminDBAppointments
                     cmdPart.Parameters.AddWithValue("@day", dayName)
                     Using dr = cmdPart.ExecuteReader()
                         If dr.Read() Then
-                            ' DirectCast is required for SQL TIME -> TimeSpan
                             startLoop = DirectCast(dr("StartTime"), TimeSpan)
                             endLoop = DirectCast(dr("EndTime"), TimeSpan)
                             foundSchedule = True
                         End If
                     End Using
                 End Using
-            Else
-                ' Handle Fixed Shifts
-                Select Case shiftType.ToLower()
-                    Case "morning shift" : startLoop = New TimeSpan(8, 0, 0) : endLoop = New TimeSpan(12, 0, 0) : foundSchedule = True
-                    Case "afternoon shift" : startLoop = New TimeSpan(13, 0, 0) : endLoop = New TimeSpan(19, 0, 0) : foundSchedule = True
-                    Case "full-time" : startLoop = New TimeSpan(8, 0, 0) : endLoop = New TimeSpan(19, 0, 0) : foundSchedule = True
-                End Select
+            ElseIf shiftType.Equals("Full-time", StringComparison.OrdinalIgnoreCase) Then
+                ' Fixed Shift for Full-time
+                startLoop = New TimeSpan(8, 0, 0)
+                endLoop = New TimeSpan(19, 0, 0)
+                foundSchedule = True
             End If
 
             ' 4. Exit if no schedule found for this specific day
             If Not foundSchedule Then Exit Sub
 
-            ' 5. Get Booked Slots
-            Dim booked As New List(Of TimeSpan)
-            Dim bQuery = "SELECT StartTime FROM Appointments WHERE UserID = @d AND Date = @date AND Status <> 'Cancelled' AND AppointmentID <> @id"
+            ' 5. Get Booked Time Ranges (Start and End)
+            Dim busySlots As New List(Of (StartTime As TimeSpan, EndTime As TimeSpan))
+            Dim bQuery = "SELECT StartTime, EndTime FROM Appointments WHERE UserID = @d AND Date = @date AND Status NOT IN ('Cancelled') AND AppointmentID <> @id"
+
             Using bCmd As New SqlCommand(bQuery, con)
                 bCmd.Parameters.AddWithValue("@d", dentistID)
                 bCmd.Parameters.AddWithValue("@date", selectedDate)
                 bCmd.Parameters.AddWithValue("@id", selectedAppointmentID)
                 Using dr = bCmd.ExecuteReader()
-                    While dr.Read() : booked.Add(DirectCast(dr("StartTime"), TimeSpan)) : End While
+                    While dr.Read()
+                        busySlots.Add((DirectCast(dr("StartTime"), TimeSpan), DirectCast(dr("EndTime"), TimeSpan)))
+                    End While
                 End Using
             End Using
 
             ' 6. Populate ComboBox (30-min intervals)
             Dim current = startLoop
             While current < endLoop
-                ' Exclude Lunch for Full-Time (12pm-1pm)
+                ' Check if current time is during Lunch
                 Dim isLunch = (shiftType.ToLower() = "full-time" AndAlso current >= New TimeSpan(12, 0, 0) AndAlso current < New TimeSpan(13, 0, 0))
 
-                If Not isLunch AndAlso Not booked.Contains(current) Then
+                ' Check if current time falls WITHIN any booked appointment range
+                Dim isBooked As Boolean = False
+                For Each slot In busySlots
+                    ' If the current time is between a start and end time, it's taken
+                    If current >= slot.StartTime AndAlso current < slot.EndTime Then
+                        isBooked = True
+                        Exit For
+                    End If
+                Next
+
+                If Not isLunch AndAlso Not isBooked Then
                     cmbStartTime.Items.Add(DateTime.Today.Add(current).ToString("hh:mm tt"))
                 End If
                 current = current.Add(TimeSpan.FromMinutes(30))
@@ -454,21 +540,31 @@ Public Class AdminDBAppointments
         End Using
     End Sub
 
-    Private Sub LoadAvailableDentistsForDay()
-        If isFormLoading Then Exit Sub
-        Dim dayName = DtpDate.Value.DayOfWeek.ToString()
+    ' Add (Optional currentDentistID As Integer = 0) to the signature
+    Private Sub LoadAvailableDentistsForDay(Optional currentDentistID As Integer = 0)
+        ' We bypass the flag ONLY for this load to ensure the first open works
+        ' But we still need to know the day
+        Dim dayName = DtpDate.Value.ToString("dddd")
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            Dim query = "SELECT DISTINCT U.UserID, U.FullName FROM Users U LEFT JOIN DentistAvailability DA ON U.UserID = DA.DentistID 
-                         WHERE U.Role = 'Dentist' AND ((U.Availability IN ('Morning Shift', 'Afternoon Shift', 'Full-time') AND @day != 'Sunday') 
-                         OR (U.Availability = 'Part-time' AND DA.DayOfWeek = @day)) ORDER BY U.FullName"
+            con.Open()
+            ' The query now uses the parameter passed into the SUB, not the Grid directly
+            Dim query = "SELECT DISTINCT U.UserID, U.FullName FROM Users U " &
+                    "LEFT JOIN DentistAvailability DA ON U.UserID = DA.DentistID " &
+                    "WHERE U.Role = 'Dentist' AND (" &
+                    "   (U.Availability = 'Full-time' AND @day != 'Sunday') OR " &
+                    "   (U.Availability = 'Part-time' AND DA.DayOfWeek = @day) OR " &
+                    "   (U.UserID = @currentID)" &
+                    ") ORDER BY U.FullName"
 
             Dim dt As New DataTable()
             Dim da As New SqlDataAdapter(query, con)
             da.SelectCommand.Parameters.AddWithValue("@day", dayName)
+            da.SelectCommand.Parameters.AddWithValue("@currentID", currentDentistID)
+
             da.Fill(dt)
 
-            ' Fixed Handler Name: Match the actual sub name
+            ' Temporarily stop events so we don't trigger time-slot logic while binding
             RemoveHandler CmbDent.SelectedIndexChanged, AddressOf CmbDent_SelectedIndexChanged
             CmbDent.DataSource = dt
             CmbDent.DisplayMember = "FullName"
@@ -480,27 +576,30 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub CalculateTotalDuration()
-        selectedEndTime = TimeSpan.Zero
-        If cmbStartTime.SelectedIndex = -1 Then
-            lblTotalDuration.Text = "Total Duration: 0 mins"
-            lblEndTime.Text = "End Time: --:--"
-            Exit Sub
-        End If
-
-        Dim startTime As DateTime
-        If Not DateTime.TryParse(cmbStartTime.Text, startTime) Then Exit Sub
-
+        ' 1. Always calculate total minutes regardless of Start Time
         Dim totalMinutes As Integer = 0
         For Each item As DataRowView In clbServices.CheckedItems
             totalMinutes += CInt(item("Duration"))
         Next
 
-        If totalMinutes > 0 Then
-            Dim endTime = startTime.AddMinutes(totalMinutes)
-            selectedEndTime = endTime.TimeOfDay
+        ' 2. Update the Duration Label immediately
+        lblTotalDuration.Text = "Total Duration: " & totalMinutes & " mins"
 
-            lblTotalDuration.Text = "Total Duration: " & totalMinutes & " mins"
-            lblEndTime.Text = "End Time: " & endTime.ToString("hh:mm tt")
+        ' 3. Handle End Time calculation ONLY if Start Time is selected
+        Dim startTime As DateTime
+        If cmbStartTime.SelectedIndex <> -1 AndAlso DateTime.TryParse(cmbStartTime.Text, startTime) Then
+            If totalMinutes > 0 Then
+                Dim endTime = startTime.AddMinutes(totalMinutes)
+                selectedEndTime = endTime.TimeOfDay
+                lblEndTime.Text = "End Time: " & endTime.ToString("hh:mm tt")
+            Else
+                selectedEndTime = TimeSpan.Zero
+                lblEndTime.Text = "End Time: --:--"
+            End If
+        Else
+            ' Reset End Time if no start time is picked
+            selectedEndTime = TimeSpan.Zero
+            lblEndTime.Text = "End Time: --:--"
         End If
     End Sub
 

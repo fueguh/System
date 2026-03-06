@@ -96,7 +96,9 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
-        TreatmentRecords.Show()
+        ' Create the form as an "object" first to avoid the reference error
+        Dim frm As New TreatmentRecords()
+        frm.Show()
         Me.Hide()
     End Sub
 
