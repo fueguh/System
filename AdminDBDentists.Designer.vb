@@ -44,6 +44,8 @@ Partial Class AdminDBDentists
         Me.Guna2TextBox1 = New Guna.UI2.WinForms.Guna2TextBox()
         Me.chkShowPassword = New Guna.UI2.WinForms.Guna2RadioButton()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
+        Me.BtnDelete = New Guna.UI2.WinForms.Guna2Button()
+        Me.BtnUpdate = New Guna.UI2.WinForms.Guna2Button()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.DGVDentists, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -266,7 +268,7 @@ Partial Class AdminDBDentists
         Me.BTNAdd.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.BTNAdd.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BTNAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNAdd.Location = New System.Drawing.Point(1289, 243)
+        Me.BTNAdd.Location = New System.Drawing.Point(1289, 214)
         Me.BTNAdd.Name = "BTNAdd"
         Me.BTNAdd.Size = New System.Drawing.Size(266, 50)
         Me.BTNAdd.TabIndex = 27
@@ -433,6 +435,38 @@ Partial Class AdminDBDentists
         Me.btnClear.TabIndex = 54
         Me.btnClear.Text = "Clear"
         '
+        'BtnDelete
+        '
+        Me.BtnDelete.BorderRadius = 13
+        Me.BtnDelete.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.BtnDelete.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.BtnDelete.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.BtnDelete.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.BtnDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.BtnDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        Me.BtnDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.BtnDelete.Location = New System.Drawing.Point(1289, 339)
+        Me.BtnDelete.Name = "BtnDelete"
+        Me.BtnDelete.Size = New System.Drawing.Size(257, 45)
+        Me.BtnDelete.TabIndex = 56
+        Me.BtnDelete.Text = "Delete"
+        '
+        'BtnUpdate
+        '
+        Me.BtnUpdate.BorderRadius = 12
+        Me.BtnUpdate.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.BtnUpdate.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.BtnUpdate.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.BtnUpdate.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.BtnUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.BtnUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.BtnUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.BtnUpdate.Location = New System.Drawing.Point(1289, 279)
+        Me.BtnUpdate.Name = "BtnUpdate"
+        Me.BtnUpdate.Size = New System.Drawing.Size(257, 45)
+        Me.BtnUpdate.TabIndex = 55
+        Me.BtnUpdate.Text = "Update"
+        '
         'AdminDBDentists
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -440,6 +474,8 @@ Partial Class AdminDBDentists
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1579, 883)
         Me.ControlBox = False
+        Me.Controls.Add(Me.BtnDelete)
+        Me.Controls.Add(Me.BtnUpdate)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.chkShowPassword)
         Me.Controls.Add(Me.Guna2TextBox1)
@@ -484,4 +520,6 @@ Partial Class AdminDBDentists
     Friend WithEvents Guna2TextBox1 As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents chkShowPassword As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents BtnDelete As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents BtnUpdate As Guna.UI2.WinForms.Guna2Button
 End Class

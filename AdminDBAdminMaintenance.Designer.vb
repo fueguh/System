@@ -41,6 +41,8 @@ Partial Class AdminDBAdminMaintenance
         Me.Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
+        Me.BtnDelete = New Guna.UI2.WinForms.Guna2Button()
+        Me.BtnUpdate = New Guna.UI2.WinForms.Guna2Button()
         CType(Me.DataGridViewAdmins, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -166,9 +168,9 @@ Partial Class AdminDBAdminMaintenance
         Me.BTNAdd.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.BTNAdd.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BTNAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNAdd.Location = New System.Drawing.Point(1374, 342)
+        Me.BTNAdd.Location = New System.Drawing.Point(1229, 156)
         Me.BTNAdd.Name = "BTNAdd"
-        Me.BTNAdd.Size = New System.Drawing.Size(180, 50)
+        Me.BTNAdd.Size = New System.Drawing.Size(256, 50)
         Me.BTNAdd.TabIndex = 75
         Me.BTNAdd.Text = "Save Admin"
         '
@@ -376,12 +378,46 @@ Partial Class AdminDBAdminMaintenance
         Me.btnClear.TabIndex = 81
         Me.btnClear.Text = "Clear"
         '
+        'BtnDelete
+        '
+        Me.BtnDelete.BorderRadius = 13
+        Me.BtnDelete.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.BtnDelete.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.BtnDelete.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.BtnDelete.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.BtnDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.BtnDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        Me.BtnDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.BtnDelete.Location = New System.Drawing.Point(1228, 289)
+        Me.BtnDelete.Name = "BtnDelete"
+        Me.BtnDelete.Size = New System.Drawing.Size(257, 45)
+        Me.BtnDelete.TabIndex = 83
+        Me.BtnDelete.Text = "Delete"
+        '
+        'BtnUpdate
+        '
+        Me.BtnUpdate.BorderRadius = 12
+        Me.BtnUpdate.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.BtnUpdate.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.BtnUpdate.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.BtnUpdate.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.BtnUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.BtnUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.BtnUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.BtnUpdate.Location = New System.Drawing.Point(1228, 229)
+        Me.BtnUpdate.Name = "BtnUpdate"
+        Me.BtnUpdate.Size = New System.Drawing.Size(257, 45)
+        Me.BtnUpdate.TabIndex = 82
+        Me.BtnUpdate.Text = "Update"
+        '
         'AdminDBAdminMaintenance
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1579, 883)
+        Me.Controls.Add(Me.BtnDelete)
+        Me.Controls.Add(Me.BtnUpdate)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.chkShowPassword)
@@ -420,4 +456,6 @@ Partial Class AdminDBAdminMaintenance
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents BtnDelete As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents BtnUpdate As Guna.UI2.WinForms.Guna2Button
 End Class
