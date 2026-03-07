@@ -146,7 +146,7 @@ Public Class AdminDBPayment
 
     Private Sub LoadPaymentMethods()
         ComboBoxPaymentMethod.Items.Clear()
-        ComboBoxPaymentMethod.Items.AddRange(New String() {"Cash", "Card"})
+        ComboBoxPaymentMethod.Items.AddRange(New String() {"Cash", "Gcash"})
     End Sub
 
     ' ================= SAVE & PRINT =================
