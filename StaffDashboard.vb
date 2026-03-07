@@ -44,7 +44,8 @@ Public Class StaffDashboard
         Me.Hide()
     End Sub
     Private Sub BillingAssistance_Click(sender As Object, e As EventArgs) Handles BillingAssistance.Click
-        MessageBox.Show("Billing and Payments screen not yet implemented.", "Coming Soon")
+        AdminDBPayment.Show()
+        Me.Hide()
     End Sub
 
     Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
@@ -66,5 +67,10 @@ Public Class StaffDashboard
                 lblClinicName.Text = "Dental Clinic Management System"
             End If
         End Using
+    End Sub
+
+    Private Sub ClinicSettingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClinicSettingToolStripMenuItem.Click
+        ClinicSettings.Show()
+        Me.Hide()
     End Sub
 End Class

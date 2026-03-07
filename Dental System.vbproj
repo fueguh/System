@@ -100,6 +100,12 @@
     <Compile Include="AdminDBItemManagement.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AdminDBPatientSelection.Designer.vb">
+      <DependentUpon>AdminDBPatientSelection.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBPatientSelection.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBPayment.Designer.vb">
       <DependentUpon>AdminDBPayment.vb</DependentUpon>
     </Compile>
@@ -130,10 +136,22 @@
     <Compile Include="AdminDBSupplier.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="BillingForm.Designer.vb">
+      <DependentUpon>BillingForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="BillingForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ClinicSettings.Designer.vb">
       <DependentUpon>ClinicSettings.vb</DependentUpon>
     </Compile>
     <Compile Include="ClinicSettings.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AvailableAppointments.Designer.vb">
+      <DependentUpon>AvailableAppointments.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AvailableAppointments.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmCustomSchedule.Designer.vb">
@@ -269,6 +287,9 @@
     <EmbeddedResource Include="AdminDBPatients.resx">
       <DependentUpon>AdminDBPatients.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBPatientSelection.resx">
+      <DependentUpon>AdminDBPatientSelection.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBPayment.resx">
       <DependentUpon>AdminDBPayment.vb</DependentUpon>
     </EmbeddedResource>
@@ -295,6 +316,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdminAuditTrailForm.resx">
       <DependentUpon>AdminAuditTrailForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AvailableAppointments.resx">
+      <DependentUpon>AvailableAppointments.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BillingForm.resx">
+      <DependentUpon>BillingForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ClinicSettings.resx">
       <DependentUpon>ClinicSettings.vb</DependentUpon>

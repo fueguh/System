@@ -23,9 +23,12 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
+            ' Added WHERE clause to filter out Dentists
             Dim query As String = "
-            SELECT UserID, FullName, Username, Role, Specialization, Availability, PhoneNumber, Email, Password, DateCreated
+            SELECT UserID, FullName, Username, Role, PhoneNumber, Email, DateCreated
             FROM Users
+            WHERE Role <> 'Dentist'
+            ORDER BY FullName
         "
 
             Dim da As New SqlDataAdapter(query, con)
@@ -42,9 +45,9 @@ Public Class AdminDBUsers
         TxtUsername.Text = ""
         txtPassword.Text = ""
         txtConfirmPassword.Text = ""
-        txtSpecialization.Text = ""
+
         CmbRole.SelectedIndex = -1
-        cmbAvailability.SelectedIndex = -1
+
         TxtPhoneNumber.Text = ""
         TxtEmail.Text = ""
         txtSearchUsers.Text = ""
@@ -102,8 +105,8 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, Specialization, Availability)
-            VALUES (@fullname, @username, @password, @role, @phone, @email, @specialization, @availability);
+            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email )
+            VALUES (@fullname, @username, @password, @role, @phone, @email );
             SELECT SCOPE_IDENTITY()"
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
@@ -112,8 +115,8 @@ Public Class AdminDBUsers
                 cmd.Parameters.AddWithValue("@role", roleToAssign)
                 cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
                 cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
-                cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
-                cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
+
+
                 ' Get the inserted UserID
                 newUserID = Convert.ToInt32(cmd.ExecuteScalar())
             End Using
@@ -166,8 +169,7 @@ Public Class AdminDBUsers
             SET FullName=@fullname,
                 Username=@username,
                 Role=@role,
-                Specialization=@specialization,
-                Availability=@availability,
+
                 PhoneNumber=@phone,
                 Email=@email
             WHERE UserID=@id"
@@ -179,8 +181,7 @@ Public Class AdminDBUsers
                 Username=@username,
                 Password=@password,
                 Role=@role,
-                Specialization=@specialization,
-                Availability=@availability,
+
                 PhoneNumber=@phone,
                 Email=@email
             WHERE UserID=@id"
@@ -192,8 +193,7 @@ Public Class AdminDBUsers
                 cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
                 cmd.Parameters.AddWithValue("@password", hashedPassword)
                 cmd.Parameters.AddWithValue("@role", CmbRole.Text)
-                cmd.Parameters.AddWithValue("@specialization", txtSpecialization.Text)
-                cmd.Parameters.AddWithValue("@availability", cmbAvailability.Text)
+
                 cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
                 cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
                 cmd.ExecuteNonQuery()
@@ -317,22 +317,7 @@ Public Class AdminDBUsers
             Return count > 0
         End Using
     End Function
-    Private Sub CmbRole_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CmbRole.SelectedIndexChanged
 
-        If CmbRole.Text.Equals("Dentist", StringComparison.OrdinalIgnoreCase) Then
-            ' Enable dentist-only fields
-            cmbAvailability.Enabled = True
-            txtSpecialization.Enabled = True
-        Else
-            ' Disable dentist-only fields
-            cmbAvailability.Enabled = False
-            cmbAvailability.SelectedIndex = -1
-
-            txtSpecialization.Enabled = False
-            txtSpecialization.Clear()
-        End If
-
-    End Sub
 
 
     Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
@@ -342,8 +327,7 @@ Public Class AdminDBUsers
             TxtFullName.Text = row.Cells("FullName").Value.ToString()
             TxtUsername.Text = row.Cells("Username").Value.ToString()
             txtPassword.Text = "" ' optional: don’t show password directly
-            txtSpecialization.Text = row.Cells("Specialization").Value.ToString()
-            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
+
             CmbRole.Text = row.Cells("Role").Value.ToString()
             TxtPhoneNumber.Text = row.Cells("PhoneNumber").Value.ToString()
             TxtEmail.Text = row.Cells("Email").Value.ToString()
@@ -371,12 +355,22 @@ Public Class AdminDBUsers
 
     Dim connectionString As String = My.Settings.DentalDBConnection2
 
-    Private Sub txtSearchUsers_TextChanged(sender As Object, e As EventArgs) Handles txtSearchUsers.TextChanged, txtSearchUsers.TextChanged
-        Dim query As String = "SELECT UserID, FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability
-                               FROM dbo.Users
-                               WHERE FullName LIKE @search OR Username LIKE @search OR Role LIKE @search OR PhoneNumber LIKE @search OR Email LIKE @search OR Specialization LIKE @search OR Availability LIKE @search"
+    Private Sub txtSearchUsers_TextChanged(sender As Object, e As EventArgs) Handles txtSearchUsers.TextChanged
+        ' ✅ Wrap the search logic in parentheses and add the Dentist filter
+        Dim query As String = "
+        SELECT UserID, FullName, Username, Role, PhoneNumber, Email, DateCreated
+        FROM dbo.Users
+        WHERE Role <> 'Dentist' 
+          AND (
+               FullName LIKE @search 
+               OR Username LIKE @search 
+               OR Role LIKE @search 
+               OR PhoneNumber LIKE @search 
+               OR Email LIKE @search
+          )"
+
         Using con As New SqlConnection(connectionString),
-              cmd As New SqlCommand(query, con)
+          cmd As New SqlCommand(query, con)
 
             cmd.Parameters.AddWithValue("@search", "%" & txtSearchUsers.Text.Trim() & "%")
 
@@ -459,8 +453,17 @@ Public Class AdminDBUsers
             TxtEmail.Focus()
             Return False
         End If
-        Dim localPart As String = email.Substring(0, email.Length - 10)
-        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
+
+        ' Validate presence and position of '@' then get local part safely
+        Dim atIndex As Integer = email.IndexOf("@"c)
+        If atIndex <= 0 Then
+            MessageBox.Show("Email is invalid. Missing or misplaced '@'.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        Dim localPart As String = email.Substring(0, atIndex)
+        If String.IsNullOrEmpty(localPart) OrElse Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
             MessageBox.Show("Email username must contain letters or digits only.")
             TxtEmail.Focus()
             Return False
@@ -577,7 +580,7 @@ Public Class AdminDBUsers
             e.Handled = True
         End If
     End Sub
-    Private Sub txtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtSpecialization.KeyPress
+    Private Sub txtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs)
         If Char.IsControl(e.KeyChar) Then Return
         If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
             e.Handled = True

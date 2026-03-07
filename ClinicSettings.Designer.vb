@@ -187,9 +187,9 @@ Partial Class ClinicSettings
         Me.BtnSave.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BtnSave.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BtnSave.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BtnSave.Location = New System.Drawing.Point(199, 548)
+        Me.BtnSave.Location = New System.Drawing.Point(125, 548)
         Me.BtnSave.Name = "BtnSave"
-        Me.BtnSave.Size = New System.Drawing.Size(162, 45)
+        Me.BtnSave.Size = New System.Drawing.Size(310, 45)
         Me.BtnSave.TabIndex = 23
         Me.BtnSave.Text = "Save"
         '

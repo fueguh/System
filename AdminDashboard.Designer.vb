@@ -37,6 +37,7 @@ Partial Class AdminDashboard
         Me.AuditTrailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SystemOverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TodaysAppointmentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ClinicSettingsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -44,6 +45,7 @@ Partial Class AdminDashboard
         Me.ItemManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StockTrackingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsAnalyticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PaymentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
@@ -78,7 +80,7 @@ Partial Class AdminDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.ToolStripMenuItem3})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.TodaysAppointmentToolStripMenuItem, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.ToolStripMenuItem3, Me.PaymentToolStripMenuItem})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -189,6 +191,13 @@ Partial Class AdminDashboard
         Me.ReportsToolStripMenuItem.Size = New System.Drawing.Size(138, 44)
         Me.ReportsToolStripMenuItem.Text = "Reports"
         '
+        'TodaysAppointmentToolStripMenuItem
+        '
+        Me.TodaysAppointmentToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.TodaysAppointmentToolStripMenuItem.Name = "TodaysAppointmentToolStripMenuItem"
+        Me.TodaysAppointmentToolStripMenuItem.Size = New System.Drawing.Size(321, 44)
+        Me.TodaysAppointmentToolStripMenuItem.Text = "Todays Appointment"
+        '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
@@ -241,6 +250,13 @@ Partial Class AdminDashboard
         Me.ReportsAnalyticsToolStripMenuItem.Name = "ReportsAnalyticsToolStripMenuItem"
         Me.ReportsAnalyticsToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
         Me.ReportsAnalyticsToolStripMenuItem.Text = "Reports and Analytics"
+        '
+        'PaymentToolStripMenuItem
+        '
+        Me.PaymentToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.PaymentToolStripMenuItem.Name = "PaymentToolStripMenuItem"
+        Me.PaymentToolStripMenuItem.Size = New System.Drawing.Size(152, 44)
+        Me.PaymentToolStripMenuItem.Text = "Payment"
         '
         'Guna2CustomGradientPanel1
         '
@@ -482,10 +498,6 @@ Partial Class AdminDashboard
     Friend WithEvents ToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents ClinicSettingsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
-    Friend WithEvents ItemManagementToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents StockTrackingToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ReportsAnalyticsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents btnLogout As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lblClinicName As Guna.UI2.WinForms.Guna2HtmlLabel
@@ -494,4 +506,10 @@ Partial Class AdminDashboard
     Friend WithEvents ToolStripMenuItem4 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
     Friend WithEvents AvailabilityMaintenanceToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TodaysAppointmentToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
+    Friend WithEvents ItemManagementToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents StockTrackingToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ReportsAnalyticsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents PaymentToolStripMenuItem As ToolStripMenuItem
 End Class

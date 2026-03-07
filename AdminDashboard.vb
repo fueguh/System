@@ -96,7 +96,9 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
-        TreatmentRecords.Show()
+        ' Create the form as an "object" first to avoid the reference error
+        Dim frm As New TreatmentRecords()
+        frm.Show()
         Me.Hide()
     End Sub
 
@@ -180,6 +182,16 @@ Public Class AdminDashboard
 
     Private Sub AvailabilityMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AvailabilityMaintenanceToolStripMenuItem.Click
         FrmCustomSchedule.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub TodaysAppointmentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TodaysAppointmentToolStripMenuItem.Click
+        AvailableAppointments.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub PaymentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PaymentToolStripMenuItem.Click
+        AdminDBPayment.Show()
         Me.Hide()
     End Sub
 End Class
