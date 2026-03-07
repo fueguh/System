@@ -23,9 +23,12 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
+            ' Added WHERE clause to filter out Dentists
             Dim query As String = "
-            SELECT UserID, FullName, Username, Role, PhoneNumber, Email, Password, DateCreated
+            SELECT UserID, FullName, Username, Role, PhoneNumber, Email, DateCreated
             FROM Users
+            WHERE Role <> 'Dentist'
+            ORDER BY FullName
         "
 
             Dim da As New SqlDataAdapter(query, con)

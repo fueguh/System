@@ -113,6 +113,9 @@ Public Class AdminDBAdminMaintenance
 
                 userId = Convert.ToInt32(cmdUser.ExecuteScalar())
 
+                ' ✅ ADD THIS LOGGING LINE
+                SystemSession.LogAudit($"Added new Admin: {TxtName.Text.Trim}", "Admin Management",
+                                       SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
             End Using
 
         End Using
@@ -371,6 +374,9 @@ Public Class AdminDBAdminMaintenance
                 End If
 
                 cmd.ExecuteNonQuery()
+                ' ✅ ADD THIS LOGGING LINE
+                SystemSession.LogAudit($"Updated Admin details for: {TxtName.Text.Trim}", "Admin Management",
+                       SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
             End Using
         End Using
 
@@ -406,6 +412,9 @@ Public Class AdminDBAdminMaintenance
                 Using cmd As New SqlCommand("DELETE FROM Users WHERE UserID=@id", con)
                     cmd.Parameters.AddWithValue("@id", selectedAdminID)
                     cmd.ExecuteNonQuery()
+                    ' ✅ ADD THIS LOGGING LINE
+                    SystemSession.LogAudit($"Deleted Admin account: {TxtName.Text.Trim}", "Admin Management",
+                                           SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
                 End Using
             End Using
 
