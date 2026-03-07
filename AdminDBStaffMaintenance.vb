@@ -14,37 +14,18 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub Guna2CirclePictureBox1_Click_1(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        If SystemSession.LoggedInUserID = 0 OrElse SystemSession.LoggedInRole <> "Admin" Then
-            Login.Show()
-            Me.Hide()
-            Exit Sub
-        End If
-
         SystemSession.NavigateToDashboard(Me)
         Me.Hide()
     End Sub
 
 #End Region
 
-#Region "Data Loading & UI Management"
+#Region "UI & State Management"
 
-    ' Handles enabling/disabling buttons based on whether a record is selected
     Private Sub SetButtonState(isEditMode As Boolean)
         BTNAdd.Enabled = Not isEditMode
         BtnUpdate.Enabled = isEditMode
         BtnDelete.Enabled = isEditMode
-    End Sub
-
-    Private Sub LoadStaffs()
-        Using con As New SqlConnection(connString)
-            con.Open()
-            Dim query As String = "SELECT UserID, FullName, Username, PhoneNumber, Email FROM Users WHERE Role = 'Staff' ORDER BY FullName"
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            DgvStaffs.DataSource = dt
-            If DgvStaffs.Columns.Contains("UserID") Then DgvStaffs.Columns("UserID").Visible = False
-        End Using
     End Sub
 
     Private Sub ClearStaffInputs()
@@ -60,7 +41,6 @@ Public Class AdminDBStaffMaintenance
         TxtConfirmPassword.UseSystemPasswordChar = True
         DgvStaffs.ClearSelection()
 
-        ' Return to "Add Mode"
         SetButtonState(False)
         TxtName.Focus()
     End Sub
@@ -72,13 +52,29 @@ Public Class AdminDBStaffMaintenance
 
 #End Region
 
-#Region "CRUD Operations with Audit Trail"
+#Region "Data Loading"
+
+    Private Sub LoadStaffs()
+        Using con As New SqlConnection(connString)
+            con.Open()
+            Dim query As String = "SELECT UserID, FullName, Username, PhoneNumber, Email FROM Users WHERE Role = 'Staff' ORDER BY FullName"
+            Dim da As New SqlDataAdapter(query, con)
+            Dim dt As New DataTable()
+            da.Fill(dt)
+            DgvStaffs.DataSource = dt
+            If DgvStaffs.Columns.Contains("UserID") Then DgvStaffs.Columns("UserID").Visible = False
+        End Using
+    End Sub
+
+#End Region
+
+#Region "CRUD Operations"
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
         If Not ValidateStaffFields() Then Exit Sub
 
         If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim()) Then
-            MessageBox.Show("Email or Username already exists.", "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show("Email or Username already exists.")
             Exit Sub
         End If
 
@@ -98,16 +94,18 @@ Public Class AdminDBStaffMaintenance
                 End Using
             End Using
 
-            LogAudit("Created new staff account: " & TxtUsername.Text.Trim)
+            ' FIXED: Using the standardized Audit helper
+            LogAuditTrail("Created Staff Account: " & TxtUsername.Text.Trim)
+
             MessageBox.Show("Staff account created successfully.")
             RefreshData()
+            Dashboard?.LoadDashboardStats()
         Catch ex As Exception
             MessageBox.Show("Error adding staff: " & ex.Message)
         End Try
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
-        ' Validation (selectedStaffID is already checked by button state)
         If Not ValidateStaffFields(selectedStaffID) Then Exit Sub
 
         Try
@@ -129,7 +127,7 @@ Public Class AdminDBStaffMaintenance
                 End Using
             End Using
 
-            LogAudit("Updated staff ID: " & selectedStaffID)
+            LogAuditTrail("Updated Staff ID: " & selectedStaffID)
             MessageBox.Show("Staff updated successfully.")
             RefreshData()
         Catch ex As Exception
@@ -138,26 +136,26 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
-        If MessageBox.Show("Are you sure you want to delete this staff member?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+        If MessageBox.Show("Permanently delete this staff member?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
             Try
                 Using con As New SqlConnection(connString)
                     con.Open()
-                    Using cmdSess As New SqlCommand("DELETE FROM UserSessions WHERE UserID = @id", con)
-                        cmdSess.Parameters.AddWithValue("@id", selectedStaffID)
-                        cmdSess.ExecuteNonQuery()
-                    End Using
+                    ' Clean up sessions first to avoid foreign key errors
+                    Dim cmdSess As New SqlCommand("DELETE FROM UserSessions WHERE UserID = @id", con)
+                    cmdSess.Parameters.AddWithValue("@id", selectedStaffID)
+                    cmdSess.ExecuteNonQuery()
 
-                    Using cmdUser As New SqlCommand("DELETE FROM Users WHERE UserID = @id", con)
-                        cmdUser.Parameters.AddWithValue("@id", selectedStaffID)
-                        cmdUser.ExecuteNonQuery()
-                    End Using
+                    Dim cmdUser As New SqlCommand("DELETE FROM Users WHERE UserID = @id", con)
+                    cmdUser.Parameters.AddWithValue("@id", selectedStaffID)
+                    cmdUser.ExecuteNonQuery()
                 End Using
 
-                LogAudit("Deleted staff ID: " & selectedStaffID)
+                LogAuditTrail("Deleted Staff ID: " & selectedStaffID)
                 MessageBox.Show("Staff member deleted.")
                 RefreshData()
+                Dashboard?.LoadDashboardStats()
             Catch ex As Exception
-                MessageBox.Show("Delete Error: User may have linked records.")
+                MessageBox.Show("Delete Error: This staff member may be linked to transaction records.")
             End Try
         End If
     End Sub
@@ -168,10 +166,6 @@ Public Class AdminDBStaffMaintenance
 
     Private Sub SearchStaff_TextChanged(sender As Object, e As EventArgs) Handles SearchStaff.TextChanged
         Dim filter As String = SearchStaff.Text.Trim()
-
-        ' Deselect if user starts searching to prevent accidental updates
-        If filter <> "" Then ClearStaffInputs()
-
         Using con As New SqlConnection(connString)
             con.Open()
             Dim query As String = "SELECT UserID, FullName, Username, PhoneNumber, Email FROM Users WHERE Role = 'Staff'"
@@ -201,8 +195,6 @@ Public Class AdminDBStaffMaintenance
 
             TxtPassword.Clear()
             TxtConfirmPassword.Clear()
-
-            ' Switch to "Edit Mode"
             SetButtonState(True)
         End If
     End Sub
@@ -211,30 +203,20 @@ Public Class AdminDBStaffMaintenance
 
 #Region "Security & Validation"
 
-    Private Function ValidateStaffFields(Optional staffID As Integer = 0) As Boolean
-        If Not TxtName.Text.Replace(" ", "").All(AddressOf Char.IsLetter) OrElse TxtName.Text = "" Then
-            MessageBox.Show("Full Name must contain letters only.")
-            Return False
-        End If
+    Private Sub LogAuditTrail(actionDescription As String)
+        ' Calling the shared SystemSession helper ensures it matches your database columns
+        SystemSession.LogAudit(actionDescription, "Staff Maintenance",
+                               SystemSession.LoggedInUserID,
+                               SystemSession.LoggedInFullName,
+                               SystemSession.LoggedInRole)
+    End Sub
 
-        If Not TxtEmail.Text.Trim().ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must be a valid @gmail.com address.")
-            Return False
-        End If
-
-        Dim pass As String = TxtPassword.Text
-        ' Password required for Add (staffID=0) or if user typed something in Update mode
-        If staffID = 0 OrElse pass.Length > 0 Then
-            If pass.Length < 8 OrElse Not pass.Any(AddressOf Char.IsUpper) Then
-                MessageBox.Show("Password must be 8+ characters with an uppercase letter.")
-                Return False
-            End If
-            If pass <> TxtConfirmPassword.Text Then
-                MessageBox.Show("Passwords do not match.")
-                Return False
-            End If
-        End If
-        Return True
+    Public Function HashPassword(password As String) As String
+        Using sha256 As SHA256 = SHA256.Create()
+            Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
+            Dim hash As Byte() = sha256.ComputeHash(bytes)
+            Return BitConverter.ToString(hash).Replace("-", "").ToLower()
+        End Using
     End Function
 
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional id As Integer = 0) As Boolean
@@ -250,38 +232,29 @@ Public Class AdminDBStaffMaintenance
         End Using
     End Function
 
-    Public Function HashPassword(password As String) As String
-        Using sha256 As SHA256 = SHA256.Create()
-            Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
-            Dim hash As Byte() = sha256.ComputeHash(bytes)
-            Return BitConverter.ToString(hash).Replace("-", "").ToLower()
-        End Using
-    End Function
+    Private Function ValidateStaffFields(Optional staffID As Integer = 0) As Boolean
+        If Not TxtName.Text.Replace(" ", "").All(AddressOf Char.IsLetter) OrElse TxtName.Text = "" Then
+            MessageBox.Show("Full Name must contain letters only.") : Return False
+        End If
 
-    Private Sub LogAudit(actionDescription As String)
-        Try
-            Using con As New SqlConnection(connString)
-                con.Open()
-                Dim query As String = "INSERT INTO AuditLogs (AdminID, ActionTaken, LogDate) VALUES (@aid, @act, GETDATE())"
-                Using cmd As New SqlCommand(query, con)
-                    cmd.Parameters.AddWithValue("@aid", SystemSession.LoggedInUserID)
-                    cmd.Parameters.AddWithValue("@act", actionDescription)
-                    cmd.ExecuteNonQuery()
-                End Using
-            End Using
-        Catch
-            ' Silent fail for logs
-        End Try
-    End Sub
+        If Not TxtEmail.Text.Trim().ToLower().EndsWith("@gmail.com") Then
+            MessageBox.Show("Email must be a valid @gmail.com address.") : Return False
+        End If
+
+        If staffID = 0 OrElse TxtPassword.Text.Length > 0 Then
+            If TxtPassword.Text.Length < 8 OrElse Not TxtPassword.Text.Any(AddressOf Char.IsUpper) Then
+                MessageBox.Show("Password must be 8+ characters with an uppercase letter.") : Return False
+            End If
+            If TxtPassword.Text <> TxtConfirmPassword.Text Then
+                MessageBox.Show("Passwords do not match.") : Return False
+            End If
+        End If
+        Return True
+    End Function
 
 #End Region
 
-#Region "Input Formatting"
-
-    Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
-        TxtPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
-        TxtConfirmPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
-    End Sub
+#Region "KeyPress & Formatting"
 
     Private Sub TxtName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtName.KeyPress
         If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c OrElse Char.IsControl(e.KeyChar)) Then e.Handled = True
@@ -294,6 +267,11 @@ Public Class AdminDBStaffMaintenance
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         RefreshData()
         SearchStaff.Clear()
+    End Sub
+
+    Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
+        TxtPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
+        TxtConfirmPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
     End Sub
 
 #End Region

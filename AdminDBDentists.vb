@@ -4,326 +4,287 @@ Imports System.Text
 
 Public Class AdminDBDentists
     Private selectedDentistID As Integer = 0
+    Private ReadOnly connString As String = My.Settings.DentalDBConnection2
+
+#Region "Form Events"
+
     Private Sub AdminDBDentists_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadDentists()
         Clearform()
     End Sub
 
+    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+        SystemSession.NavigateToDashboard(Me)
+        Me.Hide()
+    End Sub
+
+#End Region
+
+#Region "UI & State Management"
+
+    Private Sub SetButtonState(isEditMode As Boolean)
+        ' Add is for new records; Update/Delete are for existing ones
+        BTNAdd.Enabled = Not isEditMode
+        BtnUpdate.Enabled = isEditMode
+        BtnDelete.Enabled = isEditMode
+    End Sub
+
+    Private Sub Clearform()
+        selectedDentistID = 0
+        TxtName.Clear()
+        TxtSpecialization.Clear()
+        TxtUsername.Clear()
+        TxtPhone.Clear()
+        TxtEmail.Clear()
+        TxtPassword.Clear()
+        TxtConfirmPassword.Clear()
+        cmbAvailability.SelectedIndex = -1
+        cmbAvailability.Text = ""
+        DGVDentists.ClearSelection()
+
+        SetButtonState(False)
+        TxtName.Focus()
+    End Sub
+
+    Private Sub RefreshData()
+        LoadDentists()
+        Clearform()
+    End Sub
+
+#End Region
+
+#Region "Data Loading"
+
+    Private Sub LoadDentists()
+        Using con As New SqlConnection(connString)
+            con.Open()
+            Dim query As String = "SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization, Availability FROM Users WHERE Role = 'Dentist' ORDER BY FullName"
+            Dim da As New SqlDataAdapter(query, con)
+            Dim dt As New DataTable()
+            da.Fill(dt)
+            DGVDentists.DataSource = dt
+            If DGVDentists.Columns.Contains("UserID") Then DGVDentists.Columns("UserID").Visible = False
+        End Using
+    End Sub
+
+#End Region
+
+#Region "CRUD Operations"
+
+    Private Sub BTNAdd_Click_1(sender As Object, e As EventArgs) Handles BTNAdd.Click
+        If Not ValidateDentistFields() Then Exit Sub
+        If IsUsernameTaken(TxtUsername.Text.Trim()) Then
+            MessageBox.Show("Username already exists.")
+            Exit Sub
+        End If
+
+        Try
+            Using con As New SqlConnection(connString)
+                con.Open()
+                Dim query As String = "INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability) 
+                                       VALUES (@name, @username, @password, 'Dentist', @phone, @email, GETDATE(), @spec, @avail)"
+
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@name", TxtName.Text.Trim)
+                    cmd.Parameters.AddWithValue("@username", TxtUsername.Text.Trim)
+                    cmd.Parameters.AddWithValue("@password", HashPassword(TxtPassword.Text))
+                    cmd.Parameters.AddWithValue("@phone", TxtPhone.Text.Trim)
+                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim)
+                    cmd.Parameters.AddWithValue("@spec", TxtSpecialization.Text.Trim)
+                    cmd.Parameters.AddWithValue("@avail", cmbAvailability.Text)
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+
+            LogAudit("Created Dentist Account: " & TxtUsername.Text.Trim)
+            MessageBox.Show("Dentist saved successfully.")
+            RefreshData()
+            Dashboard?.LoadDashboardStats()
+        Catch ex As Exception
+            MessageBox.Show("Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
+        If Not ValidateDentistFields(selectedDentistID) Then Exit Sub
+
+        Try
+            Using con As New SqlConnection(connString)
+                con.Open()
+                Dim hasNewPass As Boolean = Not String.IsNullOrWhiteSpace(TxtPassword.Text)
+                Dim query As String = If(hasNewPass,
+                    "UPDATE Users SET FullName=@n, Username=@u, PhoneNumber=@p, Email=@e, Specialization=@s, Availability=@a, Password=@pw WHERE UserID=@id",
+                    "UPDATE Users SET FullName=@n, Username=@u, PhoneNumber=@p, Email=@e, Specialization=@s, Availability=@a WHERE UserID=@id")
+
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@id", selectedDentistID)
+                    cmd.Parameters.AddWithValue("@n", TxtName.Text.Trim)
+                    cmd.Parameters.AddWithValue("@u", TxtUsername.Text.Trim)
+                    cmd.Parameters.AddWithValue("@p", TxtPhone.Text.Trim)
+                    cmd.Parameters.AddWithValue("@e", TxtEmail.Text.Trim)
+                    cmd.Parameters.AddWithValue("@s", TxtSpecialization.Text.Trim)
+                    cmd.Parameters.AddWithValue("@a", cmbAvailability.Text)
+                    If hasNewPass Then cmd.Parameters.AddWithValue("@pw", HashPassword(TxtPassword.Text))
+                    cmd.ExecuteNonQuery()
+                End Using
+            End Using
+
+            LogAudit("Updated Dentist ID: " & selectedDentistID)
+            MessageBox.Show("Dentist updated successfully.")
+            RefreshData()
+        Catch ex As Exception
+            MessageBox.Show("Update Error: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
+        If MessageBox.Show("Permanently delete this dentist record?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+            Try
+                Using con As New SqlConnection(connString)
+                    con.Open()
+                    Using cmdSess As New SqlCommand("DELETE FROM UserSessions WHERE UserID = @id", con)
+                        cmdSess.Parameters.AddWithValue("@id", selectedDentistID)
+                        cmdSess.ExecuteNonQuery()
+                    End Using
+
+                    Using cmdUser As New SqlCommand("DELETE FROM Users WHERE UserID = @id", con)
+                        cmdUser.Parameters.AddWithValue("@id", selectedDentistID)
+                        cmdUser.ExecuteNonQuery()
+                    End Using
+                End Using
+
+                LogAudit("Deleted Dentist record ID: " & selectedDentistID)
+                MessageBox.Show("Dentist deleted successfully.")
+                RefreshData()
+                Dashboard?.LoadDashboardStats()
+            Catch ex As Exception
+                MessageBox.Show("Delete Error: This dentist may have existing appointments.")
+            End Try
+        End If
+    End Sub
+
+#End Region
+
+#Region "Search & Grid Logic"
+
+    Private Sub DGVDentists_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellClick
+        If e.RowIndex >= 0 Then
+            Dim row As DataGridViewRow = DGVDentists.Rows(e.RowIndex)
+            selectedDentistID = Convert.ToInt32(row.Cells("UserID").Value)
+
+            TxtName.Text = row.Cells("FullName").Value.ToString()
+            TxtUsername.Text = row.Cells("Username").Value.ToString()
+            TxtPhone.Text = row.Cells("PhoneNumber").Value.ToString()
+            TxtEmail.Text = row.Cells("Email").Value.ToString()
+            TxtSpecialization.Text = row.Cells("Specialization").Value.ToString()
+            cmbAvailability.Text = row.Cells("Availability").Value.ToString()
+
+            TxtPassword.Clear()
+            TxtConfirmPassword.Clear()
+            SetButtonState(True)
+        End If
+    End Sub
+
+    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
+        Dim search As String = Guna2TextBox1.Text.Trim()
+        Using con As New SqlConnection(connString)
+            con.Open()
+            Dim query As String = "SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization, Availability FROM Users WHERE Role = 'Dentist'"
+            If search <> "" Then
+                query &= " AND (FullName LIKE @s OR Username LIKE @s OR PhoneNumber LIKE @s OR Email LIKE @s OR Specialization LIKE @s)"
+            End If
+            query &= " ORDER BY FullName"
+
+            Using cmd As New SqlCommand(query, con)
+                If search <> "" Then cmd.Parameters.AddWithValue("@s", "%" & search & "%")
+                Dim da As New SqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                DGVDentists.DataSource = dt
+                If DGVDentists.Columns.Contains("UserID") Then DGVDentists.Columns("UserID").Visible = False
+            End Using
+        End Using
+    End Sub
+
+#End Region
+
+#Region "Security & Validation"
+
+    Private Sub LogAudit(action As String)
+        SystemSession.LogAudit(action, "Dentist Management",
+                               SystemSession.LoggedInUserID,
+                               SystemSession.LoggedInFullName,
+                               SystemSession.LoggedInRole)
+    End Sub
+
     Public Function HashPassword(password As String) As String
-        Using sha256 As SHA256 = sha256.Create()
+        Using sha256 As SHA256 = SHA256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
             Dim hash As Byte() = sha256.ComputeHash(bytes)
             Return BitConverter.ToString(hash).Replace("-", "").ToLower()
         End Using
     End Function
 
-    Private Sub LoadDentists()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim query As String = "
-            SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization, Availability
-            FROM Users
-            WHERE Role = 'Dentist'
-        "
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            DGVDentists.DataSource = dt
-            DGVDentists.Columns("UserID").Visible = False
-        End Using
-    End Sub
-
-    Private Sub DGVDentists_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVDentists.CellClick
-        If e.RowIndex >= 0 Then
-            Dim row As DataGridViewRow = DGVDentists.Rows(e.RowIndex)
-            ' ✅ ONLY STORE THE ID (Useful for Deleting later)
-            selectedDentistID = Convert.ToInt32(row.Cells("UserID").Value)
-            Clearform()
-        End If
-    End Sub
-
-    Private Sub Clearform()
-        TxtName.Text = ""
-        TxtSpecialization.Text = ""
-        TxtUsername.Text = ""
-        TxtPhone.Text = ""
-        TxtEmail.Text = ""
-        TxtPassword.Text = ""
-        TxtConfirmPassword.Text = ""
-        cmbAvailability.SelectedIndex = -1
-        cmbAvailability.Text = ""
-        selectedDentistID = 0
-    End Sub
-
-    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        SystemSession.NavigateToDashboard(Me)
-    End Sub
-
-    Private Sub BTNAdd_Click_1(sender As Object, e As EventArgs) Handles BTNAdd.Click
-        ' ✅ Confirm password check
-        If TxtPassword.Text <> TxtConfirmPassword.Text Then
-            MessageBox.Show("Passwords do not match. Please re-enter.")
-            Exit Sub
-        End If
-
-        'checks if user alreadey exixts
-        If IsUsernameTaken(TxtUsername.Text) Then
-            MessageBox.Show("Username already exists. Please choose a different one.")
-            Exit Sub
-        End If
-
-        If Not ValidateDentistFields() Then Exit Sub
-
-        ' ✅ Hash password
-        Dim hashedPassword As String = HashPassword(TxtPassword.Text)
-
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim query As String = "
-            INSERT INTO Users (FullName, Username, Password, Role, PhoneNumber, Email, DateCreated, Specialization, Availability)
-            VALUES (@name, @username, @password, 'Dentist', @phone, @email, GETDATE(), @spec, @avail)
-        "
-
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@name", TxtName.Text)
-            cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
-            cmd.Parameters.AddWithValue("@password", hashedPassword)
-            cmd.Parameters.AddWithValue("@phone", TxtPhone.Text)
-            cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
-            cmd.Parameters.AddWithValue("@spec", TxtSpecialization.Text)
-            cmd.Parameters.AddWithValue("@avail", cmbAvailability.Text)
-
-            cmd.ExecuteNonQuery()
-        End Using
-
-
-        MessageBox.Show("Dentist saved successfully.")
-        SystemSession.LogAudit("Dentist Account Created", "Dentist Management",
-                           SystemSession.LoggedInUserID,
-                           SystemSession.LoggedInFullName,
-                           SystemSession.LoggedInRole)
-
-        LoadDentists()
-        Clearform()
-
-        'to reload the system overview in admin dashboard after input
-        Dashboard?.LoadDashboardStats()
-    End Sub
-
     Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+        Using con As New SqlConnection(connString)
             con.Open()
-            Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@username", username)
-            Dim count As Integer = CInt(cmd.ExecuteScalar())
-            Return count > 0
+            Dim cmd As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @u", con)
+            cmd.Parameters.AddWithValue("@u", username)
+            Return CInt(cmd.ExecuteScalar()) > 0
         End Using
     End Function
 
-    Dim connectionString As String = My.Settings.DentalDBConnection2
-
-    Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            Dim query As String
-            ' 1. Removed "AS DentistID" so it stays "UserID"
-            If Guna2TextBox1.Text.Trim = "" Then
-                query = "SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization FROM Users WHERE Role = 'Dentist'"
-            Else
-                query = "SELECT UserID, FullName, Username, PhoneNumber, Email, Specialization FROM Users WHERE Role = 'Dentist' AND (COALESCE(FullName,'') LIKE @search OR COALESCE(Username,'') LIKE @search OR COALESCE(PhoneNumber,'') LIKE @search OR COALESCE(Email,'') LIKE @search OR COALESCE(Specialization,'') LIKE @search)"
-            End If
-
-            Using cmd As New SqlCommand(query, con)
-                If Guna2TextBox1.Text.Trim <> "" Then
-                    cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text.Trim & "%")
-                End If
-
-                Dim adapter As New SqlDataAdapter(cmd)
-                Dim table As New DataTable()
-                adapter.Fill(table)
-
-                ' 2. Bind the data
-                DGVDentists.DataSource = table
-
-                ' 3. Re-hide the column every time the search runs
-                If DGVDentists.Columns.Contains("UserID") Then
-                    DGVDentists.Columns("UserID").Visible = False
-                End If
-            End Using
-        End Using
-    End Sub
-
-    Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
-        If chkShowPassword.Checked Then
-            ' Show the password
-            TxtPassword.UseSystemPasswordChar = False
-            TxtConfirmPassword.UseSystemPasswordChar = False
-        Else
-            ' Hide the password
-            TxtPassword.UseSystemPasswordChar = True
-            TxtConfirmPassword.UseSystemPasswordChar = True
-        End If
-    End Sub
     Private Function ValidateDentistFields(Optional dentistID As Integer = 0) As Boolean
-        ' Full Name: letters only
-        If String.IsNullOrWhiteSpace(TxtName.Text) OrElse
-       Not TxtName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-            MessageBox.Show("Full Name must contain letters only.")
-            TxtName.Focus()
-            Return False
+        If Not TxtName.Text.Replace(" ", "").All(AddressOf Char.IsLetter) Or TxtName.Text = "" Then
+            MessageBox.Show("Full Name must contain letters only.") : Return False
         End If
 
-        ' Phone Number: digits only
-        If String.IsNullOrWhiteSpace(TxtPhone.Text) OrElse
-       Not TxtPhone.Text.All(Function(c) Char.IsDigit(c)) Then
-            MessageBox.Show("Phone Number must contain digits only.")
-            TxtPhone.Focus()
-            Return False
+        If Not TxtPhone.Text.All(AddressOf Char.IsDigit) Or TxtPhone.Text = "" Then
+            MessageBox.Show("Phone Number must contain digits only.") : Return False
         End If
 
-        ' Username: letters and numbers only
-        If String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
-       Not TxtUsername.Text.All(Function(c) Char.IsLetterOrDigit(c)) Then
-            MessageBox.Show("Username must contain only letters and numbers.")
-            TxtUsername.Focus()
-            Return False
+        If Not TxtEmail.Text.Trim().ToLower().EndsWith("@gmail.com") Then
+            MessageBox.Show("Email must be a valid @gmail.com address.") : Return False
         End If
 
-        ' Email: must end with @gmail.com and alphanumeric before domain
-        Dim email As String = TxtEmail.Text.Trim()
-        If String.IsNullOrWhiteSpace(email) OrElse Not email.ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must end with '@gmail.com'.")
-            TxtEmail.Focus()
-            Return False
-        End If
-
-        Dim localPart As String = email.Substring(0, email.Length - 10)
-        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
-            MessageBox.Show("Email username must contain only letters and numbers.")
-            TxtEmail.Focus()
-            Return False
-        End If
-
-        ' Specialization: letters only
-        If String.IsNullOrWhiteSpace(TxtSpecialization.Text) OrElse
-       Not TxtSpecialization.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-            MessageBox.Show("Specialization must contain letters only.")
-            TxtSpecialization.Focus()
-            Return False
-        End If
-
-        ' Password: at least 8 characters and 1 uppercase
-        Dim password As String = TxtPassword.Text.Trim()
-        Dim confirmPassword As String = TxtConfirmPassword.Text.Trim()
-
-        If password.Length < 8 Then
-            MessageBox.Show("Password must be at least 8 characters long.")
-            TxtPassword.Focus()
-            Return False
-        End If
-        If Not password.Any(Function(c) Char.IsUpper(c)) Then
-            MessageBox.Show("Password must contain at least one uppercase letter.")
-            TxtPassword.Focus()
-            Return False
-        End If
-        If Not password.Equals(confirmPassword) Then
-            MessageBox.Show("Passwords do not match.")
-            TxtConfirmPassword.Focus()
-            Return False
-        End If
-
-        ' Duplicate check for Email and Username
-        If IsDuplicateEmailOrUsername(email, TxtUsername.Text.Trim(), dentistID) Then
-            MessageBox.Show("Email or Username already exists. Please choose another.")
-            Return False
+        If dentistID = 0 OrElse TxtPassword.Text.Length > 0 Then
+            If TxtPassword.Text.Length < 8 OrElse Not TxtPassword.Text.Any(AddressOf Char.IsUpper) Then
+                MessageBox.Show("Password: 8+ characters and 1 uppercase.") : Return False
+            End If
+            If TxtPassword.Text <> TxtConfirmPassword.Text Then
+                MessageBox.Show("Passwords do not match.") : Return False
+            End If
         End If
 
         Return True
     End Function
 
-    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+#End Region
 
-            ' Query checks if email OR username already exists, excluding the current record if updating
-            Dim query As String = "
-            SELECT COUNT(*) 
-            FROM Users 
-            WHERE (Email = @em OR Username = @un) 
-              AND UserID <> @id
-        "
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@em", email)
-                cmd.Parameters.AddWithValue("@un", username)
-                cmd.Parameters.AddWithValue("@id", userID)
-
-                Dim count As Integer = CInt(cmd.ExecuteScalar())
-                Return count > 0
-            End Using
-        End Using
-    End Function
+#Region "KeyPress Restrictions"
 
     Private Sub TxtName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtName.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
-            Return
-        End If
-
-        ' Allow letters and spaces only
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True ' Block invalid input
-        End If
+        If Not (Char.IsLetter(e.KeyChar) Or e.KeyChar = " "c Or Char.IsControl(e.KeyChar)) Then e.Handled = True
     End Sub
 
     Private Sub TxtPhone_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhone.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
-            Return
-        End If
-
-        ' Allow digits only
-        If Not Char.IsDigit(e.KeyChar) Then
-            e.Handled = True ' Block invalid input
-        End If
+        If Not (Char.IsDigit(e.KeyChar) Or Char.IsControl(e.KeyChar)) Then e.Handled = True
     End Sub
 
-    Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return
-        If Not Char.IsLetterOrDigit(e.KeyChar) Then
-            e.Handled = True
-        End If
-    End Sub
+#End Region
 
-    Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
-            e.Handled = True
-        End If
-    End Sub
-
-    Private Sub TxtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtSpecialization.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True
-        End If
-    End Sub
+#Region "Input Formatting & Extra Actions"
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        ' 1. Reset all textboxes and variables via your existing method
-        Clearform()
-
-        ' 2. Unselect any rows in the DataGridView so no record remains "active"
-        DGVDentists.ClearSelection()
-
-        ' 3. Optional: Reset the search box if you want a total reset
-        Guna2TextBox1.Text = ""
-
-        ' 4. Set focus back to the first field for better UX
-        TxtName.Focus()
+        RefreshData()
+        Guna2TextBox1.Clear()
     End Sub
+
+    Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
+        TxtPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
+        TxtConfirmPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
+    End Sub
+
+#End Region
+
 End Class
