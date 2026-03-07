@@ -5,7 +5,9 @@ Public Class FrmCustomSchedule
     Public Property ScheduleSaved As Boolean = False
     Private schedules As New List(Of (day As String, startTime As TimeSpan, endTime As TimeSpan))
 
-    ' --- Initialization ---
+    ' ==========================================
+    ' INITIALIZATION & LOAD
+    ' ==========================================
     Private Sub FrmCustomSchedule_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Add weekdays to CheckedListBox
         ClbDays.Items.Clear()
@@ -30,24 +32,25 @@ Public Class FrmCustomSchedule
             current = current.Add(TimeSpan.FromMinutes(30))
         End While
     End Sub
-    ' --- Data Loading ---
+
+    ' ==========================================
+    ' DATA LOADING
+    ' ==========================================
     Private Sub LoadPartTimeDentists()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            ' Use STRING_AGG to show a nice summary in the Grid
+            ' Refined query: specifically targeting 'Part-time' and cleaning up the aggregate summary
             Dim query As String = "
                 SELECT u.UserID, u.FullName,
-                ISNULL((SELECT STRING_AGG(da.DayOfWeek + ' ' + 
-                       CONVERT(varchar(5), da.StartTime, 108) + '-' + 
-                       CONVERT(varchar(5), da.EndTime, 108), '; ')
-                FROM DentistAvailability da WHERE da.DentistID = u.UserID), '') AS ScheduleSummary
-                FROM Users u WHERE u.Availability LIKE 'Part-time%'"
+                ISNULL((SELECT STRING_AGG(da.DayOfWeek + ' (' + 
+                        FORMAT(CAST(da.StartTime AS datetime), 'hh:mm tt') + '-' + 
+                        FORMAT(CAST(da.EndTime AS datetime), 'hh:mm tt') + ')', '; ')
+                FROM DentistAvailability da WHERE da.DentistID = u.UserID), 'No Schedule Set') AS ScheduleSummary
+                FROM Users u WHERE u.Role = 'Dentist' AND u.Availability = 'Part-time'"
 
             Dim dt As New DataTable()
-            Using cmd As New SqlCommand(query, con)
-                Using da As New SqlDataAdapter(cmd)
-                    da.Fill(dt)
-                End Using
+            Using da As New SqlDataAdapter(query, con)
+                da.Fill(dt)
             End Using
 
             DGVPartTimers.DataSource = dt
@@ -55,14 +58,16 @@ Public Class FrmCustomSchedule
         End Using
     End Sub
 
-    ' --- Selection Logic ---
+    ' ==========================================
+    ' SELECTION LOGIC
+    ' ==========================================
     Private Sub DGVPartTimers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVPartTimers.CellClick
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row As DataGridViewRow = DGVPartTimers.Rows(e.RowIndex)
         DentistID = CInt(row.Cells("UserID").Value)
 
-        ' Reset UI for selection
+        ' Reset UI for new selection
         For i = 0 To ClbDays.Items.Count - 1
             ClbDays.SetItemChecked(i, False)
         Next
@@ -84,9 +89,8 @@ Public Class FrmCustomSchedule
                         If index >= 0 Then ClbDays.SetItemChecked(index, True)
                     End While
 
-                    ' Inside DGVPartTimers_CellClick, after filling the schedules list:
+                    ' Set combos based on existing schedule if available
                     If schedules.Count > 0 Then
-                        ' Set the start/end combos to the first schedule found for this dentist
                         Dim firstSched = schedules(0)
                         cmbStartCustom.Text = DateTime.Today.Add(firstSched.startTime).ToString("hh:mm tt")
                         cmbEndCustom.Text = DateTime.Today.Add(firstSched.endTime).ToString("hh:mm tt")
@@ -96,13 +100,17 @@ Public Class FrmCustomSchedule
         End Using
     End Sub
 
-    ' --- Save Logic ---
+    ' ==========================================
+    ' SAVE LOGIC (WITH 3-HOUR VALIDATION)
+    ' ==========================================
     Private Sub btnUpdate_Click(sender As Object, e As EventArgs) Handles btnUpdate.Click
+        ' 1. Selection Check
         If DentistID = 0 Then
             MessageBox.Show("Please select a dentist from the list first.")
             Exit Sub
         End If
 
+        ' 2. Input Check
         If cmbStartCustom.SelectedIndex = -1 OrElse cmbEndCustom.SelectedIndex = -1 Then
             MessageBox.Show("Select both start and end times.")
             Exit Sub
@@ -111,29 +119,40 @@ Public Class FrmCustomSchedule
         Dim startTime As TimeSpan = DateTime.Parse(cmbStartCustom.Text).TimeOfDay
         Dim endTime As TimeSpan = DateTime.Parse(cmbEndCustom.Text).TimeOfDay
 
+        ' 3. Chronological Validation
         If endTime <= startTime Then
             MessageBox.Show("End time must be later than start time.")
             Exit Sub
         End If
 
+        ' 4. Duration Validation (Minimum 3 Hours)
+        Dim duration As TimeSpan = endTime - startTime
+        If duration.TotalHours < 3.0 Then
+            MessageBox.Show("Invalid Schedule: Part-time dentists must work at least 3 hours per shift." & vbCrLf &
+                            "Selected duration: " & duration.TotalHours.ToString("N1") & " hours.")
+            Exit Sub
+        End If
+
+        ' 5. Days Selected Check
         If ClbDays.CheckedItems.Count = 0 Then
-            MessageBox.Show("Select at least one day.")
+            MessageBox.Show("Select at least one day for this schedule.")
             Exit Sub
         End If
 
         Try
             Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                 con.Open()
-                ' Transactional delete/insert
                 Using trans = con.BeginTransaction()
                     Try
+                        ' Remove old schedule first
                         Using cmdDel As New SqlCommand("DELETE FROM DentistAvailability WHERE DentistID=@id", con, trans)
                             cmdDel.Parameters.AddWithValue("@id", DentistID)
                             cmdDel.ExecuteNonQuery()
                         End Using
 
+                        ' Insert new schedule for each checked day
                         For Each day As String In ClbDays.CheckedItems
-                            Using cmdIns As New SqlCommand("INSERT INTO DentistAvailability (DentistID, DayOfWeek, StartTime, EndTime) VALUES (@id,@day,@start,@end)", con, trans)
+                            Using cmdIns As New SqlCommand("INSERT INTO DentistAvailability (DentistID, DayOfWeek, StartTime, EndTime) VALUES (@id, @day, @start, @end)", con, trans)
                                 cmdIns.Parameters.AddWithValue("@id", DentistID)
                                 cmdIns.Parameters.AddWithValue("@day", day)
                                 cmdIns.Parameters.AddWithValue("@start", startTime)
@@ -141,31 +160,40 @@ Public Class FrmCustomSchedule
                                 cmdIns.ExecuteNonQuery()
                             End Using
                         Next
+
                         trans.Commit()
+                        MessageBox.Show("Dentist schedule updated successfully!")
+                        LoadPartTimeDentists()
+                        ClearForm()
                     Catch ex As Exception
                         trans.Rollback()
-                        Throw ex
+                        MessageBox.Show("Error during save process: " & ex.Message)
                     End Try
                 End Using
             End Using
-
-            MessageBox.Show("Dentist schedule updated successfully!")
-            LoadPartTimeDentists()
-            ClearForm()
         Catch ex As Exception
-            MessageBox.Show("Error saving: " & ex.Message)
+            MessageBox.Show("Connection error: " & ex.Message)
         End Try
     End Sub
 
-    ' --- Cleanup & Navigation ---
+    ' ==========================================
+    ' CLEANUP & NAVIGATION
+    ' ==========================================
     Private Sub ClearForm()
         DentistID = 0
         schedules.Clear()
+
+        ' Clear Checkboxes
         For i As Integer = 0 To ClbDays.Items.Count - 1
             ClbDays.SetItemChecked(i, False)
         Next
-        If cmbStartCustom.Items.Count > 0 Then cmbStartCustom.SelectedIndex = 0
-        If cmbEndCustom.Items.Count > 18 Then cmbEndCustom.SelectedIndex = 18
+
+        ' Reset ComboBoxes
+        cmbStartCustom.SelectedIndex = -1
+        cmbEndCustom.SelectedIndex = -1
+        cmbStartCustom.Text = ""
+        cmbEndCustom.Text = ""
+
         DGVPartTimers.ClearSelection()
     End Sub
 
@@ -175,6 +203,5 @@ Public Class FrmCustomSchedule
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
-        Me.Hide()
     End Sub
 End Class

@@ -1,123 +1,138 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class TreatmentRecords
-    ' Variables to hold passed-in context from the Appointment selection
-    Private PassedAppointmentID As Integer = 0
-    Private PassedPatientID As Integer = 0
-    Private PassedDentistID As Integer = 0
+    ' Variables passed from the Appointments List
+    Public PassedAppointmentID As Integer = 0
+    Public PassedPatientID As Integer = 0
+    Public PassedDentistID As Integer = 0
+    Public CurrentPatientName As String = ""
+
     Public Sub New()
         InitializeComponent()
     End Sub
 
-    ' Constructor: Receive the names and IDs when the form opens
-    ' Usage: Dim frm As New TreatmentRecords(101, 5, "John Doe", 2, "Dr. Smith")
-    Public Sub New(ByVal apptID As Integer, ByVal patID As Integer, ByVal patName As String, ByVal denID As Integer, ByVal denName As String)
-        InitializeComponent()
-
-        Me.PassedAppointmentID = apptID
-        Me.PassedPatientID = patID
-        Me.PassedDentistID = denID
-
-        ' Set the Labels directly
-        lblPatientName.Text = patName
-        lblDentistName.Text = denName
-    End Sub
-
+    ' Inside TreatmentRecords.vb
+    ' Inside TreatmentRecords.vb
     Private Sub TreatmentRecords_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadRecords()
-        ClearForm()
+        ' 1. Display the Patient's Name if we have one
+        lblPatientName.Text = If(String.IsNullOrEmpty(CurrentPatientName), "Unknown Patient", CurrentPatientName)
+
+        ' 2. THE FIX: Remove the MessageBox and the NavigateToDashboard.
+        ' Instead of kicking you out, we just check if data exists.
+        If PassedAppointmentID <= 0 Then
+            ' Just show a warning on the label and stop the DB from loading.
+            lblPatientName.Text = "No Appointment Selected (Manual View Mode)"
+            lblPatientName.ForeColor = Color.Red
+
+            ' Disable the save button so you don't get SQL errors, but STAY on the form.
+            BtnSaveRecord.Enabled = False
+            Return ' This stops the rest of the sub from running without closing the form.
+        End If
+
+        ' 3. Normal flow - only runs if PassedAppointmentID is greater than 0
+        BtnSaveRecord.Enabled = True
+        lblPatientName.ForeColor = Color.Black
+
+        FetchAssignedDentist()
+        LoadExistingTreatmentData()
     End Sub
 
-    Private Sub ClearForm()
-        TxtTreatmentNotes.Clear()
-        TxtPrescriptions.Clear()
-        TxtProceduresDone.Clear()
-        ' Labels remain set to the current patient/dentist from the constructor
+    Private Sub FetchAssignedDentist()
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                ' Join Appointments with Users to get the assigned Dentist's name
+                Dim sql As String = "SELECT A.UserID, U.FullName FROM Appointments A " &
+                                   "JOIN Users U ON A.UserID = U.UserID " &
+                                   "WHERE A.AppointmentID = @appt"
+
+                Using cmd As New SqlCommand(sql, con)
+                    cmd.Parameters.AddWithValue("@appt", PassedAppointmentID)
+                    Using reader As SqlDataReader = cmd.ExecuteReader()
+                        If reader.Read() Then
+                            ' Set the ID to ensure the save logic uses the assigned dentist
+                            PassedDentistID = CInt(reader("UserID"))
+                            ' Display the assigned dentist's name in your label
+                            lblDentistName.Text = reader("FullName").ToString()
+                        End If
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            lblDentistName.Text = "Dentist Not Found"
+        End Try
     End Sub
 
-    Private Sub LoadRecords()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            ' Joining Appointments to show the visit date in the grid
-            Dim query As String = "
-                SELECT TR.RecordID,
-                       P.FullName AS Patient,
-                       U.FullName AS Dentist,
-                       TR.TreatmentNotes,
-                       TR.Prescriptions,
-                       TR.ProceduresDone,
-                       TR.DateCreated
-                FROM TreatmentRecords TR
-                JOIN Patients P ON TR.PatientID = P.PatientID
-                JOIN Users U ON TR.UserID = U.UserID
-                ORDER BY TR.DateCreated DESC"
+    Private Sub LoadExistingTreatmentData()
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                ' Using your actual table structure (Prescriptions is a column)
+                Dim sql As String = "SELECT TreatmentNotes, ProceduresDone, Prescriptions FROM TreatmentRecords WHERE AppointmentID = @appt"
+                Using cmd As New SqlCommand(sql, con)
+                    cmd.Parameters.AddWithValue("@appt", PassedAppointmentID)
+                    Using reader As SqlDataReader = cmd.ExecuteReader()
+                        If reader.Read() Then
+                            TxtTreatmentNotes.Text = reader("TreatmentNotes").ToString()
+                            TxtProceduresDone.Text = reader("ProceduresDone").ToString()
+                            TxtPrescriptions.Text = reader("Prescriptions").ToString()
 
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-
-            Guna2DataGridView1.DataSource = dt
-
-            ' Hide the Primary Key
-            If Guna2DataGridView1.Columns.Contains("RecordID") Then
-                Guna2DataGridView1.Columns("RecordID").Visible = False
-            End If
-        End Using
+                            ' Change button text to show we are editing
+                            BtnSaveRecord.Text = "Update Record"
+                        End If
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            MessageBox.Show("Error loading data: " & ex.Message)
+        End Try
     End Sub
 
     Private Sub BtnSaveRecord_Click(sender As Object, e As EventArgs) Handles BtnSaveRecord.Click
-        ' Validation: Ensure notes aren't empty
-        If String.IsNullOrWhiteSpace(TxtTreatmentNotes.Text) Then
-            MessageBox.Show("Please enter treatment notes.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Return
+        ' Validation to prevent SQL Foreign Key errors
+        If PassedPatientID <= 0 Or PassedAppointmentID <= 0 Or PassedDentistID <= 0 Then
+            MessageBox.Show("Cannot save: Missing record IDs. Please return to appointments.", "Invalid ID", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
         End If
 
         Try
             Using con As New SqlConnection(My.Settings.DentalDBConnection2)
                 con.Open()
 
-                ' 1. Insert the Treatment Record using the IDs passed to the labels
-                Dim sqlInsert As String = "
-                    INSERT INTO TreatmentRecords 
-                        (AppointmentID, PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, DateCreated)
-                    VALUES (@apptID, @patient, @dentist, @treatment, @prescriptions, @procedures, GETDATE())"
+                ' 1. UPSERT logic
+                Dim sqlTreat As String = "IF EXISTS (SELECT 1 FROM TreatmentRecords WHERE AppointmentID = @appt) " &
+                                         "UPDATE TreatmentRecords SET TreatmentNotes = @notes, Prescriptions = @presc, ProceduresDone = @proc, DateCreated = GETDATE() WHERE AppointmentID = @appt " &
+                                         "ELSE " &
+                                         "INSERT INTO TreatmentRecords (AppointmentID, PatientID, UserID, TreatmentNotes, Prescriptions, ProceduresDone, DateCreated) " &
+                                         "VALUES (@appt, @pat, @user, @notes, @presc, @proc, GETDATE())"
 
-                Using cmd As New SqlCommand(sqlInsert, con)
-                    cmd.Parameters.AddWithValue("@apptID", PassedAppointmentID)
-                    cmd.Parameters.AddWithValue("@patient", PassedPatientID)
-                    cmd.Parameters.AddWithValue("@dentist", PassedDentistID)
-                    cmd.Parameters.AddWithValue("@treatment", TxtTreatmentNotes.Text.Trim())
-                    cmd.Parameters.AddWithValue("@prescriptions", TxtPrescriptions.Text.Trim())
-                    cmd.Parameters.AddWithValue("@procedures", TxtProceduresDone.Text.Trim())
+                Using cmd As New SqlCommand(sqlTreat, con)
+                    cmd.Parameters.AddWithValue("@appt", PassedAppointmentID)
+                    cmd.Parameters.AddWithValue("@pat", PassedPatientID)
+                    cmd.Parameters.AddWithValue("@user", PassedDentistID) ' Uses the assigned doctor
+                    cmd.Parameters.AddWithValue("@notes", TxtTreatmentNotes.Text.Trim())
+                    cmd.Parameters.AddWithValue("@proc", TxtProceduresDone.Text.Trim())
+                    cmd.Parameters.AddWithValue("@presc", TxtPrescriptions.Text.Trim())
                     cmd.ExecuteNonQuery()
                 End Using
 
-                ' 2. Optional: Automatically mark the appointment as 'Completed'
-                Dim sqlUpdate As String = "UPDATE Appointments SET Status = 'Completed' WHERE AppointmentID = @apptID"
-                Using cmdUpdate As New SqlCommand(sqlUpdate, con)
-                    cmdUpdate.Parameters.AddWithValue("@apptID", PassedAppointmentID)
-                    cmdUpdate.ExecuteNonQuery()
+                ' 2. Mark Appointment as Completed
+                Dim sqlStatus As String = "UPDATE Appointments SET Status = 'Completed' WHERE AppointmentID = @appt"
+                Using cmdStatus As New SqlCommand(sqlStatus, con)
+                    cmdStatus.Parameters.AddWithValue("@appt", PassedAppointmentID)
+                    cmdStatus.ExecuteNonQuery()
                 End Using
             End Using
 
-            MessageBox.Show("Treatment record saved and appointment completed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-            ' Audit Log
-            SystemSession.LogAudit("Insert Treatment Record", "TreatmentRecords", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-
-            LoadRecords()
-            ClearForm()
+            MessageBox.Show("Record saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            SystemSession.NavigateToDashboard(Me)
 
         Catch ex As Exception
-            MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Save failed: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
     Private Sub btnBack1_Click(sender As Object, e As EventArgs) Handles btnBack1.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
-
-    ' Rest of your navigation logic (Back buttons, etc.)
-
-
 End Class

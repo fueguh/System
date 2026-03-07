@@ -1,151 +1,97 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class DentistDashboard
+    Private connectionString As String = My.Settings.DentalDBConnection2
+
+    ' Variables to hold selected data
+    Public PassedAppointmentID As Integer = 0
+    Public PassedPatientID As Integer = 0
+    Public CurrentPatientName As String = ""
+
     Private Sub DentistDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadDashboardStats()
     End Sub
 
-    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
-        Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-        If result = DialogResult.Yes Then
-            SystemSession.PerformLogout(Me.Name)
-            Me.Close()
-        End If
+    ' === THIS PART CLEARS THE SELECTION WHEN YOU RETURN ===
+    Private Sub DentistDashboard_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
+        ' Reset the tab selection to the first tab (Dashboard Home) 
+        ' or set to -1 if you want nothing selected at all.
+        denTab.SelectedIndex = 0
+
+        ' Reload stats to show updated counts
+        LoadDashboardStats()
     End Sub
 
-    Private Sub DentistDashboard_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
-            Dim clinicName As Object = cmd.ExecuteScalar()
-            If clinicName IsNot Nothing Then
-                lblClinicName.Text = clinicName.ToString()
-            Else
-                lblClinicName.Text = "Dental Clinic Management System"
-            End If
-        End Using
-    End Sub
-
-    Public Sub LoadDashboardStats()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-
-            ' Total Patients
-
-            Dim cmd1 As New SqlCommand("SELECT COUNT(*) FROM Patients", con)
-            lblTotalPatients.Text = cmd1.ExecuteScalar().ToString()
-
-            ' Total Dentists from Users table
-            Dim cmd2 As New SqlCommand("SeLECT COUNT(*) FROM Users WHERE Role = 'Dentist'", con)
-            lblTotalDentists.Text = cmd2.ExecuteScalar().ToString()
-
-            ' Appointments Today
-            Dim cmd3 As New SqlCommand("
-            SELECT COUNT(*) FROM Appointments 
-            WHERE Date = CAST(GETDATE() AS DATE)
-        ", con)
-            lblAppointmentsToday.Text = cmd3.ExecuteScalar().ToString()
-
-            ' Completed Appointments
-            Dim cmd4 As New SqlCommand("
-            SELECT COUNT(*) FROM Appointments 
-            WHERE Status = 'Completed'
-        ", con)
-            lblCompletedAppointments.Text = cmd4.ExecuteScalar().ToString()
-        End Using
-    End Sub
-
+    ' === SIDEBAR NAVIGATION ===
     Private Sub DenTab_SelectedIndexChanged(sender As Object, e As EventArgs) Handles denTab.SelectedIndexChanged
+        ' We only trigger navigation if a tab is actually clicked
+        ' This prevents loops when we reset the index in the Activated event
+        If denTab.SelectedIndex = -1 Or denTab.SelectedIndex = 0 Then Exit Sub
+
         Select Case denTab.SelectedTab.Name
-            Case "tabTreatmentRecords"
-                ' Open Treatment Records form
-                TreatmentRecords.Show()
+            Case "tabAppointment"
+                Dim frmAppt As New AvailableAppointments()
+                frmAppt.Show()
                 Me.Hide()
 
-            Case "tabAppointment"
-                ' Refresh the Appointment DataGridView
-                LoadAppointmentsGrid()
-
             Case "tabPatientManagement"
-                ' Refresh the Patient Management DataGridView
                 LoadPatientsGrid()
 
+            Case "tabTreatmentRecords"
+                Dim frmTreatment As New TreatmentRecords()
+
+                ' Pass the data
+                frmTreatment.PassedAppointmentID = Me.PassedAppointmentID
+                frmTreatment.PassedPatientID = Me.PassedPatientID
+                frmTreatment.CurrentPatientName = Me.CurrentPatientName
+
+                frmTreatment.Show()
+                Me.Hide()
         End Select
     End Sub
 
-    ' === Load Appointments into DataGridView ===
-    ' === Load Appointments into DataGridView ===
-    Private Sub LoadAppointmentsGrid()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+    ' === DASHBOARD STATS ===
+    Public Sub LoadDashboardStats()
+        Try
+            Using con As New SqlConnection(connectionString)
+                con.Open()
+                lblTotalPatients.Text = New SqlCommand("SELECT COUNT(*) FROM Patients WHERE IsActive=1", con).ExecuteScalar().ToString()
+                lblTotalDentists.Text = New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Dentist'", con).ExecuteScalar().ToString()
 
-            ' FIX: Changed to LEFT JOIN and removed the 'Dentist' role filter 
-            ' so appointments handled by staff or admins aren't excluded.
-            Dim query As String = "
-                SELECT 
-                    A.AppointmentID, 
-                    A.PatientID, 
-                    A.UserID, 
-                    P.FullName AS Patient, 
-                    D.FullName AS [Handled By], 
-                    STRING_AGG(S.ServiceName, ', ') AS Services, 
-                    A.Date, 
-                    A.StartTime, 
-                    A.EndTime, 
-                    A.Status
-                FROM Appointments A
-                LEFT JOIN Patients P ON A.PatientID = P.PatientID
-                LEFT JOIN Users D ON A.UserID = D.UserID
-                LEFT JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-                LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
-                GROUP BY 
-                    A.AppointmentID, A.PatientID, A.UserID, P.FullName, 
-                    D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-                ORDER BY A.Date DESC;"
+                Dim sqlPending As String = "SELECT COUNT(*) FROM Appointments WHERE UserID = @uid AND Date = CAST(GETDATE() AS DATE) AND Status <> 'Completed' AND Status <> 'Cancelled'"
+                Using cmdToday As New SqlCommand(sqlPending, con)
+                    cmdToday.Parameters.AddWithValue("@uid", SystemSession.LoggedInUserID)
+                    lblAppointmentsToday.Text = cmdToday.ExecuteScalar().ToString()
+                End Using
 
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            dgvAppointments.DataSource = dt
-
-            ' HIDING THE IDs (They remain in the DataSource, just not the UI)
-            If dgvAppointments.Columns.Contains("AppointmentID") Then dgvAppointments.Columns("AppointmentID").Visible = False
-            If dgvAppointments.Columns.Contains("PatientID") Then dgvAppointments.Columns("PatientID").Visible = False
-            If dgvAppointments.Columns.Contains("UserID") Then dgvAppointments.Columns("UserID").Visible = False
-        End Using
+                Dim sqlDone As String = "SELECT COUNT(*) FROM Appointments WHERE UserID = @uid AND Date = CAST(GETDATE() AS DATE) AND Status = 'Completed'"
+                Using cmdDone As New SqlCommand(sqlDone, con)
+                    cmdDone.Parameters.AddWithValue("@uid", SystemSession.LoggedInUserID)
+                    lblCompletedAppointments.Text = cmdDone.ExecuteScalar().ToString()
+                End Using
+            End Using
+        Catch ex As Exception
+            ' Silent fail
+        End Try
     End Sub
 
-
-    ' === Load Patients into DataGridView ===
     Private Sub LoadPatientsGrid()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim query As String = "
-                SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered 
-                FROM Patients 
-                WHERE IsActive=1 
-                ORDER BY FullName ASC"
-
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            dgvPatients.DataSource = dt
-
-            ' HIDING THE ID
-            If dgvPatients.Columns.Contains("PatientID") Then dgvPatients.Columns("PatientID").Visible = False
-        End Using
+        Try
+            Using con As New SqlConnection(connectionString)
+                con.Open()
+                Dim da As New SqlDataAdapter("SELECT FullName, ContactNumber, Email FROM Patients WHERE IsActive=1", con)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                dgvPatients.DataSource = dt
+            End Using
+        Catch ex As Exception
+        End Try
     End Sub
 
-
-    Private Sub Guna2CustomGradientPanel1_Paint(sender As Object, e As PaintEventArgs) Handles Guna2CustomGradientPanel1.Paint
-
-    End Sub
-
-    Private Sub DgvPatients_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvPatients.CellContentClick
-
-    End Sub
-
-    Private Sub TabTreatmentRecords_Click(sender As Object, e As EventArgs) Handles tabTreatmentRecords.Click
-
+    Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs) Handles LogoutPictureBox1.Click
+        If MessageBox.Show("Are you sure you want to logout?", "Logout", MessageBoxButtons.OKCancel) = DialogResult.OK Then
+            SystemSession.PerformLogout(Me.Name)
+            Me.Close()
+        End If
     End Sub
 End Class

@@ -44,6 +44,7 @@ Partial Class AdminDashboard
         Me.ItemManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StockTrackingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsAnalyticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TodaysAppointmentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
@@ -78,7 +79,7 @@ Partial Class AdminDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.ToolStripMenuItem3})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.ToolStripMenuItem3, Me.TodaysAppointmentToolStripMenuItem})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -241,6 +242,13 @@ Partial Class AdminDashboard
         Me.ReportsAnalyticsToolStripMenuItem.Name = "ReportsAnalyticsToolStripMenuItem"
         Me.ReportsAnalyticsToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
         Me.ReportsAnalyticsToolStripMenuItem.Text = "Reports and Analytics"
+        '
+        'TodaysAppointmentToolStripMenuItem
+        '
+        Me.TodaysAppointmentToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.TodaysAppointmentToolStripMenuItem.Name = "TodaysAppointmentToolStripMenuItem"
+        Me.TodaysAppointmentToolStripMenuItem.Size = New System.Drawing.Size(321, 44)
+        Me.TodaysAppointmentToolStripMenuItem.Text = "Todays Appointment"
         '
         'Guna2CustomGradientPanel1
         '
@@ -494,4 +502,5 @@ Partial Class AdminDashboard
     Friend WithEvents ToolStripMenuItem4 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
     Friend WithEvents AvailabilityMaintenanceToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents TodaysAppointmentToolStripMenuItem As ToolStripMenuItem
 End Class

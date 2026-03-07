@@ -184,4 +184,9 @@ Public Class AdminDashboard
         FrmCustomSchedule.Show()
         Me.Hide()
     End Sub
+
+    Private Sub TodaysAppointmentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TodaysAppointmentToolStripMenuItem.Click
+        AvailableAppointments.Show()
+    End Sub
+
 End Class
