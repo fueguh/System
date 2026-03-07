@@ -187,6 +187,11 @@ Public Class AdminDashboard
 
     Private Sub TodaysAppointmentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TodaysAppointmentToolStripMenuItem.Click
         AvailableAppointments.Show()
+        Me.Hide()
     End Sub
 
+    Private Sub PaymentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PaymentToolStripMenuItem.Click
+        AdminDBPayment.Show()
+        Me.Hide()
+    End Sub
 End Class
