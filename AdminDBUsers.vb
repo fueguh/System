@@ -355,12 +355,22 @@ Public Class AdminDBUsers
 
     Dim connectionString As String = My.Settings.DentalDBConnection2
 
-    Private Sub txtSearchUsers_TextChanged(sender As Object, e As EventArgs) Handles txtSearchUsers.TextChanged, txtSearchUsers.TextChanged
-        Dim query As String = "SELECT UserID, FullName, Username, Password, Role, PhoneNumber, Email, DateCreated
-                               FROM dbo.Users
-                               WHERE FullName LIKE @search OR Username LIKE @search OR Role LIKE @search OR PhoneNumber LIKE @search OR Email LIKE @search"
+    Private Sub txtSearchUsers_TextChanged(sender As Object, e As EventArgs) Handles txtSearchUsers.TextChanged
+        ' ✅ Wrap the search logic in parentheses and add the Dentist filter
+        Dim query As String = "
+        SELECT UserID, FullName, Username, Role, PhoneNumber, Email, DateCreated
+        FROM dbo.Users
+        WHERE Role <> 'Dentist' 
+          AND (
+               FullName LIKE @search 
+               OR Username LIKE @search 
+               OR Role LIKE @search 
+               OR PhoneNumber LIKE @search 
+               OR Email LIKE @search
+          )"
+
         Using con As New SqlConnection(connectionString),
-              cmd As New SqlCommand(query, con)
+          cmd As New SqlCommand(query, con)
 
             cmd.Parameters.AddWithValue("@search", "%" & txtSearchUsers.Text.Trim() & "%")
 

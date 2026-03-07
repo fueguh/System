@@ -83,13 +83,13 @@ Partial Class AdminDBAdminMaintenance
         Me.AdminSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.AdminSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.AdminSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.AdminSearch.Location = New System.Drawing.Point(14, 342)
+        Me.AdminSearch.Location = New System.Drawing.Point(53, 342)
         Me.AdminSearch.Margin = New System.Windows.Forms.Padding(4)
         Me.AdminSearch.Name = "AdminSearch"
         Me.AdminSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.AdminSearch.PlaceholderText = "Search admin.."
         Me.AdminSearch.SelectedText = ""
-        Me.AdminSearch.Size = New System.Drawing.Size(653, 50)
+        Me.AdminSearch.Size = New System.Drawing.Size(614, 50)
         Me.AdminSearch.TabIndex = 78
         '
         'DataGridViewAdmins
