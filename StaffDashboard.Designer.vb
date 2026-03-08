@@ -44,6 +44,10 @@ Partial Class StaffDashboard
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label5 = New System.Windows.Forms.Label()
         Me.lblTotalPatients = New System.Windows.Forms.Label()
+        Me.InventoryManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ItemManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StockTrackingToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ReportsAnalyticToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -75,7 +79,7 @@ Partial Class StaffDashboard
         Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
         Me.PictureBox1.Location = New System.Drawing.Point(0, 1)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(327, 123)
+        Me.PictureBox1.Size = New System.Drawing.Size(367, 123)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox1.TabIndex = 33
         Me.PictureBox1.TabStop = False
@@ -116,12 +120,12 @@ Partial Class StaffDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.BillingAssistance, Me.ClinicSettingToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.BillingAssistance, Me.ClinicSettingToolStripMenuItem, Me.InventoryManagementToolStripMenuItem})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 124)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(327, 859)
+        Me.MenuStrip1.Size = New System.Drawing.Size(367, 859)
         Me.MenuStrip1.TabIndex = 32
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -282,6 +286,38 @@ Partial Class StaffDashboard
         Me.lblTotalPatients.Text = "0"
         Me.lblTotalPatients.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'InventoryManagementToolStripMenuItem
+        '
+        Me.InventoryManagementToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ItemManagementToolStripMenuItem1, Me.StockTrackingToolStripMenuItem1, Me.ReportsAnalyticToolStripMenuItem2})
+        Me.InventoryManagementToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.InventoryManagementToolStripMenuItem.Name = "InventoryManagementToolStripMenuItem"
+        Me.InventoryManagementToolStripMenuItem.Size = New System.Drawing.Size(364, 41)
+        Me.InventoryManagementToolStripMenuItem.Text = "Inventory Management"
+        '
+        'ItemManagementToolStripMenuItem1
+        '
+        Me.ItemManagementToolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ItemManagementToolStripMenuItem1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ItemManagementToolStripMenuItem1.Name = "ItemManagementToolStripMenuItem1"
+        Me.ItemManagementToolStripMenuItem1.Size = New System.Drawing.Size(483, 42)
+        Me.ItemManagementToolStripMenuItem1.Text = "Item Management"
+        '
+        'StockTrackingToolStripMenuItem1
+        '
+        Me.StockTrackingToolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.StockTrackingToolStripMenuItem1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.StockTrackingToolStripMenuItem1.Name = "StockTrackingToolStripMenuItem1"
+        Me.StockTrackingToolStripMenuItem1.Size = New System.Drawing.Size(483, 42)
+        Me.StockTrackingToolStripMenuItem1.Text = "StockTracking/Transaction"
+        '
+        'ReportsAnalyticToolStripMenuItem2
+        '
+        Me.ReportsAnalyticToolStripMenuItem2.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ReportsAnalyticToolStripMenuItem2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ReportsAnalyticToolStripMenuItem2.Name = "ReportsAnalyticToolStripMenuItem2"
+        Me.ReportsAnalyticToolStripMenuItem2.Size = New System.Drawing.Size(483, 42)
+        Me.ReportsAnalyticToolStripMenuItem2.Text = "Reports and Analytics"
+        '
         'StaffDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -345,4 +381,8 @@ Partial Class StaffDashboard
     Friend WithEvents label5 As Label
     Friend WithEvents lblTotalPatients As Label
     Friend WithEvents ClinicSettingToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents InventoryManagementToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ItemManagementToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents StockTrackingToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents ReportsAnalyticToolStripMenuItem2 As ToolStripMenuItem
 End Class

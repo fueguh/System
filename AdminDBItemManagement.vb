@@ -69,25 +69,30 @@ Public Class AdminDBItemManagement
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BtnAdd.Click
         Dim price As Decimal
-        If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then Exit Sub
+        If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then
+            MessageBox.Show("Please enter a valid price.")
+            Exit Sub
+        End If
 
+        ' ADD 'Quantity' to the column list and '@Quantity' to the VALUES list
         Dim query As String = "
-        INSERT INTO ItemManagement 
-        (ItemName, Price, CategoryID, SupplierID, ExpirationDate, HasExpiry) 
-        VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @ExpirationDate, @HasExpiry)
-    "
+    INSERT INTO ItemManagement 
+    (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, HasExpiry) 
+    VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate, @HasExpiry)"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-              cmd As New SqlCommand(query, connection)
+          cmd As New SqlCommand(query, connection)
 
             cmd.Parameters.AddWithValue("@ItemName", TextBoxItemName.Text)
             cmd.Parameters.AddWithValue("@Price", price)
             cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
             cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
 
+            ' FIX: Pass a default quantity (or use your NumericUpDown value)
+            cmd.Parameters.AddWithValue("@Quantity", 0)
+
             cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
 
-            ' Only add ExpirationDate once, depending on checkbox
             If chkHasExpiry.Checked Then
                 cmd.Parameters.AddWithValue("@ExpirationDate", DateTimePickerExpiry.Value)
             Else
@@ -100,14 +105,11 @@ Public Class AdminDBItemManagement
         End Using
 
         MessageBox.Show("Item added successfully!")
-        LoadSuppliers()
         LoadInventory()
-        LoadCategories()
         ClearInputs()
-
     End Sub
 
-    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click, BtnUpdate.Click
+    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
         If DgvItems.CurrentRow Is Nothing Then Exit Sub
         Dim itemID As Integer = CInt(DgvItems.CurrentRow.Cells("ItemID").Value)
         'Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
