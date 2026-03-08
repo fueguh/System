@@ -320,7 +320,6 @@ Public Class AdminDBPayment
         ' Reset Labels (Assuming these are your Label names)
         patient_name.Text = "---"
         dentist_name.Text = "---"
-
         ' Reset Numeric fields
         TextBoxTotal.Text = "0.00"
 
