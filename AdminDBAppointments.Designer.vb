@@ -51,6 +51,7 @@ Partial Class AdminDBAppointments
         Me.btnChoosePatient = New Guna.UI2.WinForms.Guna2Button()
         Me.lblPatientName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.lblPatient = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.txtSearchAppointments = New Guna.UI2.WinForms.Guna2TextBox()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2GroupBox1.SuspendLayout()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -450,6 +451,30 @@ Partial Class AdminDBAppointments
         Me.lblPatient.TabIndex = 90
         Me.lblPatient.Text = "Patient Name:"
         '
+        'txtSearchAppointments
+        '
+        Me.txtSearchAppointments.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtSearchAppointments.BorderRadius = 10
+        Me.txtSearchAppointments.BorderThickness = 2
+        Me.txtSearchAppointments.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.txtSearchAppointments.DefaultText = ""
+        Me.txtSearchAppointments.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.txtSearchAppointments.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.txtSearchAppointments.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtSearchAppointments.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtSearchAppointments.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtSearchAppointments.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.txtSearchAppointments.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtSearchAppointments.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtSearchAppointments.Location = New System.Drawing.Point(840, 403)
+        Me.txtSearchAppointments.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtSearchAppointments.Name = "txtSearchAppointments"
+        Me.txtSearchAppointments.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtSearchAppointments.PlaceholderText = "Search Appointments"
+        Me.txtSearchAppointments.SelectedText = ""
+        Me.txtSearchAppointments.Size = New System.Drawing.Size(334, 50)
+        Me.txtSearchAppointments.TabIndex = 91
+        '
         'AdminDBAppointments
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -457,6 +482,7 @@ Partial Class AdminDBAppointments
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1625, 996)
         Me.ControlBox = False
+        Me.Controls.Add(Me.txtSearchAppointments)
         Me.Controls.Add(Me.lblPatient)
         Me.Controls.Add(Me.lblPatientName)
         Me.Controls.Add(Me.btnChoosePatient)
@@ -516,4 +542,5 @@ Partial Class AdminDBAppointments
     Friend WithEvents btnChoosePatient As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lblPatientName As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents lblPatient As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents txtSearchAppointments As Guna.UI2.WinForms.Guna2TextBox
 End Class

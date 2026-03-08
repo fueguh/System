@@ -196,20 +196,23 @@ Public Class AdminDBPatients
     End Sub
 
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
-        Dim query As String = "SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered, IsActive, NoteAllergy
-                               FROM dbo.Patients 
-                               WHERE FullName LIKE @search OR ContactNumber LIKE @search OR Email LIKE @search OR NoteAllergy LIKE @search"
+        ' Use your existing query but add the IsActive filter so deactivated patients don't reappear
+        Dim query As String = "SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered, NoteAllergy " &
+                         "FROM Patients " &
+                         "WHERE IsActive = 1 AND (FullName LIKE @search OR ContactNumber LIKE @search OR Email LIKE @search)"
 
         Using con As New SqlConnection(connectionString),
-              cmd As New SqlCommand(query, con)
+          cmd As New SqlCommand(query, con)
 
             cmd.Parameters.AddWithValue("@search", "%" & Guna2TextBox1.Text & "%")
-
             Dim adapter As New SqlDataAdapter(cmd)
             Dim table As New DataTable()
             adapter.Fill(table)
 
             DGVPatients.DataSource = table
+
+            ' Re-hide the ID column after search refresh
+            If DGVPatients.Columns.Contains("PatientID") Then DGVPatients.Columns("PatientID").Visible = False
         End Using
     End Sub
     Private Function ValidatePatientFields(Optional patientID As Integer = 0) As Boolean
@@ -223,15 +226,11 @@ Public Class AdminDBPatients
 
         ' Email: must end with @gmail.com, alphanumeric before domain, no duplicates
         Dim email As String = txtEmail.Text.Trim()
-        If String.IsNullOrWhiteSpace(email) OrElse Not email.ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must end with '@gmail.com'.")
-            txtEmail.Focus()
-            Return False
-        End If
+        ' This pattern allows: letters, numbers, dots, underscores, hyphens @ domain . extension
+        Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
-        Dim localPart As String = email.Substring(0, email.Length - 10)
-        If Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
-            MessageBox.Show("Email username must contain only letters and numbers.")
+        If String.IsNullOrWhiteSpace(email) OrElse Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
+            MessageBox.Show("Please enter a valid email address (e.g., patient@example.com).")
             txtEmail.Focus()
             Return False
         End If
@@ -260,12 +259,13 @@ Public Class AdminDBPatients
             Return False
         End If
 
-        ' Allergy Note: letters only
-        If String.IsNullOrWhiteSpace(txtAllergy.Text) OrElse
-       Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-            MessageBox.Show("Allergy note must contain letters only.")
-            txtAllergy.Focus()
-            Return False
+        ' Allergy Note: Letters only, but ALLOW blank (Optional)
+        If Not String.IsNullOrWhiteSpace(txtAllergy.Text) Then
+            If Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
+                MessageBox.Show("Allergy note must contain letters only.")
+                txtAllergy.Focus()
+                Return False
+            End If
         End If
 
         ' Contact Number: digits only
