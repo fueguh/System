@@ -215,6 +215,8 @@ Partial Class AdminDashboard
         '
         'ClinicSettingsToolStripMenuItem
         '
+        Me.ClinicSettingsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ClinicSettingsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClinicSettingsToolStripMenuItem.Name = "ClinicSettingsToolStripMenuItem"
         Me.ClinicSettingsToolStripMenuItem.Size = New System.Drawing.Size(186, 44)
         Me.ClinicSettingsToolStripMenuItem.Text = "Clinic "
