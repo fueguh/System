@@ -21,6 +21,13 @@ Public Class AdminDBSupplier
     End Sub
 
     Private Sub BtnAddSupplier_Click(sender As Object, e As EventArgs) Handles BtnAddSupplier.Click
+
+        If Not TextBoxEmail.Text.Contains("@") OrElse Not TextBoxEmail.Text.Contains(".") Then
+            MessageBox.Show("Please enter a valid email address.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            TextBoxEmail.Focus()
+            Exit Sub
+        End If
+
         Dim query As String = "INSERT INTO Suppliers 
         (SupplierName, ContactNumber, Address, Email, IsActive) 
         VALUES (@SupplierName, @ContactNumber, @Address, @Email, 1)" ' Always active by default
@@ -44,6 +51,11 @@ Public Class AdminDBSupplier
     End Sub
 
     Private Sub BtnUpdateSupplier_Click(sender As Object, e As EventArgs) Handles BtnUpdateSupplier.Click
+        If Not TextBoxEmail.Text.Contains("@") OrElse Not TextBoxEmail.Text.Contains(".") Then
+            MessageBox.Show("Please enter a valid email address.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            TextBoxEmail.Focus()
+            Exit Sub
+        End If
         If selectedSupplierID = 0 Then
             MessageBox.Show("Please select a supplier to update.")
             Exit Sub
@@ -171,45 +183,65 @@ Public Class AdminDBSupplier
     End Sub
 
     Private Sub TextBoxAddress_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxAddress.KeyPress
-        ' 1. Allow Backspace/System keys
+        ' 1. Allow Backspace and System keys
         If Char.IsControl(e.KeyChar) Then Return
 
-        ' 2. Define allowed special characters
-        Dim allowedChars As String = " ,.-/"
+        ' 2. Allowed special characters for addresses
+        ' Added: # (for unit numbers) and () (for landmarks/districts)
+        Dim allowedChars As String = " ,.-/#()"
 
-        ' 3. Check if it's a Letter, Digit, or one of our allowed symbols
+        ' 3. Validate character
         If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse allowedChars.Contains(e.KeyChar)) Then
             e.Handled = True
             Return
         End If
 
-        ' 4. Prevent "Symbol Spam" (Double dots, double commas, etc.)
-        ' If the key just pressed is a symbol AND the last character was also a symbol
-        If allowedChars.Contains(e.KeyChar) AndAlso TextBoxAddress.Text.Length > 0 Then
+        ' 4. Prevent consecutive symbols (e.g., prevent ",," or "++")
+        ' We allow spaces to be consecutive if needed, but block double dots/commas
+        Dim symbolsToLimit As String = ",.-/#"
+        If symbolsToLimit.Contains(e.KeyChar) AndAlso TextBoxAddress.Text.Length > 0 Then
             Dim lastChar As Char = TextBoxAddress.Text.Last()
-            If allowedChars.Contains(lastChar) Then
-                e.Handled = True ' Block the second consecutive symbol
+            If symbolsToLimit.Contains(lastChar) Then
+                e.Handled = True
             End If
         End If
     End Sub
-
+    Private Sub TextBoxAddress_Leave(sender As Object, e As EventArgs) Handles TextBoxAddress.Leave
+        If Not String.IsNullOrWhiteSpace(TextBoxAddress.Text) Then
+            ' Automatically converts "manila, philippines" to "Manila, Philippines"
+            TextBoxAddress.Text = StrConv(TextBoxAddress.Text, VbStrConv.ProperCase)
+        End If
+    End Sub
     Private Sub TextBoxEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxEmail.KeyPress
+        ' 1. Allow Backspace/System keys
         If Char.IsControl(e.KeyChar) Then Return
 
-        ' Allow letters, digits, and @
-        If Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c Then Return
+        ' 2. Define extra allowed characters for emails
+        Dim allowedSpecial As String = "@._-"
 
-        ' Handle the Dot
-        If e.KeyChar = "."c Then
-            ' Block dot if it's the first character or if the previous character was also a dot
-            If TextBoxEmail.Text.Length = 0 OrElse TextBoxEmail.Text.EndsWith(".") Then
+        ' 3. Check if it's a letter, digit, or one of the allowed symbols
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse allowedSpecial.Contains(e.KeyChar)) Then
+            e.Handled = True
+            Return
+        End If
+
+        ' 4. Specific Logic for '@'
+        If e.KeyChar = "@"c Then
+            ' Block if it's the first character OR if an @ already exists
+            If TextBoxEmail.Text.Length = 0 OrElse TextBoxEmail.Text.Contains("@") Then
                 e.Handled = True
             End If
             Return
         End If
 
-        ' Block everything else
-        e.Handled = True
+        ' 5. Specific Logic for Dot '.'
+        If e.KeyChar = "."c Then
+            ' Block if it's the first character OR the last character was also a dot
+            If TextBoxEmail.Text.Length = 0 OrElse TextBoxEmail.Text.EndsWith(".") Then
+                e.Handled = True
+            End If
+            Return
+        End If
     End Sub
 
     Private Sub DataGridViewSuppliers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewSuppliers.CellClick

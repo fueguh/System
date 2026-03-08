@@ -78,24 +78,49 @@ Public Class AdminDBReports
     End Sub
 
     ' Service Usage
+    ' Service Usage - Fixed to show 0 revenue for unused services
     Private Sub LoadServiceUsage()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
-            SELECT 
-                S.ServiceName,
-                A.Date AS DateUsed,
-                COUNT(*) AS TimesUsedOnDate
-            FROM Services S
-            LEFT JOIN AppointmentServices ASV ON S.ServiceID = ASV.ServiceID
-            LEFT JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
-            GROUP BY S.ServiceName, A.Date
-            ORDER BY S.ServiceName, A.Date DESC
-            "
+        -- 1. Get the total clinic revenue first to calculate shares
+        DECLARE @GrandTotal DECIMAL(18,2);
+        SELECT @GrandTotal = SUM(S.Price) 
+        FROM AppointmentServices ASV
+        INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
+        INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
+        INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+        WHERE A.Status = 'Completed';
+
+        -- 2. Generate the descriptive report
+        SELECT 
+            S.ServiceName AS [Service Name],
+            COUNT(ASV.ServiceID) AS [Total Procedures],
+            SUM(S.Price) AS [Gross Revenue],
+            -- Descriptive: Shows importance of service to the business
+            CAST((SUM(S.Price) / NULLIF(@GrandTotal, 0)) * 100 AS DECIMAL(10,2)) AS [% Contribution],
+            -- Descriptive: Ranking (1 = Most Profitable)
+            DENSE_RANK() OVER (ORDER BY SUM(S.Price) DESC) AS [Profit Rank]
+        FROM Services S
+        INNER JOIN AppointmentServices ASV ON S.ServiceID = ASV.ServiceID
+        INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
+        INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+        WHERE A.Status = 'Completed'
+        GROUP BY S.ServiceName
+        ORDER BY [Gross Revenue] DESC"
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             DgvServiceUsage.DataSource = dt
+
+            ' Format columns for clarity
+            If DgvServiceUsage.Columns.Contains("Gross Revenue") Then
+                DgvServiceUsage.Columns("Gross Revenue").DefaultCellStyle.Format = "N2"
+            End If
+            If DgvServiceUsage.Columns.Contains("% Contribution") Then
+                DgvServiceUsage.Columns("% Contribution").DefaultCellStyle.Format = "0.0'%'"
+            End If
         End Using
     End Sub
 
@@ -103,14 +128,15 @@ Public Class AdminDBReports
     Private Sub LoadPatientSummary()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
+            ' This query groups registrations by month to show clinic growth
             Dim query As String = "
-            SELECT 
-                P.FullName,
-                DATENAME(MONTH, P.DateRegistered) AS RegistrationMonth,
-                COUNT(*) OVER (PARTITION BY MONTH(P.DateRegistered)) AS MonthlyCount
-            FROM Patients P
-            ORDER BY MONTH(P.DateRegistered), P.FullName
-            "
+        SELECT 
+            FORMAT(DateRegistered, 'MMMM yyyy') AS [Month Joined],
+            COUNT(PatientID) AS [New Patients]
+        FROM Patients
+        GROUP BY FORMAT(DateRegistered, 'MMMM yyyy'), YEAR(DateRegistered), MONTH(DateRegistered)
+        ORDER BY YEAR(DateRegistered) DESC, MONTH(DateRegistered) DESC"
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
@@ -153,19 +179,38 @@ Public Class AdminDBReports
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
+        WITH MonthlyStats AS (
             SELECT 
-                FORMAT(A.Date, 'MMMM yyyy') AS Month,
-                SUM(S.Price) AS TotalRevenue
+                FORMAT(A.Date, 'MMMM yyyy') AS [Month],
+                YEAR(A.Date) as [YearNum],
+                MONTH(A.Date) as [MonthNum],
+                COUNT(DISTINCT A.AppointmentID) AS [Total Appointments],
+                SUM(R.TotalAmount) AS [Gross Revenue]
             FROM Appointments A
-            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-            JOIN Services S ON ASV.ServiceID = S.ServiceID
-            GROUP BY FORMAT(A.Date, 'MMMM yyyy')
-            ORDER BY MIN(A.Date)
-            "
+            INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+            WHERE A.Status = 'Completed'
+            GROUP BY FORMAT(A.Date, 'MMMM yyyy'), YEAR(A.Date), MONTH(A.Date)
+        )
+        SELECT 
+            [Month],
+            [Total Appointments],
+            [Gross Revenue],
+            CAST([Gross Revenue] / NULLIF([Total Appointments], 0) AS DECIMAL(10,2)) AS [Avg Per Patient]
+        FROM MonthlyStats
+        ORDER BY [YearNum] DESC, [MonthNum] DESC"
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVMonthly.DataSource = dt
+
+            ' UI Enhancement: Auto-format currency
+            If DGVMonthly.Columns.Contains("Gross Revenue") Then
+                DGVMonthly.Columns("Gross Revenue").DefaultCellStyle.Format = "C2"
+            End If
+            If DGVMonthly.Columns.Contains("Avg Per Patient") Then
+                DGVMonthly.Columns("Avg Per Patient").DefaultCellStyle.Format = "C2"
+            End If
         End Using
     End Sub
 

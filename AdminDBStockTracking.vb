@@ -66,64 +66,71 @@ Public Class AdminDBStockTracking
     End Sub
 
     Private Sub ButtonRecord_Click(sender As Object, e As EventArgs) Handles ButtonRecord.Click
-
-        If ComboBoxItem.SelectedValue Is Nothing Then
-            MessageBox.Show("Please select an item.")
+        ' 1. Basic Validation
+        If ComboBoxItem.SelectedValue Is Nothing OrElse Not TypeOf ComboBoxItem.SelectedValue Is Integer Then
+            MessageBox.Show("Please select a valid item.")
             Exit Sub
         End If
 
-        Dim itemID As Integer = CInt(ComboBoxItem.SelectedValue)
-        Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
-        Dim transType As String
-
-        If RadioIn.Checked Then
-            transType = "IN"
-        ElseIf RadioOut.Checked Then
-            transType = "OUT"
-        Else
-            MessageBox.Show("Please select a transaction type.")
-            Exit Sub
-        End If
-
-        Dim transDate As Date = TransactionDate.Value.Date
-
-        ' Insert into StockTransactions
-        Dim queryTrans As String = "INSERT INTO StockTransactions 
-        (ItemID, TransactionType, Quantity, TransactionDate) 
-        VALUES (@ItemID, @TransactionType, @Quantity, @TransactionDate)"
-
-        ' Update ItemManagement stock
-        Dim queryUpdate As String
-        If transType = "IN" Then
-            queryUpdate = "UPDATE ItemManagement SET Quantity = Quantity + @Quantity WHERE ItemID=@ItemID"
-        Else
-            queryUpdate = "UPDATE ItemManagement SET Quantity = Quantity - @Quantity WHERE ItemID=@ItemID"
-        End If
-
-        If qty <= 0 Then
+        If NumericUpDownQuantity.Value <= 0 Then
             MessageBox.Show("Quantity must be greater than zero.")
             Exit Sub
         End If
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          cmdTrans As New SqlCommand(queryTrans, connection),
-          cmdUpdate As New SqlCommand(queryUpdate, connection)
 
-            cmdTrans.Parameters.AddWithValue("@ItemID", itemID)
-            cmdTrans.Parameters.AddWithValue("@TransactionType", transType)
-            cmdTrans.Parameters.AddWithValue("@Quantity", qty)
-            cmdTrans.Parameters.AddWithValue("@TransactionDate", transDate)
+        ' 2. Variable Setup
+        Dim itemID As Integer = CInt(ComboBoxItem.SelectedValue)
+        Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
+        Dim transType As String = If(RadioIn.Checked, "IN", If(RadioOut.Checked, "OUT", ""))
 
-            cmdUpdate.Parameters.AddWithValue("@ItemID", itemID)
-            cmdUpdate.Parameters.AddWithValue("@Quantity", qty)
+        If transType = "" Then
+            MessageBox.Show("Please select a transaction type (IN or OUT).")
+            Exit Sub
+        End If
 
+        ' 3. Database Execution with Transaction
+        Using connection As New SqlConnection(My.Settings.DentalDBConnection2)
             connection.Open()
-            cmdTrans.ExecuteNonQuery()
-            cmdUpdate.ExecuteNonQuery()
-            connection.Close()
 
+            ' Start a transaction to ensure data integrity
+            Using sqlTrans As SqlTransaction = connection.BeginTransaction()
+                Try
+                    ' Define Queries
+                    Dim queryTrans As String = "INSERT INTO StockTransactions (ItemID, TransactionType, Quantity, TransactionDate) " &
+                                         "VALUES (@ItemID, @TransType, @Qty, @Date)"
+
+                    Dim queryUpdate As String = If(transType = "IN",
+                    "UPDATE ItemManagement SET Quantity = Quantity + @Qty WHERE ItemID = @ItemID",
+                    "UPDATE ItemManagement SET Quantity = Quantity - @Qty WHERE ItemID = @ItemID")
+
+                    ' Command 1: Record Transaction
+                    Using cmdTrans As New SqlCommand(queryTrans, connection, sqlTrans)
+                        cmdTrans.Parameters.AddWithValue("@ItemID", itemID)
+                        cmdTrans.Parameters.AddWithValue("@TransType", transType)
+                        cmdTrans.Parameters.AddWithValue("@Qty", qty)
+                        cmdTrans.Parameters.AddWithValue("@Date", TransactionDate.Value.Date)
+                        cmdTrans.ExecuteNonQuery()
+                    End Using
+
+                    ' Command 2: Update Item Stock
+                    Using cmdUpdate As New SqlCommand(queryUpdate, connection, sqlTrans)
+                        cmdUpdate.Parameters.AddWithValue("@ItemID", itemID)
+                        cmdUpdate.Parameters.AddWithValue("@Qty", qty)
+                        cmdUpdate.ExecuteNonQuery()
+                    End Using
+
+                    ' If we got here, save changes
+                    sqlTrans.Commit()
+                    MessageBox.Show("Stock updated successfully!")
+
+                Catch ex As Exception
+                    ' If anything failed, undo everything
+                    sqlTrans.Rollback()
+                    MessageBox.Show("Transaction failed: " & ex.Message)
+                End Try
+            End Using
         End Using
 
-        MessageBox.Show("Transaction recorded successfully!")
+        ' 4. Refresh UI
         LoadTransactions()
         LoadInventory()
         ClearInputs()

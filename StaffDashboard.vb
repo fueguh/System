@@ -73,4 +73,19 @@ Public Class StaffDashboard
         ClinicSettings.Show()
         Me.Hide()
     End Sub
+
+    Private Sub ItemManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ItemManagementToolStripMenuItem1.Click
+        AdminDBItemManagement.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub StockTrackingToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles StockTrackingToolStripMenuItem1.Click
+        AdminDBStockTracking.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub ReportsAnalyticToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ReportsAnalyticToolStripMenuItem2.Click
+        AdminDBRepandAnalytics.Show()
+        Me.Hide()
+    End Sub
 End Class

@@ -11,7 +11,7 @@ Public Class FrmCustomSchedule
     Private Sub FrmCustomSchedule_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Add weekdays to CheckedListBox
         ClbDays.Items.Clear()
-        ClbDays.Items.AddRange({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"})
+        ClbDays.Items.AddRange({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
 
         FillTimeComboBoxes()
         LoadPartTimeDentists()

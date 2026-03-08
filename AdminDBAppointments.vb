@@ -9,7 +9,7 @@ Public Class AdminDBAppointments
     Private isFormLoading As Boolean = True
     Private selectedEndTime As TimeSpan
     Private selectedPatientID As Integer = 0
-
+    Private dtAppointments As DataTable
     Public Shared Dashboard As AdminDashboard
     Public Shared AdminDBReports As AdminDBReports
 
@@ -60,23 +60,24 @@ Public Class AdminDBAppointments
 
     Private Sub LoadAppointments()
         Dim query As String = "
-            SELECT A.AppointmentID, P.PatientID, P.FullName AS Patient, D.UserID AS DentistID,
-                   D.FullName AS Dentist, STRING_AGG(S.ServiceName, ', ') AS Services, 
-                   A.Date, A.StartTime, A.EndTime, A.Status
-            FROM Appointments A
-            JOIN Patients P ON A.PatientID = P.PatientID
-            JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
-            JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-            JOIN Services S ON ASV.ServiceID = S.ServiceID
-            GROUP BY A.AppointmentID, P.PatientID, P.FullName, D.UserID, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-            ORDER BY A.Date DESC"
+        SELECT A.AppointmentID, P.PatientID, P.FullName AS Patient, D.UserID AS DentistID,
+               D.FullName AS Dentist, STRING_AGG(S.ServiceName, ', ') AS Services, 
+               A.Date, A.StartTime, A.EndTime, A.Status
+        FROM Appointments A
+        JOIN Patients P ON A.PatientID = P.PatientID
+        JOIN Users D ON A.UserID = D.UserID AND D.Role = 'Dentist'
+        JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
+        JOIN Services S ON ASV.ServiceID = S.ServiceID
+        GROUP BY A.AppointmentID, P.PatientID, P.FullName, D.UserID, D.FullName, A.Date, A.StartTime, A.EndTime, A.Status
+        ORDER BY A.Date DESC"
 
         Using da As New SqlDataAdapter(query, My.Settings.DentalDBConnection2)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            DGVAppointments.DataSource = dt
+            dtAppointments = New DataTable() ' Store in the class-level variable
+            da.Fill(dtAppointments)
+            DGVAppointments.DataSource = dtAppointments
         End Using
 
+        ' Hide internal IDs
         For Each colName In {"AppointmentID", "PatientID", "DentistID"}
             If DGVAppointments.Columns.Contains(colName) Then DGVAppointments.Columns(colName).Visible = False
         Next
@@ -91,8 +92,9 @@ Public Class AdminDBAppointments
         Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
 
         ' Updated logic to reflect that both Dentist and Patient are checked
-        If IsConflict(0, startTimeValue, selectedEndTime) Then
-            MessageBox.Show("Schedule Conflict: Either the Dentist or the Patient is already booked during this time.", "Conflict Detected", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        Dim conflictMessage As String = IsConflict(0, startTimeValue, selectedEndTime)
+        If conflictMessage <> "" Then
+            MessageBox.Show(conflictMessage, "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
@@ -126,8 +128,9 @@ Public Class AdminDBAppointments
 
         Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
 
-        If IsConflict(selectedAppointmentID, startTimeValue, selectedEndTime) Then
-            MessageBox.Show("Overlap detected. Please choose a different slot.")
+        Dim conflictMessage As String = IsConflict(selectedAppointmentID, startTimeValue, selectedEndTime)
+        If conflictMessage <> "" Then
+            MessageBox.Show(conflictMessage, "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
@@ -166,6 +169,7 @@ Public Class AdminDBAppointments
     Private Function ValidateFields() As Boolean
         If isFormLoading Then Return False
 
+        ' 1. Check Required Fields
         If selectedPatientID = 0 OrElse CmbDent.SelectedValue Is Nothing OrElse cmbStartTime.SelectedIndex = -1 Then
             MessageBox.Show("Please fill all required fields (Patient, Dentist, and Time).")
             Return False
@@ -181,18 +185,14 @@ Public Class AdminDBAppointments
             Return False
         End If
 
+        ' 2. Date Check
         If DtpDate.Value.Date < DateTime.Today Then
             MessageBox.Show("Cannot schedule appointments in the past.")
             Return False
         End If
 
-        If DtpDate.Value.DayOfWeek = DayOfWeek.Sunday Then
-            MessageBox.Show("The clinic is closed on Sundays.")
-            Return False
-        End If
-
-        ' Shift Validation (Partial/Full Logic)
-        Dim shiftEnd As TimeSpan = New TimeSpan(19, 30, 0)
+        ' --- FIX: Declare variables at the function level ---
+        Dim shiftEnd As TimeSpan = New TimeSpan(19, 30, 0) ' Default fallback
         Dim dentistID As Integer = CInt(CmbDent.SelectedValue)
         Dim dayName = DtpDate.Value.ToString("dddd")
 
@@ -205,20 +205,32 @@ Public Class AdminDBAppointments
             End Using
 
             If shiftType = "Part-time" Then
-                Using cmdPart As New SqlCommand("SELECT EndTime FROM DentistAvailability WHERE DentistID = @id AND DayOfWeek = @day", con)
+                ' Using parameterized query for safety
+                Dim queryPart = "SELECT EndTime FROM DentistAvailability WHERE DentistID = @id AND DayOfWeek = @day"
+                Using cmdPart As New SqlCommand(queryPart, con)
                     cmdPart.Parameters.AddWithValue("@id", dentistID)
                     cmdPart.Parameters.AddWithValue("@day", dayName)
+
                     Dim resEnd = cmdPart.ExecuteScalar()
-                    If resEnd IsNot Nothing Then shiftEnd = DirectCast(resEnd, TimeSpan)
+                    If resEnd IsNot Nothing AndAlso Not IsDBNull(resEnd) Then
+                        shiftEnd = DirectCast(resEnd, TimeSpan)
+                    Else
+                        ' SUNDAY/TEST FALLBACK: If no specific hours in DB, allow until 7:30 PM
+                        shiftEnd = New TimeSpan(19, 30, 0)
+                    End If
                 End Using
             Else
+                ' Full-time or specific shift types
                 Select Case shiftType?.ToLower()
-                    Case "morning shift" : shiftEnd = New TimeSpan(12, 0, 0)
-                    Case "afternoon shift", "full-time" : shiftEnd = New TimeSpan(19, 30, 0)
+                    Case "morning shift"
+                        shiftEnd = New TimeSpan(12, 0, 0)
+                    Case Else ' Afternoon shift or Full-time
+                        shiftEnd = New TimeSpan(19, 30, 0)
                 End Select
             End If
         End Using
 
+        ' 3. Final Comparison
         If selectedEndTime > shiftEnd Then
             MessageBox.Show("The services exceed the dentist's shift (Ends at " & DateTime.Today.Add(shiftEnd).ToString("hh:mm tt") & ").")
             Return False
@@ -227,27 +239,43 @@ Public Class AdminDBAppointments
         Return True
     End Function
 
-    Private Function IsConflict(appointmentID As Integer, startT As TimeSpan, endT As TimeSpan) As Boolean
+    Private Function IsConflict(appointmentID As Integer, startT As TimeSpan, endT As TimeSpan) As String
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            ' This query checks for any overlap AND looks for BOTH the Dentist or the Patient
-            Dim query As String = "SELECT 1 FROM Appointments " &
-                             "WHERE Date = @date " &
-                             "AND AppointmentID <> @id " &
-                             "AND Status <> 'Cancelled' " &
-                             "AND (@start < EndTime AND @end > StartTime) " &
-                             "AND (UserID = @dentist OR PatientID = @patient)"
 
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@dentist", CInt(CmbDent.SelectedValue))
-                cmd.Parameters.AddWithValue("@patient", selectedPatientID)
-                cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-                cmd.Parameters.AddWithValue("@id", appointmentID)
-                cmd.Parameters.AddWithValue("@start", startT)
-                cmd.Parameters.AddWithValue("@end", endT)
+            ' Base query to check for time overlaps
+            Dim baseQuery As String = "SELECT FullName FROM Appointments A " &
+                                  "JOIN {0} T ON A.{1} = T.{1} " &
+                                  "WHERE A.Date = @date AND A.AppointmentID <> @id " &
+                                  "AND A.Status <> 'Cancelled' " &
+                                  "AND (@start < A.EndTime AND @end > A.StartTime) " &
+                                  "AND A.{1} = @targetID"
 
-                Return cmd.ExecuteScalar() IsNot Nothing
+            ' 1. Check Dentist
+            Using cmdDentist As New SqlCommand(String.Format(baseQuery, "Users", "UserID"), con)
+                cmdDentist.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+                cmdDentist.Parameters.AddWithValue("@id", appointmentID)
+                cmdDentist.Parameters.AddWithValue("@start", startT)
+                cmdDentist.Parameters.AddWithValue("@end", endT)
+                cmdDentist.Parameters.AddWithValue("@targetID", CInt(CmbDent.SelectedValue))
+
+                Dim dentistName = cmdDentist.ExecuteScalar()
+                If dentistName IsNot Nothing Then Return "Dentist (" & dentistName.ToString() & ") is already booked at this time."
             End Using
+
+            ' 2. Check Patient
+            Using cmdPatient As New SqlCommand(String.Format(baseQuery, "Patients", "PatientID"), con)
+                cmdPatient.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+                cmdPatient.Parameters.AddWithValue("@id", appointmentID)
+                cmdPatient.Parameters.AddWithValue("@start", startT)
+                cmdPatient.Parameters.AddWithValue("@end", endT)
+                cmdPatient.Parameters.AddWithValue("@targetID", selectedPatientID)
+
+                Dim patientName = cmdPatient.ExecuteScalar()
+                If patientName IsNot Nothing Then Return "Patient (" & patientName.ToString() & ") already has another appointment at this time."
+            End Using
+
+            Return "" ' No conflict
         End Using
     End Function
 
@@ -291,11 +319,34 @@ Public Class AdminDBAppointments
         End Try
     End Sub
 
+    Private Sub txtSearchAppointments_TextChanged(sender As Object, e As EventArgs) Handles txtSearchAppointments.TextChanged
+        If dtAppointments Is Nothing Then Exit Sub
+
+        Try
+            ' This filters the Patient, Dentist, and Status columns simultaneously
+            Dim filter As String = String.Format("Patient LIKE '%{0}%' OR Dentist LIKE '%{0}%' OR Status LIKE '%{0}%'",
+                                                 txtSearchAppointments.Text.Replace("'", "''"))
+
+            dtAppointments.DefaultView.RowFilter = filter
+        Catch ex As Exception
+            ' Silent catch to prevent crashes during rapid typing
+        End Try
+    End Sub
     Private Sub btnChoosePatient_Click(sender As Object, e As EventArgs) Handles btnChoosePatient.Click
         Using selectionForm As New AdminDBPatientSelection()
             If selectionForm.ShowDialog() = DialogResult.OK Then
                 selectedPatientID = selectionForm.SelectedPatientId
                 lblPatient.Text = selectionForm.SelectedPatientName
+
+                ' --- ADDED LOGIC TO CLEAR SERVICES ---
+                ' Uncheck all services in the list
+                For i As Integer = 0 To clbServices.Items.Count - 1
+                    clbServices.SetItemChecked(i, False)
+                Next
+
+                ' Reset duration and end time labels since no services are selected now
+                CalculateTotalDuration()
+                ' --------------------------------------
             End If
         End Using
     End Sub
@@ -333,7 +384,7 @@ Public Class AdminDBAppointments
     Private Sub ClearForm()
         isFormLoading = True
         lblPatient.Text = ""
-
+        txtSearchAppointments.Clear()
         ' Reset Dentist ComboBox fully
         CmbDent.DataSource = Nothing
         CmbDent.Items.Clear()
@@ -363,12 +414,18 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub PopulateTimeSlots()
-        If isFormLoading OrElse CmbDent.SelectedValue Is Nothing Then
+        ' FIX 1: Remove isFormLoading check here. 
+        ' We want this to run even when loading data from the DataGridView.
+        If CmbDent.SelectedValue Is Nothing Then
             cmbStartTime.Items.Clear()
             Exit Sub
         End If
 
+        Dim startLoop As TimeSpan = New TimeSpan(8, 0, 0)
+        Dim endLoop As TimeSpan = New TimeSpan(19, 0, 0)
         Dim dentistID As Integer
+
+        ' Handle the SelectedValue safely
         If TypeOf CmbDent.SelectedValue Is DataRowView Then
             dentistID = CInt(CType(CmbDent.SelectedValue, DataRowView)("UserID"))
         Else
@@ -378,32 +435,52 @@ Public Class AdminDBAppointments
         cmbStartTime.Items.Clear()
         Dim selectedDate = DtpDate.Value.Date
         Dim dayName = selectedDate.ToString("dddd")
-        Dim startLoop, endLoop As TimeSpan
         Dim shiftType As String = ""
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            shiftType = New SqlCommand("SELECT Availability FROM Users WHERE UserID=" & dentistID, con).ExecuteScalar()?.ToString()
 
-            If shiftType = "Part-time" Then
-                Using dr = New SqlCommand("SELECT StartTime, EndTime FROM DentistAvailability WHERE DentistID=" & dentistID & " AND DayOfWeek='" & dayName & "'", con).ExecuteReader()
-                    If dr.Read() Then
-                        startLoop = DirectCast(dr("StartTime"), TimeSpan)
-                        endLoop = DirectCast(dr("EndTime"), TimeSpan)
-                    Else
-                        Exit Sub
-                    End If
-                End Using
-            Else
-                startLoop = New TimeSpan(8, 0, 0)
-                endLoop = New TimeSpan(19, 0, 0)
-            End If
-
-            Dim busySlots As New List(Of (S As TimeSpan, E As TimeSpan))
-            Using dr = New SqlCommand("SELECT StartTime, EndTime FROM Appointments WHERE UserID=" & dentistID & " AND Date='" & selectedDate.ToString("yyyy-MM-dd") & "' AND Status<>'Cancelled' AND AppointmentID<>" & selectedAppointmentID, con).ExecuteReader()
-                While dr.Read() : busySlots.Add((DirectCast(dr("StartTime"), TimeSpan), DirectCast(dr("EndTime"), TimeSpan))) : End While
+            ' FIX 2: Use Parameterized queries to avoid syntax errors
+            Using cmdShift As New SqlCommand("SELECT Availability FROM Users WHERE UserID = @uid", con)
+                cmdShift.Parameters.AddWithValue("@uid", dentistID)
+                shiftType = cmdShift.ExecuteScalar()?.ToString()
             End Using
 
+            If shiftType = "Part-time" Then
+                Dim availQuery As String = "SELECT StartTime, EndTime FROM DentistAvailability WHERE DentistID=@uid AND DayOfWeek=@day"
+                Using cmdAvail As New SqlCommand(availQuery, con)
+                    cmdAvail.Parameters.AddWithValue("@uid", dentistID)
+                    cmdAvail.Parameters.AddWithValue("@day", dayName)
+                    Using dr = cmdAvail.ExecuteReader()
+                        If dr.Read() Then
+                            startLoop = DirectCast(dr("StartTime"), TimeSpan)
+                            endLoop = DirectCast(dr("EndTime"), TimeSpan)
+                        Else
+                            Exit Sub ' No availability set for this day
+                        End If
+                    End Using
+                End Using
+            End If
+
+            ' FIX 3: Fetch busy slots, EXCLUDING the current appointment ID so it doesn't block itself
+            Dim busySlots As New List(Of (S As TimeSpan, E As TimeSpan))
+            Dim busyQuery As String = "SELECT StartTime, EndTime FROM Appointments " &
+                                  "WHERE UserID=@uid AND Date=@date " &
+                                  "AND Status<>'Cancelled' AND AppointmentID<>@aid"
+
+            Using cmdBusy As New SqlCommand(busyQuery, con)
+                cmdBusy.Parameters.AddWithValue("@uid", dentistID)
+                cmdBusy.Parameters.AddWithValue("@date", selectedDate)
+                cmdBusy.Parameters.AddWithValue("@aid", selectedAppointmentID) ' This allows the current time to show up
+
+                Using dr = cmdBusy.ExecuteReader()
+                    While dr.Read()
+                        busySlots.Add((DirectCast(dr("StartTime"), TimeSpan), DirectCast(dr("EndTime"), TimeSpan)))
+                    End While
+                End Using
+            End Using
+
+            ' Populate the ComboBox
             Dim current = startLoop
             While current < endLoop
                 Dim isLunch = (shiftType = "Full-time" AndAlso current >= New TimeSpan(12, 0, 0) AndAlso current < New TimeSpan(13, 0, 0))
@@ -424,7 +501,7 @@ Public Class AdminDBAppointments
             Dim query = "SELECT DISTINCT U.UserID, U.FullName FROM Users U " &
                         "LEFT JOIN DentistAvailability DA ON U.UserID = DA.DentistID " &
                         "WHERE U.Role = 'Dentist' AND (" &
-                        "(U.Availability = 'Full-time' AND @day != 'Sunday') OR " &
+                        "(U.Availability = 'Full-time') OR " &
                         "(U.Availability = 'Part-time' AND DA.DayOfWeek = @day) OR " &
                         "(U.UserID = @currentID)) ORDER BY U.FullName"
 
