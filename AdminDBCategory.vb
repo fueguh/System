@@ -199,42 +199,69 @@ Public Class AdminDBCategory
     End Sub
 
     Private Sub TextBoxCategoryName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxCategoryName.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
-            Return
-        End If
+        ' 1. Always allow Backspace (KeyChar 8)
+        If Char.IsControl(e.KeyChar) Then Return
 
-        ' Allow letters and spaces only
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True ' Block invalid input
+        ' 2. Define the allowed list clearly
+        ' Specifically check for: Space, Ampersand, Comma, Hyphen, Slash
+        Dim allowedSpecial As String = " &,-/"
+
+        ' 3. Check if the character is a Letter, a Digit, or in our special list
+        If Char.IsLetterOrDigit(e.KeyChar) Then
+            Return
+        ElseIf allowedSpecial.Contains(e.KeyChar) Then
+            ' 4. Additional Rule: Don't allow a symbol at the very beginning
+            If TextBoxCategoryName.Text.Length = 0 Then
+                e.Handled = True
+            End If
+            Return
+        Else
+            ' If it's anything else, block it
+            e.Handled = True
         End If
     End Sub
-
+    Private Sub TextBoxCategoryName_Leave(sender As Object, e As EventArgs) Handles TextBoxCategoryName.Leave
+        If Not String.IsNullOrWhiteSpace(TextBoxCategoryName.Text) Then
+            ' Trims leading/trailing spaces and capitalizes correctly
+            ' "hygiene & oral care" -> "Hygiene & Oral Care"
+            TextBoxCategoryName.Text = StrConv(TextBoxCategoryName.Text.Trim(), VbStrConv.ProperCase)
+        End If
+    End Sub
     Private Sub TextBoxDescription_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxDescription.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        ' 1. Allow Backspace and other control keys
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' 2. Define allowed special characters (Comma, Dot, Hyphen, Slash, Parentheses)
+        Dim allowedChars As String = " ,.-/()"
+
+        ' 3. Allow Letters, Digits, and our allowed special characters
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse allowedChars.Contains(e.KeyChar)) Then
+            e.Handled = True
             Return
         End If
 
-        ' Allow letters and spaces only
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True ' Block invalid input
+        ' 4. Optional: Prevent starting the description with a symbol or space
+        If TextBoxDescription.Text.Length = 0 AndAlso Not Char.IsLetterOrDigit(e.KeyChar) Then
+            e.Handled = True
         End If
     End Sub
-
+    Private Sub TextBoxDescription_Leave(sender As Object, e As EventArgs) Handles TextBoxDescription.Leave
+        If Not String.IsNullOrWhiteSpace(TextBoxDescription.Text) Then
+            ' Trims extra spaces and ensures the first letter is capitalized
+            Dim text As String = TextBoxDescription.Text.Trim()
+            TextBoxDescription.Text = Char.ToUpper(text(0)) & text.Substring(1)
+        End If
+    End Sub
     Private Sub DataGridViewCategories_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewCategories.CellClick
-
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DataGridViewCategories.Rows(e.RowIndex)
 
-            ' Assign the CategoryID
             selectedCategoryID = Convert.ToInt32(row.Cells("CategoryID").Value)
 
-            ' Populate textboxes
-            TextBoxCategoryName.Text = row.Cells("CategoryName").Value.ToString()
-            TextBoxDescription.Text = row.Cells("Description").Value.ToString()
+            ' Use If-Then or Coalesce logic to handle potential Nulls
+            TextBoxCategoryName.Text = If(row.Cells("CategoryName").Value Is DBNull.Value, "", row.Cells("CategoryName").Value.ToString())
+            TextBoxDescription.Text = If(row.Cells("Description").Value Is DBNull.Value, "", row.Cells("Description").Value.ToString())
         End If
-
     End Sub
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         clearform()
