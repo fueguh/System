@@ -89,10 +89,10 @@ Partial Class AdminDBAppointments
         Me.BTNAdd.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNAdd.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BTNAdd.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNAdd.Location = New System.Drawing.Point(1324, 157)
+        Me.BTNAdd.Location = New System.Drawing.Point(1224, 157)
         Me.BTNAdd.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNAdd.Name = "BTNAdd"
-        Me.BTNAdd.Size = New System.Drawing.Size(183, 45)
+        Me.BTNAdd.Size = New System.Drawing.Size(365, 45)
         Me.BTNAdd.TabIndex = 6
         Me.BTNAdd.Text = "Add"
         '
@@ -108,10 +108,10 @@ Partial Class AdminDBAppointments
         Me.BTNUpdate.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.BTNUpdate.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.BTNUpdate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BTNUpdate.Location = New System.Drawing.Point(1324, 221)
+        Me.BTNUpdate.Location = New System.Drawing.Point(1224, 221)
         Me.BTNUpdate.Margin = New System.Windows.Forms.Padding(4)
         Me.BTNUpdate.Name = "BTNUpdate"
-        Me.BTNUpdate.Size = New System.Drawing.Size(183, 45)
+        Me.BTNUpdate.Size = New System.Drawing.Size(365, 45)
         Me.BTNUpdate.TabIndex = 7
         Me.BTNUpdate.Text = "Update"
         '
@@ -353,9 +353,9 @@ Partial Class AdminDBAppointments
         Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnClear.Location = New System.Drawing.Point(1324, 286)
+        Me.btnClear.Location = New System.Drawing.Point(1224, 286)
         Me.btnClear.Name = "btnClear"
-        Me.btnClear.Size = New System.Drawing.Size(183, 45)
+        Me.btnClear.Size = New System.Drawing.Size(365, 45)
         Me.btnClear.TabIndex = 83
         Me.btnClear.Text = "Clear"
         '
