@@ -1,4 +1,5 @@
 ﻿Imports System.Data.SqlClient
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 
 Public Class AdminDBPatients
     Private selectedPatientID As Integer = 0
@@ -35,7 +36,7 @@ Public Class AdminDBPatients
     Private Sub Clearform()
         selectedPatientID = 0
         txtFullName.Clear()
-        dtpBirthDate.Value = DateTime.Now
+        txtBirthDate.Clear() ' Changed from dtpBirthDate.Value = DateTime.Now
         txtContact.Clear()
         txtEmail.Clear()
         txtAddress.Clear()
@@ -69,7 +70,7 @@ Public Class AdminDBPatients
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@name", txtFullName.Text)
-                cmd.Parameters.AddWithValue("@birth", dtpBirthDate.Value.Date)
+                cmd.Parameters.AddWithValue("@birth", Date.ParseExact(txtBirthDate.Text, "dd/MM/yyyy", Nothing))
                 cmd.Parameters.AddWithValue("@contact", txtContact.Text)
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text)
                 cmd.Parameters.AddWithValue("@address", txtAddress.Text)
@@ -116,7 +117,7 @@ Public Class AdminDBPatients
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedPatientID)
                 cmd.Parameters.AddWithValue("@name", txtFullName.Text)
-                cmd.Parameters.AddWithValue("@birth", dtpBirthDate.Value.Date)
+                cmd.Parameters.AddWithValue("@birth", Date.ParseExact(txtBirthDate.Text, "dd/MM/yyyy", Nothing))
                 cmd.Parameters.AddWithValue("@contact", txtContact.Text)
                 cmd.Parameters.AddWithValue("@email", txtEmail.Text)
                 cmd.Parameters.AddWithValue("@address", txtAddress.Text)
@@ -171,7 +172,6 @@ Public Class AdminDBPatients
         End Using
     End Sub
 
-
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
@@ -183,7 +183,8 @@ Public Class AdminDBPatients
         selectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
 
         txtFullName.Text = row.Cells("FullName").Value.ToString()
-        dtpBirthDate.Value = Convert.ToDateTime(row.Cells("BirthDate").Value)
+        Dim bDate As Date = Convert.ToDateTime(row.Cells("BirthDate").Value)
+        txtBirthDate.Text = bDate.ToString("ddMMyyyy")
         txtContact.Text = row.Cells("ContactNumber").Value.ToString()
         txtEmail.Text = row.Cells("Email").Value.ToString()
         txtAddress.Text = row.Cells("Address").Value.ToString()
@@ -194,7 +195,10 @@ Public Class AdminDBPatients
         BTNUpdate.Enabled = True
         BTNDelete.Enabled = True
     End Sub
-
+    Private Sub txtBirthDate_Enter(sender As Object, e As EventArgs) Handles txtBirthDate.Enter
+        ' Moves cursor to the start so they don't type in the middle
+        BeginInvoke(Sub() txtBirthDate.Select(0, 0))
+    End Sub
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
         ' Use your existing query but add the IsActive filter so deactivated patients don't reappear
         Dim query As String = "SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered, NoteAllergy " &
@@ -221,6 +225,23 @@ Public Class AdminDBPatients
          Not txtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c OrElse c = "-"c OrElse c = "'"c OrElse c = "."c) Then
             MessageBox.Show("Full Name must contain letters, spaces, '-', ''' or '.' only.")
             txtFullName.Focus()
+            Return False
+        End If
+
+        Dim tempDate As Date
+        ' Force the code to read Day then Month (PH Standard)
+        If Not Date.TryParseExact(txtBirthDate.Text, "dd/MM/yyyy",
+                          System.Globalization.CultureInfo.InvariantCulture,
+                          System.Globalization.DateTimeStyles.None, tempDate) Then
+            MessageBox.Show("Please enter a valid Birth Date in DD/MM/YYYY format.")
+            txtBirthDate.Focus()
+            Return False
+        End If
+
+        ' Ensure the date is not in the future
+        If tempDate > DateTime.Now Then
+            MessageBox.Show("Birth date cannot be in the future.")
+            txtBirthDate.Focus()
             Return False
         End If
 
@@ -303,7 +324,7 @@ Public Class AdminDBPatients
         ' Allow control keys (Backspace, Delete)
         If Char.IsControl(e.KeyChar) Then Return
 
-        ' Allow letters, digits, spaces, and common address symbols
+        ' Allow letters, digits, spaces, and common address txtBirthDate
         If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "-"c OrElse e.KeyChar = "@"c _
         OrElse e.KeyChar = "."c OrElse e.KeyChar = ","c OrElse e.KeyChar = "/"c) Then
             e.Handled = True

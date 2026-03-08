@@ -28,7 +28,6 @@ Partial Class AdminDBPatients
         Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.txtFullName = New Guna.UI2.WinForms.Guna2TextBox()
-        Me.dtpBirthDate = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.txtContact = New Guna.UI2.WinForms.Guna2TextBox()
         Me.txtEmail = New Guna.UI2.WinForms.Guna2TextBox()
         Me.txtAddress = New Guna.UI2.WinForms.Guna2TextBox()
@@ -43,6 +42,7 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.txtAllergy = New Guna.UI2.WinForms.Guna2TextBox()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
+        Me.txtBirthDate = New System.Windows.Forms.MaskedTextBox()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DGVPatients, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -71,24 +71,6 @@ Partial Class AdminDBPatients
         Me.txtFullName.SelectedText = ""
         Me.txtFullName.Size = New System.Drawing.Size(351, 50)
         Me.txtFullName.TabIndex = 0
-        '
-        'dtpBirthDate
-        '
-        Me.dtpBirthDate.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.dtpBirthDate.BorderRadius = 10
-        Me.dtpBirthDate.BorderThickness = 2
-        Me.dtpBirthDate.Checked = True
-        Me.dtpBirthDate.FillColor = System.Drawing.Color.White
-        Me.dtpBirthDate.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.dtpBirthDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.dtpBirthDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpBirthDate.Location = New System.Drawing.Point(423, 155)
-        Me.dtpBirthDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
-        Me.dtpBirthDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
-        Me.dtpBirthDate.Name = "dtpBirthDate"
-        Me.dtpBirthDate.Size = New System.Drawing.Size(351, 50)
-        Me.dtpBirthDate.TabIndex = 1
-        Me.dtpBirthDate.Value = New Date(2025, 12, 18, 12, 14, 7, 394)
         '
         'txtContact
         '
@@ -319,11 +301,11 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(423, 125)
+        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(423, 177)
         Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
-        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(89, 28)
+        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(94, 28)
         Me.Guna2HtmlLabel3.TabIndex = 43
-        Me.Guna2HtmlLabel3.Text = "BirthDate:"
+        Me.Guna2HtmlLabel3.Text = "Birth Date:"
         '
         'Guna2CustomGradientPanel1
         '
@@ -391,6 +373,21 @@ Partial Class AdminDBPatients
         Me.btnClear.TabIndex = 82
         Me.btnClear.Text = "Clear"
         '
+        'txtBirthDate
+        '
+        Me.txtBirthDate.AllowPromptAsInput = False
+        Me.txtBirthDate.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.txtBirthDate.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.txtBirthDate.Font = New System.Drawing.Font("Mongolian Baiti", 20.0!)
+        Me.txtBirthDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtBirthDate.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Overwrite
+        Me.txtBirthDate.Location = New System.Drawing.Point(526, 172)
+        Me.txtBirthDate.Mask = "00/00/0000"
+        Me.txtBirthDate.Name = "txtBirthDate"
+        Me.txtBirthDate.Size = New System.Drawing.Size(158, 31)
+        Me.txtBirthDate.TabIndex = 83
+        Me.txtBirthDate.ValidatingType = GetType(Date)
+        '
         'AdminDBPatients
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -398,6 +395,7 @@ Partial Class AdminDBPatients
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1379, 881)
         Me.ControlBox = False
+        Me.Controls.Add(Me.txtBirthDate)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.txtAllergy)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
@@ -410,7 +408,6 @@ Partial Class AdminDBPatients
         Me.Controls.Add(Me.txtAddress)
         Me.Controls.Add(Me.txtEmail)
         Me.Controls.Add(Me.txtContact)
-        Me.Controls.Add(Me.dtpBirthDate)
         Me.Controls.Add(Me.txtFullName)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBPatients"
@@ -425,7 +422,6 @@ Partial Class AdminDBPatients
     End Sub
 
     Friend WithEvents txtFullName As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents dtpBirthDate As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents txtContact As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtEmail As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtAddress As Guna.UI2.WinForms.Guna2TextBox
@@ -440,4 +436,5 @@ Partial Class AdminDBPatients
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents txtAllergy As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents txtBirthDate As MaskedTextBox
 End Class
