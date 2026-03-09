@@ -44,7 +44,7 @@ Public Class AdminDBPayment
         (SELECT STRING_AGG(S.ServiceName, ', ') 
          FROM AppointmentServices AS [AS] 
          JOIN Services S ON [AS].ServiceID = S.ServiceID 
-         WHERE [AS].AppointmentID = A.AppointmentID) AS [Planned Services]
+         WHERE [AS].AppointmentID = A.AppointmentID) AS [Services Done]
     FROM Appointments A
     INNER JOIN Patients P ON A.PatientID = P.PatientID
     INNER JOIN Users U ON A.UserID = U.UserID -- Join to get Dentist Name
