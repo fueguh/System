@@ -53,6 +53,9 @@ Public Class AdminDBReports
             Dim dt As New DataTable()
             da.Fill(dt)
             DGVDaily.DataSource = dt
+            If DGVDaily.Columns.Contains("AppointmentID") Then
+                DGVDaily.Columns("AppointmentID").Visible = False
+            End If
         End Using
     End Sub
 
@@ -170,7 +173,10 @@ Public Class AdminDBReports
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
-            DGVAppointmentHistory.DataSource = dt
+            DgvAppointmentHistory.DataSource = dt
+            If DgvAppointmentHistory.Columns.Contains("AppointmentID") Then
+                DgvAppointmentHistory.Columns("AppointmentID").Visible = False
+            End If
         End Using
     End Sub
 

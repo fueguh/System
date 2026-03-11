@@ -57,7 +57,7 @@ Public Class AdminDBCategory
         End Using
 
         ' ✅ AUDIT LOG: Log the addition
-        SystemSession.LogAudit($"Added new category: {TextBoxCategoryName.Text.Trim}", "Inventory Management", SystemSession.LoggedInUserID)
+        SystemSession.LogAudit($"Added new category: {TextBoxCategoryName.Text.Trim}", "Category Maintenance", SystemSession.LoggedInUserID)
 
         MessageBox.Show("Category added successfully.")
         LoadCategories()
@@ -70,19 +70,23 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
+        ' Capture the category name into a variable BEFORE clearing or updating
+        Dim catName As String = TextBoxCategoryName.Text.Trim()
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "UPDATE Categories SET CategoryName=@name, Description=@desc WHERE CategoryID=@id"
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedCategoryID)
-                cmd.Parameters.AddWithValue("@name", TextBoxCategoryName.Text.Trim)
+                cmd.Parameters.AddWithValue("@name", catName)
                 cmd.Parameters.AddWithValue("@desc", TextBoxDescription.Text.Trim)
                 cmd.ExecuteNonQuery()
             End Using
         End Using
 
-        ' ✅ AUDIT LOG: Log the update
-        SystemSession.LogAudit($"Updated category ID {selectedCategoryID}: {TextBoxCategoryName.Text.Trim}", "Inventory Management", SystemSession.LoggedInUserID)
+        ' ✅ FIX: Use the Category Name in the description (String)
+        ' ✅ FIX: Use the LoggedInUserID for the person (Integer) - matches your old way
+        SystemSession.LogAudit($"Updated category: {catName}", "Category Maintenance", SystemSession.LoggedInUserID)
 
         MessageBox.Show("Category updated successfully.")
         LoadCategories()
@@ -98,7 +102,7 @@ Public Class AdminDBCategory
         If MessageBox.Show("Are you sure you want to delete this category?", "Confirm Delete", MessageBoxButtons.YesNo) = DialogResult.No Then
             Exit Sub
         End If
-
+        Dim newCatName As String = TextBoxCategoryName.Text.Trim()
         ' Capture name for the audit log before it's deleted
         Dim categoryName As String = TextBoxCategoryName.Text
 
@@ -113,7 +117,7 @@ Public Class AdminDBCategory
             End Using
 
             ' ✅ AUDIT LOG: Log the deletion
-            SystemSession.LogAudit($"Deleted category: {categoryName} (ID: {selectedCategoryID})", "Inventory Management", SystemSession.LoggedInUserID)
+            SystemSession.LogAudit($"Added new category: {newCatName}", "Category Maintenance", SystemSession.LoggedInUserID)
 
             MessageBox.Show("Category deleted successfully.")
             LoadCategories()
