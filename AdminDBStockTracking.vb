@@ -102,15 +102,9 @@ Public Class AdminDBStockTracking
         End If
 
         Dim itemID As Integer = CInt(ComboBoxItem.SelectedValue)
+        Dim itemName As String = ComboBoxItem.Text ' Capture for logging
         Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
         Dim transType As String = If(RadioIn.Checked, "IN", If(RadioOut.Checked, "OUT", ""))
-
-        If transType = "" Then
-            MessageBox.Show("Please select a transaction type (IN or OUT).")
-            Exit Sub
-        End If
-
-        ' Use the TransactionDate picker value for the transaction
         Dim transDate As Date = TransactionDate.Value.Date
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2)
@@ -128,14 +122,12 @@ Public Class AdminDBStockTracking
                 End Using
             End If
 
-            ' Transaction block
             Using sqlTrans As SqlTransaction = connection.BeginTransaction()
                 Try
-                    ' Insert transaction with correct date
+                    ' 1. Insert transaction
                     Using cmdTrans As New SqlCommand(
-                        "INSERT INTO StockTransactions (ItemID, TransactionType, Quantity, TransactionDate) " &
-                        "VALUES (@ItemID, @TransType, @Qty, @Date)", connection, sqlTrans)
-
+                    "INSERT INTO StockTransactions (ItemID, TransactionType, Quantity, TransactionDate) " &
+                    "VALUES (@ItemID, @TransType, @Qty, @Date)", connection, sqlTrans)
                         cmdTrans.Parameters.AddWithValue("@ItemID", itemID)
                         cmdTrans.Parameters.AddWithValue("@TransType", transType)
                         cmdTrans.Parameters.AddWithValue("@Qty", qty)
@@ -143,15 +135,19 @@ Public Class AdminDBStockTracking
                         cmdTrans.ExecuteNonQuery()
                     End Using
 
-                    ' Update stock
+                    ' 2. Update stock
                     Dim queryUpdate As String = If(transType = "IN",
-                                                   "UPDATE ItemManagement SET Quantity = Quantity + @Qty WHERE ItemID = @ItemID",
-                                                   "UPDATE ItemManagement SET Quantity = Quantity - @Qty WHERE ItemID = @ItemID")
+                                               "UPDATE ItemManagement SET Quantity = Quantity + @Qty WHERE ItemID = @ItemID",
+                                               "UPDATE ItemManagement SET Quantity = Quantity - @Qty WHERE ItemID = @ItemID")
                     Using cmdUpdate As New SqlCommand(queryUpdate, connection, sqlTrans)
                         cmdUpdate.Parameters.AddWithValue("@ItemID", itemID)
                         cmdUpdate.Parameters.AddWithValue("@Qty", qty)
                         cmdUpdate.ExecuteNonQuery()
                     End Using
+
+                    ' 3. AUDIT LOG: Record the stock movement
+                    Dim auditMsg As String = $"Stock {transType}: {qty} units of {itemName} on {transDate.ToShortDateString()}"
+                    SystemSession.LogAudit(auditMsg, "Stock Tracking", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
                     sqlTrans.Commit()
                     MessageBox.Show("Stock updated successfully!")
@@ -181,30 +177,35 @@ Public Class AdminDBStockTracking
         Dim transType As String = row.Cells("TransactionType").Value.ToString()
         Dim qty As Integer = Convert.ToInt32(row.Cells("Quantity").Value)
         Dim itemID As Integer = Convert.ToInt32(row.Cells("ItemID").Value)
+        Dim itemName As String = row.Cells("ItemName").Value.ToString()
 
         Dim queryUpdate As String = If(transType = "IN",
-                                       "UPDATE ItemManagement SET Quantity = Quantity - @Quantity WHERE ItemID=@ItemID",
-                                       "UPDATE ItemManagement SET Quantity = Quantity + @Quantity WHERE ItemID=@ItemID")
+                                   "UPDATE ItemManagement SET Quantity = Quantity - @Quantity WHERE ItemID=@ItemID",
+                                   "UPDATE ItemManagement SET Quantity = Quantity + @Quantity WHERE ItemID=@ItemID")
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2)
             connection.Open()
             Using sqlTrans As SqlTransaction = connection.BeginTransaction()
                 Try
-                    ' Update stock
+                    ' 1. Update stock (Reverse the transaction)
                     Using cmdUpdate As New SqlCommand(queryUpdate, connection, sqlTrans)
                         cmdUpdate.Parameters.AddWithValue("@ItemID", itemID)
                         cmdUpdate.Parameters.AddWithValue("@Quantity", qty)
                         cmdUpdate.ExecuteNonQuery()
                     End Using
 
-                    ' Delete transaction
+                    ' 2. Delete transaction
                     Using cmdDelete As New SqlCommand("DELETE FROM StockTransactions WHERE TransactionID=@TransactionID", connection, sqlTrans)
                         cmdDelete.Parameters.AddWithValue("@TransactionID", transID)
                         cmdDelete.ExecuteNonQuery()
                     End Using
 
+                    ' 3. AUDIT LOG: Record that a transaction was deleted/voided
+                    Dim auditMsg As String = $"Deleted/Voided {transType} Transaction (ID: {transID}) for {qty} units of {itemName}"
+                    SystemSession.LogAudit(auditMsg, "Stock Tracking", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
                     sqlTrans.Commit()
-                    MessageBox.Show("Transaction deleted successfully!")
+                    MessageBox.Show("Transaction deleted and stock adjusted successfully!")
                 Catch ex As Exception
                     sqlTrans.Rollback()
                     MessageBox.Show("Failed to delete transaction: " & ex.Message)
