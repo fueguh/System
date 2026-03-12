@@ -156,6 +156,7 @@ Public Class AdminDBItemManagement
     End Sub
 
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
+
         If selectedItemID = 0 Then
             MessageBox.Show("Please select an item to delete.")
             Exit Sub
@@ -163,27 +164,28 @@ Public Class AdminDBItemManagement
 
         Dim query As String = "DELETE FROM ItemManagement WHERE ItemID=@ItemID"
 
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          cmd As New SqlCommand(query, connection)
+        Try
+            Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
+              cmd As New SqlCommand(query, connection)
 
-            cmd.Parameters.AddWithValue("@ItemID", selectedItemID)
+                cmd.Parameters.AddWithValue("@ItemID", selectedItemID)
 
-            connection.Open()
-            cmd.ExecuteNonQuery()
-            connection.Close()
+                connection.Open()
+                cmd.ExecuteNonQuery()
 
-            If chkHasExpiry.Checked Then
-                cmd.Parameters.AddWithValue("@ExpirationDate", DateTimePickerExpiry.Value)
-            Else
-                cmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value)
-            End If
-        End Using
+            End Using
 
-        MessageBox.Show("Item deleted successfully!")
+            MessageBox.Show("Item deleted successfully!")
+
+        Catch ex As SqlException
+            MessageBox.Show("Cannot delete this item because it is used in stock transactions.")
+        End Try
+
         LoadInventory()
         LoadSuppliers()
         LoadCategories()
         ClearInputs()
+
     End Sub
 
     Private Sub AdminDBItemManagement_Load(sender As Object, e As EventArgs) Handles MyBase.Load
