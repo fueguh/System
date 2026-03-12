@@ -2,40 +2,51 @@
 Imports System.Windows.Forms.DataVisualization.Charting
 
 Public Class AdminDBRepandAnalytics
-    Private Sub Guna2GroupBox1_Click(sender As Object, e As EventArgs) Handles GrpFilters.Click
 
+    ' =========================
+    ' FORM LOAD
+    ' =========================
+    Private Sub AdminDBRepandAnalytics_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Set default dates to today so it's not empty on start
+        DtpFrom.Value = DateTime.Now
+        DtpTo.Value = DateTime.Now
+
+        LoadSuppliers()
+        RefreshAllData()
     End Sub
 
-    Private Sub AdminDBRepandAnalytics_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    ' The "Master Switch" that updates everything
+    Private Sub RefreshAllData()
         LoadTransactions()
         LoadItem()
         LoadStockLevelsChart()
-        'LoadSupplierContributionsChart()
         LoadTransactionTrendsChart()
         LoadSummaryBoxes()
-        LoadSuppliers()
     End Sub
 
+    ' =========================
+    ' DATA RETRIEVAL (The Filter Engine)
+    ' =========================
     Private Function GetFilteredData() As DataTable
-        ' Base query: transactions joined with items and suppliers
+        ' This is the heart of your filters
         Dim query As String = "
-        SELECT 
-            t.TransactionDate,
-            t.TransactionType,
-            t.Quantity,
-            i.ItemName, s.SupplierName
-        FROM StockTransactions t
-        INNER JOIN ItemManagement i ON t.ItemID = i.ItemID
-        INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID
-        WHERE t.TransactionDate BETWEEN @From AND @To
-    "
+            SELECT 
+                t.TransactionID,
+                t.TransactionDate,
+                t.TransactionType,
+                t.Quantity,
+                i.ItemName, 
+                s.SupplierName
+            FROM StockTransactions t
+            INNER JOIN ItemManagement i ON t.ItemID = i.ItemID
+            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID
+            WHERE t.TransactionDate BETWEEN @From AND @To
+        "
 
-        ' Supplier filter (skip "All")
         If CmbSupplier.SelectedIndex > 0 Then
             query &= " AND s.SupplierName = @Supplier"
         End If
 
-        ' Transaction type filter
         If BRIn.Checked Then
             query &= " AND t.TransactionType = 'IN'"
         ElseIf RBOut.Checked Then
@@ -45,233 +56,180 @@ Public Class AdminDBRepandAnalytics
         Dim dt As New DataTable()
         Using conn As New SqlConnection(My.Settings.DentalDBConnection2)
             Using cmd As New SqlCommand(query, conn)
-                ' Always add date range
                 cmd.Parameters.AddWithValue("@From", DtpFrom.Value.Date)
                 cmd.Parameters.AddWithValue("@To", DtpTo.Value.Date)
-
-                ' Add supplier parameter only if not "All"
                 If CmbSupplier.SelectedIndex > 0 Then
                     cmd.Parameters.AddWithValue("@Supplier", CmbSupplier.Text)
                 End If
-
-                Dim adapter As New SqlDataAdapter(cmd)
-                adapter.Fill(dt)
+                Using adapter As New SqlDataAdapter(cmd)
+                    adapter.Fill(dt)
+                End Using
             End Using
         End Using
-
         Return dt
     End Function
 
+    ' =========================
+    ' SUPPLIER LOADING
+    ' =========================
     Private Sub LoadSuppliers()
-        Dim query As String = "SELECT DISTINCT SupplierName FROM Suppliers ORDER BY SupplierName"
+        ' Only get suppliers that actually have items in ItemManagement
+        Dim query As String = "
+        SELECT DISTINCT s.SupplierName
+        FROM Suppliers s
+        INNER JOIN ItemManagement i ON s.SupplierID = i.SupplierID
+        ORDER BY s.SupplierName
+    "
 
         Using conn As New SqlConnection(My.Settings.DentalDBConnection2)
             Using cmd As New SqlCommand(query, conn)
                 conn.Open()
                 Dim reader As SqlDataReader = cmd.ExecuteReader()
-
                 CmbSupplier.Items.Clear()
+                CmbSupplier.Items.Add("All") ' Add "All" first
                 While reader.Read()
                     CmbSupplier.Items.Add(reader("SupplierName").ToString())
                 End While
             End Using
         End Using
-
-        ' Optional: Add "All Suppliers" choice
-        CmbSupplier.Items.Insert(0, "All")
         CmbSupplier.SelectedIndex = 0
     End Sub
 
+    ' =========================
+    ' DATAGRIDVIEW LOADING
+    ' =========================
     Private Sub LoadTransactions()
-        Dim query As String = "SELECT t.TransactionID, i.ItemName, t.TransactionType, 
-                                  t.Quantity, t.TransactionDate
-                           FROM StockTransactions t
-                           INNER JOIN ItemManagement i ON t.ItemID = i.ItemID"
+        ' Now using the FILTERED data instead of a blind SELECT
+        DGVStockTrackTransaction.DataSource = GetFilteredData()
 
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          adapter As New SqlDataAdapter(query, connection)
-            Dim dt As New DataTable()
-            adapter.Fill(dt)
-            DGVStockTrackTransaction.DataSource = dt
-        End Using
-
-        ' Hide internal IDs
         If DGVStockTrackTransaction.Columns.Contains("TransactionID") Then
             DGVStockTrackTransaction.Columns("TransactionID").Visible = False
+        End If
+        FormatDGV(DGVStockTrackTransaction)
+        If DGVStockTrackTransaction.Columns.Contains("TransactionDate") Then
+            DGVStockTrackTransaction.Columns("TransactionDate").DefaultCellStyle.Format = "dd/MM/yyyy"
         End If
     End Sub
 
     Private Sub LoadItem()
-        Dim query As String = "SELECT ItemID, ItemName, Quantity, Price 
-                           FROM ItemManagement"
+        ' Items should also filter by Supplier
+        Dim query As String = "
+            SELECT i.ItemID, i.ItemName, i.Quantity, i.Price 
+            FROM ItemManagement i
+            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID
+        "
 
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          adapter As New SqlDataAdapter(query, connection)
-            Dim dt As New DataTable()
-            adapter.Fill(dt)
-            DGVItemManagement.DataSource = dt
+        If CmbSupplier.SelectedIndex > 0 Then
+            query &= " WHERE s.SupplierName = @Supplier"
+        End If
+
+        Using conn As New SqlConnection(My.Settings.DentalDBConnection2)
+            Using cmd As New SqlCommand(query, conn)
+                If CmbSupplier.SelectedIndex > 0 Then
+                    cmd.Parameters.AddWithValue("@Supplier", CmbSupplier.Text)
+                End If
+                Dim dt As New DataTable()
+                Dim adapter As New SqlDataAdapter(cmd)
+                adapter.Fill(dt)
+                DGVItemManagement.DataSource = dt
+            End Using
         End Using
 
         If DGVItemManagement.Columns.Contains("ItemID") Then
             DGVItemManagement.Columns("ItemID").Visible = False
         End If
-
+        FormatDGV(DGVItemManagement)
     End Sub
 
+    Private Sub FormatDGV(ByRef dgv As DataGridView)
+        dgv.ReadOnly = True
+        dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+        dgv.AllowUserToAddRows = False
+    End Sub
+
+    ' =========================
+    ' CHART LOADING
+    ' =========================
     Private Sub LoadStockLevelsChart()
-        Dim query As String = "SELECT ItemName, Quantity FROM ItemManagement"
-
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          adapter As New SqlDataAdapter(query, connection)
-            Dim dt As New DataTable()
-            adapter.Fill(dt)
-
-            ChartStockLevels.Series.Clear()
-            ChartStockLevels.Series.Add("Stock")
-            ChartStockLevels.Series("Stock").ChartType = DataVisualization.Charting.SeriesChartType.Bar
-
-            For Each row As DataRow In dt.Rows
-                ChartStockLevels.Series("Stock").Points.AddXY(row("ItemName"), row("Quantity"))
-            Next
-        End Using
-    End Sub
-
-    'Private Sub LoadSupplierContributionsChart()
-    '   Dim query As String = "SELECT s.SupplierName, SUM(i.Quantity) AS TotalSupplied
-    '                     FROM ItemManagement i
-    '                    INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID
-    '                   GROUP BY s.SupplierName"
-
-    'Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-    ' adapter As New SqlDataAdapter(query, connection)
-    '  Dim dt As New DataTable()
-    ' adapter.Fill(dt)
-
-    'ChartSupplierContributions.Series.Clear()
-    'ChartSupplierContributions.Series.Add("Suppliers")
-    'ChartSupplierContributions.Series("Suppliers").ChartType = DataVisualization.Charting.SeriesChartType.Column
-
-    'For Each row As DataRow In dt.Rows
-    '   ChartSupplierContributions.Series("Suppliers").Points.AddXY(row("SupplierName"), row("TotalSupplied"))
-    'Next
-    'End Using
-    'End Sub
-
-    Private Sub LoadTransactionTrendsChart()
-        Dim query As String = "SELECT TransactionDate, SUM(CASE WHEN TransactionType='IN' THEN Quantity ELSE -Quantity END) AS NetChange
-                           FROM StockTransactions
-                           GROUP BY TransactionDate
-                           ORDER BY TransactionDate"
-
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-          adapter As New SqlDataAdapter(query, connection)
-            Dim dt As New DataTable()
-            adapter.Fill(dt)
-
-            ChartTransactionTrends.Series.Clear()
-            ChartTransactionTrends.Series.Add("Trends")
-            ChartTransactionTrends.Series("Trends").ChartType = DataVisualization.Charting.SeriesChartType.Column
-
-            For Each row As DataRow In dt.Rows
-                ChartTransactionTrends.Series("Trends").Points.AddXY(row("TransactionDate"), row("NetChange"))
-            Next
-        End Using
-    End Sub
-
-    Private Sub LoadSummaryBoxes()
-        Dim query As String = "
-        SELECT 
-            (SELECT ISNULL(SUM(Quantity),0) FROM StockTransactions WHERE TransactionType='IN') AS TotalIn,
-            (SELECT ISNULL(SUM(Quantity),0) FROM StockTransactions WHERE TransactionType='OUT') AS TotalOut,
-            (SELECT ISNULL(SUM(Quantity),0) FROM ItemManagement) AS CurrentStock
-    "
-
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-              cmd As New SqlCommand(query, connection)
-            connection.Open()
-            Dim reader As SqlDataReader = cmd.ExecuteReader()
-            If reader.Read() Then
-                LBLTotalIn.Text = reader("TotalIn").ToString()
-                LBLTotalOut.Text = reader("TotalOut").ToString()
-                LBLCurrentStock.Text = reader("CurrentStock").ToString()
-            End If
-            connection.Close()
-        End Using
-    End Sub
-
-    Private Sub BtnGenerateReport_Click(sender As Object, e As EventArgs) Handles BtnGenerateReport.Click
-        ' --- Chart 1: Stock Levels (from ItemManagement) ---
-        Dim dtStock As New DataTable()
-        Using conn As New SqlConnection(My.Settings.DentalDBConnection2)
-            Dim queryStock As String = "SELECT ItemName, Quantity FROM ItemManagement"
-            Using adapter As New SqlDataAdapter(queryStock, conn)
-                adapter.Fill(dtStock)
-            End Using
-        End Using
+        ' Link chart to the filtered Item view
+        Dim dt As DataTable = CType(DGVItemManagement.DataSource, DataTable)
 
         ChartStockLevels.Series.Clear()
-        ChartStockLevels.Series.Add("Stocks")
-        ChartStockLevels.Series("Stocks").ChartType = DataVisualization.Charting.SeriesChartType.Bar
-        ChartStockLevels.Series("Stocks").Points.Clear()
-        For Each row As DataRow In dtStock.Rows
-            ChartStockLevels.Series("Stocks").Points.AddXY(row("ItemName"), row("Quantity"))
-        Next
+        Dim series = ChartStockLevels.Series.Add("Stock")
+        series.ChartType = SeriesChartType.Bar
+        series.Color = Color.SeaGreen
 
-        ' --- Chart 2: Transaction Trends (from StockTransactions) ---
-        Dim dtTrans As New DataTable()
-        Using conn As New SqlConnection(My.Settings.DentalDBConnection2)
-            Dim queryTrans As String = "
-            SELECT TransactionDate, TransactionType, Quantity
-            FROM StockTransactions
-            WHERE TransactionDate BETWEEN @From AND @To
-            ORDER BY TransactionDate
-        "
-            Using cmd As New SqlCommand(queryTrans, conn)
-                cmd.Parameters.AddWithValue("@From", DtpFrom.Value.Date)
-                cmd.Parameters.AddWithValue("@To", DtpTo.Value.Date)
-                Using adapter As New SqlDataAdapter(cmd)
-                    adapter.Fill(dtTrans)
-                End Using
-            End Using
-        End Using
+        If dt IsNot Nothing Then
+            For Each row As DataRow In dt.Rows
+                series.Points.AddXY(row("ItemName"), row("Quantity"))
+            Next
+        End If
+    End Sub
 
-        ' Prepare chart series
+    Private Sub LoadTransactionTrendsChart()
+        Dim dtTrans As DataTable = GetFilteredData()
+
         ChartTransactionTrends.Series.Clear()
-        ChartTransactionTrends.Series.Add("InTransactions")
-        ChartTransactionTrends.Series("InTransactions").ChartType = DataVisualization.Charting.SeriesChartType.Column
-        ChartTransactionTrends.Series.Add("OutTransactions")
-        ChartTransactionTrends.Series("OutTransactions").ChartType = DataVisualization.Charting.SeriesChartType.Column
+        Dim sIn = ChartTransactionTrends.Series.Add("IN")
+        Dim sOut = ChartTransactionTrends.Series.Add("OUT")
 
-        ' Populate IN series
-        Dim inRows = dtTrans.Select("TransactionType = 'IN'")
-        ChartTransactionTrends.Series("InTransactions").Points.Clear()
-        For Each row As DataRow In inRows
-            ChartTransactionTrends.Series("InTransactions").Points.AddXY(row("TransactionDate"), row("Quantity"))
+        sIn.ChartType = SeriesChartType.Column
+        sIn.Color = Color.Green
+        sOut.ChartType = SeriesChartType.Column
+        sOut.Color = Color.Red
+
+        For Each row As DataRow In dtTrans.Rows
+            Dim dateVal As Date = CDate(row("TransactionDate"))
+            Dim qty As Integer = CInt(row("Quantity"))
+            If row("TransactionType").ToString() = "IN" Then
+                sIn.Points.AddXY(dateVal, qty)
+            Else
+                sOut.Points.AddXY(dateVal, qty)
+            End If
+        Next
+    End Sub
+
+    ' =========================
+    ' SUMMARY BOXES (Filtered)
+    ' =========================
+    Private Sub LoadSummaryBoxes()
+        Dim dt As DataTable = GetFilteredData()
+
+        ' Calculate from the already filtered table for consistency
+        Dim totalIn As Integer = 0
+        Dim totalOut As Integer = 0
+
+        For Each row As DataRow In dt.Rows
+            If row("TransactionType").ToString() = "IN" Then
+                totalIn += CInt(row("Quantity"))
+            Else
+                totalOut += CInt(row("Quantity"))
+            End If
         Next
 
+        LBLTotalIn.Text = totalIn.ToString()
+        LBLTotalOut.Text = totalOut.ToString()
 
-        ' Populate OUT series
-        Dim outRows = dtTrans.Select("TransactionType = 'OUT'")
-        ChartTransactionTrends.Series("OutTransactions").Points.Clear()
-        For Each row As DataRow In outRows
-            ChartTransactionTrends.Series("OutTransactions").Points.AddXY(row("TransactionDate"), row("Quantity"))
-        Next
+        ' Current Stock matches the filtered DGVItemManagement
+        Dim currentStock As Integer = 0
+        Dim dtItems As DataTable = CType(DGVItemManagement.DataSource, DataTable)
+        If dtItems IsNot Nothing Then
+            For Each row As DataRow In dtItems.Rows
+                currentStock += CInt(row("Quantity"))
+            Next
+        End If
+        LBLCurrentStock.Text = currentStock.ToString()
+    End Sub
 
+    ' =========================
+    ' BUTTON EVENTS
+    ' =========================
+    Private Sub BtnGenerateReport_Click(sender As Object, e As EventArgs) Handles BtnGenerateReport.Click
+        RefreshAllData()
     End Sub
 
     Private Sub BtnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
-    End Sub
-
-    Private Sub DGVStockTrackTransaction_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-
-    End Sub
-
-    Private Sub DGVItemManagement_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVItemManagement.CellContentClick
-
-    End Sub
-
-    Private Sub LBLTotalIn_Click(sender As Object, e As EventArgs) Handles LBLTotalIn.Click
-
     End Sub
 End Class
