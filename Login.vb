@@ -96,10 +96,9 @@ Public Class Login
                     SystemSession.LoggedInFullName = dr("FullName").ToString()
                     SystemSession.LoggedInRole = dr("Role").ToString()
 
-                    ' Only log login if this is NOT a restored session
-                    If Not isRestoredSession Then
-                        SystemSession.LogLogin()
-                    End If
+                    ' ✅ FIX: Always log manual button clicks. 
+                    ' Manual login is a conscious action and should always be in the audit trail.
+                    SystemSession.LogLogin()
 
                     ' Handle Remember Me
                     If chkRememberMe.Checked Then
