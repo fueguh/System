@@ -21,6 +21,12 @@ Public Class AdminDBSupplier
     End Sub
 
     Private Sub BtnAddSupplier_Click(sender As Object, e As EventArgs) Handles BtnAddSupplier.Click
+        ' 1. Basic Validation
+        If TextBoxSupplierName.Text.Trim = "" Then
+            MessageBox.Show("Supplier name is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TextBoxSupplierName.Focus()
+            Exit Sub
+        End If
 
         If Not TextBoxEmail.Text.Contains("@") OrElse Not TextBoxEmail.Text.Contains(".") Then
             MessageBox.Show("Please enter a valid email address.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -28,62 +34,109 @@ Public Class AdminDBSupplier
             Exit Sub
         End If
 
-        Dim query As String = "INSERT INTO Suppliers 
-        (SupplierName, ContactNumber, Address, Email, IsActive) 
-        VALUES (@SupplierName, @ContactNumber, @Address, @Email, 1)" ' Always active by default
+        ' Capture the name for the audit log
+        Dim sName As String = TextBoxSupplierName.Text.Trim()
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
+        Try
+            Dim query As String = "INSERT INTO Suppliers (SupplierName, ContactNumber, Address, Email, IsActive) 
+                               VALUES (@SupplierName, @ContactNumber, @Address, @Email, 1)"
+
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, con)
 
-            cmd.Parameters.AddWithValue("@SupplierName", TextBoxSupplierName.Text)
-            cmd.Parameters.AddWithValue("@ContactNumber", TextBoxContact.Text)
-            cmd.Parameters.AddWithValue("@Address", TextBoxAddress.Text)
-            cmd.Parameters.AddWithValue("@Email", TextBoxEmail.Text)
+                cmd.Parameters.AddWithValue("@SupplierName", sName)
+                cmd.Parameters.AddWithValue("@ContactNumber", TextBoxContact.Text.Trim())
+                cmd.Parameters.AddWithValue("@Address", TextBoxAddress.Text.Trim())
+                cmd.Parameters.AddWithValue("@Email", TextBoxEmail.Text.Trim())
 
-            con.Open()
-            cmd.ExecuteNonQuery()
-            con.Close()
-        End Using
+                con.Open()
+                cmd.ExecuteNonQuery()
+            End Using
 
-        MessageBox.Show("Supplier added successfully!")
-        LoadSuppliers()
-        Clearform()
+            ' ✅ AUDIT LOG: Record the addition
+            SystemSession.LogAudit($"Added new supplier: {sName}", "Supplier Maintenance", SystemSession.LoggedInUserID)
+
+            MessageBox.Show("Supplier added successfully!")
+
+            LoadSuppliers()
+            Clearform()
+
+        Catch ex As Exception
+            MessageBox.Show("Error adding supplier: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub BtnUpdateSupplier_Click(sender As Object, e As EventArgs) Handles BtnUpdateSupplier.Click
-        If Not TextBoxEmail.Text.Contains("@") OrElse Not TextBoxEmail.Text.Contains(".") Then
-            MessageBox.Show("Please enter a valid email address.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            TextBoxEmail.Focus()
-            Exit Sub
-        End If
+        ' 1. Basic Validations
         If selectedSupplierID = 0 Then
             MessageBox.Show("Please select a supplier to update.")
             Exit Sub
         End If
 
-        Dim query As String = "UPDATE Suppliers SET 
-        SupplierName=@SupplierName, ContactNumber=@ContactNumber, Address=@Address, 
-        Email=@Email 
-        WHERE SupplierID=@SupplierID"
+        If Not TextBoxEmail.Text.Contains("@") OrElse Not TextBoxEmail.Text.Contains(".") Then
+            MessageBox.Show("Please enter a valid email address.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            TextBoxEmail.Focus()
+            Exit Sub
+        End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
-          cmd As New SqlCommand(query, con)
+        Try
+            Dim changes As String = ""
+            Dim targetName As String = TextBoxSupplierName.Text.Trim()
 
-            cmd.Parameters.AddWithValue("@SupplierID", selectedSupplierID)
-            cmd.Parameters.AddWithValue("@SupplierName", TextBoxSupplierName.Text)
-            cmd.Parameters.AddWithValue("@ContactNumber", TextBoxContact.Text)
-            cmd.Parameters.AddWithValue("@Address", TextBoxAddress.Text)
-            cmd.Parameters.AddWithValue("@Email", TextBoxEmail.Text)
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
 
-            con.Open()
-            cmd.ExecuteNonQuery()
-            con.Close()
-        End Using
+                ' --- STEP A: FETCH OLD DATA FOR COMPARISON ---
+                Dim oldName As String = "", oldPh As String = "", oldAdd As String = "", oldEm As String = ""
+                Dim getOldQuery As String = "SELECT SupplierName, ContactNumber, Address, Email FROM Suppliers WHERE SupplierID = @id"
 
-        MessageBox.Show("Supplier updated successfully!")
-        LoadSuppliers()
-        Clearform()
+                Using cmdOld As New SqlCommand(getOldQuery, con)
+                    cmdOld.Parameters.AddWithValue("@id", selectedSupplierID)
+                    Using dr As SqlDataReader = cmdOld.ExecuteReader()
+                        If dr.Read() Then
+                            oldName = dr("SupplierName").ToString()
+                            oldPh = dr("ContactNumber").ToString()
+                            oldAdd = dr("Address").ToString()
+                            oldEm = dr("Email").ToString()
+                        End If
+                    End Using
+                End Using
 
+                ' --- STEP B: COMPARE OLD VS NEW ---
+                If oldName <> TextBoxSupplierName.Text.Trim() Then changes &= $"Name: {oldName} -> {TextBoxSupplierName.Text.Trim()}; "
+                If oldPh <> TextBoxContact.Text.Trim() Then changes &= $"Phone: {oldPh} -> {TextBoxContact.Text.Trim()}; "
+                If oldAdd <> TextBoxAddress.Text.Trim() Then changes &= $"Address: {oldAdd} -> {TextBoxAddress.Text.Trim()}; "
+                If oldEm <> TextBoxEmail.Text.Trim() Then changes &= $"Email: {oldEm} -> {TextBoxEmail.Text.Trim()}; "
+
+                ' --- STEP C: EXECUTE UPDATE ---
+                Dim query As String = "UPDATE Suppliers SET SupplierName=@SupplierName, ContactNumber=@ContactNumber, 
+                                   Address=@Address, Email=@Email WHERE SupplierID=@SupplierID"
+
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@SupplierID", selectedSupplierID)
+                    cmd.Parameters.AddWithValue("@SupplierName", TextBoxSupplierName.Text.Trim())
+                    cmd.Parameters.AddWithValue("@ContactNumber", TextBoxContact.Text.Trim())
+                    cmd.Parameters.AddWithValue("@Address", TextBoxAddress.Text.Trim())
+                    cmd.Parameters.AddWithValue("@Email", TextBoxEmail.Text.Trim())
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                ' --- STEP D: LOG AUDIT ---
+                Dim auditMsg As String = If(String.IsNullOrEmpty(changes),
+                                    $"Updated supplier {targetName} (No changes made)",
+                                    $"Updated supplier {targetName}. Changes: {changes}")
+
+                SystemSession.LogAudit(auditMsg, "Supplier Maintenance", SystemSession.LoggedInUserID)
+            End Using
+
+            MessageBox.Show("Supplier updated successfully!")
+
+            LoadSuppliers()
+            Clearform()
+
+        Catch ex As Exception
+            MessageBox.Show("Update Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub BtnDeleteSupplier_Click(sender As Object, e As EventArgs) Handles BtnDeleteSupplier.Click
@@ -92,25 +145,40 @@ Public Class AdminDBSupplier
             Exit Sub
         End If
 
+        ' Capture the name for the audit log before the delete happens
+        Dim deletedName As String = TextBoxSupplierName.Text.Trim()
+
         ' ADD THIS CONFIRMATION:
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to delete this supplier?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
         If result = DialogResult.No Then Exit Sub
 
-        Dim query As String = "DELETE FROM Suppliers WHERE SupplierID=@SupplierID"
+        Try
+            Dim query As String = "DELETE FROM Suppliers WHERE SupplierID=@SupplierID"
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2),
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, con)
 
-            cmd.Parameters.AddWithValue("@SupplierID", selectedSupplierID)
+                cmd.Parameters.AddWithValue("@SupplierID", selectedSupplierID)
 
-            con.Open()
-            cmd.ExecuteNonQuery()
-            con.Close()
-        End Using
+                con.Open()
+                cmd.ExecuteNonQuery()
+                con.Close()
+            End Using
 
-        MessageBox.Show("Supplier deleted successfully!")
-        LoadSuppliers()
-        Clearform()
+            ' ✅ AUDIT LOG: Only adding this line
+            SystemSession.LogAudit($"Deleted supplier: {deletedName}", "Supplier Maintenance", SystemSession.LoggedInUserID)
+
+            MessageBox.Show("Supplier deleted successfully!")
+            LoadSuppliers()
+            Clearform()
+
+        Catch ex As SqlException
+            ' Optional: Log the failure if it's a Foreign Key error
+            If ex.Number = 547 Then
+                SystemSession.LogAudit($"Delete failed: Supplier '{deletedName}' is in use.", "Supplier Maintenance", SystemSession.LoggedInUserID)
+            End If
+            MessageBox.Show("Error: " & ex.Message)
+        End Try
     End Sub
 
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
