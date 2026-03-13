@@ -102,7 +102,6 @@ Public Class AvailableAppointments
 
     ' === 4. NAVIGATION ===
     Private Sub btnBack1_Click(sender As Object, e As EventArgs) Handles btnBack1.Click
-        SystemSession.LogAudit("Returned to Dashboard from Appointments", "AvailableAppointments")
         SystemSession.NavigateToDashboard(Me)
     End Sub
     ' === 5. DOUBLE CLICK SHORTCUT ===

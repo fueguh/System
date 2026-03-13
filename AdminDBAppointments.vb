@@ -123,9 +123,15 @@ Public Class AdminDBAppointments
     End Sub
 
     Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
-        If selectedAppointmentID = 0 Then Exit Sub
+        ' 1. INITIAL VALIDATION
+        If selectedAppointmentID = 0 Then
+            MessageBox.Show("Please select an appointment from the list first.")
+            Exit Sub
+        End If
+
         If Not ValidateFields() Then Exit Sub
 
+        ' 2. PREPARE TIME AND CONFLICT CHECK
         Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
 
         Dim conflictMessage As String = IsConflict(selectedAppointmentID, startTimeValue, selectedEndTime)
@@ -134,33 +140,71 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
+        ' 3. CAPTURE NAMES FOR AUDIT TRAIL (Before database changes)
+        ' We use .Text to get the actual names instead of IDs
+        Dim patientName As String = lblPatient.Text
+        Dim dentistName As String = CmbDent.Text
+        Dim apptDate As String = DtpDate.Value.ToString("MMM dd, yyyy")
+
+        ' 4. DATABASE OPERATIONS
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            Dim query As String = "UPDATE Appointments SET PatientID=@p, UserID=@d, Date=@date, StartTime=@start, EndTime=@end, Status=@status WHERE AppointmentID=@id"
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
-            cmd.Parameters.AddWithValue("@p", selectedPatientID)
-            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
-            cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-            cmd.Parameters.AddWithValue("@start", startTimeValue)
-            cmd.Parameters.AddWithValue("@end", selectedEndTime)
-            cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
 
-            Try
-                cmd.ExecuteNonQuery()
-                Using cmdDel As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con)
-                    cmdDel.Parameters.AddWithValue("@aid", selectedAppointmentID)
-                    cmdDel.ExecuteNonQuery()
-                End Using
-                SaveAppointmentServices(selectedAppointmentID)
+            ' Start a transaction to ensure both Appointment and Services update together
+            Using sqlTrans As SqlTransaction = con.BeginTransaction()
+                Try
+                    ' A. Update Main Appointment Table
+                    Dim query As String = "UPDATE Appointments SET PatientID=@p, UserID=@d, Date=@date, " &
+                                    "StartTime=@start, EndTime=@end, Status=@status WHERE AppointmentID=@id"
 
-                MessageBox.Show("Appointment updated.")
-                SystemSession.LogAudit("Updated Appointment ID: " & selectedAppointmentID, "Appointment Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-                RefreshUI()
-            Catch ex As Exception
-                MessageBox.Show("Error: " & ex.Message)
-            End Try
+                    Using cmd As New SqlCommand(query, con, sqlTrans)
+                        cmd.Parameters.AddWithValue("@id", selectedAppointmentID)
+                        cmd.Parameters.AddWithValue("@p", selectedPatientID)
+                        cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
+                        cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+                        cmd.Parameters.AddWithValue("@start", startTimeValue)
+                        cmd.Parameters.AddWithValue("@end", selectedEndTime)
+                        cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
+                        cmd.ExecuteNonQuery()
+                    End Using
+
+                    ' B. Update Services (Delete old, Insert new)
+                    Using cmdDel As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con, sqlTrans)
+                        cmdDel.Parameters.AddWithValue("@aid", selectedAppointmentID)
+                        cmdDel.ExecuteNonQuery()
+                    End Using
+
+                    ' Note: Modified SaveAppointmentServices to accept connection and transaction 
+                    ' to prevent "Connection Busy" or "Transaction Required" errors.
+                    SaveAppointmentServicesInTransaction(selectedAppointmentID, con, sqlTrans)
+
+                    ' C. COMMIT AND LOG
+                    sqlTrans.Commit()
+
+                    ' --- THE IMPROVED AUDIT LOG ---
+                    Dim auditMsg As String = $"Updated Appointment #{selectedAppointmentID} | Patient: {patientName} | Dentist: {dentistName} | New Date: {apptDate}"
+                    SystemSession.LogAudit(auditMsg, "Appointment Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
+                    MessageBox.Show("Appointment updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    RefreshUI()
+
+                Catch ex As Exception
+                    sqlTrans.Rollback()
+                    MessageBox.Show("Error updating appointment: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            End Using
         End Using
+    End Sub
+
+    ' Helper method to ensure services are saved within the same transaction
+    Private Sub SaveAppointmentServicesInTransaction(appointmentID As Integer, con As SqlConnection, trans As SqlTransaction)
+        For Each item As DataRowView In clbServices.CheckedItems
+            Using cmd As New SqlCommand("INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES (@aid, @sid)", con, trans)
+                cmd.Parameters.AddWithValue("@aid", appointmentID)
+                cmd.Parameters.AddWithValue("@sid", item("ServiceID"))
+                cmd.ExecuteNonQuery()
+            End Using
+        Next
     End Sub
 
     ' ==========================================

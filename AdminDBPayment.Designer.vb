@@ -48,8 +48,8 @@ Partial Class AdminDBPayment
         Me.dgvServices = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.dentist_name = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
-        Me.Guna2Panel2 = New Guna.UI2.WinForms.Guna2Panel()
         Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.Guna2Panel2 = New Guna.UI2.WinForms.Guna2Panel()
         Me.Guna2HtmlLabel4 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -139,7 +139,7 @@ Partial Class AdminDBPayment
         Me.ButtonGenerateReceipt.Name = "ButtonGenerateReceipt"
         Me.ButtonGenerateReceipt.Size = New System.Drawing.Size(279, 45)
         Me.ButtonGenerateReceipt.TabIndex = 24
-        Me.ButtonGenerateReceipt.Text = "Generate Receipt"
+        Me.ButtonGenerateReceipt.Text = "Finish Payment"
         '
         'ButtonPrintReceipt
         '
@@ -155,7 +155,7 @@ Partial Class AdminDBPayment
         Me.ButtonPrintReceipt.Name = "ButtonPrintReceipt"
         Me.ButtonPrintReceipt.Size = New System.Drawing.Size(279, 45)
         Me.ButtonPrintReceipt.TabIndex = 25
-        Me.ButtonPrintReceipt.Text = "Print"
+        Me.ButtonPrintReceipt.Text = "Print Receipt"
         '
         'Guna2HtmlLabel2
         '
@@ -364,15 +364,6 @@ Partial Class AdminDBPayment
         Me.Guna2Panel1.Size = New System.Drawing.Size(791, 66)
         Me.Guna2Panel1.TabIndex = 53
         '
-        'Guna2Panel2
-        '
-        Me.Guna2Panel2.Controls.Add(Me.Guna2HtmlLabel4)
-        Me.Guna2Panel2.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel2.Location = New System.Drawing.Point(376, 529)
-        Me.Guna2Panel2.Name = "Guna2Panel2"
-        Me.Guna2Panel2.Size = New System.Drawing.Size(791, 66)
-        Me.Guna2Panel2.TabIndex = 54
-        '
         'Guna2HtmlLabel3
         '
         Me.Guna2HtmlLabel3.AutoSize = False
@@ -385,6 +376,15 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel3.TabIndex = 48
         Me.Guna2HtmlLabel3.Text = "Queue"
         Me.Guna2HtmlLabel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'Guna2Panel2
+        '
+        Me.Guna2Panel2.Controls.Add(Me.Guna2HtmlLabel4)
+        Me.Guna2Panel2.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.Guna2Panel2.Location = New System.Drawing.Point(376, 529)
+        Me.Guna2Panel2.Name = "Guna2Panel2"
+        Me.Guna2Panel2.Size = New System.Drawing.Size(791, 66)
+        Me.Guna2Panel2.TabIndex = 54
         '
         'Guna2HtmlLabel4
         '
