@@ -235,24 +235,64 @@ Public Class AdminDBDentists
     End Function
 
     Private Function ValidateDentistFields(Optional dentistID As Integer = 0) As Boolean
-        If Not TxtName.Text.Replace(" ", "").All(AddressOf Char.IsLetter) Or TxtName.Text = "" Then
-            MessageBox.Show("Full Name must contain letters only.") : Return False
+        ' --- 1. FULL NAME VALIDATION ---
+        Dim fullName As String = TxtName.Text.Trim()
+        ' Regex: Starts with letter, single spaces/dots/hyphens allowed between words
+        Dim nameRegex As String = "^[A-Za-z]+(?:[ .'-][A-Za-z]+)*[.]?$"
+
+        If String.IsNullOrWhiteSpace(fullName) OrElse Not System.Text.RegularExpressions.Regex.IsMatch(fullName, nameRegex) Then
+            MessageBox.Show("Full Name must start with a letter. Use single spaces/dots only between words.")
+            TxtName.Focus()
+            Return False
         End If
 
-        If Not TxtPhone.Text.All(AddressOf Char.IsDigit) Or TxtPhone.Text = "" Then
-            MessageBox.Show("Phone Number must contain digits only.") : Return False
+        ' --- 2. USERNAME VALIDATION ---
+        Dim username As String = TxtUsername.Text.Trim()
+        ' Regex: Starts/ends with alphanumeric, allows single dots/underscores in between
+        Dim userRegex As String = "^[A-Za-z0-9](?:[._]?[A-Za-z0-9])*$"
+
+        If username.Length < 5 Then
+            MessageBox.Show("Username must be at least 5 characters long.")
+            TxtUsername.Focus()
+            Return False
+        ElseIf Not System.Text.RegularExpressions.Regex.IsMatch(username, userRegex) Then
+            MessageBox.Show("Username can only contain letters, numbers, and single dots/underscores.")
+            TxtUsername.Focus()
+            Return False
         End If
 
-        If Not TxtEmail.Text.Trim().ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must be a valid @gmail.com address.") : Return False
+        ' --- 3. PHONE NUMBER VALIDATION (PH 11-Digit Format) ---
+        Dim phone As String = TxtPhone.Text.Trim()
+        If phone.Length <> 11 OrElse Not phone.All(AddressOf Char.IsDigit) Then
+            MessageBox.Show("Phone Number must be exactly 11 digits.")
+            TxtPhone.Focus()
+            Return False
+        ElseIf Not phone.StartsWith("09") Then
+            MessageBox.Show("Invalid Phone Number. Must start with '09'.")
+            TxtPhone.Focus()
+            Return False
         End If
 
+        ' --- 4. EMAIL VALIDATION ---
+        Dim email As String = TxtEmail.Text.Trim()
+        If Not email.ToLower().EndsWith("@gmail.com") OrElse email.Length < 11 Then
+            MessageBox.Show("Email must be a valid @gmail.com address.")
+            TxtEmail.Focus()
+            Return False
+        End If
+
+        ' --- 5. PASSWORD VALIDATION ---
+        ' Only validates if it's a new record (ID=0) or if the user typed something in the password field
         If dentistID = 0 OrElse TxtPassword.Text.Length > 0 Then
             If TxtPassword.Text.Length < 8 OrElse Not TxtPassword.Text.Any(AddressOf Char.IsUpper) Then
-                MessageBox.Show("Password: 8+ characters and 1 uppercase.") : Return False
+                MessageBox.Show("Password must be at least 8 characters long and contain at least one uppercase letter.")
+                TxtPassword.Focus()
+                Return False
             End If
             If TxtPassword.Text <> TxtConfirmPassword.Text Then
-                MessageBox.Show("Passwords do not match.") : Return False
+                MessageBox.Show("Passwords do not match.")
+                TxtConfirmPassword.Focus()
+                Return False
             End If
         End If
 
@@ -264,13 +304,75 @@ Public Class AdminDBDentists
 #Region "KeyPress Restrictions"
 
     Private Sub TxtName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtName.KeyPress
-        If Not (Char.IsLetter(e.KeyChar) Or e.KeyChar = " "c Or Char.IsControl(e.KeyChar)) Then e.Handled = True
-    End Sub
+        ' Allow backspace and control keys
+        If Char.IsControl(e.KeyChar) Then Return
 
+        Dim allowedChars As String = " .'-" ' Space, dot, hyphen, apostrophe
+        Dim lastChar As Char = If(TxtName.Text.Length > 0, TxtName.Text.Last(), ChrW(0))
+
+        ' Allow letters
+        If Char.IsLetter(e.KeyChar) Then Return
+
+        ' Allow special characters but prevent consecutive ones
+        If allowedChars.Contains(e.KeyChar) Then
+            If lastChar = e.KeyChar Then
+                e.Handled = True ' Block consecutive (e.g., "  ")
+            ElseIf TxtName.Text.Length = 0 AndAlso e.KeyChar = " "c Then
+                e.Handled = True ' Cannot start with a space
+            End If
+            Return
+        End If
+
+        ' Block everything else
+        e.Handled = True
+    End Sub
+    Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
+        ' Block spaces entirely for usernames
+        If e.KeyChar = " "c Then
+            e.Handled = True
+            Return
+        End If
+
+        ' Allow letters, digits, and control keys (backspace)
+        If Char.IsLetterOrDigit(e.KeyChar) Or Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow specific special characters (optional: dot or underscore) 
+        ' but prevent them from being the first character or consecutive
+        Dim allowedSpecial As String = "._"
+        If allowedSpecial.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text.Last(), ChrW(0))
+            If TxtUsername.Text.Length = 0 OrElse lastChar = e.KeyChar Then
+                e.Handled = True
+            End If
+            Return
+        End If
+
+        ' Block everything else
+        e.Handled = True
+    End Sub
     Private Sub TxtPhone_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhone.KeyPress
         If Not (Char.IsDigit(e.KeyChar) Or Char.IsControl(e.KeyChar)) Then e.Handled = True
     End Sub
+    Private Sub TxtSpecialization_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtSpecialization.KeyPress
+        ' Allow backspace/control keys
+        If Char.IsControl(e.KeyChar) Then Return
 
+        ' Allow letters
+        If Char.IsLetter(e.KeyChar) Then Return
+
+        ' Allow space or hyphen, but prevent consecutive ones and starting with them
+        Dim allowedChars As String = " -"
+        If allowedChars.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtSpecialization.Text.Length > 0, TxtSpecialization.Text.Last(), ChrW(0))
+            If TxtSpecialization.Text.Length = 0 OrElse lastChar = e.KeyChar Then
+                e.Handled = True
+            End If
+            Return
+        End If
+
+        ' Block numbers and other symbols
+        e.Handled = True
+    End Sub
 #End Region
 
 #Region "Input Formatting & Extra Actions"

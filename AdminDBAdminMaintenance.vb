@@ -199,9 +199,10 @@ Public Class AdminDBAdminMaintenance
     Private Function ValidateEmail(Optional userID As Integer = 0) As Boolean
         Dim email As String = TxtEmail.Text.Trim()
 
-        ' 1. Format Check
-        If Not email.ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must end with '@gmail.com'.")
+        ' 1. Flexible Format Check
+        Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        If Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
+            MessageBox.Show("Please enter a valid email address (e.g., name@example.com).")
             TxtEmail.Focus()
             Return False
         End If
@@ -254,51 +255,77 @@ Public Class AdminDBAdminMaintenance
     End Function
 
     Private Sub TxtName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtName.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow letters
+        If Char.IsLetter(e.KeyChar) Then Return
+
+        ' Allow single space/dot/hyphen, but prevent consecutive or starting with them
+        Dim allowedChars As String = " .'-"
+        If allowedChars.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtName.Text.Length > 0, TxtName.Text.Last(), ChrW(0))
+            If TxtName.Text.Length = 0 OrElse allowedChars.Contains(lastChar) Then
+                e.Handled = True
+            End If
             Return
         End If
 
-        ' Allow letters and spaces only
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True ' Block the input
-        End If
+        e.Handled = True
     End Sub
 
     Private Sub TxtPhone_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhone.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        ' Allow backspace
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow digits only and limit to 11 characters
+        If Char.IsDigit(e.KeyChar) AndAlso TxtPhone.Text.Length < 11 Then
             Return
         End If
 
-        ' Allow digits only
-        If Not Char.IsDigit(e.KeyChar) Then
-            e.Handled = True ' Block the input
-        End If
+        e.Handled = True
     End Sub
 
     Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Block spaces
+        If e.KeyChar = " "c Then
+            e.Handled = True
             Return
         End If
 
-        ' Allow letters and digits only
-        If Not (Char.IsLetterOrDigit(e.KeyChar)) Then
-            e.Handled = True ' Block the input
+        ' Allow letters and numbers
+        If Char.IsLetterOrDigit(e.KeyChar) Then Return
+
+        ' Allow dot or underscore (but not as first char or consecutive)
+        Dim allowedSymbols As String = "._"
+        If allowedSymbols.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text.Last(), ChrW(0))
+            If TxtUsername.Text.Length = 0 OrElse allowedSymbols.Contains(lastChar) Then
+                e.Handled = True
+            End If
+            Return
         End If
+
+        e.Handled = True
     End Sub
 
     Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Block spaces
+        If e.KeyChar = " "c Then
+            e.Handled = True
             Return
         End If
 
-        ' Allow letters, digits, @, and .
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
-            e.Handled = True ' Block invalid input
+        ' Allow standard email characters
+        Dim allowedEmailChars As String = "@._-"
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse allowedEmailChars.Contains(e.KeyChar) Then
+            Return
         End If
+
+        e.Handled = True
     End Sub
     Private Sub DataGridViewAdmins_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewAdmins.CellClick
         If e.RowIndex >= 0 Then

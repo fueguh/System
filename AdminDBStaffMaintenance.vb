@@ -1,6 +1,7 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Security.Cryptography
 Imports System.Text
+Imports System.Text.RegularExpressions
 
 Public Class AdminDBStaffMaintenance
     Private selectedStaffID As Integer = 0
@@ -232,23 +233,47 @@ Public Class AdminDBStaffMaintenance
         End Using
     End Function
 
+    ' ✅ IMPROVED: Unified Validation Logic
     Private Function ValidateStaffFields(Optional staffID As Integer = 0) As Boolean
-        If Not TxtName.Text.Replace(" ", "").All(AddressOf Char.IsLetter) OrElse TxtName.Text = "" Then
-            MessageBox.Show("Full Name must contain letters only.") : Return False
+        ' 1. Name Validation (Allows letters, single spaces, dots, and hyphens)
+        Dim nameRegex As String = "^[A-Za-z]+(?:[ .'-][A-Za-z]+)*[.]?$"
+        If String.IsNullOrWhiteSpace(TxtName.Text) OrElse Not Regex.IsMatch(TxtName.Text.Trim(), nameRegex) Then
+            MessageBox.Show("Please enter a valid Full Name (Letters, dots, and hyphens only).")
+            TxtName.Focus() : Return False
         End If
 
-        If Not TxtEmail.Text.Trim().ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must be a valid @gmail.com address.") : Return False
+        ' 2. Username Length
+        If TxtUsername.Text.Trim().Length < 5 Then
+            MessageBox.Show("Username must be at least 5 characters long.")
+            TxtUsername.Focus() : Return False
         End If
 
+        ' 3. PH Phone Format (11 digits, starts with 09)
+        Dim phone As String = TxtPhone.Text.Trim()
+        If phone.Length <> 11 OrElse Not phone.StartsWith("09") Then
+            MessageBox.Show("Phone Number must be exactly 11 digits and start with '09'.")
+            TxtPhone.Focus() : Return False
+        End If
+
+        ' 4. IMPROVED: Flexible Email Format (No longer Gmail-only)
+        Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        If Not Regex.IsMatch(TxtEmail.Text.Trim(), emailPattern) Then
+            MessageBox.Show("Please enter a valid email address.")
+            TxtEmail.Focus() : Return False
+        End If
+
+        ' 5. Password Check
         If staffID = 0 OrElse TxtPassword.Text.Length > 0 Then
             If TxtPassword.Text.Length < 8 OrElse Not TxtPassword.Text.Any(AddressOf Char.IsUpper) Then
-                MessageBox.Show("Password must be 8+ characters with an uppercase letter.") : Return False
+                MessageBox.Show("Password must be at least 8 characters with one uppercase letter.")
+                TxtPassword.Focus() : Return False
             End If
             If TxtPassword.Text <> TxtConfirmPassword.Text Then
-                MessageBox.Show("Passwords do not match.") : Return False
+                MessageBox.Show("Passwords do not match.")
+                TxtConfirmPassword.Focus() : Return False
             End If
         End If
+
         Return True
     End Function
 
@@ -256,14 +281,57 @@ Public Class AdminDBStaffMaintenance
 
 #Region "KeyPress & Formatting"
 
+    ' ✅ IMPROVED: Strict KeyPress handling to prevent invalid characters in real-time
+
     Private Sub TxtName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtName.KeyPress
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c OrElse Char.IsControl(e.KeyChar)) Then e.Handled = True
-    End Sub
+        If Char.IsControl(e.KeyChar) Then Return
+        If Char.IsLetter(e.KeyChar) Then Return
 
+        ' Allow space, dot, hyphen, apostrophe but prevent consecutive symbols
+        Dim allowedChars As String = " .'-"
+        If allowedChars.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtName.Text.Length > 0, TxtName.Text.Last(), ChrW(0))
+            If TxtName.Text.Length = 0 OrElse allowedChars.Contains(lastChar) Then
+                e.Handled = True
+            End If
+            Return
+        End If
+        e.Handled = True
+    End Sub
+    Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If e.KeyChar = " "c Then e.Handled = True : Return ' No spaces in username
+
+        If Char.IsLetterOrDigit(e.KeyChar) Then Return
+
+        ' Allow dot or underscore but not at the start or consecutively
+        Dim allowedSymbols As String = "._"
+        If allowedSymbols.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text.Last(), ChrW(0))
+            If TxtUsername.Text.Length = 0 OrElse allowedSymbols.Contains(lastChar) Then
+                e.Handled = True
+            End If
+            Return
+        End If
+        e.Handled = True
+    End Sub
     Private Sub TxtPhone_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhone.KeyPress
-        If Not (Char.IsDigit(e.KeyChar) OrElse Char.IsControl(e.KeyChar)) Then e.Handled = True
+        If Char.IsControl(e.KeyChar) Then Return
+        ' Only allow digits and limit to 11
+        If Char.IsDigit(e.KeyChar) AndAlso TxtPhone.Text.Length < 11 Then Return
+        e.Handled = True
     End Sub
+    Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
+        If Char.IsControl(e.KeyChar) Then Return
+        If e.KeyChar = " "c Then e.Handled = True : Return
 
+        ' Standard email characters
+        Dim allowedEmailChars As String = "@._-"
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse allowedEmailChars.Contains(e.KeyChar) Then
+            Return
+        End If
+        e.Handled = True
+    End Sub
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         RefreshData()
         SearchStaff.Clear()
