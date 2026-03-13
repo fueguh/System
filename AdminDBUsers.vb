@@ -143,90 +143,103 @@ Public Class AdminDBUsers
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
-        ' ✅ Only Admin can update users
+        ' 1. Security & Selection Checks
         If Not SystemSession.RequireAdmin("update users") Then Exit Sub
-        If Not SystemSession.RequireSelectedUser(selectedUserID, "update") Then Exit Sub
-        ' Get old role
-        Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
-        Dim hashedPassword As String = HashPassword(txtPassword.Text)
+        If selectedUserID = 0 Then
+            MessageBox.Show("Please select a user to update.")
+            Exit Sub
+        End If
 
         If Not ValidateUserFields(selectedUserID) Then Exit Sub
 
+        ' 2. Duplicate Check
         If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedUserID) Then
             MessageBox.Show("Email or Username already exists. Please choose another.")
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+        Try
+            Dim changes As String = ""
+            Dim targetName As String = TxtFullName.Text.Trim()
 
-            ' Decide query depending on whether password is entered, to avoid updating password with blank.
-            Dim query As String
-            If String.IsNullOrWhiteSpace(txtPassword.Text) Then
-                ' Password not changed
-                query = "
-            UPDATE Users
-            SET FullName=@fullname,
-                Username=@username,
-                Role=@role,
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
 
-                PhoneNumber=@phone,
-                Email=@email
-            WHERE UserID=@id"
-            Else
-                ' Password changed
-                query = "
-            UPDATE Users
-            SET FullName=@fullname,
-                Username=@username,
-                Password=@password,
-                Role=@role,
+                ' --- STEP A: FETCH OLD DATA FOR COMPARISON ---
+                Dim oldName As String = "", oldUn As String = "", oldRole As String = "", oldPh As String = "", oldEm As String = ""
+                Dim getOldQuery As String = "SELECT FullName, Username, Role, PhoneNumber, Email FROM Users WHERE UserID = @id"
+                Using cmdOld As New SqlCommand(getOldQuery, con)
+                    cmdOld.Parameters.AddWithValue("@id", selectedUserID)
+                    Using dr As SqlDataReader = cmdOld.ExecuteReader()
+                        If dr.Read() Then
+                            oldName = dr("FullName").ToString()
+                            oldUn = dr("Username").ToString()
+                            oldRole = dr("Role").ToString()
+                            oldPh = dr("PhoneNumber").ToString()
+                            oldEm = dr("Email").ToString()
+                        End If
+                    End Using
+                End Using
 
-                PhoneNumber=@phone,
-                Email=@email
-            WHERE UserID=@id"
-            End If
+                ' --- STEP B: COMPARE OLD VS NEW ---
+                If oldName <> TxtFullName.Text.Trim() Then changes &= $"Name: {oldName} -> {TxtFullName.Text.Trim()}; "
+                If oldUn <> TxtUsername.Text.Trim() Then changes &= $"Username: {oldUn} -> {TxtUsername.Text.Trim()}; "
+                If oldRole <> CmbRole.Text.Trim() Then changes &= $"Role: {oldRole} -> {CmbRole.Text.Trim()}; "
+                If oldPh <> TxtPhoneNumber.Text.Trim() Then changes &= $"Phone: {oldPh} -> {TxtPhoneNumber.Text.Trim()}; "
+                If oldEm <> TxtEmail.Text.Trim() Then changes &= $"Email: {oldEm} -> {TxtEmail.Text.Trim()}; "
 
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedUserID)
-                cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
-                cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
-                cmd.Parameters.AddWithValue("@password", hashedPassword)
-                cmd.Parameters.AddWithValue("@role", CmbRole.Text)
+                If Not String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                    changes &= "Password was updated; "
+                End If
 
-                cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
-                cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
-                cmd.ExecuteNonQuery()
+                ' --- STEP C: EXECUTE UPDATE ---
+                Dim query As String
+                If String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                    query = "UPDATE Users SET FullName=@fullname, Username=@username, Role=@role, PhoneNumber=@phone, Email=@email WHERE UserID=@id"
+                Else
+                    query = "UPDATE Users SET FullName=@fullname, Username=@username, Password=@password, Role=@role, PhoneNumber=@phone, Email=@email WHERE UserID=@id"
+                End If
+
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@id", selectedUserID)
+                    cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text.Trim())
+                    cmd.Parameters.AddWithValue("@username", TxtUsername.Text.Trim())
+                    cmd.Parameters.AddWithValue("@role", CmbRole.Text)
+                    cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text.Trim())
+                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim())
+
+                    ' Check specifically for the password parameter defined in the query above
+                    If Not String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                        cmd.Parameters.AddWithValue("@password", HashPassword(txtPassword.Text))
+                    End If
+
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                ' --- STEP D: DETAILED AUDIT LOGGING ---
+                Dim auditMsg As String = If(String.IsNullOrEmpty(changes),
+                                        $"Updated user {targetName} (No changes made)",
+                                        $"Updated user {targetName}. Changes: {changes}")
+
+                SystemSession.LogAudit(auditMsg, "User Management",
+                                   SystemSession.LoggedInUserID,
+                                   SystemSession.LoggedInFullName,
+                                   SystemSession.LoggedInRole)
+
+                ' Special check for last Admin (your original logic)
+                If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
+                    MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.", "System Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                End If
             End Using
-        End Using
 
-        SystemSession.ShowSuccess("updated")
+            SystemSession.ShowSuccess("updated")
+            SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
+            LoadUsers()
+            Clearform()
 
-        ' Audit logging
-        Dim actorID As Integer = SystemSession.LoggedInUserID
-        Dim actorName As String = SystemSession.LoggedInFullName
-        Dim actorRole As String = SystemSession.LoggedInRole
-        Dim targetName As String = TxtFullName.Text
-        Dim targetRole As String = CmbRole.Text
-
-        If oldRole = "Admin" AndAlso targetRole <> "Admin" AndAlso Not SystemSession.AdminExists() Then
-            SystemSession.LogAudit($"Changed last Admin account: {targetName}", "User Management",
-        actorID, actorName, actorRole)
-            MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
-                    "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        ElseIf targetRole = "Admin" Then
-            SystemSession.LogAudit($"Updated Admin account: {targetName}", "User Management",
-        actorID, actorName, actorRole)
-        Else
-            SystemSession.LogAudit($"Updated user: {targetName}", "User Management",
-        actorID, actorName, actorRole)
-        End If
-
-
-        ' Enforce session rules if the logged-in user updates their own role
-        SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
-        LoadUsers()
-        Clearform()
+        Catch ex As Exception
+            MessageBox.Show("Update Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click

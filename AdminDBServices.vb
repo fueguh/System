@@ -131,26 +131,50 @@ Public Class AdminDBServices
             Exit Sub
         End If
 
+        Dim price As Decimal
+        Dim durationMinutes As Integer
+        Dim serviceName As String = txtServiceName.Text.Trim()
+
+        ' 1. Basic Validation
+        If serviceName = "" Then
+            MessageBox.Show("Service name is required.")
+            Return
+        End If
+
+        ' 2. DUPLICATE CHECK (Specify current ID to ignore self)
+        If IsDuplicateService(serviceName, selectedServiceID) Then
+            MessageBox.Show("Another service with this name already exists.")
+            txtServiceName.Focus()
+            Return
+        End If
+
+        ' 3. Format Validation (Prevents crashes)
+        If Not Decimal.TryParse(txtPrice.Text.Trim(), price) Then
+            MessageBox.Show("Please enter a valid price.")
+            Return
+        End If
+
+        If Not TryParseDuration(txtDuration.Text, durationMinutes) Then
+            MessageBox.Show("Please enter a valid duration.")
+            Return
+        End If
+
+        ' 4. Database Update
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
-            Dim query As String = "
-            UPDATE Services
-            SET ServiceName=@name, Price=@price, Duration=@duration
-            WHERE ServiceID=@id
-        "
+            Dim query As String = "UPDATE Services SET ServiceName=@name, Price=@price, Duration=@duration WHERE ServiceID=@id"
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedServiceID)
-                cmd.Parameters.AddWithValue("@name", txtServiceName.Text)
-                cmd.Parameters.AddWithValue("@price", Convert.ToDecimal(txtPrice.Text))
-                cmd.Parameters.AddWithValue("@duration", Convert.ToInt32(txtDuration.Text))
+                cmd.Parameters.AddWithValue("@name", serviceName)
+                cmd.Parameters.AddWithValue("@price", price)
+                cmd.Parameters.AddWithValue("@duration", durationMinutes)
                 cmd.ExecuteNonQuery()
             End Using
         End Using
 
         MessageBox.Show("Service updated successfully.")
-        LogAudit("Updated service ", "Service Management")
+        LogAudit("Updated service: " & serviceName, "Service Management")
         LoadServices()
         Clearform()
     End Sub

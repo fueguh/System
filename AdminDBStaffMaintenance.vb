@@ -107,19 +107,49 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
+        If selectedStaffID = 0 Then Exit Sub
         If Not ValidateStaffFields(selectedStaffID) Then Exit Sub
 
+        ' Check duplicates (handles its own MessageBox)
         If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedStaffID) Then
-            MessageBox.Show("This Email or Username is already taken by another staff member.", "Duplicate Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
+
         Try
+            Dim changes As String = ""
+
             Using con As New SqlConnection(connString)
                 con.Open()
+
+                ' 1. FETCH CURRENT DATA BEFORE UPDATE
+                Dim currentName As String = "", currentUn As String = "", currentPh As String = "", currentEm As String = ""
+                Dim getOldQuery As String = "SELECT FullName, Username, PhoneNumber, Email FROM Users WHERE UserID = @id"
+                Using cmdOld As New SqlCommand(getOldQuery, con)
+                    cmdOld.Parameters.AddWithValue("@id", selectedStaffID)
+                    Using dr As SqlDataReader = cmdOld.ExecuteReader()
+                        If dr.Read() Then
+                            currentName = dr("FullName").ToString()
+                            currentUn = dr("Username").ToString()
+                            currentPh = dr("PhoneNumber").ToString()
+                            currentEm = dr("Email").ToString()
+                        End If
+                    End Using
+                End Using
+
+                ' 2. COMPARE OLD VS NEW
+                If currentName <> TxtName.Text.Trim() Then changes &= $"Name: {currentName} -> {TxtName.Text.Trim()}; "
+                If currentUn <> TxtUsername.Text.Trim() Then changes &= $"Username: {currentUn} -> {TxtUsername.Text.Trim()}; "
+                If currentPh <> TxtPhone.Text.Trim() Then changes &= $"Phone: {currentPh} -> {TxtPhone.Text.Trim()}; "
+                If currentEm <> TxtEmail.Text.Trim() Then changes &= $"Email: {currentEm} -> {TxtEmail.Text.Trim()}; "
+
+                ' Check if password was changed (don't log the actual password!)
+                If Not String.IsNullOrWhiteSpace(TxtPassword.Text) Then changes &= "Password was updated; "
+
+                ' 3. EXECUTE UPDATE
                 Dim updatePassword As Boolean = Not String.IsNullOrWhiteSpace(TxtPassword.Text)
                 Dim query As String = If(updatePassword,
-                    "UPDATE Users SET FullName=@name, Username=@un, PhoneNumber=@ph, Email=@em, Password=@pw WHERE UserID=@id",
-                    "UPDATE Users SET FullName=@name, Username=@un, PhoneNumber=@ph, Email=@em WHERE UserID=@id")
+                "UPDATE Users SET FullName=@name, Username=@un, PhoneNumber=@ph, Email=@em, Password=@pw WHERE UserID=@id",
+                "UPDATE Users SET FullName=@name, Username=@un, PhoneNumber=@ph, Email=@em WHERE UserID=@id")
 
                 Using cmd As New SqlCommand(query, con)
                     cmd.Parameters.AddWithValue("@id", selectedStaffID)
@@ -132,35 +162,63 @@ Public Class AdminDBStaffMaintenance
                 End Using
             End Using
 
-            LogAuditTrail("Updated Staff ID: " & selectedStaffID)
-            MessageBox.Show("Staff updated successfully.")
+            ' 4. LOG DETAILED AUDIT
+            If String.IsNullOrEmpty(changes) Then
+                LogAuditTrail($"Updated Staff {TxtName.Text.Trim()} (No data changes)")
+            Else
+                LogAuditTrail($"Updated Staff {TxtName.Text.Trim()} - Changes: {changes}")
+            End If
+
+            MessageBox.Show("Staff updated successfully.", "Update Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             RefreshData()
         Catch ex As Exception
-            MessageBox.Show("Update Error: " & ex.Message)
+            MessageBox.Show("Update Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
-        If MessageBox.Show("Permanently delete this staff member?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+        ' 1. Selection Check
+        If selectedStaffID = 0 Then
+            MessageBox.Show("Please select a staff member to delete.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        ' 2. Capture the name for the Audit Trail BEFORE deletion
+        Dim staffName As String = TxtName.Text.Trim()
+
+        ' 3. Confirmation Dialog
+        If MessageBox.Show($"Permanently delete staff member '{staffName}'?", "Confirm Delete",
+                       MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
             Try
                 Using con As New SqlConnection(connString)
                     con.Open()
+
                     ' Clean up sessions first to avoid foreign key errors
                     Dim cmdSess As New SqlCommand("DELETE FROM UserSessions WHERE UserID = @id", con)
                     cmdSess.Parameters.AddWithValue("@id", selectedStaffID)
                     cmdSess.ExecuteNonQuery()
 
+                    ' Delete the User
                     Dim cmdUser As New SqlCommand("DELETE FROM Users WHERE UserID = @id", con)
                     cmdUser.Parameters.AddWithValue("@id", selectedStaffID)
                     cmdUser.ExecuteNonQuery()
                 End Using
 
-                LogAuditTrail("Deleted Staff ID: " & selectedStaffID)
-                MessageBox.Show("Staff member deleted.")
+                ' ✅ SUCCESS: Log the Name, not the ID
+                LogAuditTrail("Deleted Staff: " & staffName)
+
+                MessageBox.Show($"Staff member '{staffName}' has been deleted.")
                 RefreshData()
                 Dashboard?.LoadDashboardStats()
-            Catch ex As Exception
-                MessageBox.Show("Delete Error: This staff member may be linked to transaction records.")
+
+            Catch ex As SqlException
+                ' Specific error for Foreign Key constraints (e.g., if they have Dental Records)
+                If ex.Number = 547 Then
+                    MessageBox.Show("Cannot delete this staff member because they are linked to existing records.",
+                                "Delete Blocked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                Else
+                    MessageBox.Show("Delete Error: " & ex.Message)
+                End If
             End Try
         End If
     End Sub
