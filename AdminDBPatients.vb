@@ -220,67 +220,83 @@ Public Class AdminDBPatients
         End Using
     End Sub
     Private Function ValidatePatientFields(Optional patientID As Integer = 0) As Boolean
-        ' Full Name: letters only
-        If String.IsNullOrWhiteSpace(txtFullName.Text) OrElse
-         Not txtFullName.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c OrElse c = "-"c OrElse c = "'"c OrElse c = "."c) Then
+        ' 1. Full Name: Basic Character Validation
+        Dim fullName As String = txtFullName.Text.Trim()
+        If String.IsNullOrWhiteSpace(fullName) OrElse
+       Not fullName.All(Function(c) Char.IsLetter(c) OrElse c = " "c OrElse c = "-"c OrElse c = "'"c OrElse c = "."c) Then
             MessageBox.Show("Full Name must contain letters, spaces, '-', ''' or '.' only.")
             txtFullName.Focus()
             Return False
         End If
 
+        ' 2. Duplicate Name Check (Warning only, not a hard block)
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim nameCheckQuery As String = "SELECT COUNT(*) FROM Patients WHERE FullName = @name AND IsActive = 1 AND PatientID <> @id"
+            Using cmdName As New SqlCommand(nameCheckQuery, con)
+                cmdName.Parameters.AddWithValue("@name", fullName)
+                cmdName.Parameters.AddWithValue("@id", patientID)
+
+                Dim nameCount As Integer = CInt(cmdName.ExecuteScalar())
+                If nameCount > 0 Then
+                    Dim result As DialogResult = MessageBox.Show("A patient named '" & fullName & "' is already registered. Is this a different person?",
+                    "Potential Duplicate Name", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+                    If result = DialogResult.No Then
+                        txtFullName.Focus()
+                        Return False
+                    End If
+                End If
+            End Using
+
+            ' 3. Email: Format and Duplicate Check (Hard Block)
+            Dim email As String = txtEmail.Text.Trim()
+            Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+
+            If String.IsNullOrWhiteSpace(email) OrElse Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
+                MessageBox.Show("Please enter a valid email address.")
+                txtEmail.Focus()
+                Return False
+            End If
+
+            Dim emailCheckQuery As String = "SELECT COUNT(*) FROM Patients WHERE Email=@em AND PatientID <> @id"
+            Using cmdEmail As New SqlCommand(emailCheckQuery, con)
+                cmdEmail.Parameters.AddWithValue("@em", email)
+                cmdEmail.Parameters.AddWithValue("@id", patientID)
+                If CInt(cmdEmail.ExecuteScalar()) > 0 Then
+                    MessageBox.Show("This email is already registered to another patient.")
+                    txtEmail.Focus()
+                    Return False
+                End If
+            End Using
+        End Using
+
+        ' 4. Birth Date Validation (PH Standard: DD/MM/YYYY)
         Dim tempDate As Date
-        ' Force the code to read Day then Month (PH Standard)
         If Not Date.TryParseExact(txtBirthDate.Text, "dd/MM/yyyy",
-                          System.Globalization.CultureInfo.InvariantCulture,
-                          System.Globalization.DateTimeStyles.None, tempDate) Then
+                      System.Globalization.CultureInfo.InvariantCulture,
+                      System.Globalization.DateTimeStyles.None, tempDate) Then
             MessageBox.Show("Please enter a valid Birth Date in DD/MM/YYYY format.")
             txtBirthDate.Focus()
             Return False
         End If
 
-        ' Ensure the date is not in the future
         If tempDate > DateTime.Now Then
             MessageBox.Show("Birth date cannot be in the future.")
             txtBirthDate.Focus()
             Return False
         End If
 
-        ' Email: must end with @gmail.com, alphanumeric before domain, no duplicates
-        Dim email As String = txtEmail.Text.Trim()
-        ' This pattern allows: letters, numbers, dots, underscores, hyphens @ domain . extension
-        Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-
-        If String.IsNullOrWhiteSpace(email) OrElse Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
-            MessageBox.Show("Please enter a valid email address (e.g., patient@example.com).")
-            txtEmail.Focus()
-            Return False
-        End If
-
-        ' Duplicate check for Email
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim cmd As New SqlCommand("SELECT COUNT(*) FROM Patients WHERE Email=@em AND PatientID <> @id", con)
-            cmd.Parameters.AddWithValue("@em", email)
-            cmd.Parameters.AddWithValue("@id", patientID)
-            Dim count As Integer = CInt(cmd.ExecuteScalar())
-            If count > 0 Then
-                MessageBox.Show("This email is already registered.")
-                txtEmail.Focus()
-                Return False
-            End If
-        End Using
-
-        ' Address: letters, numbers, spaces, "-", "@", ".", ",", "/" allowed
+        ' 5. Address Validation
         If String.IsNullOrWhiteSpace(txtAddress.Text) OrElse
-   Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse
-                            c = " "c OrElse c = "-"c OrElse c = "@"c OrElse
-                            c = "."c OrElse c = ","c OrElse c = "/"c) Then
-            MessageBox.Show("Address must contain only letters, numbers, spaces, '-', '@', '.', ',' or '/'.")
+       Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse
+       " -@.,/".Contains(c)) Then
+            MessageBox.Show("Address contains invalid characters.")
             txtAddress.Focus()
             Return False
         End If
 
-        ' Allergy Note: Letters only, but ALLOW blank (Optional)
+        ' 6. Allergy Note (Optional)
         If Not String.IsNullOrWhiteSpace(txtAllergy.Text) Then
             If Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
                 MessageBox.Show("Allergy note must contain letters only.")
@@ -289,9 +305,8 @@ Public Class AdminDBPatients
             End If
         End If
 
-        ' Contact Number: digits only
-        If String.IsNullOrWhiteSpace(txtContact.Text) OrElse
-       Not txtContact.Text.All(Function(c) Char.IsDigit(c)) Then
+        ' 7. Contact Number Validation
+        If String.IsNullOrWhiteSpace(txtContact.Text) OrElse Not txtContact.Text.All(Function(c) Char.IsDigit(c)) Then
             MessageBox.Show("Contact Number must contain digits only.")
             txtContact.Focus()
             Return False
@@ -299,7 +314,6 @@ Public Class AdminDBPatients
 
         Return True
     End Function
-
     Private Sub txtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtFullName.KeyPress
         ' Allow control keys (Backspace, Delete, etc.)
         If Char.IsControl(e.KeyChar) Then Return

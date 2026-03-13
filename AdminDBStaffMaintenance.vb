@@ -109,6 +109,10 @@ Public Class AdminDBStaffMaintenance
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
         If Not ValidateStaffFields(selectedStaffID) Then Exit Sub
 
+        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedStaffID) Then
+            MessageBox.Show("This Email or Username is already taken by another staff member.", "Duplicate Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
         Try
             Using con As New SqlConnection(connString)
                 con.Open()
