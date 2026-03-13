@@ -43,46 +43,43 @@ Public Class AdminDBStockTracking
     ' =========================
     ' LOAD TRANSACTIONS
     ' =========================
-    Private Sub LoadTransactions()
-        Dim query As String = "SELECT t.TransactionID, 
-                                  i.ItemName, 
-                                  t.TransactionType, 
-                                  t.Quantity, 
-                                  t.TransactionDate,
-                                  t.ItemID
-                           FROM StockTransactions t
-                           INNER JOIN ItemManagement i ON t.ItemID = i.ItemID
-                           ORDER BY t.TransactionDate DESC"
+    Private Sub LoadSummarizedReport()
+        Dim query As String = "
+        SELECT 
+            i.ItemID, 
+            i.ItemName, 
+            ISNULL(SUM(CASE WHEN t.TransactionType = 'IN' THEN t.Quantity ELSE 0 END), 0) AS [Total Stock In],
+            ISNULL(SUM(CASE WHEN t.TransactionType = 'OUT' THEN t.Quantity ELSE 0 END), 0) AS [Total Stock Out],
+            -- Mathematically calculate the balance right here:
+            ISNULL(SUM(CASE WHEN t.TransactionType = 'IN' THEN t.Quantity ELSE 0 END), 0) - 
+            ISNULL(SUM(CASE WHEN t.TransactionType = 'OUT' THEN t.Quantity ELSE 0 END), 0) AS [Current Balance]
+        FROM ItemManagement i
+        LEFT JOIN StockTransactions t ON i.ItemID = t.ItemID
+        GROUP BY i.ItemID, i.ItemName
+        ORDER BY i.ItemName ASC"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
-              adapter As New SqlDataAdapter(query, connection)
+          adapter As New SqlDataAdapter(query, connection)
             Dim dt As New DataTable()
             adapter.Fill(dt)
             DGVTransactions.DataSource = dt
         End Using
 
-        ' Hide IDs
-        If DGVTransactions.Columns.Contains("TransactionID") Then DGVTransactions.Columns("TransactionID").Visible = False
         If DGVTransactions.Columns.Contains("ItemID") Then DGVTransactions.Columns("ItemID").Visible = False
-
-        ' Format the TransactionDate column
-        If DGVTransactions.Columns.Contains("TransactionDate") Then
-            DGVTransactions.Columns("TransactionDate").DefaultCellStyle.Format = "dd/MM/yyyy"
-        End If
     End Sub
 
     Private Sub DGVTransactions_SelectionChanged(sender As Object, e As EventArgs) Handles DGVTransactions.SelectionChanged
         If DGVTransactions.SelectedRows.Count > 0 Then
             Dim row As DataGridViewRow = DGVTransactions.SelectedRows(0)
-            ' Set ComboBox item
+
+            ' We can still auto-select the item for the user to add more stock
             If DGVTransactions.Columns.Contains("ItemID") Then
                 Dim itemID As Integer = Convert.ToInt32(row.Cells("ItemID").Value)
                 ComboBoxItem.SelectedValue = itemID
             End If
-            ' Set TransactionDate
-            If DGVTransactions.Columns.Contains("TransactionDate") Then
-                TransactionDate.Value = CDate(row.Cells("TransactionDate").Value)
-            End If
+
+            ' Note: TransactionDate is removed here because a summary row 
+            ' represents many dates at once.
         End If
     End Sub
 
@@ -90,9 +87,14 @@ Public Class AdminDBStockTracking
     ' RECORD NEW TRANSACTION
     ' =========================
     Private Sub ButtonRecord_Click(sender As Object, e As EventArgs) Handles ButtonRecord.Click
-        ' Validation
-        If ComboBoxItem.SelectedValue Is Nothing OrElse Not TypeOf ComboBoxItem.SelectedValue Is Integer Then
-            MessageBox.Show("Please select a valid item.")
+        ' --- VALIDATION ---
+        If ComboBoxItem.SelectedValue Is Nothing Then
+            MessageBox.Show("Please select an item.")
+            Exit Sub
+        End If
+
+        If Not RadioIn.Checked AndAlso Not RadioOut.Checked Then
+            MessageBox.Show("Please select if the stock is coming IN or going OUT.")
             Exit Sub
         End If
 
@@ -101,33 +103,37 @@ Public Class AdminDBStockTracking
             Exit Sub
         End If
 
+        ' --- VARIABLES ---
         Dim itemID As Integer = CInt(ComboBoxItem.SelectedValue)
-        Dim itemName As String = ComboBoxItem.Text ' Capture for logging
+        Dim itemName As String = ComboBoxItem.Text
         Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
-        Dim transType As String = If(RadioIn.Checked, "IN", If(RadioOut.Checked, "OUT", ""))
+        Dim transType As String = If(RadioIn.Checked, "IN", "OUT")
         Dim transDate As Date = TransactionDate.Value.Date
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2)
             connection.Open()
 
-            ' Check stock if OUT
+            ' --- STOCK CHECK ---
             If transType = "OUT" Then
-                Using cmdCheck As New SqlCommand("SELECT Quantity FROM ItemManagement WHERE ItemID=@ItemID", connection)
-                    cmdCheck.Parameters.AddWithValue("@ItemID", itemID)
-                    Dim currentQty As Integer = Convert.ToInt32(cmdCheck.ExecuteScalar())
-                    If qty > currentQty Then
-                        MessageBox.Show($"Cannot deduct {qty} items. Only {currentQty} in stock.")
+                ' Check balance from the calculated history
+                Dim balQuery As String = "SELECT ISNULL(SUM(CASE WHEN TransactionType='IN' THEN Quantity ELSE -Quantity END), 0) FROM StockTransactions WHERE ItemID=@ID"
+                Using cmdCheck As New SqlCommand(balQuery, connection)
+                    cmdCheck.Parameters.AddWithValue("@ID", itemID)
+                    Dim currentBalance As Integer = Convert.ToInt32(cmdCheck.ExecuteScalar())
+                    If qty > currentBalance Then
+                        MessageBox.Show($"Cannot deduct {qty}. Current balance is only {currentBalance}.")
                         Exit Sub
                     End If
                 End Using
             End If
 
+            ' --- DATABASE TRANSACTION ---
             Using sqlTrans As SqlTransaction = connection.BeginTransaction()
                 Try
-                    ' 1. Insert transaction
-                    Using cmdTrans As New SqlCommand(
-                    "INSERT INTO StockTransactions (ItemID, TransactionType, Quantity, TransactionDate) " &
-                    "VALUES (@ItemID, @TransType, @Qty, @Date)", connection, sqlTrans)
+                    ' 1. ONLY Insert transaction record
+                    ' THE SQL TRIGGER HANDLES THE MATH AUTOMATICALLY NOW
+                    Dim insertSql As String = "INSERT INTO StockTransactions (ItemID, TransactionType, Quantity, TransactionDate) VALUES (@ItemID, @TransType, @Qty, @Date)"
+                    Using cmdTrans As New SqlCommand(insertSql, connection, sqlTrans)
                         cmdTrans.Parameters.AddWithValue("@ItemID", itemID)
                         cmdTrans.Parameters.AddWithValue("@TransType", transType)
                         cmdTrans.Parameters.AddWithValue("@Qty", qty)
@@ -135,22 +141,13 @@ Public Class AdminDBStockTracking
                         cmdTrans.ExecuteNonQuery()
                     End Using
 
-                    ' 2. Update stock
-                    Dim queryUpdate As String = If(transType = "IN",
-                                               "UPDATE ItemManagement SET Quantity = Quantity + @Qty WHERE ItemID = @ItemID",
-                                               "UPDATE ItemManagement SET Quantity = Quantity - @Qty WHERE ItemID = @ItemID")
-                    Using cmdUpdate As New SqlCommand(queryUpdate, connection, sqlTrans)
-                        cmdUpdate.Parameters.AddWithValue("@ItemID", itemID)
-                        cmdUpdate.Parameters.AddWithValue("@Qty", qty)
-                        cmdUpdate.ExecuteNonQuery()
-                    End Using
-
-                    ' 3. AUDIT LOG: Record the stock movement
-                    Dim auditMsg As String = $"Stock {transType}: {qty} units of {itemName} on {transDate.ToShortDateString()}"
+                    ' 2. Audit Log
+                    Dim auditMsg As String = $"Stock {transType}: {qty} {itemName}"
                     SystemSession.LogAudit(auditMsg, "Stock Tracking", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
                     sqlTrans.Commit()
                     MessageBox.Show("Stock updated successfully!")
+
                 Catch ex As Exception
                     sqlTrans.Rollback()
                     MessageBox.Show("Transaction failed: " & ex.Message)
@@ -158,63 +155,7 @@ Public Class AdminDBStockTracking
             End Using
         End Using
 
-        LoadTransactions()
-        LoadInventory()
-        ClearInputs()
-    End Sub
-
-    ' =========================
-    ' DELETE TRANSACTION
-    ' =========================
-    Private Sub ButtonDelete_Click(sender As Object, e As EventArgs) Handles ButtonDelete.Click
-        If DGVTransactions.SelectedRows.Count = 0 Then
-            MessageBox.Show("Please select a transaction to delete.")
-            Exit Sub
-        End If
-
-        Dim row As DataGridViewRow = DGVTransactions.SelectedRows(0)
-        Dim transID As Integer = Convert.ToInt32(row.Cells("TransactionID").Value)
-        Dim transType As String = row.Cells("TransactionType").Value.ToString()
-        Dim qty As Integer = Convert.ToInt32(row.Cells("Quantity").Value)
-        Dim itemID As Integer = Convert.ToInt32(row.Cells("ItemID").Value)
-        Dim itemName As String = row.Cells("ItemName").Value.ToString()
-
-        Dim queryUpdate As String = If(transType = "IN",
-                                   "UPDATE ItemManagement SET Quantity = Quantity - @Quantity WHERE ItemID=@ItemID",
-                                   "UPDATE ItemManagement SET Quantity = Quantity + @Quantity WHERE ItemID=@ItemID")
-
-        Using connection As New SqlConnection(My.Settings.DentalDBConnection2)
-            connection.Open()
-            Using sqlTrans As SqlTransaction = connection.BeginTransaction()
-                Try
-                    ' 1. Update stock (Reverse the transaction)
-                    Using cmdUpdate As New SqlCommand(queryUpdate, connection, sqlTrans)
-                        cmdUpdate.Parameters.AddWithValue("@ItemID", itemID)
-                        cmdUpdate.Parameters.AddWithValue("@Quantity", qty)
-                        cmdUpdate.ExecuteNonQuery()
-                    End Using
-
-                    ' 2. Delete transaction
-                    Using cmdDelete As New SqlCommand("DELETE FROM StockTransactions WHERE TransactionID=@TransactionID", connection, sqlTrans)
-                        cmdDelete.Parameters.AddWithValue("@TransactionID", transID)
-                        cmdDelete.ExecuteNonQuery()
-                    End Using
-
-                    ' 3. AUDIT LOG: Record that a transaction was deleted/voided
-                    Dim auditMsg As String = $"Deleted/Voided {transType} Transaction (ID: {transID}) for {qty} units of {itemName}"
-                    SystemSession.LogAudit(auditMsg, "Stock Tracking", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-
-                    sqlTrans.Commit()
-                    MessageBox.Show("Transaction deleted and stock adjusted successfully!")
-                Catch ex As Exception
-                    sqlTrans.Rollback()
-                    MessageBox.Show("Failed to delete transaction: " & ex.Message)
-                End Try
-            End Using
-        End Using
-
-        LoadTransactions()
-        LoadInventory()
+        LoadSummarizedReport()
         ClearInputs()
     End Sub
 
@@ -222,7 +163,7 @@ Public Class AdminDBStockTracking
     ' FORM LOAD
     ' =========================
     Private Sub AdminDBStockTracking_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadTransactions()
+        LoadSummarizedReport()
         LoadInventory()
         LoadItem()
         ClearInputs()

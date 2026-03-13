@@ -30,7 +30,6 @@ Partial Class AdminDBStockTracking
         Me.RadioIn = New Guna.UI2.WinForms.Guna2RadioButton()
         Me.NumericUpDownQuantity = New Guna.UI2.WinForms.Guna2NumericUpDown()
         Me.ButtonRecord = New Guna.UI2.WinForms.Guna2Button()
-        Me.ButtonDelete = New Guna.UI2.WinForms.Guna2Button()
         Me.TransactionDate = New Guna.UI2.WinForms.Guna2DateTimePicker()
         Me.RadioOut = New Guna.UI2.WinForms.Guna2RadioButton()
         Me.ComboBoxItem = New Guna.UI2.WinForms.Guna2ComboBox()
@@ -96,25 +95,9 @@ Partial Class AdminDBStockTracking
         Me.ButtonRecord.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ButtonRecord.Location = New System.Drawing.Point(71, 678)
         Me.ButtonRecord.Name = "ButtonRecord"
-        Me.ButtonRecord.Size = New System.Drawing.Size(304, 45)
+        Me.ButtonRecord.Size = New System.Drawing.Size(304, 70)
         Me.ButtonRecord.TabIndex = 7
         Me.ButtonRecord.Text = "Record"
-        '
-        'ButtonDelete
-        '
-        Me.ButtonDelete.BorderRadius = 10
-        Me.ButtonDelete.DisabledState.BorderColor = System.Drawing.Color.DarkGray
-        Me.ButtonDelete.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
-        Me.ButtonDelete.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
-        Me.ButtonDelete.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.ButtonDelete.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.ButtonDelete.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        Me.ButtonDelete.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ButtonDelete.Location = New System.Drawing.Point(71, 741)
-        Me.ButtonDelete.Name = "ButtonDelete"
-        Me.ButtonDelete.Size = New System.Drawing.Size(304, 45)
-        Me.ButtonDelete.TabIndex = 8
-        Me.ButtonDelete.Text = "Delete"
         '
         'TransactionDate
         '
@@ -337,7 +320,6 @@ Partial Class AdminDBStockTracking
         Me.Controls.Add(Me.ComboBoxItem)
         Me.Controls.Add(Me.RadioOut)
         Me.Controls.Add(Me.TransactionDate)
-        Me.Controls.Add(Me.ButtonDelete)
         Me.Controls.Add(Me.ButtonRecord)
         Me.Controls.Add(Me.NumericUpDownQuantity)
         Me.Controls.Add(Me.RadioIn)
@@ -356,7 +338,6 @@ Partial Class AdminDBStockTracking
     Friend WithEvents RadioIn As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents NumericUpDownQuantity As Guna.UI2.WinForms.Guna2NumericUpDown
     Friend WithEvents ButtonRecord As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents ButtonDelete As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents TransactionDate As Guna.UI2.WinForms.Guna2DateTimePicker
     Friend WithEvents RadioOut As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents ComboBoxItem As Guna.UI2.WinForms.Guna2ComboBox
