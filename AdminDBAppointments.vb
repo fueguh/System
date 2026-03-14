@@ -311,10 +311,26 @@ Public Class AdminDBAppointments
             Return False
         End If
 
-        ' 2. Date Check
+        ' 2. Date and Status Logic (Past Date Handler)
         If DtpDate.Value.Date < DateTime.Today Then
-            MessageBox.Show("Cannot schedule appointments in the past.")
-            Return False
+            ' Get the status as it exists in the Database/Grid before the update
+            Dim currentStatus As String = DGVAppointments.CurrentRow.Cells("Status").Value.ToString()
+            Dim newStatus As String = cmbStatus.Text
+
+            ' BLOCK 1: Final States (Cannot change once it's done)
+            If currentStatus = "Completed" OrElse currentStatus = "Cancelled" Then
+                MessageBox.Show($"This appointment is already '{currentStatus}' and cannot be modified.", "Record Locked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+                Return False
+            End If
+
+            ' BLOCK 2: Valid Transitions for Past Appointments
+            ' Allowed: Confirmed -> Cancelled, Confirmed -> Completed, Ongoing -> Completed, Ongoing -> Cancelled
+            Dim isValidTransition As Boolean = (newStatus = "Completed" OrElse newStatus = "Cancelled")
+
+            If Not isValidTransition Then
+                MessageBox.Show("For past appointments, you must set the status to either 'Completed' or 'Cancelled'.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return False
+            End If
         End If
 
         ' --- CLEANED VALIDATION BLOCK ---
