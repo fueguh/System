@@ -276,6 +276,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="My Project\StaffDashboard.vb" />
+    <Compile Include="ReceiptPrinter.vb" />
     <Compile Include="Reports.Designer.vb">
       <DependentUpon>Reports.vb</DependentUpon>
     </Compile>

@@ -113,8 +113,8 @@ Public Class AdminDBDentists
                 con.Open()
                 Dim hasNewPass As Boolean = Not String.IsNullOrWhiteSpace(TxtPassword.Text)
                 Dim query As String = If(hasNewPass,
-                    "UPDATE Users SET FullName=@n, Username=@u, PhoneNumber=@p, Email=@e, Specialization=@s, Availability=@a, Password=@pw WHERE UserID=@id",
-                    "UPDATE Users SET FullName=@n, Username=@u, PhoneNumber=@p, Email=@e, Specialization=@s, Availability=@a WHERE UserID=@id")
+                "UPDATE Users SET FullName=@n, Username=@u, PhoneNumber=@p, Email=@e, Specialization=@s, Availability=@a, Password=@pw WHERE UserID=@id",
+                "UPDATE Users SET FullName=@n, Username=@u, PhoneNumber=@p, Email=@e, Specialization=@s, Availability=@a WHERE UserID=@id")
 
                 Using cmd As New SqlCommand(query, con)
                     cmd.Parameters.AddWithValue("@id", selectedDentistID)
@@ -129,7 +129,9 @@ Public Class AdminDBDentists
                 End Using
             End Using
 
-            LogAudit("Updated Dentist ID: " & selectedDentistID)
+            ' Audit now logs actual name
+            LogAudit("Updated Dentist: " & TxtName.Text.Trim)
+
             MessageBox.Show("Dentist updated successfully.")
             RefreshData()
         Catch ex As Exception
@@ -211,7 +213,7 @@ Public Class AdminDBDentists
 #Region "Security & Validation"
 
     Private Sub LogAudit(action As String)
-        SystemSession.LogAudit(action, "Dentist Management",
+        SystemSession.LogAudit(action, "Dentist Maintenance",
                                SystemSession.LoggedInUserID,
                                SystemSession.LoggedInFullName,
                                SystemSession.LoggedInRole)

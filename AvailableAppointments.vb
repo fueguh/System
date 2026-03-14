@@ -7,8 +7,6 @@ Public Class AvailableAppointments
     Private Sub AvailableAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadTodaysAppointments()
 
-        ' AUDIT: Log module access
-        SystemSession.LogAudit("Accessed Today's Appointments", "AvailableAppointments")
     End Sub
 
     ' === 2. DATA LOADING ===

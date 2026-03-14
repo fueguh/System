@@ -86,7 +86,7 @@ Public Class AdminDBPatients
         End Using
 
         MessageBox.Show("Patient added successfully.")
-        SystemSession.LogAudit("Patient Added", "Patient Management",
+        SystemSession.LogAudit("Patient Added", "Patient Maintenance",
                        SystemSession.LoggedInUserID,
                        SystemSession.LoggedInFullName,
                        SystemSession.LoggedInRole)
@@ -133,7 +133,7 @@ Public Class AdminDBPatients
         End Using
 
         MessageBox.Show("Patient updated successfully.")
-        SystemSession.LogAudit("Patient Updated", "Patient Management",
+        SystemSession.LogAudit("Patient Updated", "Patient Maintenance",
                        SystemSession.LoggedInUserID,
                        SystemSession.LoggedInFullName,
                        SystemSession.LoggedInRole)
@@ -155,7 +155,7 @@ Public Class AdminDBPatients
             MessageBox.Show("Patient record deactivated.")
 
             ' Logging and Refreshing
-            SystemSession.LogAudit("Patient Deleted", "Patient Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            SystemSession.LogAudit("Patient Deleted", "Patient Maintenance", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
             LoadPatients()
             Clearform()
             Dashboard?.LoadDashboardStats()

@@ -1,6 +1,5 @@
 ﻿Imports System.Data.SqlClient
-Imports System.Drawing.Printing
-Imports System.Management
+
 Public Class AdminDBPaymentHistory
     Private connectionString As String = My.Settings.DentalDBConnection2
     Private SelectedAppointmentID As Integer = 0
@@ -10,6 +9,7 @@ Public Class AdminDBPaymentHistory
     Private SelectedPaymentMethod As String = ""
     Private dtServicesForPrinting As New DataTable()
     Private SelectedDentistName As String = ""
+    Private SelectedRefNo As String = ""
     Private Sub AdminDBPaymentHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPaymentHistory()
 
@@ -23,23 +23,29 @@ Public Class AdminDBPaymentHistory
         Try
             Using con As New SqlConnection(connectionString)
                 con.Open()
-                ' Changed R.DateCreated to R.DateIssued to match your SQL schema
-                Dim sql As String = "
-    SELECT 
-        R.ReceiptID,
-        R.AppointmentID,
-        P.FullName AS [Patient Name],
-        R.TotalAmount AS [Amount Paid],
-        R.PaymentMethod AS [Method],
-        R.DateIssued AS [Payment Date], 
-        U.FullName AS [Processed By]
-    FROM Receipts R
-    INNER JOIN Patients P ON R.PatientID = P.PatientID
-    INNER JOIN Users U ON R.UserID = U.UserID"
 
-                ' Improved Search: Checks both Name and Receipt ID
+                ' Base Query
+                Dim sql As String = "
+                    SELECT 
+                        R.ReceiptID,
+                        R.AppointmentID,
+                        P.FullName AS [Patient Name],
+                        R.TotalAmount AS [Amount Paid],
+                        R.PaymentMethod AS [Method],
+                        R.ReferenceNumber AS [Ref No],
+                        R.DateIssued AS [Payment Date], 
+                        U.FullName AS [Processed By]
+                    FROM Receipts R
+                    INNER JOIN Patients P ON R.PatientID = P.PatientID
+                    INNER JOIN Users U ON R.UserID = U.UserID"
+
+                ' --- MULTI-FIELD SEARCH LOGIC ---
+                ' This now checks: Name, Receipt ID, Ref Number, and Payment Method
                 If Not String.IsNullOrEmpty(searchName) Then
-                    sql &= " WHERE (P.FullName LIKE @search OR CAST(R.ReceiptID AS VARCHAR) LIKE @search)"
+                    sql &= " WHERE (P.FullName LIKE @search 
+                                OR CAST(R.ReceiptID AS VARCHAR) LIKE @search 
+                                OR R.ReferenceNumber LIKE @search
+                                OR R.PaymentMethod LIKE @search)"
                 End If
 
                 sql &= " ORDER BY R.DateIssued DESC"
@@ -76,52 +82,14 @@ Public Class AdminDBPaymentHistory
         SelectedPatientName = row.Cells("Patient Name").Value.ToString()
         SelectedTotalAmount = CDec(row.Cells("Amount Paid").Value).ToString("F2")
         SelectedPaymentMethod = row.Cells("Method").Value.ToString()
-
+        SelectedRefNo = row.Cells("Ref No").Value.ToString() '
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        Dim pd As New PrintDocument()
-        pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
-        AddHandler pd.PrintPage, AddressOf PrintPageHandler
+        ReceiptPrinter.PrintReceipt(SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes, SelectedTotalAmount, SelectedPaymentMethod, SelectedRefNo, dtServicesForPrinting)
 
-        Dim dlg As New PrintDialog()
-        dlg.Document = pd
-
-        ' 1. User selects their printer and clicks "Print" in the dialog
-        If dlg.ShowDialog() = DialogResult.OK Then
-
-            ' 2. NOW we check if the SPECIFIC printer they chose is online
-            Dim pkName As String = pd.PrinterSettings.PrinterName
-
-            If Not IsPrinterOnline(pkName) Then
-                Dim ans As DialogResult = MessageBox.Show($"The printer '{pkName}' is offline or disconnected. Try to print anyway?",
-                                                 "Printer Offline", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                If ans = DialogResult.No Then Exit Sub
-            End If
-
-            ' 3. Actually send the data to the printer
-            Try
-                pd.Print()
-            Catch ex As Exception
-                MessageBox.Show("A hardware error occurred: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End Try
-        End If
     End Sub
 
     ' Helper Function to check if printer is actually on
-    Private Function IsPrinterOnline(printerName As String) As Boolean
-        Dim strQuery As String = "SELECT * FROM Win32_Printer WHERE Name = '" & printerName.Replace("\", "\\") & "'"
-        Try
-            Using searcher As New ManagementObjectSearcher(strQuery)
-                For Each printer As ManagementObject In searcher.Get()
-                    ' WorkOffline property: True if printer is not communicating
-                    Return Not CBool(printer("WorkOffline"))
-                Next
-            End Using
-        Catch
-            Return False ' If check fails, assume offline for safety
-        End Try
-        Return False
-    End Function
 
     Private Sub FetchDetailsForReprint(apptID As Integer)
         Using con As New SqlConnection(connectionString)
@@ -163,57 +131,6 @@ Public Class AdminDBPaymentHistory
 
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
-    End Sub
-    Private Sub PrintPageHandler(sender As Object, e As PrintPageEventArgs)
-        Dim g As Graphics = e.Graphics
-        Dim currentY As Integer = 40
-        Dim fontBody As New Font("Consolas", 8)
-        Dim leftMargin As Integer = 5
-        Dim rightMargin As Integer = 185
-
-        ' 1. Header
-        g.DrawString("DENTAL CLINIC RECEIPT", New Font("Arial", 10, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        currentY += 20
-        g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15 ' Incremented to prevent overlap
-        g.DrawString("Doctor:  " & SelectedDentistName, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-
-        ' 2. Services List (Updated to loop through the DataTable variable)
-        For Each row As DataRow In dtServicesForPrinting.Rows
-            Dim sName As String = row("ServiceName").ToString()
-            Dim sPrice As String = "P" & CDec(row("Price")).ToString("F2")
-
-            g.DrawString(sName, fontBody, Brushes.Black, leftMargin, currentY)
-            g.DrawString(sPrice, fontBody, Brushes.Black, rightMargin - g.MeasureString(sPrice, fontBody).Width, currentY)
-            currentY += 15
-        Next
-
-        ' 3. Dentist Notes
-        currentY += 10
-        g.DrawString("DENTIST NOTES:", New Font("Consolas", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        Dim rectNotes As New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 150)
-        g.DrawString(SelectedTreatmentNotes, fontBody, Brushes.Black, rectNotes)
-        Dim textSize = g.MeasureString(SelectedTreatmentNotes, fontBody, New SizeF(rightMargin - leftMargin, 150))
-        currentY += CInt(textSize.Height) + 10
-
-        ' 4. Total (Using variable instead of TextBox)
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        g.DrawString("TOTAL AMOUNT:", New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & SelectedTotalAmount, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, rightMargin - g.MeasureString("P" & SelectedTotalAmount, fontBody).Width, currentY)
-
-        currentY += 25
-        g.DrawString("Method: " & SelectedPaymentMethod, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 30
-        g.DrawString("Thank you for visiting!", fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 40
-        g.DrawString(".", New Font("Arial", 1), Brushes.Black, leftMargin, currentY)
     End Sub
 
 End Class

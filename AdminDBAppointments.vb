@@ -90,36 +90,56 @@ Public Class AdminDBAppointments
         If Not ValidateFields() Then Exit Sub
 
         Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
-
-        ' Updated logic to reflect that both Dentist and Patient are checked
         Dim conflictMessage As String = IsConflict(0, startTimeValue, selectedEndTime)
         If conflictMessage <> "" Then
             MessageBox.Show(conflictMessage, "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
+        ' Capture names for the audit trail before clearing or refreshing
+        Dim patientName As String = lblPatient.Text
+        Dim dentistName As String = CmbDent.Text
+        Dim isAddSuccessful As Boolean = False
+        Dim newID As Integer
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            Dim query As String = "INSERT INTO Appointments (PatientID, UserID, Date, StartTime, EndTime, Status) " &
-                               "OUTPUT INSERTED.AppointmentID VALUES (@p, @d, @date, @start, @end, @status)"
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@p", selectedPatientID)
-            cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
-            cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
-            cmd.Parameters.AddWithValue("@start", startTimeValue)
-            cmd.Parameters.AddWithValue("@end", selectedEndTime)
-            cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
+            ' Using a transaction to ensure services and appointment are saved together
+            Using sqlTrans As SqlTransaction = con.BeginTransaction()
+                Try
+                    Dim query As String = "INSERT INTO Appointments (PatientID, UserID, Date, StartTime, EndTime, Status) " &
+                                    "OUTPUT INSERTED.AppointmentID VALUES (@p, @d, @date, @start, @end, @status)"
 
-            Try
-                Dim newID As Integer = CInt(cmd.ExecuteScalar())
-                SaveAppointmentServices(newID)
-                MessageBox.Show("Appointment added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                SystemSession.LogAudit("Added Appointment for Patient ID: " & selectedPatientID, "Appointment Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-                RefreshUI()
-            Catch ex As Exception
-                MessageBox.Show("Error: " & ex.Message)
-            End Try
+                    Using cmd As New SqlCommand(query, con, sqlTrans)
+                        cmd.Parameters.AddWithValue("@p", selectedPatientID)
+                        cmd.Parameters.AddWithValue("@d", CInt(CmbDent.SelectedValue))
+                        cmd.Parameters.AddWithValue("@date", DtpDate.Value.Date)
+                        cmd.Parameters.AddWithValue("@start", startTimeValue)
+                        cmd.Parameters.AddWithValue("@end", selectedEndTime)
+                        cmd.Parameters.AddWithValue("@status", cmbStatus.Text)
+                        newID = CInt(cmd.ExecuteScalar())
+                    End Using
+
+                    SaveAppointmentServicesInTransaction(newID, con, sqlTrans)
+
+                    sqlTrans.Commit()
+                    isAddSuccessful = True
+                Catch ex As Exception
+                    If sqlTrans.Connection IsNot Nothing Then sqlTrans.Rollback()
+                    MessageBox.Show("Error: " & ex.Message)
+                End Try
+            End Using
         End Using
+
+        If isAddSuccessful Then
+            ' Simplified: No more trimming logic needed for NVARCHAR(300)
+            Dim auditMsg As String = $"Added Appointment #{newID} | Patient: {patientName} | Dentist: {dentistName}"
+
+            SystemSession.LogAudit(auditMsg, "Appointment Maintenance", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
+            MessageBox.Show("Appointment added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            RefreshUI()
+        End If
     End Sub
 
     Private Sub BTNUpdate_Click(sender As Object, e As EventArgs) Handles BTNUpdate.Click
@@ -131,29 +151,72 @@ Public Class AdminDBAppointments
 
         If Not ValidateFields() Then Exit Sub
 
-        ' 2. PREPARE TIME AND CONFLICT CHECK
+        ' 2. PREPARE DATA
         Dim startTimeValue As TimeSpan = DateTime.Parse(cmbStartTime.Text).TimeOfDay
-
         Dim conflictMessage As String = IsConflict(selectedAppointmentID, startTimeValue, selectedEndTime)
         If conflictMessage <> "" Then
             MessageBox.Show(conflictMessage, "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
-        ' 3. CAPTURE NAMES FOR AUDIT TRAIL (Before database changes)
-        ' We use .Text to get the actual names instead of IDs
-        Dim patientName As String = lblPatient.Text
-        Dim dentistName As String = CmbDent.Text
-        Dim apptDate As String = DtpDate.Value.ToString("MMM dd, yyyy")
+        ' --- AUDIT PREPARATION: Capture "Old" values from the DataGridView row ---
+        Dim currentRow As DataGridViewRow = DGVAppointments.CurrentRow
+        Dim changes As New List(Of String)
 
-        ' 4. DATABASE OPERATIONS
+        ' Compare Fields
+        If currentRow.Cells("Patient").Value.ToString() <> lblPatient.Text Then
+            changes.Add($"Patient: {currentRow.Cells("Patient").Value} -> {lblPatient.Text}")
+        End If
+
+        If currentRow.Cells("Dentist").Value.ToString() <> CmbDent.Text Then
+            changes.Add($"Dentist: {currentRow.Cells("Dentist").Value} -> {CmbDent.Text}")
+        End If
+
+        Dim oldDate As Date = CDate(currentRow.Cells("Date").Value)
+        If oldDate.Date <> DtpDate.Value.Date Then
+            changes.Add($"Date: {oldDate:MMM dd} -> {DtpDate.Value:MMM dd}")
+        End If
+
+        Dim oldStart As TimeSpan = TimeSpan.Parse(currentRow.Cells("StartTime").Value.ToString())
+        If oldStart <> startTimeValue Then
+            changes.Add($"Time: {DateTime.Today.Add(oldStart):hh:mm tt} -> {cmbStartTime.Text}")
+        End If
+
+        If currentRow.Cells("Status").Value.ToString() <> cmbStatus.Text Then
+            changes.Add($"Status: {currentRow.Cells("Status").Value} -> {cmbStatus.Text}")
+        End If
+        ' --- SERVICE CHANGE DETECTION ---
+        Dim oldServices As New List(Of String)
+        Using conCheck As New SqlConnection(My.Settings.DentalDBConnection2)
+            conCheck.Open()
+            Dim cmdSvc As New SqlCommand("SELECT S.ServiceName FROM AppointmentServices ASV JOIN Services S ON ASV.ServiceID = S.ServiceID WHERE ASV.AppointmentID = @aid", conCheck)
+            cmdSvc.Parameters.AddWithValue("@aid", selectedAppointmentID)
+            Using dr = cmdSvc.ExecuteReader()
+                While dr.Read()
+                    oldServices.Add(dr("ServiceName").ToString())
+                End While
+            End Using
+        End Using
+
+        ' Create a list of currently checked service names
+        Dim newServices As New List(Of String)
+        For Each item In clbServices.CheckedItems
+            newServices.Add(DirectCast(item, DataRowView)("ServiceName").ToString())
+        Next
+
+        ' Compare the two lists
+        oldServices.Sort()
+        newServices.Sort()
+        If String.Join(", ", oldServices) <> String.Join(", ", newServices) Then
+            changes.Add($"Services: [{String.Join(", ", oldServices)}] -> [{String.Join(", ", newServices)}]")
+        End If
+        ' 3. DATABASE OPERATIONS
+        Dim isUpdateSuccessful As Boolean = False
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-
-            ' Start a transaction to ensure both Appointment and Services update together
             Using sqlTrans As SqlTransaction = con.BeginTransaction()
                 Try
-                    ' A. Update Main Appointment Table
+                    ' A. Update Main Table
                     Dim query As String = "UPDATE Appointments SET PatientID=@p, UserID=@d, Date=@date, " &
                                     "StartTime=@start, EndTime=@end, Status=@status WHERE AppointmentID=@id"
 
@@ -168,42 +231,61 @@ Public Class AdminDBAppointments
                         cmd.ExecuteNonQuery()
                     End Using
 
-                    ' B. Update Services (Delete old, Insert new)
+                    ' B. Update Services
                     Using cmdDel As New SqlCommand("DELETE FROM AppointmentServices WHERE AppointmentID=@aid", con, sqlTrans)
                         cmdDel.Parameters.AddWithValue("@aid", selectedAppointmentID)
                         cmdDel.ExecuteNonQuery()
                     End Using
-
-                    ' Note: Modified SaveAppointmentServices to accept connection and transaction 
-                    ' to prevent "Connection Busy" or "Transaction Required" errors.
                     SaveAppointmentServicesInTransaction(selectedAppointmentID, con, sqlTrans)
 
-                    ' C. COMMIT AND LOG
                     sqlTrans.Commit()
-
-                    ' --- THE IMPROVED AUDIT LOG ---
-                    Dim auditMsg As String = $"Updated Appointment #{selectedAppointmentID} | Patient: {patientName} | Dentist: {dentistName} | New Date: {apptDate}"
-                    SystemSession.LogAudit(auditMsg, "Appointment Management", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-
-                    MessageBox.Show("Appointment updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    RefreshUI()
-
+                    isUpdateSuccessful = True
                 Catch ex As Exception
-                    sqlTrans.Rollback()
-                    MessageBox.Show("Error updating appointment: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    If sqlTrans.Connection IsNot Nothing Then sqlTrans.Rollback()
+                    MessageBox.Show("Error updating: " & ex.Message)
                 End Try
             End Using
         End Using
+
+        ' 4. LOG AUDIT
+        If isUpdateSuccessful Then
+            ' Create the final message: "Updated Appt #12 | Changes: Status: Confirmed -> Ongoing"
+            Dim changeSummary As String = If(changes.Count > 0, String.Join(", ", changes), "No details changed")
+            Dim auditMsg As String = $"Updated Appt #{selectedAppointmentID} for {lblPatient.Text} | Changes: {changeSummary}"
+
+            ' Ensure it doesn't exceed your DB limit (300 chars)
+            If auditMsg.Length > 300 Then auditMsg = auditMsg.Substring(0, 297) & "..."
+
+            SystemSession.LogAudit(auditMsg, "Appointment Maintenance", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
+            MessageBox.Show("Appointment updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            RefreshUI()
+        End If
     End Sub
 
     ' Helper method to ensure services are saved within the same transaction
     Private Sub SaveAppointmentServicesInTransaction(appointmentID As Integer, con As SqlConnection, trans As SqlTransaction)
-        For Each item As DataRowView In clbServices.CheckedItems
-            Using cmd As New SqlCommand("INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES (@aid, @sid)", con, trans)
-                cmd.Parameters.AddWithValue("@aid", appointmentID)
-                cmd.Parameters.AddWithValue("@sid", item("ServiceID"))
-                cmd.ExecuteNonQuery()
-            End Using
+        ' 1. Check if there are actually any items to save
+        If clbServices.CheckedItems.Count = 0 Then Exit Sub
+
+        For Each item In clbServices.CheckedItems
+            ' Use TryCast to safely handle the DataRowView
+            Dim rowView As DataRowView = TryCast(item, DataRowView)
+
+            If rowView IsNot Nothing Then
+                Dim serviceID As Integer = CInt(rowView("ServiceID"))
+
+                ' 2. Re-use the Command object if you want to be super efficient, 
+                ' but the 'Using' block here is safe and clean.
+                Using cmd As New SqlCommand("INSERT INTO AppointmentServices (AppointmentID, ServiceID) VALUES (@aid, @sid)", con, trans)
+                    cmd.Parameters.AddWithValue("@aid", appointmentID)
+                    cmd.Parameters.AddWithValue("@sid", serviceID)
+                    cmd.ExecuteNonQuery()
+                End Using
+            Else
+                ' Optional: Log or Debug if a cast fails
+                Debug.WriteLine("Warning: Checked item was not a DataRowView.")
+            End If
         Next
     End Sub
 
@@ -235,8 +317,8 @@ Public Class AdminDBAppointments
             Return False
         End If
 
-        ' --- FIX: Declare variables at the function level ---
-        Dim shiftEnd As TimeSpan = New TimeSpan(20, 0, 0) ' Default fallback
+        ' --- CLEANED VALIDATION BLOCK ---
+        Dim shiftEnd As TimeSpan = New TimeSpan(20, 0, 0) ' Default fallback (8 PM)
         Dim dentistID As Integer = CInt(CmbDent.SelectedValue)
         Dim dayName = DtpDate.Value.ToString("dddd")
 
@@ -248,6 +330,8 @@ Public Class AdminDBAppointments
                 shiftType = cmdShift.ExecuteScalar()?.ToString()
             End Using
 
+            ' We only check the DB for Part-time. 
+            ' If they aren't Part-time, we assume they are Full-time (8 PM).
             If shiftType = "Part-time" Then
                 Dim queryPart = "SELECT EndTime FROM DentistAvailability WHERE DentistID = @id AND DayOfWeek = @day"
                 Using cmdPart As New SqlCommand(queryPart, con)
@@ -258,14 +342,10 @@ Public Class AdminDBAppointments
                     If resEnd IsNot Nothing AndAlso Not IsDBNull(resEnd) Then
                         shiftEnd = DirectCast(resEnd, TimeSpan)
                     Else
-                        ' If part-time but no schedule for this day, they aren't working
                         MessageBox.Show("This dentist has no schedule set for " & dayName)
                         Return False
                     End If
                 End Using
-            Else
-                ' Full-time: Default to clinic closing time
-                shiftEnd = New TimeSpan(20, 0, 0)
             End If
         End Using
 
@@ -485,6 +565,7 @@ Public Class AdminDBAppointments
                 shiftType = cmdShift.ExecuteScalar()?.ToString()
             End Using
 
+            ' --- CLEANED SLOT GENERATION ---
             If shiftType = "Part-time" Then
                 Dim availQuery As String = "SELECT StartTime, EndTime FROM DentistAvailability WHERE DentistID=@uid AND DayOfWeek=@day"
                 Using cmdAvail As New SqlCommand(availQuery, con)
@@ -495,10 +576,15 @@ Public Class AdminDBAppointments
                             startLoop = DirectCast(dr("StartTime"), TimeSpan)
                             endLoop = DirectCast(dr("EndTime"), TimeSpan)
                         Else
-                            Exit Sub ' No availability set for this day
+                            Exit Sub ' No schedule found for this day
                         End If
                     End Using
                 End Using
+            Else
+                ' If not Part-time, they are Full-time. 
+                ' Use defaults: 8:00 AM to 8:00 PM.
+                startLoop = New TimeSpan(8, 0, 0)
+                endLoop = New TimeSpan(20, 0, 0)
             End If
 
             ' FIX 3: Fetch busy slots, EXCLUDING the current appointment ID so it doesn't block itself
@@ -522,12 +608,13 @@ Public Class AdminDBAppointments
             ' Populate the ComboBox
             Dim current = startLoop
             While current < endLoop
-                Dim isLunch = (shiftType = "Full-time" AndAlso current >= New TimeSpan(12, 0, 0) AndAlso current < New TimeSpan(13, 0, 0))
+                ' We removed the isLunch check entirely
                 Dim isBooked = busySlots.Any(Function(s) current >= s.S AndAlso current < s.E)
 
-                If Not isLunch AndAlso Not isBooked Then
+                If Not isBooked Then
                     cmbStartTime.Items.Add(DateTime.Today.Add(current).ToString("hh:mm tt"))
                 End If
+
                 current = current.Add(TimeSpan.FromMinutes(30))
             End While
         End Using
