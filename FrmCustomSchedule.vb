@@ -23,7 +23,7 @@ Public Class FrmCustomSchedule
 
         ' Start at 8:00 AM, End at 7:30 PM
         Dim current As New TimeSpan(8, 0, 0)
-        Dim limit As New TimeSpan(19, 30, 0)
+        Dim limit As New TimeSpan(20, 0, 0)
 
         While current <= limit
             Dim timeString As String = DateTime.Today.Add(current).ToString("hh:mm tt")
@@ -42,11 +42,22 @@ Public Class FrmCustomSchedule
             ' Refined query: specifically targeting 'Part-time' and cleaning up the aggregate summary
             Dim query As String = "
                 SELECT u.UserID, u.FullName,
-                ISNULL((SELECT STRING_AGG(da.DayOfWeek + ' (' + 
-                        FORMAT(CAST(da.StartTime AS datetime), 'hh:mm tt') + '-' + 
-                        FORMAT(CAST(da.EndTime AS datetime), 'hh:mm tt') + ')', '; ')
-                FROM DentistAvailability da WHERE da.DentistID = u.UserID), 'No Schedule Set') AS ScheduleSummary
-                FROM Users u WHERE u.Role = 'Dentist' AND u.Availability = 'Part-time'"
+ISNULL(
+(
+    SELECT STRING_AGG(Days + ' (' + TimeRange + ')', '; ')
+    FROM (
+        SELECT 
+            STRING_AGG(da.DayOfWeek, ', ') AS Days,
+            FORMAT(CAST(da.StartTime AS datetime), 'hh:mm tt') + '-' +
+            FORMAT(CAST(da.EndTime AS datetime), 'hh:mm tt') AS TimeRange
+        FROM DentistAvailability da
+        WHERE da.DentistID = u.UserID
+        GROUP BY da.StartTime, da.EndTime
+    ) grouped
+),
+'No Schedule Set') AS ScheduleSummary
+FROM Users u
+WHERE u.Role = 'Dentist' AND u.Availability = 'Part-time'"
 
             Dim dt As New DataTable()
             Using da As New SqlDataAdapter(query, con)

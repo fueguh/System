@@ -236,7 +236,7 @@ Public Class AdminDBAppointments
         End If
 
         ' --- FIX: Declare variables at the function level ---
-        Dim shiftEnd As TimeSpan = New TimeSpan(19, 30, 0) ' Default fallback
+        Dim shiftEnd As TimeSpan = New TimeSpan(20, 0, 0) ' Default fallback
         Dim dentistID As Integer = CInt(CmbDent.SelectedValue)
         Dim dayName = DtpDate.Value.ToString("dddd")
 
@@ -249,7 +249,6 @@ Public Class AdminDBAppointments
             End Using
 
             If shiftType = "Part-time" Then
-                ' Using parameterized query for safety
                 Dim queryPart = "SELECT EndTime FROM DentistAvailability WHERE DentistID = @id AND DayOfWeek = @day"
                 Using cmdPart As New SqlCommand(queryPart, con)
                     cmdPart.Parameters.AddWithValue("@id", dentistID)
@@ -259,18 +258,14 @@ Public Class AdminDBAppointments
                     If resEnd IsNot Nothing AndAlso Not IsDBNull(resEnd) Then
                         shiftEnd = DirectCast(resEnd, TimeSpan)
                     Else
-                        ' SUNDAY/TEST FALLBACK: If no specific hours in DB, allow until 7:30 PM
-                        shiftEnd = New TimeSpan(19, 30, 0)
+                        ' If part-time but no schedule for this day, they aren't working
+                        MessageBox.Show("This dentist has no schedule set for " & dayName)
+                        Return False
                     End If
                 End Using
             Else
-                ' Full-time or specific shift types
-                Select Case shiftType?.ToLower()
-                    Case "morning shift"
-                        shiftEnd = New TimeSpan(12, 0, 0)
-                    Case Else ' Afternoon shift or Full-time
-                        shiftEnd = New TimeSpan(19, 30, 0)
-                End Select
+                ' Full-time: Default to clinic closing time
+                shiftEnd = New TimeSpan(20, 0, 0)
             End If
         End Using
 
@@ -466,7 +461,7 @@ Public Class AdminDBAppointments
         End If
 
         Dim startLoop As TimeSpan = New TimeSpan(8, 0, 0)
-        Dim endLoop As TimeSpan = New TimeSpan(19, 0, 0)
+        Dim endLoop As TimeSpan = New TimeSpan(20, 0, 0)
         Dim dentistID As Integer
 
         ' Handle the SelectedValue safely
