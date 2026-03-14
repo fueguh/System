@@ -194,4 +194,9 @@ Public Class AdminDashboard
         AdminDBPayment.Show()
         Me.Hide()
     End Sub
+
+    Private Sub PaymentHistory_Click_1(sender As Object, e As EventArgs) Handles PaymentHistory.Click
+        AdminDBPaymentHistory.Show()
+        Me.Hide()
+    End Sub
 End Class

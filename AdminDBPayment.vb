@@ -149,15 +149,13 @@ Public Class AdminDBPayment
         ComboBoxPaymentMethod.Items.AddRange(New String() {"Cash", "Gcash"})
     End Sub
 
-    ' ================= SAVE & PRINT =================
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-        ' 1. Security Check: Ensure a user is logged in
+        ' 1. Security & Validation
         If SystemSession.LoggedInUserID <= 0 Then
             MessageBox.Show("Error: No logged-in User ID found. Please re-login.")
             Exit Sub
         End If
 
-        ' 2. Validation: Ensure a patient is selected and payment method is chosen
         If SelectedAppointmentID = 0 Then
             MessageBox.Show("Please select an appointment from the list first.")
             Exit Sub
@@ -173,7 +171,7 @@ Public Class AdminDBPayment
                 con.Open()
                 Using trans As SqlTransaction = con.BeginTransaction()
                     Try
-                        ' 3. Database Insert
+                        ' 2. Database Insert
                         Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod) " &
                                         "VALUES (@AID, @PID, @UID, @Total, @Method)"
 
@@ -187,48 +185,32 @@ Public Class AdminDBPayment
                             Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                             If rowsAffected > 0 Then
-                                ' 4. Commit to Database
                                 trans.Commit()
 
-                                ' === AUDIT TRAIL LOGGING ===
-                                ' We log the specific amount and patient so it's clear in the system history
+                                ' Audit Logging
                                 Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1} (Appt ID: {2})",
-                                           TextBoxTotal.Text,
-                                           SelectedPatientName,
-                                           SelectedAppointmentID)
-
+                                       TextBoxTotal.Text, SelectedPatientName, SelectedAppointmentID)
                                 SystemSession.LogAudit(auditMsg, "Billing", SystemSession.LoggedInUserID,
-                           SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-                                ' ===========================
+                                       SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
-                                ' 5. Prompt to Print (While data is still in variables)
+                                ' 3. Prompt to Print
                                 Dim askPrint As DialogResult = MessageBox.Show("Payment Successful! Would you like to print the receipt now?",
-                                                   "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                                               "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                                 If askPrint = DialogResult.Yes Then
-                                    Dim pd As New PrintDocument()
-                                    pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
-                                    AddHandler pd.PrintPage, AddressOf PrintPageHandler
-
-                                    Dim dlg As New PrintDialog()
-                                    dlg.Document = pd
-
-                                    If dlg.ShowDialog() = DialogResult.OK Then
-                                        pd.Print()
-                                    End If
+                                    ' Call the shared printing logic to avoid code duplication
+                                    PrintWithStatusCheck()
                                 End If
 
-                                ' 6. Final UI Cleanup
-                                LoadPendingPayments()
-                                ClearBillingUI()
-
+                                ' Jump to cleanup after successful print/skip
+                                GoTo SuccessCleanup
                             Else
                                 trans.Rollback()
                                 MessageBox.Show("Save failed: No rows were affected.")
                             End If
                         End Using
                     Catch ex As Exception
-                        trans.Rollback()
+                        If trans.Connection IsNot Nothing Then trans.Rollback()
                         MessageBox.Show("Transaction Error: " & ex.Message)
                     End Try
                 End Using
@@ -236,18 +218,72 @@ Public Class AdminDBPayment
                 MessageBox.Show("Connection Error: " & ex.Message)
             End Try
         End Using
+        Exit Sub
+
+SuccessCleanup:
+        LoadPendingPayments()
+        ClearBillingUI()
     End Sub
-    ' ================= PRINTER LOGIC =================
-    Private Sub ButtonPrintReceipt_Click(sender As Object, e As EventArgs) Handles ButtonPrintReceipt.Click
+
+    ' --- SHARED PRINTING LOGIC ---
+    Private Sub PrintWithStatusCheck()
         Dim pd As New PrintDocument()
         pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
         AddHandler pd.PrintPage, AddressOf PrintPageHandler
 
         Dim dlg As New PrintDialog()
         dlg.Document = pd
+
+        ' User interacts with Windows Print Dialog first
         If dlg.ShowDialog() = DialogResult.OK Then
-            pd.Print()
+            ' NOW check if the selected printer is actually reachable
+            Dim pkName As String = pd.PrinterSettings.PrinterName
+
+            If Not IsPrinterOnline(pkName) Then
+                Dim ans As DialogResult = MessageBox.Show($"The printer '{pkName}' appears to be offline. Try printing anyway?",
+                                                 "Printer Offline", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                If ans = DialogResult.No Then Exit Sub
+            End If
+
+            Try
+                pd.Print()
+            Catch ex As Exception
+                MessageBox.Show("A hardware error occurred: " & ex.Message, "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
         End If
+    End Sub
+
+    ' WMI Helper for Printer Status
+    Private Function IsPrinterOnline(printerName As String) As Boolean
+        Try
+            ' Escape backslashes for the SQL-like WMI query
+            Dim query As String = "SELECT * FROM Win32_Printer WHERE Name = '" & printerName.Replace("\", "\\") & "'"
+            Using searcher As New ManagementObjectSearcher(query)
+                For Each printer As ManagementObject In searcher.Get()
+                    ' Check if it's manually set to "Work Offline"
+                    Dim isWorkOffline As Boolean = CBool(printer("WorkOffline"))
+
+                    ' Check the extended status (3 = Idle/Ready, 4 = Printing, 5 = Warming Up)
+                    ' Status codes 1 (Other), 2 (Unknown), 7 (Offline) usually mean trouble
+                    Dim status As Integer = If(printer("PrinterStatus") IsNot Nothing, CInt(printer("PrinterStatus")), 0)
+
+                    ' If it's offline OR status is 7 (Power off/Disconnected)
+                    If isWorkOffline OrElse status = 7 Then
+                        Return False
+                    End If
+
+                    Return True ' Printer is likely okay
+                Next
+            End Using
+        Catch
+            Return False ' Error accessing WMI, assume offline for safety
+        End Try
+        Return False
+    End Function
+    ' ================= PRINTER LOGIC =================
+    Private Sub ButtonPrintReceipt_Click(sender As Object, e As EventArgs) Handles ButtonPrintReceipt.Click
+        ' Stop using local logic; call the shared sub that has the warning check
+        PrintWithStatusCheck()
     End Sub
 
     Private Sub PrintPageHandler(sender As Object, e As PrintPageEventArgs)
@@ -263,6 +299,8 @@ Public Class AdminDBPayment
         g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
         g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        g.DrawString("Doctor:  " & SelectedDentistName, fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
         g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
@@ -308,8 +346,6 @@ Public Class AdminDBPayment
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
-
-    ' ... Include your IsPrinterOnline / IsPrinterInstalled functions here ...
 
     ' Helper to clean up the screen after saving
     Private Sub ClearBillingUI()

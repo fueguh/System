@@ -33,7 +33,9 @@ Public Class AvailableAppointments
                     LEFT JOIN Users U ON A.UserID = U.UserID
                     LEFT JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
                     LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
-                    WHERE A.Date = CAST(GETDATE() AS DATE)"
+                    WHERE A.Date = CAST(GETDATE() AS DATE)
+                    AND A.Status <> 'Cancelled'
+                    AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)"
 
                 ' ROLE CHECK: Filter for Dentists, Admins see all
                 If SystemSession.LoggedInRole <> "Admin" Then

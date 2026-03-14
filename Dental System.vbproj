@@ -143,6 +143,12 @@
     <Compile Include="AdminDBPayment.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AdminDBPaymentHistory.Designer.vb">
+      <DependentUpon>AdminDBPaymentHistory.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBPaymentHistory.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBRepandAnalytics.Designer.vb">
       <DependentUpon>AdminDBRepandAnalytics.vb</DependentUpon>
     </Compile>
@@ -323,6 +329,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBPayment.resx">
       <DependentUpon>AdminDBPayment.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBPaymentHistory.resx">
+      <DependentUpon>AdminDBPaymentHistory.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBRepandAnalytics.resx">
       <DependentUpon>AdminDBRepandAnalytics.vb</DependentUpon>
