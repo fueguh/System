@@ -558,26 +558,37 @@ Public Class AdminDBUsers
         e.Handled = True
     End Sub
 
+    ' --- TEXTBOX INPUT VALIDATION (Login Form) ---
     Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return ' Allow backspace
+        ' 1. Always allow control keys (Backspace, etc.)
+        If Char.IsControl(e.KeyChar) Then Return
 
-        Dim allowedChars As String = "._" ' dot, underscore
-        Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text(TxtUsername.Text.Length - 1), ChrW(0))
+        Dim allowedSpecialChars As String = "._"
+        Dim currentText As String = TxtUsername.Text
+        Dim lastChar As Char = If(currentText.Length > 0, currentText(currentText.Length - 1), ChrW(0))
 
-        ' Allow letters and digits
-        If Char.IsLetterOrDigit(e.KeyChar) Then Return
-
-        ' Allow dot or underscore but prevent consecutive ones or starting char
-        If allowedChars.Contains(e.KeyChar) Then
-            If TxtUsername.Text.Length = 0 Then
-                e.Handled = True ' Cannot start with dot/underscore
-            ElseIf lastChar = e.KeyChar Then
-                e.Handled = True ' No consecutive dot/underscore
+        ' 2. Allow Letters and Digits
+        If Char.IsLetterOrDigit(e.KeyChar) Then
+            ' Logic check: The very first character MUST be a letter (based on your Regex)
+            If currentText.Length = 0 AndAlso Not Char.IsLetter(e.KeyChar) Then
+                e.Handled = True
             End If
             Return
         End If
 
-        ' Block everything else
+        ' 3. Allow Dot or Underscore
+        If allowedSpecialChars.Contains(e.KeyChar) Then
+            ' Rule: Cannot start with a special char
+            If currentText.Length = 0 Then
+                e.Handled = True
+                ' Rule: No consecutive special characters (e.g., ".." or "__")
+            ElseIf lastChar = e.KeyChar Then
+                e.Handled = True
+            End If
+            Return
+        End If
+
+        ' 4. Block everything else (spaces, symbols, etc.)
         e.Handled = True
     End Sub
 
