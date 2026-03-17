@@ -15,30 +15,11 @@ Public Class Login
     Private Sub Login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' Load clinic name first
         LoadClinicName()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
-            Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
-            If adminCount = 0 Then
-                ' No admin found – create default admin
-                Dim defaultUsername As String = "admin"
-                Dim defaultPassword As String = "admin" ' Default password
-                Dim hashedPassword As String = HashPassword(defaultPassword)
-
-                Dim cmdInsert As New SqlCommand("
-                INSERT INTO Users (Username, Password, Role, FullName)
-                VALUES (@username, @password, 'Admin', 'Administrator')", con)
-                cmdInsert.Parameters.AddWithValue("@username", defaultUsername)
-                cmdInsert.Parameters.AddWithValue("@password", hashedPassword)
-                cmdInsert.ExecuteNonQuery()
-
-                MessageBox.Show("No admin found. Default admin created:" & Environment.NewLine &
-                "Username: admin" & Environment.NewLine &
-                "Password: admin")
-
-            End If
-        End Using
+        ' On cold start show admin-creation dialog if creation/restoration occurs
+        SystemSession.EnsureAdminExists(True)
     End Sub
+
+    ' (Admin creation logic moved to SystemSession.EnsureAdminExists)
 
     ' --- FORM SHOWN ---
     Private Sub Login_Shown(sender As Object, e As EventArgs) Handles Me.Shown
@@ -218,6 +199,13 @@ Public Class Login
     End Sub
     Private Sub Login_Activated(sender As Object, e As EventArgs) Handles Me.Activated
         LoadClinicName()
+        ' Skip automatic quiet admin creation if caller requested suppression
+        If Not SystemSession.SuppressEnsureOnActivate Then
+            SystemSession.EnsureAdminExists(False)
+        Else
+            ' Clear the flag so future activations behave normally
+            SystemSession.SuppressEnsureOnActivate = False
+        End If
     End Sub
 
 End Class

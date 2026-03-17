@@ -1,4 +1,7 @@
 ﻿Imports System.Data.SqlClient
+Imports System.Security.Cryptography
+Imports System.Text
+Imports System.Windows.Forms
 
 Public Module SystemSession
 
@@ -10,6 +13,8 @@ Public Module SystemSession
     Public LoggedInUserID As Integer = 0
     Public LoggedInFullName As String = ""
     Public LoggedInRole As String = ""
+    ' When true, Login.Activated should skip the EnsureAdminExists(False) call once.
+    Public SuppressEnsureOnActivate As Boolean = False
     ' Audit Logging function for various actions
     Public Sub LogAudit(action As String, moduleName As String,
                     Optional userId As Integer = 0,
@@ -57,7 +62,7 @@ Public Module SystemSession
         End If
     End Sub
 
-    Public Sub PerformLogout(moduleName As String)
+    Public Sub PerformLogout(moduleName As String, Optional showLoginForm As Boolean = True)
         ' Capture user info before clearing session
         Dim userId As Integer = LoggedInUserID
         Dim fullName As String = LoggedInFullName
@@ -87,8 +92,10 @@ Public Module SystemSession
             LoggedInRole = ""
             CurrentSessionToken = ""
 
-            ' 4️⃣ Show login form
-            Login.Show()
+            ' 4️⃣ Optionally show login form (caller may want to delay showing)
+            If showLoginForm Then
+                Login.Show()
+            End If
         End Try
     End Sub
 
@@ -141,8 +148,8 @@ Public Module SystemSession
                 LogAudit($"Role changed to {newRole}", "Users", oldUserID, oldFullName, oldRole)
             End If
 
-            ' Perform logout BEFORE clearing session
-            SystemSession.PerformLogout(currentForm.Name)
+            ' Perform logout BEFORE clearing session but do NOT show the Login form yet
+            PerformLogout(currentForm.Name, False)
 
             ' Now clear session safely
             LoggedInUserID = 0
@@ -153,7 +160,37 @@ Public Module SystemSession
             currentForm.Close()
             MessageBox.Show("Your session has ended. You have been logged out.",
                         "Session Ended", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            'log audit for forced logout
+
+            ' Prevent Login.Activated from suppressing the admin-creation dialog
+            SuppressEnsureOnActivate = True
+
+            ' After informing the user, show the Login form then schedule EnsureAdminExists to run on its UI thread
+            If loginForm IsNot Nothing Then
+                loginForm.Show()
+                Try
+                    loginForm.Activate()
+                Catch
+                End Try
+
+                ' Schedule admin creation with dialogs on the login form's message loop to ensure proper owner/focus
+                Try
+                    loginForm.BeginInvoke(New Action(Sub()
+                                                         EnsureAdminExists(True)
+                                                     End Sub))
+                Catch
+                    ' Fallback to direct call if BeginInvoke not available
+                    EnsureAdminExists(True)
+                End Try
+            Else
+                ' Fallback if no login form provided
+                Login.Show()
+                EnsureAdminExists(True)
+            End If
+
+            ' Clear the suppress flag so future activations behave normally
+            SuppressEnsureOnActivate = False
+
+            ' log audit for forced logout
             LogAudit("Forced Logout after user account change", "Users", oldUserID, oldFullName, oldRole)
         End If
     End Sub
@@ -165,6 +202,60 @@ Public Module SystemSession
             Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
             Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
             Return adminCount > 0
+        End Using
+    End Function
+
+    ' Ensure an Admin user exists. Returns: 0 = no action, 1 = updated existing user, 2 = created new user
+    Public Function EnsureAdminExists(Optional showDialogs As Boolean = True) As Integer
+        Dim result As Integer = 0
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim cmdCheckAdmin As New SqlCommand("SELECT COUNT(*) FROM Users WHERE Role = 'Admin'", con)
+            Dim adminCount As Integer = CInt(cmdCheckAdmin.ExecuteScalar())
+            If adminCount = 0 Then
+                Dim defaultUsername As String = "admin"
+                Dim defaultPassword As String = "admin"
+                Dim hashedPassword As String = HashPassword(defaultPassword)
+
+                ' Check if username exists
+                Dim cmdUserExists As New SqlCommand("SELECT UserID FROM Users WHERE Username = @username", con)
+                cmdUserExists.Parameters.AddWithValue("@username", defaultUsername)
+                Dim existingIdObj As Object = cmdUserExists.ExecuteScalar()
+
+                If existingIdObj IsNot Nothing AndAlso Not Convert.IsDBNull(existingIdObj) Then
+                    Dim cmdUpdate As New SqlCommand("UPDATE Users SET Role = 'Admin', Password = @password, FullName = 'Administrator' WHERE UserID = @uid", con)
+                    cmdUpdate.Parameters.AddWithValue("@password", hashedPassword)
+                    cmdUpdate.Parameters.AddWithValue("@uid", CInt(existingIdObj))
+                    cmdUpdate.ExecuteNonQuery()
+                    LogAudit("Admin account restored/updated", "System", -1, "SYSTEM", "System")
+                    result = 1
+                    If showDialogs Then
+                        MessageBox.Show("No admin role found. Existing user 'admin' updated to Admin role and password reset to default.")
+                    End If
+                Else
+                    Dim cmdInsert As New SqlCommand("INSERT INTO Users (Username, Password, Role, FullName) VALUES (@username, @password, 'Admin', 'Administrator')", con)
+                    cmdInsert.Parameters.AddWithValue("@username", defaultUsername)
+                    cmdInsert.Parameters.AddWithValue("@password", hashedPassword)
+                    cmdInsert.ExecuteNonQuery()
+                    LogAudit("Default admin created", "System", -1, "SYSTEM", "System")
+                    result = 2
+                    If showDialogs Then
+                        MessageBox.Show("No admin found. Default admin created:" & Environment.NewLine &
+                                        "Username: admin" & Environment.NewLine &
+                                        "Password: admin")
+                    End If
+                End If
+            End If
+        End Using
+        Return result
+    End Function
+
+    ' Simple SHA256 helper for password hashing used by EnsureAdminExists
+    Private Function HashPassword(password As String) As String
+        Using sha256 As SHA256 = SHA256.Create()
+            Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
+            Dim hash As Byte() = sha256.ComputeHash(bytes)
+            Return BitConverter.ToString(hash).Replace("-", "").ToLower()
         End Using
     End Function
     ' This is for getting the user role based on user id
