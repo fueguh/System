@@ -458,8 +458,8 @@ Public Class AdminDBAppointments
         If dtAppointments Is Nothing Then Exit Sub
 
         Try
-            ' This filters the Patient, Dentist, and Status columns simultaneously
-            Dim filter As String = String.Format("Patient LIKE '%{0}%' OR Dentist LIKE '%{0}%' OR Status LIKE '%{0}%'",
+            ' This filters the Patient, Dentist, Service, and Status columns simultaneously
+            Dim filter As String = String.Format("Patient LIKE '%{0}%' OR Dentist LIKE '%{0}%' OR Status LIKE '%{0}%' OR Services LIKE '%{0}%' OR Status LIKE '%{0}%'",
                                                  txtSearchAppointments.Text.Replace("'", "''"))
 
             dtAppointments.DefaultView.RowFilter = filter

@@ -44,7 +44,6 @@ Public Class AdminDBUsers
         TxtFullName.Text = ""
         TxtUsername.Text = ""
         txtPassword.Text = ""
-        txtConfirmPassword.Text = ""
 
         CmbRole.SelectedIndex = -1
 
@@ -65,14 +64,8 @@ Public Class AdminDBUsers
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
        String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
        String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
-       String.IsNullOrWhiteSpace(txtConfirmPassword.Text) OrElse
        String.IsNullOrWhiteSpace(CmbRole.Text) Then
             MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Exit Sub
-        End If
-
-        If txtPassword.Text <> txtConfirmPassword.Text Then
-            MessageBox.Show("Passwords do not match.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
@@ -181,6 +174,11 @@ Public Class AdminDBUsers
                         End If
                     End Using
                 End Using
+
+                If String.IsNullOrEmpty(changes) Then
+                    MessageBox.Show("No changes detected. Update cancelled.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Return
+                End If
 
                 ' Warn the user if they are about to demote themselves
                 If selectedUserID = SystemSession.LoggedInUserID AndAlso oldRole = "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
@@ -435,11 +433,9 @@ Public Class AdminDBUsers
         If chkShowPassword.Checked Then
             ' Show the password
             txtPassword.UseSystemPasswordChar = False
-            txtConfirmPassword.UseSystemPasswordChar = False
         Else
             ' Hide the password
             txtPassword.UseSystemPasswordChar = True
-            txtConfirmPassword.UseSystemPasswordChar = True
         End If
     End Sub
 
@@ -523,7 +519,6 @@ Public Class AdminDBUsers
 
         ' --- PASSWORD VALIDATION ---
         Dim password As String = txtPassword.Text.Trim()
-        Dim confirmPassword As String = txtConfirmPassword.Text.Trim()
         If password <> "" Then
             If password.Length < 8 Then
                 MessageBox.Show("Password must be at least 8 characters long.")
@@ -533,11 +528,6 @@ Public Class AdminDBUsers
             If Not password.Any(Function(c) Char.IsUpper(c)) Then
                 MessageBox.Show("Password must contain at least one uppercase letter.")
                 txtPassword.Focus()
-                Return False
-            End If
-            If password <> confirmPassword Then
-                MessageBox.Show("Passwords do not match.")
-                txtConfirmPassword.Focus()
                 Return False
             End If
         End If

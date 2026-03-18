@@ -32,7 +32,6 @@ Partial Class AdminDBUsers
         Me.TxtPhoneNumber = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtEmail = New Guna.UI2.WinForms.Guna2TextBox()
         Me.txtPassword = New Guna.UI2.WinForms.Guna2TextBox()
-        Me.txtConfirmPassword = New Guna.UI2.WinForms.Guna2TextBox()
         Me.BtnAddUser = New Guna.UI2.WinForms.Guna2Button()
         Me.BtnUpdate = New Guna.UI2.WinForms.Guna2Button()
         Me.BtnDelete = New Guna.UI2.WinForms.Guna2Button()
@@ -166,31 +165,6 @@ Partial Class AdminDBUsers
         Me.txtPassword.Size = New System.Drawing.Size(257, 50)
         Me.txtPassword.TabIndex = 7
         Me.txtPassword.UseSystemPasswordChar = True
-        '
-        'txtConfirmPassword
-        '
-        Me.txtConfirmPassword.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtConfirmPassword.BorderRadius = 10
-        Me.txtConfirmPassword.BorderThickness = 2
-        Me.txtConfirmPassword.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.txtConfirmPassword.DefaultText = ""
-        Me.txtConfirmPassword.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
-        Me.txtConfirmPassword.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
-        Me.txtConfirmPassword.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.txtConfirmPassword.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.txtConfirmPassword.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtConfirmPassword.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtConfirmPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtConfirmPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtConfirmPassword.Location = New System.Drawing.Point(360, 407)
-        Me.txtConfirmPassword.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtConfirmPassword.Name = "txtConfirmPassword"
-        Me.txtConfirmPassword.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtConfirmPassword.PlaceholderText = "Confirm Password"
-        Me.txtConfirmPassword.SelectedText = ""
-        Me.txtConfirmPassword.Size = New System.Drawing.Size(257, 50)
-        Me.txtConfirmPassword.TabIndex = 8
-        Me.txtConfirmPassword.UseSystemPasswordChar = True
         '
         'BtnAddUser
         '
@@ -396,13 +370,13 @@ Partial Class AdminDBUsers
         Me.txtSearchUsers.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.txtSearchUsers.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtSearchUsers.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtSearchUsers.Location = New System.Drawing.Point(666, 114)
+        Me.txtSearchUsers.Location = New System.Drawing.Point(673, 114)
         Me.txtSearchUsers.Margin = New System.Windows.Forms.Padding(4)
         Me.txtSearchUsers.Name = "txtSearchUsers"
         Me.txtSearchUsers.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtSearchUsers.PlaceholderText = "Search user.."
         Me.txtSearchUsers.SelectedText = ""
-        Me.txtSearchUsers.Size = New System.Drawing.Size(1110, 50)
+        Me.txtSearchUsers.Size = New System.Drawing.Size(1103, 50)
         Me.txtSearchUsers.TabIndex = 48
         '
         'chkShowPassword
@@ -415,7 +389,7 @@ Partial Class AdminDBUsers
         Me.chkShowPassword.CheckedState.InnerOffset = -4
         Me.chkShowPassword.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.chkShowPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.chkShowPassword.Location = New System.Drawing.Point(364, 464)
+        Me.chkShowPassword.Location = New System.Drawing.Point(364, 392)
         Me.chkShowPassword.Name = "chkShowPassword"
         Me.chkShowPassword.Size = New System.Drawing.Size(126, 20)
         Me.chkShowPassword.TabIndex = 49
@@ -435,7 +409,7 @@ Partial Class AdminDBUsers
         Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnClear.Location = New System.Drawing.Point(364, 504)
+        Me.btnClear.Location = New System.Drawing.Point(364, 432)
         Me.btnClear.Name = "btnClear"
         Me.btnClear.Size = New System.Drawing.Size(253, 45)
         Me.btnClear.TabIndex = 11
@@ -458,7 +432,6 @@ Partial Class AdminDBUsers
         Me.Controls.Add(Me.BtnDelete)
         Me.Controls.Add(Me.BtnUpdate)
         Me.Controls.Add(Me.BtnAddUser)
-        Me.Controls.Add(Me.txtConfirmPassword)
         Me.Controls.Add(Me.txtPassword)
         Me.Controls.Add(Me.TxtEmail)
         Me.Controls.Add(Me.TxtPhoneNumber)
@@ -481,7 +454,6 @@ Partial Class AdminDBUsers
     Friend WithEvents TxtPhoneNumber As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents TxtEmail As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtPassword As Guna.UI2.WinForms.Guna2TextBox
-    Friend WithEvents txtConfirmPassword As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents BtnAddUser As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents BtnUpdate As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents BtnDelete As Guna.UI2.WinForms.Guna2Button
