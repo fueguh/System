@@ -88,4 +88,9 @@ Public Class StaffDashboard
         AdminDBRepandAnalytics.Show()
         Me.Hide()
     End Sub
+
+    Private Sub PaymentHistory_Click(sender As Object, e As EventArgs) Handles PaymentHistory.Click
+        AdminDBPaymentHistory.Show()
+        Me.Hide()
+    End Sub
 End Class

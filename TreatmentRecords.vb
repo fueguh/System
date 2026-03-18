@@ -31,7 +31,6 @@ Public Class TreatmentRecords
 
         ' 3. Normal flow - only runs if PassedAppointmentID is greater than 0
         BtnSaveRecord.Enabled = True
-        lblPatientName.ForeColor = Color.Black
 
         FetchAssignedDentist()
         LoadExistingTreatmentData()

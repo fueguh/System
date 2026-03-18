@@ -30,12 +30,8 @@ Public Class AdminDBAdminMaintenance
         TxtPhone.Clear()
         TxtPassword.Clear()
         TxtEmail.Clear()
-        TxtConfirmPassword.Clear()
-
         chkShowPassword.Checked = False
         TxtPassword.UseSystemPasswordChar = True
-        TxtConfirmPassword.UseSystemPasswordChar = True
-
         ' Reset logic state
         selectedAdminID = 0
         BTNAdd.Enabled = True
@@ -70,16 +66,9 @@ Public Class AdminDBAdminMaintenance
 
     Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
         TxtPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
-        TxtConfirmPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
     End Sub
 
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
-        ' No ID passed here, so it checks if the email exists anywhere
-        If Not ValidateEmail() Then Exit Sub
-        If TxtPassword.Text.Trim <> TxtConfirmPassword.Text.Trim Then
-            MessageBox.Show("Passwords do not match.")
-            Exit Sub
-        End If
 
         ' Validate fields first
         If Not ValidatePassword() Then Exit Sub
@@ -90,7 +79,10 @@ Public Class AdminDBAdminMaintenance
             Exit Sub
         End If
 
-        If Not ValidateEmail() Then Exit Sub
+        ' Flexible Email Format Check (Only if not empty)
+        If Not String.IsNullOrWhiteSpace(TxtEmail.Text) Then
+            If Not ValidateEmail() Then Exit Sub
+        End If
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
@@ -103,18 +95,17 @@ Public Class AdminDBAdminMaintenance
             ' ✅ Hash password
             Dim hashedPassword As String = HashPassword(TxtPassword.Text)
 
-            Dim userId As Integer
             Using cmdUser As New SqlCommand(queryUser, con)
                 cmdUser.Parameters.AddWithValue("@fullname", TxtName.Text.Trim)
                 cmdUser.Parameters.AddWithValue("@username", TxtUsername.Text.Trim)
                 cmdUser.Parameters.AddWithValue("@password", hashedPassword) ' ideally hash this
-                cmdUser.Parameters.AddWithValue("@phone", TxtPhone.Text.Trim)
-                cmdUser.Parameters.AddWithValue("@email", TxtUsername.Text.Trim & "@gmail.com") ' or use a textbox if you want
-
-                userId = Convert.ToInt32(cmdUser.ExecuteScalar())
+                ' Use DBNull if the fields are empty
+                cmdUser.Parameters.AddWithValue("@phone", If(String.IsNullOrWhiteSpace(TxtPhone.Text), DBNull.Value, TxtPhone.Text.Trim))
+                cmdUser.Parameters.AddWithValue("@email", If(String.IsNullOrWhiteSpace(TxtEmail.Text), DBNull.Value, TxtEmail.Text.Trim))
+                cmdUser.ExecuteNonQuery()
 
                 ' ✅ ADD THIS LOGGING LINE
-                SystemSession.LogAudit($"Added new Admin: {TxtName.Text.Trim}", "Admin Management",
+                SystemSession.LogAudit($"Added new Admin: {TxtName.Text.Trim}", "Admin Maintenance",
                                        SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
             End Using
 
@@ -124,7 +115,110 @@ Public Class AdminDBAdminMaintenance
         LoadAdmins()
         ClearAdminInputs()
     End Sub
+    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
+        If selectedAdminID = 0 Then
+            MessageBox.Show("Please select an admin to update.")
+            Exit Sub
+        End If
 
+        ' 1. Validate Email ONLY if it's not empty
+        If Not String.IsNullOrWhiteSpace(TxtEmail.Text) Then
+            If Not ValidateEmail(selectedAdminID) Then Exit Sub
+        End If
+
+        ' 2. Validate Username duplicates (ignoring current ID)
+        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedAdminID) Then
+            MessageBox.Show("Email or Username already exists for another account.")
+            Exit Sub
+        End If
+
+        ' 3. If they typed a password, validate it meets requirements
+        If Not String.IsNullOrWhiteSpace(TxtPassword.Text) Then
+            If Not ValidatePassword() Then Exit Sub
+        End If
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Dim query As String
+
+            If String.IsNullOrWhiteSpace(TxtPassword.Text) Then
+                query = "UPDATE Users SET FullName=@fn, Username=@un, PhoneNumber=@ph, Email=@em WHERE UserID=@id"
+            Else
+                query = "UPDATE Users SET FullName=@fn, Username=@un, PhoneNumber=@ph, Email=@em, Password=@pw WHERE UserID=@id"
+            End If
+
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@id", selectedAdminID)
+                cmd.Parameters.AddWithValue("@fn", TxtName.Text.Trim)
+                cmd.Parameters.AddWithValue("@un", TxtUsername.Text.Trim)
+                ' Allow saving as NULL/Empty
+                cmd.Parameters.AddWithValue("@ph", If(String.IsNullOrWhiteSpace(TxtPhone.Text), DBNull.Value, TxtPhone.Text.Trim))
+                cmd.Parameters.AddWithValue("@em", If(String.IsNullOrWhiteSpace(TxtEmail.Text), DBNull.Value, TxtEmail.Text.Trim))
+
+                If Not String.IsNullOrWhiteSpace(TxtPassword.Text) Then
+                    cmd.Parameters.AddWithValue("@pw", HashPassword(TxtPassword.Text))
+                End If
+
+                cmd.ExecuteNonQuery()
+                ' ✅ ADD THIS LOGGING LINE
+                SystemSession.LogAudit($"Updated Admin details for: {TxtName.Text.Trim}", "Admin Maintenance",
+                       SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            End Using
+        End Using
+
+        MessageBox.Show("Admin updated successfully.")
+
+        ' Sync current session if the admin edited their own profile
+        If selectedAdminID = SystemSession.LoggedInUserID Then
+            SystemSession.LoggedInFullName = TxtName.Text.Trim
+        End If
+
+        LoadAdmins()
+        ClearAdminInputs()
+    End Sub
+
+    Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
+        If selectedAdminID = 0 Then
+            MessageBox.Show("Please select an admin to delete.")
+            Exit Sub
+        End If
+
+        ' Prevent accidental self-deletion without serious warning
+        If selectedAdminID = SystemSession.LoggedInUserID Then
+            Dim result = MessageBox.Show("You are about to delete your own account. You will be logged out immediately. Proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            If result = DialogResult.No Then Exit Sub
+        Else
+            Dim result = MessageBox.Show("Are you sure you want to delete this admin?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            If result = DialogResult.No Then Exit Sub
+        End If
+
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                Using cmd As New SqlCommand("DELETE FROM Users WHERE UserID=@id", con)
+                    cmd.Parameters.AddWithValue("@id", selectedAdminID)
+                    cmd.ExecuteNonQuery()
+                    ' ✅ ADD THIS LOGGING LINE
+                    SystemSession.LogAudit($"Deleted Admin account: {TxtName.Text.Trim}", "Admin Maintenance",
+                                           SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+                End Using
+            End Using
+
+            MessageBox.Show("Admin deleted successfully.")
+
+            ' If you deleted yourself, go back to login
+            If selectedAdminID = SystemSession.LoggedInUserID Then
+                Login.Show()
+                Me.Hide()
+            Else
+                LoadAdmins()
+                ClearAdminInputs()
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error deleting admin. They might have linked records (Audit logs, etc).")
+        End Try
+    End Sub
     Private Sub AdminSearch_TextChanged(sender As Object, e As EventArgs) Handles AdminSearch.TextChanged
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
@@ -170,7 +264,6 @@ Public Class AdminDBAdminMaintenance
     '========================================================= VALIDATIONS ======================================================
     Private Function ValidatePassword() As Boolean
         Dim password As String = TxtPassword.Text.Trim()
-        Dim confirmPassword As String = TxtConfirmPassword.Text.Trim()
 
         ' Check length
         If password.Length < 8 Then
@@ -186,22 +279,19 @@ Public Class AdminDBAdminMaintenance
             Return False
         End If
 
-        ' Confirm password match
-        If Not password.Equals(confirmPassword) Then
-            MessageBox.Show("Passwords do not match.")
-            TxtConfirmPassword.Focus()
-            Return False
-        End If
-
         Return True
     End Function
 
     Private Function ValidateEmail(Optional userID As Integer = 0) As Boolean
         Dim email As String = TxtEmail.Text.Trim()
 
-        ' 1. Format Check
-        If Not email.ToLower().EndsWith("@gmail.com") Then
-            MessageBox.Show("Email must end with '@gmail.com'.")
+        ' If it's empty, it's valid (because it's optional)
+        If String.IsNullOrWhiteSpace(email) Then Return True
+
+        ' 1. Flexible Format Check
+        Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        If Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
+            MessageBox.Show("Please enter a valid email address (e.g., name@example.com).")
             TxtEmail.Focus()
             Return False
         End If
@@ -235,18 +325,26 @@ Public Class AdminDBAdminMaintenance
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            Dim query As String = "
-            SELECT COUNT(*) 
-            FROM Users 
-            WHERE (Email = @em OR Username = @un) 
-              AND UserID <> @id
-        "
+            ' Path 1: If email is empty, we only care if the Username is taken.
+            ' Path 2: If email is provided, we check if either the Email OR Username is taken.
+            Dim query As String
+            If String.IsNullOrWhiteSpace(email) Then
+                query = "SELECT COUNT(*) FROM Users WHERE Username = @un AND UserID <> @id"
+            Else
+                query = "SELECT COUNT(*) FROM Users WHERE (Email = @em OR Username = @un) AND UserID <> @id"
+            End If
 
             Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@em", email)
+                ' These two are always needed regardless of which path we took
                 cmd.Parameters.AddWithValue("@un", username)
                 cmd.Parameters.AddWithValue("@id", userID)
 
+                ' Only add @em if we are on Path 2 (Email is not empty)
+                If Not String.IsNullOrWhiteSpace(email) Then
+                    cmd.Parameters.AddWithValue("@em", email)
+                End If
+
+                ' Get the result using your preferred step-by-step logic
                 Dim count As Integer = CInt(cmd.ExecuteScalar())
                 Return count > 0
             End Using
@@ -254,51 +352,77 @@ Public Class AdminDBAdminMaintenance
     End Function
 
     Private Sub TxtName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtName.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow letters
+        If Char.IsLetter(e.KeyChar) Then Return
+
+        ' Allow single space/dot/hyphen, but prevent consecutive or starting with them
+        Dim allowedChars As String = " .'-"
+        If allowedChars.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtName.Text.Length > 0, TxtName.Text.Last(), ChrW(0))
+            If TxtName.Text.Length = 0 OrElse allowedChars.Contains(lastChar) Then
+                e.Handled = True
+            End If
             Return
         End If
 
-        ' Allow letters and spaces only
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
-            e.Handled = True ' Block the input
-        End If
+        e.Handled = True
     End Sub
 
     Private Sub TxtPhone_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtPhone.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        ' Allow backspace
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Allow digits only and limit to 11 characters
+        If Char.IsDigit(e.KeyChar) AndAlso TxtPhone.Text.Length < 11 Then
             Return
         End If
 
-        ' Allow digits only
-        If Not Char.IsDigit(e.KeyChar) Then
-            e.Handled = True ' Block the input
-        End If
+        e.Handled = True
     End Sub
 
     Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Block spaces
+        If e.KeyChar = " "c Then
+            e.Handled = True
             Return
         End If
 
-        ' Allow letters and digits only
-        If Not (Char.IsLetterOrDigit(e.KeyChar)) Then
-            e.Handled = True ' Block the input
+        ' Allow letters and numbers
+        If Char.IsLetterOrDigit(e.KeyChar) Then Return
+
+        ' Allow dot or underscore (but not as first char or consecutive)
+        Dim allowedSymbols As String = "._"
+        If allowedSymbols.Contains(e.KeyChar) Then
+            Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text.Last(), ChrW(0))
+            If TxtUsername.Text.Length = 0 OrElse allowedSymbols.Contains(lastChar) Then
+                e.Handled = True
+            End If
+            Return
         End If
+
+        e.Handled = True
     End Sub
 
     Private Sub TxtEmail_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtEmail.KeyPress
-        ' Allow control keys (Backspace, Delete, etc.)
-        If Char.IsControl(e.KeyChar) Then
+        If Char.IsControl(e.KeyChar) Then Return
+
+        ' Block spaces
+        If e.KeyChar = " "c Then
+            e.Handled = True
             Return
         End If
 
-        ' Allow letters, digits, @, and .
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = "@"c OrElse e.KeyChar = "."c) Then
-            e.Handled = True ' Block invalid input
+        ' Allow standard email characters
+        Dim allowedEmailChars As String = "@._-"
+        If Char.IsLetterOrDigit(e.KeyChar) OrElse allowedEmailChars.Contains(e.KeyChar) Then
+            Return
         End If
+
+        e.Handled = True
     End Sub
     Private Sub DataGridViewAdmins_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewAdmins.CellClick
         If e.RowIndex >= 0 Then
@@ -315,7 +439,6 @@ Public Class AdminDBAdminMaintenance
 
             ' Clear password fields for security (admin must re-type to change)
             TxtPassword.Text = ""
-            TxtConfirmPassword.Text = ""
 
             ' Switch button states
             BTNAdd.Enabled = False
@@ -325,6 +448,15 @@ Public Class AdminDBAdminMaintenance
     End Sub
     Private selectedAdminID As Integer = 0 ' Add this line at the top
 
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+
+    End Sub
+
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearAdminInputs()
         AdminSearch.Text = ""
@@ -332,109 +464,4 @@ Public Class AdminDBAdminMaintenance
         TxtName.Focus()
     End Sub
 
-    Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
-        If selectedAdminID = 0 Then
-            MessageBox.Show("Please select an admin to update.")
-            Exit Sub
-        End If
-
-        ' 1. Validate Email format and check for duplicates (ignoring current ID)
-        If Not ValidateEmail(selectedAdminID) Then Exit Sub
-
-        ' 2. Validate Username duplicates (ignoring current ID)
-        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedAdminID) Then
-            MessageBox.Show("Email or Username already exists for another account.")
-            Exit Sub
-        End If
-
-        ' 3. If they typed a password, validate it meets requirements
-        If Not String.IsNullOrWhiteSpace(TxtPassword.Text) Then
-            If Not ValidatePassword() Then Exit Sub
-        End If
-
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim query As String
-
-            If String.IsNullOrWhiteSpace(TxtPassword.Text) Then
-                query = "UPDATE Users SET FullName=@fn, Username=@un, PhoneNumber=@ph, Email=@em WHERE UserID=@id"
-            Else
-                query = "UPDATE Users SET FullName=@fn, Username=@un, PhoneNumber=@ph, Email=@em, Password=@pw WHERE UserID=@id"
-            End If
-
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedAdminID)
-                cmd.Parameters.AddWithValue("@fn", TxtName.Text.Trim)
-                cmd.Parameters.AddWithValue("@un", TxtUsername.Text.Trim)
-                cmd.Parameters.AddWithValue("@ph", TxtPhone.Text.Trim)
-                cmd.Parameters.AddWithValue("@em", TxtEmail.Text.Trim)
-
-                If Not String.IsNullOrWhiteSpace(TxtPassword.Text) Then
-                    cmd.Parameters.AddWithValue("@pw", HashPassword(TxtPassword.Text))
-                End If
-
-                cmd.ExecuteNonQuery()
-                ' ✅ ADD THIS LOGGING LINE
-                SystemSession.LogAudit($"Updated Admin details for: {TxtName.Text.Trim}", "Admin Management",
-                       SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-            End Using
-        End Using
-
-        MessageBox.Show("Admin updated successfully.")
-
-        ' Sync current session if the admin edited their own profile
-        If selectedAdminID = SystemSession.LoggedInUserID Then
-            SystemSession.LoggedInFullName = TxtName.Text.Trim
-        End If
-
-        LoadAdmins()
-        ClearAdminInputs()
-    End Sub
-
-    Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
-        If selectedAdminID = 0 Then
-            MessageBox.Show("Please select an admin to delete.")
-            Exit Sub
-        End If
-
-        ' Prevent accidental self-deletion without serious warning
-        If selectedAdminID = SystemSession.LoggedInUserID Then
-            Dim result = MessageBox.Show("You are about to delete your own account. You will be logged out immediately. Proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-            If result = DialogResult.No Then Exit Sub
-        Else
-            Dim result = MessageBox.Show("Are you sure you want to delete this admin?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-            If result = DialogResult.No Then Exit Sub
-        End If
-
-        Try
-            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-                con.Open()
-                Using cmd As New SqlCommand("DELETE FROM Users WHERE UserID=@id", con)
-                    cmd.Parameters.AddWithValue("@id", selectedAdminID)
-                    cmd.ExecuteNonQuery()
-                    ' ✅ ADD THIS LOGGING LINE
-                    SystemSession.LogAudit($"Deleted Admin account: {TxtName.Text.Trim}", "Admin Management",
-                                           SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-                End Using
-            End Using
-
-            MessageBox.Show("Admin deleted successfully.")
-
-            ' If you deleted yourself, go back to login
-            If selectedAdminID = SystemSession.LoggedInUserID Then
-                Login.Show()
-                Me.Hide()
-            Else
-                LoadAdmins()
-                ClearAdminInputs()
-            End If
-
-        Catch ex As Exception
-            MessageBox.Show("Error deleting admin. They might have linked records (Audit logs, etc).")
-        End Try
-    End Sub
-
-    Private Sub DataGridViewAdmins_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridViewAdmins.CellContentClick
-
-    End Sub
 End Class

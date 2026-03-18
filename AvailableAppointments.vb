@@ -7,8 +7,6 @@ Public Class AvailableAppointments
     Private Sub AvailableAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadTodaysAppointments()
 
-        ' AUDIT: Log module access
-        SystemSession.LogAudit("Accessed Today's Appointments", "AvailableAppointments")
     End Sub
 
     ' === 2. DATA LOADING ===
@@ -33,7 +31,9 @@ Public Class AvailableAppointments
                     LEFT JOIN Users U ON A.UserID = U.UserID
                     LEFT JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
                     LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
-                    WHERE A.Date = CAST(GETDATE() AS DATE)"
+                    WHERE A.Date = CAST(GETDATE() AS DATE)
+                    AND A.Status <> 'Cancelled'
+                    AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)"
 
                 ' ROLE CHECK: Filter for Dentists, Admins see all
                 If SystemSession.LoggedInRole <> "Admin" Then
@@ -102,7 +102,6 @@ Public Class AvailableAppointments
 
     ' === 4. NAVIGATION ===
     Private Sub btnBack1_Click(sender As Object, e As EventArgs) Handles btnBack1.Click
-        SystemSession.LogAudit("Returned to Dashboard from Appointments", "AvailableAppointments")
         SystemSession.NavigateToDashboard(Me)
     End Sub
     ' === 5. DOUBLE CLICK SHORTCUT ===

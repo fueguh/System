@@ -250,7 +250,7 @@ Partial Class DentistDashboard
         Me.tabPatientManagement.Padding = New System.Windows.Forms.Padding(3)
         Me.tabPatientManagement.Size = New System.Drawing.Size(1208, 631)
         Me.tabPatientManagement.TabIndex = 0
-        Me.tabPatientManagement.Text = "Patient Management"
+        Me.tabPatientManagement.Text = "Patients"
         '
         'dgvPatients
         '
@@ -319,7 +319,7 @@ Partial Class DentistDashboard
         Me.tabAppointment.Padding = New System.Windows.Forms.Padding(3)
         Me.tabAppointment.Size = New System.Drawing.Size(1208, 631)
         Me.tabAppointment.TabIndex = 1
-        Me.tabAppointment.Text = "Appointment"
+        Me.tabAppointment.Text = "Appointments Today"
         '
         'dgvAppointments
         '

@@ -1,6 +1,4 @@
 ﻿Imports System.Data.SqlClient
-Imports System.Drawing.Printing
-Imports System.Management
 
 Public Class AdminDBPayment
 
@@ -15,7 +13,7 @@ Public Class AdminDBPayment
     Private Sub AdminDBPayment_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPendingPayments()
         LoadPaymentMethods()
-
+        txtReferenceNo.Enabled = False ' Ensure it starts disabled
         ' Formatting the Grid for Word Wrap (For those long dentist notes)
         dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
         dgvPendingPayments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
@@ -44,7 +42,7 @@ Public Class AdminDBPayment
         (SELECT STRING_AGG(S.ServiceName, ', ') 
          FROM AppointmentServices AS [AS] 
          JOIN Services S ON [AS].ServiceID = S.ServiceID 
-         WHERE [AS].AppointmentID = A.AppointmentID) AS [Planned Services]
+         WHERE [AS].AppointmentID = A.AppointmentID) AS [Services Done]
     FROM Appointments A
     INNER JOIN Patients P ON A.PatientID = P.PatientID
     INNER JOIN Users U ON A.UserID = U.UserID -- Join to get Dentist Name
@@ -148,16 +146,22 @@ Public Class AdminDBPayment
         ComboBoxPaymentMethod.Items.Clear()
         ComboBoxPaymentMethod.Items.AddRange(New String() {"Cash", "Gcash"})
     End Sub
-
-    ' ================= SAVE & PRINT =================
+    Private Sub ComboBoxPaymentMethod_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxPaymentMethod.SelectedIndexChanged
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            txtReferenceNo.Enabled = True
+            txtReferenceNo.PlaceholderText = "Enter Reference No." ' If using Guna or modern controls
+        Else
+            txtReferenceNo.Enabled = False
+            txtReferenceNo.Clear()
+        End If
+    End Sub
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-        ' 1. Security Check: Ensure a user is logged in
+        ' 1. Security & Validation
         If SystemSession.LoggedInUserID <= 0 Then
             MessageBox.Show("Error: No logged-in User ID found. Please re-login.")
             Exit Sub
         End If
 
-        ' 2. Validation: Ensure a patient is selected and payment method is chosen
         If SelectedAppointmentID = 0 Then
             MessageBox.Show("Please select an appointment from the list first.")
             Exit Sub
@@ -168,14 +172,35 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
+        ' --- GCash Validation Check ---
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            Dim refNo As String = txtReferenceNo.Text.Trim()
+
+            If String.IsNullOrWhiteSpace(refNo) Then
+                MessageBox.Show("Please enter the GCash Reference Number.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                txtReferenceNo.Focus()
+                Exit Sub
+            End If
+
+            ' Philippines standard GCash Ref is 13 digits
+            If Not System.Text.RegularExpressions.Regex.IsMatch(refNo, "^\d{13}$") Then
+                Dim confirm = MessageBox.Show("Standard GCash reference numbers are 13 digits. Proceed anyway?",
+                                    "Format Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                If confirm = DialogResult.No Then
+                    txtReferenceNo.Focus()
+                    Exit Sub
+                End If
+            End If
+        End If
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             Try
                 con.Open()
                 Using trans As SqlTransaction = con.BeginTransaction()
                     Try
-                        ' 3. Database Insert
-                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod) " &
-                                        "VALUES (@AID, @PID, @UID, @Total, @Method)"
+                        ' 2. Database Insert
+                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber) " &
+                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref)"
 
                         Using cmd As New SqlCommand(sql, con, trans)
                             cmd.Parameters.Add("@AID", SqlDbType.Int).Value = SelectedAppointmentID
@@ -184,51 +209,46 @@ Public Class AdminDBPayment
                             cmd.Parameters.Add("@Total", SqlDbType.Decimal).Value = CDec(TextBoxTotal.Text)
                             cmd.Parameters.Add("@Method", SqlDbType.VarChar).Value = ComboBoxPaymentMethod.Text
 
+                            ' Pass Reference Number or DBNull
+                            cmd.Parameters.Add("@Ref", SqlDbType.VarChar).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
+
                             Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                             If rowsAffected > 0 Then
-                                ' 4. Commit to Database
                                 trans.Commit()
 
-                                ' === AUDIT TRAIL LOGGING ===
-                                ' We log the specific amount and patient so it's clear in the system history
-                                Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1} (Appt ID: {2})",
-                                           TextBoxTotal.Text,
-                                           SelectedPatientName,
-                                           SelectedAppointmentID)
+                                ' Audit Logging
+                                Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1}", TextBoxTotal.Text, SelectedPatientName)
+                                SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
-                                SystemSession.LogAudit(auditMsg, "Billing", SystemSession.LoggedInUserID,
-                           SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-                                ' ===========================
-
-                                ' 5. Prompt to Print (While data is still in variables)
+                                ' 3. Unified Printing Call
                                 Dim askPrint As DialogResult = MessageBox.Show("Payment Successful! Would you like to print the receipt now?",
-                                                   "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                                               "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
+                                ' Inside ButtonGenerateReceipt_Click
                                 If askPrint = DialogResult.Yes Then
-                                    Dim pd As New PrintDocument()
-                                    pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
-                                    AddHandler pd.PrintPage, AddressOf PrintPageHandler
+                                    ' 1. Grab the table from the grid
+                                    Dim dtServices As DataTable = CType(dgvServices.DataSource, DataTable)
 
-                                    Dim dlg As New PrintDialog()
-                                    dlg.Document = pd
-
-                                    If dlg.ShowDialog() = DialogResult.OK Then
-                                        pd.Print()
-                                    End If
+                                    ' 2. Call the Unified Module
+                                    ReceiptPrinter.PrintReceipt(SelectedPatientName,
+                              SelectedDentistName,
+                              SelectedTreatmentNotes,
+                              TextBoxTotal.Text,
+                              ComboBoxPaymentMethod.Text,
+                              txtReferenceNo.Text,
+                              dtServices)
                                 End If
 
-                                ' 6. Final UI Cleanup
-                                LoadPendingPayments()
-                                ClearBillingUI()
-
+                                ' Jump to cleanup
+                                GoTo SuccessCleanup
                             Else
                                 trans.Rollback()
                                 MessageBox.Show("Save failed: No rows were affected.")
                             End If
                         End Using
                     Catch ex As Exception
-                        trans.Rollback()
+                        If trans.Connection IsNot Nothing Then trans.Rollback()
                         MessageBox.Show("Transaction Error: " & ex.Message)
                     End Try
                 End Using
@@ -236,80 +256,16 @@ Public Class AdminDBPayment
                 MessageBox.Show("Connection Error: " & ex.Message)
             End Try
         End Using
-    End Sub
-    ' ================= PRINTER LOGIC =================
-    Private Sub ButtonPrintReceipt_Click(sender As Object, e As EventArgs) Handles ButtonPrintReceipt.Click
-        Dim pd As New PrintDocument()
-        pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
-        AddHandler pd.PrintPage, AddressOf PrintPageHandler
+        Exit Sub
 
-        Dim dlg As New PrintDialog()
-        dlg.Document = pd
-        If dlg.ShowDialog() = DialogResult.OK Then
-            pd.Print()
-        End If
-    End Sub
-
-    Private Sub PrintPageHandler(sender As Object, e As PrintPageEventArgs)
-        Dim g As Graphics = e.Graphics
-        Dim currentY As Integer = 40
-        Dim fontBody As New Font("Consolas", 8)
-        Dim leftMargin As Integer = 5
-        Dim rightMargin As Integer = 185
-
-        ' 1. Header
-        g.DrawString("DENTAL CLINIC RECEIPT", New Font("Arial", 10, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        currentY += 20
-        g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        g.DrawString("Patient: " & SelectedPatientName, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-
-        ' 2. Services List (Updated to use dgvServices)
-        For Each row As DataGridViewRow In dgvServices.Rows
-            If Not row.IsNewRow Then
-                Dim sName As String = row.Cells("ServiceName").Value.ToString()
-                Dim sPrice As String = "P" & CDec(row.Cells("Price").Value).ToString("F2")
-
-                g.DrawString(sName, fontBody, Brushes.Black, leftMargin, currentY)
-                g.DrawString(sPrice, fontBody, Brushes.Black, rightMargin - g.MeasureString(sPrice, fontBody).Width, currentY)
-                currentY += 15
-            End If
-        Next
-
-        ' 3. MERGED TREATMENT NOTES (The Merged Part)
-        currentY += 10
-        g.DrawString("DENTIST NOTES:", New Font("Consolas", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        ' Use RectangleF for wrapping text
-        Dim rectNotes As New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 150)
-        g.DrawString(SelectedTreatmentNotes, fontBody, Brushes.Black, rectNotes)
-
-        ' Dynamic Y shift based on note length
-        Dim textSize = g.MeasureString(SelectedTreatmentNotes, fontBody, New SizeF(rightMargin - leftMargin, 150))
-        currentY += CInt(textSize.Height) + 10
-
-        ' 4. Total
-        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 15
-        g.DrawString("TOTAL AMOUNT:", New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & TextBoxTotal.Text, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, rightMargin - g.MeasureString("P" & TextBoxTotal.Text, fontBody).Width, currentY)
-
-        currentY += 25
-        g.DrawString("Method: " & ComboBoxPaymentMethod.Text, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 30
-        g.DrawString("Thank you for visiting!", fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 40
-        g.DrawString(".", New Font("Arial", 1), Brushes.Black, leftMargin, currentY) ' Force Feed
+SuccessCleanup:
+        LoadPendingPayments()
+        ClearBillingUI()
     End Sub
 
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
-
-    ' ... Include your IsPrinterOnline / IsPrinterInstalled functions here ...
 
     ' Helper to clean up the screen after saving
     Private Sub ClearBillingUI()
@@ -325,11 +281,18 @@ Public Class AdminDBPayment
 
         ' Clear the Itemized Grid
         dgvServices.DataSource = Nothing
-
+        txtReferenceNo.Clear()
+        ' Clear reference number and disable it until GCash is selected again
+        txtReferenceNo.Enabled = False
         ' Reset selection in main grid
         dgvPendingPayments.ClearSelection()
     End Sub
-
+    ' Only allows numbers and backspace in the Reference Number box
+    Private Sub txtReferenceNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtReferenceNo.KeyPress
+        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+        End If
+    End Sub
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearBillingUI()
     End Sub

@@ -38,7 +38,6 @@ Partial Class AdminDBPayment
         Me.lblDentist = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.ButtonGenerateReceipt = New Guna.UI2.WinForms.Guna2Button()
-        Me.ButtonPrintReceipt = New Guna.UI2.WinForms.Guna2Button()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnBack = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.dgvPendingPayments = New Guna.UI2.WinForms.Guna2DataGridView()
@@ -48,10 +47,11 @@ Partial Class AdminDBPayment
         Me.dgvServices = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.dentist_name = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
-        Me.Guna2Panel2 = New Guna.UI2.WinForms.Guna2Panel()
         Me.Guna2HtmlLabel3 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.Guna2Panel2 = New Guna.UI2.WinForms.Guna2Panel()
         Me.Guna2HtmlLabel4 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
+        Me.txtReferenceNo = New Guna.UI2.WinForms.Guna2TextBox()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvPendingPayments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -75,7 +75,7 @@ Partial Class AdminDBPayment
         Me.TextBoxTotal.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.TextBoxTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.TextBoxTotal.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TextBoxTotal.Location = New System.Drawing.Point(32, 299)
+        Me.TextBoxTotal.Location = New System.Drawing.Point(32, 315)
         Me.TextBoxTotal.Margin = New System.Windows.Forms.Padding(4)
         Me.TextBoxTotal.Name = "TextBoxTotal"
         Me.TextBoxTotal.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -135,27 +135,11 @@ Partial Class AdminDBPayment
         Me.ButtonGenerateReceipt.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.ButtonGenerateReceipt.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ButtonGenerateReceipt.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ButtonGenerateReceipt.Location = New System.Drawing.Point(32, 476)
+        Me.ButtonGenerateReceipt.Location = New System.Drawing.Point(32, 602)
         Me.ButtonGenerateReceipt.Name = "ButtonGenerateReceipt"
-        Me.ButtonGenerateReceipt.Size = New System.Drawing.Size(279, 45)
+        Me.ButtonGenerateReceipt.Size = New System.Drawing.Size(279, 83)
         Me.ButtonGenerateReceipt.TabIndex = 24
-        Me.ButtonGenerateReceipt.Text = "Generate Receipt"
-        '
-        'ButtonPrintReceipt
-        '
-        Me.ButtonPrintReceipt.BorderRadius = 10
-        Me.ButtonPrintReceipt.DisabledState.BorderColor = System.Drawing.Color.DarkGray
-        Me.ButtonPrintReceipt.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
-        Me.ButtonPrintReceipt.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
-        Me.ButtonPrintReceipt.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.ButtonPrintReceipt.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.ButtonPrintReceipt.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ButtonPrintReceipt.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ButtonPrintReceipt.Location = New System.Drawing.Point(32, 554)
-        Me.ButtonPrintReceipt.Name = "ButtonPrintReceipt"
-        Me.ButtonPrintReceipt.Size = New System.Drawing.Size(279, 45)
-        Me.ButtonPrintReceipt.TabIndex = 25
-        Me.ButtonPrintReceipt.Text = "Print"
+        Me.ButtonGenerateReceipt.Text = "Finish Payment"
         '
         'Guna2HtmlLabel2
         '
@@ -364,15 +348,6 @@ Partial Class AdminDBPayment
         Me.Guna2Panel1.Size = New System.Drawing.Size(791, 66)
         Me.Guna2Panel1.TabIndex = 53
         '
-        'Guna2Panel2
-        '
-        Me.Guna2Panel2.Controls.Add(Me.Guna2HtmlLabel4)
-        Me.Guna2Panel2.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel2.Location = New System.Drawing.Point(376, 529)
-        Me.Guna2Panel2.Name = "Guna2Panel2"
-        Me.Guna2Panel2.Size = New System.Drawing.Size(791, 66)
-        Me.Guna2Panel2.TabIndex = 54
-        '
         'Guna2HtmlLabel3
         '
         Me.Guna2HtmlLabel3.AutoSize = False
@@ -385,6 +360,15 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel3.TabIndex = 48
         Me.Guna2HtmlLabel3.Text = "Queue"
         Me.Guna2HtmlLabel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'Guna2Panel2
+        '
+        Me.Guna2Panel2.Controls.Add(Me.Guna2HtmlLabel4)
+        Me.Guna2Panel2.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.Guna2Panel2.Location = New System.Drawing.Point(376, 529)
+        Me.Guna2Panel2.Name = "Guna2Panel2"
+        Me.Guna2Panel2.Size = New System.Drawing.Size(791, 66)
+        Me.Guna2Panel2.TabIndex = 54
         '
         'Guna2HtmlLabel4
         '
@@ -415,6 +399,30 @@ Partial Class AdminDBPayment
         Me.btnClear.TabIndex = 55
         Me.btnClear.Text = "Clear"
         '
+        'txtReferenceNo
+        '
+        Me.txtReferenceNo.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtReferenceNo.BorderRadius = 10
+        Me.txtReferenceNo.BorderThickness = 2
+        Me.txtReferenceNo.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.txtReferenceNo.DefaultText = ""
+        Me.txtReferenceNo.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.txtReferenceNo.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.txtReferenceNo.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtReferenceNo.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtReferenceNo.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtReferenceNo.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtReferenceNo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtReferenceNo.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtReferenceNo.Location = New System.Drawing.Point(32, 466)
+        Me.txtReferenceNo.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtReferenceNo.Name = "txtReferenceNo"
+        Me.txtReferenceNo.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtReferenceNo.PlaceholderText = "Reference No:"
+        Me.txtReferenceNo.SelectedText = ""
+        Me.txtReferenceNo.Size = New System.Drawing.Size(279, 45)
+        Me.txtReferenceNo.TabIndex = 56
+        '
         'AdminDBPayment
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -422,6 +430,7 @@ Partial Class AdminDBPayment
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1179, 823)
         Me.ControlBox = False
+        Me.Controls.Add(Me.txtReferenceNo)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.dgvPendingPayments)
         Me.Controls.Add(Me.dgvServices)
@@ -431,7 +440,6 @@ Partial Class AdminDBPayment
         Me.Controls.Add(Me.patient_name)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.Guna2HtmlLabel2)
-        Me.Controls.Add(Me.ButtonPrintReceipt)
         Me.Controls.Add(Me.ButtonGenerateReceipt)
         Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.lblDentist)
@@ -458,7 +466,6 @@ Partial Class AdminDBPayment
     Friend WithEvents lblDentist As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents ButtonGenerateReceipt As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents ButtonPrintReceipt As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnBack As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents dgvPendingPayments As Guna.UI2.WinForms.Guna2DataGridView
@@ -472,4 +479,5 @@ Partial Class AdminDBPayment
     Friend WithEvents Guna2HtmlLabel3 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel4 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
+    Friend WithEvents txtReferenceNo As Guna.UI2.WinForms.Guna2TextBox
 End Class

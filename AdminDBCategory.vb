@@ -20,17 +20,19 @@ Public Class AdminDBCategory
 
         selectedCategoryID = 0
 
-        ' Optional: Deselect rows in the grid for a clean slate
-        DataGridViewCategories.ClearSelection()
+        ' Button States
+        BtnAddCategory.Enabled = True
+        BtnUpdateCategory.Enabled = False
+        BtnDeleteCategory.Enabled = False
 
-        ' Focus the first input for better UX
+        DataGridViewCategories.ClearSelection()
         TextBoxCategoryName.Focus()
     End Sub
 
     Private Sub LoadCategories()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            Dim query As String = "SELECT CategoryID, CategoryName, Description, IsActive FROM Categories ORDER BY CategoryName"
+            Dim query As String = "SELECT CategoryID, CategoryName, Description FROM Categories ORDER BY CategoryName"
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
@@ -45,7 +47,12 @@ Public Class AdminDBCategory
             MessageBox.Show("Category name is required.")
             Exit Sub
         End If
-
+        ' NEW DUPLICATE CHECK
+        If IsDuplicateCategory(TextBoxCategoryName.Text.Trim(), 0) Then
+            MessageBox.Show("A category with this name already exists.", "Duplicate Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TextBoxCategoryName.Focus()
+            Exit Sub
+        End If
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "INSERT INTO Categories (CategoryName, Description) VALUES (@name, @desc)"
@@ -57,7 +64,7 @@ Public Class AdminDBCategory
         End Using
 
         ' ✅ AUDIT LOG: Log the addition
-        SystemSession.LogAudit($"Added new category: {TextBoxCategoryName.Text.Trim}", "Inventory Management", SystemSession.LoggedInUserID)
+        SystemSession.LogAudit($"Added new category: {TextBoxCategoryName.Text.Trim}", "Category Maintenance", SystemSession.LoggedInUserID)
 
         MessageBox.Show("Category added successfully.")
         LoadCategories()
@@ -65,28 +72,50 @@ Public Class AdminDBCategory
     End Sub
 
     Private Sub BtnUpdateCategory_Click(sender As Object, e As EventArgs) Handles BtnUpdateCategory.Click
+        ' 1. Selection Check
         If selectedCategoryID = 0 Then
-            MessageBox.Show("Please select a category to update.")
+            MessageBox.Show("Please select a category to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim query As String = "UPDATE Categories SET CategoryName=@name, Description=@desc WHERE CategoryID=@id"
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedCategoryID)
-                cmd.Parameters.AddWithValue("@name", TextBoxCategoryName.Text.Trim)
-                cmd.Parameters.AddWithValue("@desc", TextBoxDescription.Text.Trim)
-                cmd.ExecuteNonQuery()
+        ' 2. Basic Validation
+        Dim catName As String = TextBoxCategoryName.Text.Trim()
+        If catName = "" Then
+            MessageBox.Show("Category name is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TextBoxCategoryName.Focus()
+            Exit Sub
+        End If
+
+        ' 3. DUPLICATE CHECK (Specify current ID to ignore the record being edited)
+        If IsDuplicateCategory(catName, selectedCategoryID) Then
+            MessageBox.Show($"The category name '{catName}' is already in use by another record.",
+                        "Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TextBoxCategoryName.Focus()
+            Exit Sub
+        End If
+
+        ' 4. Database Update
+        Try
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                Dim query As String = "UPDATE Categories SET CategoryName=@name, Description=@desc WHERE CategoryID=@id"
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@id", selectedCategoryID)
+                    cmd.Parameters.AddWithValue("@name", catName)
+                    cmd.Parameters.AddWithValue("@desc", TextBoxDescription.Text.Trim)
+                    cmd.ExecuteNonQuery()
+                End Using
             End Using
-        End Using
 
-        ' ✅ AUDIT LOG: Log the update
-        SystemSession.LogAudit($"Updated category ID {selectedCategoryID}: {TextBoxCategoryName.Text.Trim}", "Inventory Management", SystemSession.LoggedInUserID)
+            ' Audit Log
+            SystemSession.LogAudit($"Updated category: {catName}", "Category Maintenance", SystemSession.LoggedInUserID)
 
-        MessageBox.Show("Category updated successfully.")
-        LoadCategories()
-        clearform()
+            MessageBox.Show("Category updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            LoadCategories()
+            clearform()
+        Catch ex As Exception
+            MessageBox.Show("An error occurred while updating: " & ex.Message, "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub BtnDeleteCategory_Click(sender As Object, e As EventArgs) Handles BtnDeleteCategory.Click
@@ -95,12 +124,13 @@ Public Class AdminDBCategory
             Exit Sub
         End If
 
-        If MessageBox.Show("Are you sure you want to delete this category?", "Confirm Delete", MessageBoxButtons.YesNo) = DialogResult.No Then
+        ' Capture the name for the audit log BEFORE the confirmation or deletion
+        ' This ensures the name is saved even if the user clicks a different row
+        Dim deletedName As String = TextBoxCategoryName.Text.Trim()
+
+        If MessageBox.Show($"Are you sure you want to delete the category '{deletedName}'?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then
             Exit Sub
         End If
-
-        ' Capture name for the audit log before it's deleted
-        Dim categoryName As String = TextBoxCategoryName.Text
 
         Try
             Using con As New SqlConnection(My.Settings.DentalDBConnection2)
@@ -112,18 +142,18 @@ Public Class AdminDBCategory
                 End Using
             End Using
 
-            ' ✅ AUDIT LOG: Log the deletion
-            SystemSession.LogAudit($"Deleted category: {categoryName} (ID: {selectedCategoryID})", "Inventory Management", SystemSession.LoggedInUserID)
+            ' ✅ CORRECTED AUDIT LOG: Use the captured name and correct action text
+            SystemSession.LogAudit($"Deleted category: {deletedName}", "Category Maintenance", SystemSession.LoggedInUserID)
 
             MessageBox.Show("Category deleted successfully.")
             LoadCategories()
             clearform()
 
         Catch ex As SqlException
-            ' Handle Foreign Key errors (e.g., if items are still assigned to this category)
             If ex.Number = 547 Then
                 MessageBox.Show("Cannot delete this category because it is being used by existing items.", "Delete Blocked", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                SystemSession.LogAudit($"Delete failed: Category '{categoryName}' is in use.", "Inventory Management", SystemSession.LoggedInUserID)
+                ' Log the failure too
+                SystemSession.LogAudit($"Delete failed: Category '{deletedName}' is in use.", "Category Maintenance", SystemSession.LoggedInUserID)
             Else
                 MessageBox.Show("Error: " & ex.Message)
             End If
@@ -157,6 +187,10 @@ Public Class AdminDBCategory
             Else
                 TextBoxDescription.Clear()
             End If
+            ' --- BUTTON STATES ---
+            BtnAddCategory.Enabled = False ' Prevent adding when a record is selected
+            BtnUpdateCategory.Enabled = True
+            BtnDeleteCategory.Enabled = True
         End If
     End Sub
 
@@ -170,13 +204,13 @@ Public Class AdminDBCategory
 
             If CategorySearch.Text.Trim = "" Then
                 query = "
-                SELECT CategoryID, CategoryName, Description, IsActive
+                SELECT CategoryID, CategoryName, Description
                 FROM Categories
                 ORDER BY CategoryName
             "
             Else
                 query = "
-                SELECT CategoryID, CategoryName, Description, IsActive
+                SELECT CategoryID, CategoryName, Description
                 FROM Categories
                 WHERE COALESCE(CategoryName,'') LIKE @search
                    OR COALESCE(Description,'') LIKE @search
@@ -197,7 +231,18 @@ Public Class AdminDBCategory
             End Using
         End Using
     End Sub
-
+    Private Function IsDuplicateCategory(name As String, id As Integer) As Boolean
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            ' Check if name exists excluding the current ID
+            Dim query As String = "SELECT COUNT(*) FROM Categories WHERE CategoryName = @name AND CategoryID <> @id"
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@name", name.Trim())
+                cmd.Parameters.AddWithValue("@id", id)
+                Return CInt(cmd.ExecuteScalar()) > 0
+            End Using
+        End Using
+    End Function
     Private Sub TextBoxCategoryName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TextBoxCategoryName.KeyPress
         ' 1. Always allow Backspace (KeyChar 8)
         If Char.IsControl(e.KeyChar) Then Return

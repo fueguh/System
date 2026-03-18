@@ -6,7 +6,7 @@ Public Class AdminDBUsers
     Private selectedUserID As Integer = 0
 
     Private Function HashPassword(password As String) As String
-        Using sha256 As SHA256 = sha256.Create()
+        Using sha256 As SHA256 = SHA256.Create()
             Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
             Dim hash As Byte() = sha256.ComputeHash(bytes)
             Return BitConverter.ToString(hash).Replace("-", "").ToLower()
@@ -44,7 +44,6 @@ Public Class AdminDBUsers
         TxtFullName.Text = ""
         TxtUsername.Text = ""
         txtPassword.Text = ""
-        txtConfirmPassword.Text = ""
 
         CmbRole.SelectedIndex = -1
 
@@ -65,14 +64,8 @@ Public Class AdminDBUsers
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
        String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
        String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
-       String.IsNullOrWhiteSpace(txtConfirmPassword.Text) OrElse
        String.IsNullOrWhiteSpace(CmbRole.Text) Then
             MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Exit Sub
-        End If
-
-        If txtPassword.Text <> txtConfirmPassword.Text Then
-            MessageBox.Show("Passwords do not match.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
@@ -129,7 +122,7 @@ Public Class AdminDBUsers
             ' Updated
             SystemSession.LogAudit(
                 $"Added user {TxtFullName.Text}",   ' Message now mentions the new user
-                "User Management",                  ' Module
+                "Users Maintenance",                  ' Module (consistent with previous naming)
                 SystemSession.LoggedInUserID,      ' Your admin UserID
                 SystemSession.LoggedInFullName,    ' Your admin name
                 SystemSession.LoggedInRole          ' Your admin role
@@ -143,90 +136,124 @@ Public Class AdminDBUsers
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
-        ' ✅ Only Admin can update users
+        ' 1. Security & Selection Checks
         If Not SystemSession.RequireAdmin("update users") Then Exit Sub
-        If Not SystemSession.RequireSelectedUser(selectedUserID, "update") Then Exit Sub
-        ' Get old role
-        Dim oldRole As String = SystemSession.GetUserRole(selectedUserID)
-        Dim hashedPassword As String = HashPassword(txtPassword.Text)
+        If selectedUserID = 0 Then
+            MessageBox.Show("Please select a user to update.")
+            Exit Sub
+        End If
 
         If Not ValidateUserFields(selectedUserID) Then Exit Sub
 
+        ' 2. Duplicate Check
         If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedUserID) Then
             MessageBox.Show("Email or Username already exists. Please choose another.")
             Exit Sub
         End If
 
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
+        Try
+            Dim changes As String = ""
+            Dim targetName As String = TxtFullName.Text.Trim()
+            Dim needsAdminWarning As Boolean = False
 
-            ' Decide query depending on whether password is entered, to avoid updating password with blank.
-            Dim query As String
-            If String.IsNullOrWhiteSpace(txtPassword.Text) Then
-                ' Password not changed
-                query = "
-            UPDATE Users
-            SET FullName=@fullname,
-                Username=@username,
-                Role=@role,
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
 
-                PhoneNumber=@phone,
-                Email=@email
-            WHERE UserID=@id"
-            Else
-                ' Password changed
-                query = "
-            UPDATE Users
-            SET FullName=@fullname,
-                Username=@username,
-                Password=@password,
-                Role=@role,
+                ' --- STEP A: FETCH OLD DATA FOR COMPARISON ---
+                Dim oldName As String = "", oldUn As String = "", oldRole As String = "", oldPh As String = "", oldEm As String = ""
+                Dim getOldQuery As String = "SELECT FullName, Username, Role, PhoneNumber, Email FROM Users WHERE UserID = @id"
+                Using cmdOld As New SqlCommand(getOldQuery, con)
+                    cmdOld.Parameters.AddWithValue("@id", selectedUserID)
+                    Using dr As SqlDataReader = cmdOld.ExecuteReader()
+                        If dr.Read() Then
+                            oldName = dr("FullName").ToString()
+                            oldUn = dr("Username").ToString()
+                            oldRole = dr("Role").ToString()
+                            oldPh = dr("PhoneNumber").ToString()
+                            oldEm = dr("Email").ToString()
+                        End If
+                    End Using
+                End Using
 
-                PhoneNumber=@phone,
-                Email=@email
-            WHERE UserID=@id"
+                If String.IsNullOrEmpty(changes) Then
+                    MessageBox.Show("No changes detected. Update cancelled.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Return
+                End If
+
+                ' Warn the user if they are about to demote themselves
+                If selectedUserID = SystemSession.LoggedInUserID AndAlso oldRole = "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
+                    Dim res = MessageBox.Show("You are about to change your own role from Admin to '" & CmbRole.Text & "'. This will end your session immediately and log you out. Continue?", "Confirm role change", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                    If res <> DialogResult.Yes Then
+                        Return
+                    End If
+                End If
+
+                ' --- STEP B: COMPARE OLD VS NEW ---
+                If oldName <> TxtFullName.Text.Trim() Then changes &= $"Name: {oldName} -> {TxtFullName.Text.Trim()}; "
+                If oldUn <> TxtUsername.Text.Trim() Then changes &= $"Username: {oldUn} -> {TxtUsername.Text.Trim()}; "
+                If oldRole <> CmbRole.Text.Trim() Then changes &= $"Role: {oldRole} -> {CmbRole.Text.Trim()}; "
+                If oldPh <> TxtPhoneNumber.Text.Trim() Then changes &= $"Phone: {oldPh} -> {TxtPhoneNumber.Text.Trim()}; "
+                If oldEm <> TxtEmail.Text.Trim() Then changes &= $"Email: {oldEm} -> {TxtEmail.Text.Trim()}; "
+
+                If Not String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                    changes &= "Password was updated; "
+                End If
+
+                ' --- STEP C: EXECUTE UPDATE ---
+                Dim query As String
+                If String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                    query = "UPDATE Users SET FullName=@fullname, Username=@username, Role=@role, PhoneNumber=@phone, Email=@email WHERE UserID=@id"
+                Else
+                    query = "UPDATE Users SET FullName=@fullname, Username=@username, Password=@password, Role=@role, PhoneNumber=@phone, Email=@email WHERE UserID=@id"
+                End If
+
+                Using cmd As New SqlCommand(query, con)
+                    cmd.Parameters.AddWithValue("@id", selectedUserID)
+                    cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text.Trim())
+                    cmd.Parameters.AddWithValue("@username", TxtUsername.Text.Trim())
+                    cmd.Parameters.AddWithValue("@role", CmbRole.Text)
+                    cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text.Trim())
+                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim())
+
+                    ' Check specifically for the password parameter defined in the query above
+                    If Not String.IsNullOrWhiteSpace(txtPassword.Text) Then
+                        cmd.Parameters.AddWithValue("@password", HashPassword(txtPassword.Text))
+                    End If
+
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                ' --- STEP D: DETAILED AUDIT LOGGING ---
+                Dim auditMsg As String = If(String.IsNullOrEmpty(changes),
+                                        $"Updated user {targetName} (No changes made)",
+                                        $"Updated user {targetName}. Changes: {changes}")
+
+                SystemSession.LogAudit(auditMsg, "Users Maintenance",
+                                   SystemSession.LoggedInUserID,
+                                   SystemSession.LoggedInFullName,
+                                   SystemSession.LoggedInRole)
+
+                ' Special check for last Admin (your original logic)
+                ' Don't show the warning yet — delay until after self-session enforcement so logout message appears first
+                If oldRole = "Admin" AndAlso CmbRole.Text <> "Admin" AndAlso Not SystemSession.AdminExists() Then
+                    needsAdminWarning = True
+                End If
+            End Using
+
+            SystemSession.ShowSuccess("updated")
+            SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
+
+            ' After enforcement (logout) or normal flow, optionally log a warning instead of showing a dialog
+            If needsAdminWarning AndAlso Not SystemSession.AdminExists() Then
+                SystemSession.LogAudit("Last Admin changed - no admins remain", "Users Maintenance")
             End If
 
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@id", selectedUserID)
-                cmd.Parameters.AddWithValue("@fullname", TxtFullName.Text)
-                cmd.Parameters.AddWithValue("@username", TxtUsername.Text)
-                cmd.Parameters.AddWithValue("@password", hashedPassword)
-                cmd.Parameters.AddWithValue("@role", CmbRole.Text)
+            LoadUsers()
+            Clearform()
 
-                cmd.Parameters.AddWithValue("@phone", TxtPhoneNumber.Text)
-                cmd.Parameters.AddWithValue("@email", TxtEmail.Text)
-                cmd.ExecuteNonQuery()
-            End Using
-        End Using
-
-        SystemSession.ShowSuccess("updated")
-
-        ' Audit logging
-        Dim actorID As Integer = SystemSession.LoggedInUserID
-        Dim actorName As String = SystemSession.LoggedInFullName
-        Dim actorRole As String = SystemSession.LoggedInRole
-        Dim targetName As String = TxtFullName.Text
-        Dim targetRole As String = CmbRole.Text
-
-        If oldRole = "Admin" AndAlso targetRole <> "Admin" AndAlso Not SystemSession.AdminExists() Then
-            SystemSession.LogAudit($"Changed last Admin account: {targetName}", "User Management",
-        actorID, actorName, actorRole)
-            MessageBox.Show("The last Admin account has been changed. Register a new Admin immediately.",
-                    "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        ElseIf targetRole = "Admin" Then
-            SystemSession.LogAudit($"Updated Admin account: {targetName}", "User Management",
-        actorID, actorName, actorRole)
-        Else
-            SystemSession.LogAudit($"Updated user: {targetName}", "User Management",
-        actorID, actorName, actorRole)
-        End If
-
-
-        ' Enforce session rules if the logged-in user updates their own role
-        SystemSession.EnforceSelfSessionRules(selectedUserID, CmbRole.Text, Me, Login)
-        LoadUsers()
-        Clearform()
+        Catch ex As Exception
+            MessageBox.Show("Update Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub BtnDelete_Click(sender As Object, e As EventArgs) Handles BtnDelete.Click
@@ -236,6 +263,16 @@ Public Class AdminDBUsers
         If selectedUserID = 0 Then
             MessageBox.Show("Please select a user to delete.")
             Exit Sub
+        End If
+
+        ' Warn the user if they are about to delete their own account
+        If selectedUserID = SystemSession.LoggedInUserID Then
+            Dim confirmSelf = MessageBox.Show(
+                "You are about to delete your own account. This will log you out immediately. Do you want to continue?",
+                "Confirm Self-Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+            If confirmSelf <> DialogResult.Yes Then
+                Exit Sub
+            End If
         End If
 
         Try
@@ -256,15 +293,25 @@ Public Class AdminDBUsers
             End Using
 
             ' Always log the deletion BEFORE enforcing self-session
-            SystemSession.LogAudit("User Deleted", "User Management", selectedUserID)
+            SystemSession.LogAudit("User Deleted", "Users Maintenance", selectedUserID)
 
-            ' Show success message
+            ' If the admin deleted themselves, enforce self-session immediately
+            If selectedUserID = SystemSession.LoggedInUserID Then
+                ' Do not show extra dialogs that may steal focus — enforce logout and then create admin quietly
+                SystemSession.EnforceSelfSessionRules(selectedUserID, Nothing, Me, Login, True)
+                ' Refresh users table (may not be reached if the form is closed)
+                LoadUsers()
+                Clearform()
+                Return
+            End If
+
+            ' For non-self deletes, show success and warn if no admins remain
             SystemSession.ShowSuccess("deleted")
 
             ' Check if any Admins remain in the system
             If Not SystemSession.AdminExists() Then
-                SystemSession.LogAudit("All Admins Deleted", "User Management")
-                MessageBox.Show("Warning: No Admin accounts remain! Create a new Admin immediately.", "System Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                SystemSession.LogAudit("All Admins Deleted", "Users Maintenance")
+                ' Warning removed: do not show blocking dialog here
             End If
 
             ' Self-session enforcement (logs out if deleted yourself)
@@ -297,13 +344,13 @@ Public Class AdminDBUsers
 
             Else
                 MessageBox.Show("Database error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                SystemSession.LogAudit("Delete failed: " & ex.Message, "User Management")
+                SystemSession.LogAudit("Delete failed: " & ex.Message, "Users Maintenance")
             End If
 
         Catch ex As Exception
             ' Catch any unexpected errors
             MessageBox.Show("Unexpected error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            SystemSession.LogAudit("Unexpected delete error: " & ex.Message, "User Management")
+            SystemSession.LogAudit("Unexpected delete error: " & ex.Message, "Users Maintenance")
         End Try
     End Sub
 
@@ -386,11 +433,9 @@ Public Class AdminDBUsers
         If chkShowPassword.Checked Then
             ' Show the password
             txtPassword.UseSystemPasswordChar = False
-            txtConfirmPassword.UseSystemPasswordChar = False
         Else
             ' Hide the password
             txtPassword.UseSystemPasswordChar = True
-            txtConfirmPassword.UseSystemPasswordChar = True
         End If
     End Sub
 
@@ -428,12 +473,13 @@ Public Class AdminDBUsers
             Return False
         End If
 
-        ' --- PHONE NUMBER VALIDATION ---
-        If String.IsNullOrWhiteSpace(TxtPhoneNumber.Text) OrElse
-       Not TxtPhoneNumber.Text.All(Function(c) Char.IsDigit(c)) Then
-            MessageBox.Show("Phone Number must contain digits only.")
-            TxtPhoneNumber.Focus()
-            Return False
+        ' --- PHONE NUMBER VALIDATION (optional) ---
+        If Not String.IsNullOrWhiteSpace(TxtPhoneNumber.Text) Then
+            If Not TxtPhoneNumber.Text.All(Function(c) Char.IsDigit(c)) Then
+                MessageBox.Show("Phone Number must contain digits only.")
+                TxtPhoneNumber.Focus()
+                Return False
+            End If
         End If
 
         ' --- EMAIL VALIDATION ---
@@ -447,31 +493,32 @@ Public Class AdminDBUsers
 
         Dim emailRegex As String = "^[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z]{2,})+$"
 
-        If String.IsNullOrWhiteSpace(email) OrElse
-   Not System.Text.RegularExpressions.Regex.IsMatch(email, emailRegex) Then
-            MessageBox.Show("Email is invalid. It must be in a proper format, e.g., name.lastname@gmail.com")
-            TxtEmail.Focus()
-            Return False
-        End If
+        ' --- EMAIL VALIDATION (optional) ---
+        If Not String.IsNullOrWhiteSpace(email) Then
+            If Not System.Text.RegularExpressions.Regex.IsMatch(email, emailRegex) Then
+                MessageBox.Show("Email is invalid. It must be in a proper format, e.g., name.lastname@gmail.com")
+                TxtEmail.Focus()
+                Return False
+            End If
 
-        ' Validate presence and position of '@' then get local part safely
-        Dim atIndex As Integer = email.IndexOf("@"c)
-        If atIndex <= 0 Then
-            MessageBox.Show("Email is invalid. Missing or misplaced '@'.")
-            TxtEmail.Focus()
-            Return False
-        End If
+            ' Validate presence and position of '@' then get local part safely
+            Dim atIndex As Integer = email.IndexOf("@"c)
+            If atIndex <= 0 Then
+                MessageBox.Show("Email is invalid. Missing or misplaced '@'.")
+                TxtEmail.Focus()
+                Return False
+            End If
 
-        Dim localPart As String = email.Substring(0, atIndex)
-        If String.IsNullOrEmpty(localPart) OrElse Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
-            MessageBox.Show("Email username must contain letters or digits only.")
-            TxtEmail.Focus()
-            Return False
+            Dim localPart As String = email.Substring(0, atIndex)
+            If String.IsNullOrEmpty(localPart) OrElse Not localPart.All(Function(c) Char.IsLetterOrDigit(c)) Then
+                MessageBox.Show("Email username must contain letters or digits only.")
+                TxtEmail.Focus()
+                Return False
+            End If
         End If
 
         ' --- PASSWORD VALIDATION ---
         Dim password As String = txtPassword.Text.Trim()
-        Dim confirmPassword As String = txtConfirmPassword.Text.Trim()
         If password <> "" Then
             If password.Length < 8 Then
                 MessageBox.Show("Password must be at least 8 characters long.")
@@ -481,11 +528,6 @@ Public Class AdminDBUsers
             If Not password.Any(Function(c) Char.IsUpper(c)) Then
                 MessageBox.Show("Password must contain at least one uppercase letter.")
                 txtPassword.Focus()
-                Return False
-            End If
-            If password <> confirmPassword Then
-                MessageBox.Show("Passwords do not match.")
-                txtConfirmPassword.Focus()
                 Return False
             End If
         End If
@@ -502,18 +544,18 @@ Public Class AdminDBUsers
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            ' Query checks if email OR username already exists, excluding the current record if updating
-            Dim query As String = "
-            SELECT COUNT(*) 
-            FROM Users 
-            WHERE (Email = @em OR Username = @un) 
-              AND UserID <> @id
-        "
+            ' If email is empty, only check username. Otherwise check either matching email or username.
+            Dim query As String
+            If String.IsNullOrWhiteSpace(email) Then
+                query = "SELECT COUNT(*) FROM Users WHERE Username = @un AND UserID <> @id"
+            Else
+                query = "SELECT COUNT(*) FROM Users WHERE (Email = @em OR Username = @un) AND UserID <> @id"
+            End If
 
             Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@em", email)
                 cmd.Parameters.AddWithValue("@un", username)
                 cmd.Parameters.AddWithValue("@id", userID)
+                If Not String.IsNullOrWhiteSpace(email) Then cmd.Parameters.AddWithValue("@em", email)
 
                 Dim count As Integer = CInt(cmd.ExecuteScalar())
                 Return count > 0
@@ -545,26 +587,37 @@ Public Class AdminDBUsers
         e.Handled = True
     End Sub
 
+    ' --- TEXTBOX INPUT VALIDATION (Login Form) ---
     Private Sub TxtUsername_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtUsername.KeyPress
-        If Char.IsControl(e.KeyChar) Then Return ' Allow backspace
+        ' 1. Always allow control keys (Backspace, etc.)
+        If Char.IsControl(e.KeyChar) Then Return
 
-        Dim allowedChars As String = "._" ' dot, underscore
-        Dim lastChar As Char = If(TxtUsername.Text.Length > 0, TxtUsername.Text(TxtUsername.Text.Length - 1), ChrW(0))
+        Dim allowedSpecialChars As String = "._"
+        Dim currentText As String = TxtUsername.Text
+        Dim lastChar As Char = If(currentText.Length > 0, currentText(currentText.Length - 1), ChrW(0))
 
-        ' Allow letters and digits
-        If Char.IsLetterOrDigit(e.KeyChar) Then Return
-
-        ' Allow dot or underscore but prevent consecutive ones or starting char
-        If allowedChars.Contains(e.KeyChar) Then
-            If TxtUsername.Text.Length = 0 Then
-                e.Handled = True ' Cannot start with dot/underscore
-            ElseIf lastChar = e.KeyChar Then
-                e.Handled = True ' No consecutive dot/underscore
+        ' 2. Allow Letters and Digits
+        If Char.IsLetterOrDigit(e.KeyChar) Then
+            ' Logic check: The very first character MUST be a letter (based on your Regex)
+            If currentText.Length = 0 AndAlso Not Char.IsLetter(e.KeyChar) Then
+                e.Handled = True
             End If
             Return
         End If
 
-        ' Block everything else
+        ' 3. Allow Dot or Underscore
+        If allowedSpecialChars.Contains(e.KeyChar) Then
+            ' Rule: Cannot start with a special char
+            If currentText.Length = 0 Then
+                e.Handled = True
+                ' Rule: No consecutive special characters (e.g., ".." or "__")
+            ElseIf lastChar = e.KeyChar Then
+                e.Handled = True
+            End If
+            Return
+        End If
+
+        ' 4. Block everything else (spaces, symbols, etc.)
         e.Handled = True
     End Sub
 
