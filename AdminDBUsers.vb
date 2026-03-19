@@ -61,6 +61,7 @@ Public Class AdminDBUsers
 
     Private Sub BtnAddUser_Click(sender As Object, e As EventArgs) Handles BtnAddUser.Click
         ' Validation
+        If Not ValidateUserFields() Then Exit Sub
         If String.IsNullOrWhiteSpace(TxtFullName.Text) OrElse
        String.IsNullOrWhiteSpace(TxtUsername.Text) OrElse
        String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
@@ -69,22 +70,10 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        If IsUsernameTaken(TxtUsername.Text) Then
-            MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            Exit Sub
-        End If
-
         ' Only allow Staff/Dentist to be added by logged-in Admin
         If SystemSession.LoggedInRole <> "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
             MessageBox.Show("You must be logged in as an Admin to add Staff or Dentists.",
                     "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
-
-        If Not ValidateUserFields() Then Exit Sub
-
-        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim()) Then
-            MessageBox.Show("Email or Username already exists. Please choose another.")
             Exit Sub
         End If
 
@@ -136,6 +125,7 @@ Public Class AdminDBUsers
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
+        If Not ValidateUserFields(selectedUserID) Then Exit Sub
         ' 1. Security & Selection Checks
         If Not SystemSession.RequireAdmin("update users") Then Exit Sub
         If selectedUserID = 0 Then
@@ -144,12 +134,6 @@ Public Class AdminDBUsers
         End If
 
         If Not ValidateUserFields(selectedUserID) Then Exit Sub
-
-        ' 2. Duplicate Check
-        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedUserID) Then
-            MessageBox.Show("Email or Username already exists. Please choose another.")
-            Exit Sub
-        End If
 
         Try
             Dim changes As String = ""
@@ -175,11 +159,6 @@ Public Class AdminDBUsers
                     End Using
                 End Using
 
-                If String.IsNullOrEmpty(changes) Then
-                    MessageBox.Show("No changes detected. Update cancelled.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    Return
-                End If
-
                 ' Warn the user if they are about to demote themselves
                 If selectedUserID = SystemSession.LoggedInUserID AndAlso oldRole = "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
                     Dim res = MessageBox.Show("You are about to change your own role from Admin to '" & CmbRole.Text & "'. This will end your session immediately and log you out. Continue?", "Confirm role change", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
@@ -197,6 +176,11 @@ Public Class AdminDBUsers
 
                 If Not String.IsNullOrWhiteSpace(txtPassword.Text) Then
                     changes &= "Password was updated; "
+                End If
+
+                If String.IsNullOrEmpty(changes) Then
+                    MessageBox.Show("No changes detected. Update cancelled.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Return
                 End If
 
                 ' --- STEP C: EXECUTE UPDATE ---
@@ -354,19 +338,6 @@ Public Class AdminDBUsers
         End Try
     End Sub
 
-    Private Function IsUsernameTaken(username As String) As Boolean
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim query As String = "SELECT COUNT(*) FROM Users WHERE Username = @username"
-            Dim cmd As New SqlCommand(query, con)
-            cmd.Parameters.AddWithValue("@username", username)
-            Dim count As Integer = CInt(cmd.ExecuteScalar())
-            Return count > 0
-        End Using
-    End Function
-
-
-
     Private Sub DGVUsers_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles DGVUsers.CellClick
         If e.RowIndex >= 0 Then
             Dim row As DataGridViewRow = DGVUsers.Rows(e.RowIndex)
@@ -474,14 +445,18 @@ Public Class AdminDBUsers
         End If
 
         ' --- PHONE NUMBER VALIDATION (optional) ---
-        If Not String.IsNullOrWhiteSpace(TxtPhoneNumber.Text) Then
-            If Not TxtPhoneNumber.Text.All(Function(c) Char.IsDigit(c)) Then
-                MessageBox.Show("Phone Number must contain digits only.")
+        Dim phone As String = TxtPhoneNumber.Text.Trim()
+        If Not String.IsNullOrWhiteSpace(phone) Then
+            If phone.Length <> 11 OrElse Not phone.All(AddressOf Char.IsDigit) Then
+                MessageBox.Show("Phone Number must be exactly 11 digits.")
+                TxtPhoneNumber.Focus()
+                Return False
+            ElseIf Not phone.StartsWith("09") Then
+                MessageBox.Show("Invalid Phone Number. Must start with '09'.")
                 TxtPhoneNumber.Focus()
                 Return False
             End If
         End If
-
         ' --- EMAIL VALIDATION ---
         Dim email As String = TxtEmail.Text.Trim()
 
@@ -533,37 +508,69 @@ Public Class AdminDBUsers
         End If
 
         ' --- DUPLICATE CHECK ---
-        If IsDuplicateEmailOrUsername(email, username, userID) Then
-            MessageBox.Show("Email or Username already exists. Please choose another.")
+        Dim duplicateUsername As Boolean = False
+        Dim duplicateEmail As Boolean = False
+
+        CheckDuplicates(email, username, userID, duplicateUsername, duplicateEmail)
+
+        If duplicateUsername Or duplicateEmail Then
+            Dim msg As String = ""
+
+            If duplicateUsername Then
+                msg &= "Username already exists." & vbCrLf
+            End If
+
+            If duplicateEmail Then
+                msg &= "Email already exists." & vbCrLf
+            End If
+
+            MessageBox.Show(msg, "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+
+            If duplicateUsername Then
+                TxtUsername.Focus()
+            ElseIf duplicateEmail Then
+                TxtEmail.Focus()
+            End If
+
             Return False
         End If
 
         Return True
     End Function
-    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
+    Private Sub CheckDuplicates(email As String, username As String, userID As Integer,
+                            ByRef isUsernameDuplicate As Boolean,
+                            ByRef isEmailDuplicate As Boolean)
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            ' If email is empty, only check username. Otherwise check either matching email or username.
-            Dim query As String
-            If String.IsNullOrWhiteSpace(email) Then
-                query = "SELECT COUNT(*) FROM Users WHERE Username = @un AND UserID <> @id"
-            Else
-                query = "SELECT COUNT(*) FROM Users WHERE (Email = @em OR Username = @un) AND UserID <> @id"
-            End If
+            Dim query As String = "
+        SELECT 
+            SUM(CASE WHEN Username = @un THEN 1 ELSE 0 END) AS UsernameCount,
+            SUM(CASE WHEN Email = @em THEN 1 ELSE 0 END) AS EmailCount
+        FROM Users
+        WHERE UserID <> @id"
 
             Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@un", username)
+                cmd.Parameters.AddWithValue("@un", username.Trim())
                 cmd.Parameters.AddWithValue("@id", userID)
-                If Not String.IsNullOrWhiteSpace(email) Then cmd.Parameters.AddWithValue("@em", email)
 
-                Dim count As Integer = CInt(cmd.ExecuteScalar())
-                Return count > 0
+                If String.IsNullOrWhiteSpace(email) Then
+                    cmd.Parameters.AddWithValue("@em", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@em", email.Trim())
+                End If
+
+                Using dr As SqlDataReader = cmd.ExecuteReader()
+                    If dr.Read() Then
+                        isUsernameDuplicate = Convert.ToInt32(dr("UsernameCount")) > 0
+                        isEmailDuplicate = Convert.ToInt32(dr("EmailCount")) > 0
+                    End If
+                End Using
             End Using
         End Using
-    End Function
-
-
+    End Sub
+    
     Private Sub TxtFullName_KeyPress(sender As Object, e As KeyPressEventArgs) Handles TxtFullName.KeyPress
         If Char.IsControl(e.KeyChar) Then Return ' Allow backspace, delete
 

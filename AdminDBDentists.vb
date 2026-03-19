@@ -37,7 +37,6 @@ Public Class AdminDBDentists
         TxtPhone.Clear()
         TxtEmail.Clear()
         TxtPassword.Clear()
-        TxtConfirmPassword.Clear()
         cmbAvailability.SelectedIndex = -1
         cmbAvailability.Text = ""
         DGVDentists.ClearSelection()
@@ -88,8 +87,8 @@ Public Class AdminDBDentists
                     cmd.Parameters.AddWithValue("@name", TxtName.Text.Trim)
                     cmd.Parameters.AddWithValue("@username", TxtUsername.Text.Trim)
                     cmd.Parameters.AddWithValue("@password", HashPassword(TxtPassword.Text))
-                    cmd.Parameters.AddWithValue("@phone", TxtPhone.Text.Trim)
-                    cmd.Parameters.AddWithValue("@email", TxtEmail.Text.Trim)
+                    cmd.Parameters.AddWithValue("@phone", If(String.IsNullOrWhiteSpace(TxtPhone.Text), DBNull.Value, TxtPhone.Text.Trim()))
+                    cmd.Parameters.AddWithValue("@email", If(String.IsNullOrWhiteSpace(TxtEmail.Text), DBNull.Value, TxtEmail.Text.Trim()))
                     cmd.Parameters.AddWithValue("@spec", TxtSpecialization.Text.Trim)
                     cmd.Parameters.AddWithValue("@avail", cmbAvailability.Text)
                     cmd.ExecuteNonQuery()
@@ -182,7 +181,6 @@ Public Class AdminDBDentists
             cmbAvailability.Text = row.Cells("Availability").Value.ToString()
 
             TxtPassword.Clear()
-            TxtConfirmPassword.Clear()
             SetButtonState(True)
         End If
     End Sub
@@ -263,24 +261,39 @@ Public Class AdminDBDentists
             Return False
         End If
 
-        ' --- 3. PHONE NUMBER VALIDATION (PH 11-Digit Format) ---
+        ' --- 3. PHONE NUMBER VALIDATION (OPTIONAL)(PH 11-Digit Format) ---
         Dim phone As String = TxtPhone.Text.Trim()
-        If phone.Length <> 11 OrElse Not phone.All(AddressOf Char.IsDigit) Then
-            MessageBox.Show("Phone Number must be exactly 11 digits.")
-            TxtPhone.Focus()
-            Return False
-        ElseIf Not phone.StartsWith("09") Then
-            MessageBox.Show("Invalid Phone Number. Must start with '09'.")
-            TxtPhone.Focus()
-            Return False
-        End If
 
-        ' --- 4. EMAIL VALIDATION ---
+        If Not String.IsNullOrWhiteSpace(phone) Then 'Optional field, only validate if not empty
+            If phone.Length <> 11 OrElse Not phone.All(AddressOf Char.IsDigit) Then
+                MessageBox.Show("Phone Number must be exactly 11 digits.")
+                TxtPhone.Focus()
+                Return False
+            ElseIf Not phone.StartsWith("09") Then
+                MessageBox.Show("Invalid Phone Number. Must start with '09'.")
+                TxtPhone.Focus()
+                Return False
+            End If
+        End If
+        ' --- 4. EMAIL VALIDATION (OPTIONAL) ---
         Dim email As String = TxtEmail.Text.Trim()
-        If Not email.ToLower().EndsWith("@gmail.com") OrElse email.Length < 11 Then
-            MessageBox.Show("Email must be a valid @gmail.com address.")
-            TxtEmail.Focus()
-            Return False
+        Dim emailPattern As String = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+
+        If Not String.IsNullOrWhiteSpace(email) Then
+            If Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) OrElse email.Contains("..") Then
+                MessageBox.Show("Please enter a valid email address (e.g., name@example.com).", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                TxtEmail.Focus()
+                Return False
+            End If
+
+            Dim atIndex As Integer = email.IndexOf("@"c)
+            Dim localPart As String = email.Substring(0, atIndex)
+
+            If localPart.Length < 1 OrElse Not Char.IsLetterOrDigit(localPart(0)) Then
+                MessageBox.Show("Email username must start with a letter or digit.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                TxtEmail.Focus()
+                Return False
+            End If
         End If
 
         ' --- 5. PASSWORD VALIDATION ---
@@ -291,16 +304,36 @@ Public Class AdminDBDentists
                 TxtPassword.Focus()
                 Return False
             End If
-            If TxtPassword.Text <> TxtConfirmPassword.Text Then
-                MessageBox.Show("Passwords do not match.")
-                TxtConfirmPassword.Focus()
-                Return False
-            End If
+
         End If
 
         Return True
     End Function
+    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
+        Using con As New SqlConnection(connString)
+            con.Open()
 
+            Dim query As String
+
+            ' If email is empty → only check username
+            If String.IsNullOrWhiteSpace(email) Then
+                query = "SELECT COUNT(*) FROM Users WHERE Username = @un AND UserID <> @id"
+            Else
+                query = "SELECT COUNT(*) FROM Users WHERE (Email = @em OR Username = @un) AND UserID <> @id"
+            End If
+
+            Using cmd As New SqlCommand(query, con)
+                cmd.Parameters.AddWithValue("@un", username.Trim())
+                cmd.Parameters.AddWithValue("@id", userID)
+
+                If Not String.IsNullOrWhiteSpace(email) Then
+                    cmd.Parameters.AddWithValue("@em", email.Trim())
+                End If
+
+                Return CInt(cmd.ExecuteScalar()) > 0
+            End Using
+        End Using
+    End Function
 #End Region
 
 #Region "KeyPress Restrictions"
@@ -386,7 +419,6 @@ Public Class AdminDBDentists
 
     Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
         TxtPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
-        TxtConfirmPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
     End Sub
 
 #End Region
