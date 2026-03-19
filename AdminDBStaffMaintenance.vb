@@ -35,11 +35,9 @@ Public Class AdminDBStaffMaintenance
         TxtUsername.Clear()
         TxtPhone.Clear()
         TxtPassword.Clear()
-        TxtConfirmPassword.Clear()
         TxtEmail.Clear()
         chkShowPassword.Checked = False
         TxtPassword.UseSystemPasswordChar = True
-        TxtConfirmPassword.UseSystemPasswordChar = True
         DgvStaffs.ClearSelection()
 
         SetButtonState(False)
@@ -257,7 +255,6 @@ Public Class AdminDBStaffMaintenance
             TxtEmail.Text = row.Cells("Email").Value.ToString()
 
             TxtPassword.Clear()
-            TxtConfirmPassword.Clear()
             SetButtonState(True)
         End If
     End Sub
@@ -312,27 +309,26 @@ Public Class AdminDBStaffMaintenance
 
         ' 3. PH Phone Format (11 digits, starts with 09)
         Dim phone As String = TxtPhone.Text.Trim()
-        If phone.Length <> 11 OrElse Not phone.StartsWith("09") Then
-            MessageBox.Show("Phone Number must be exactly 11 digits and start with '09'.")
-            TxtPhone.Focus() : Return False
+        If Not String.IsNullOrWhiteSpace(phone) Then
+            If phone.Length <> 11 OrElse Not phone.StartsWith("09") Then
+                MessageBox.Show("Phone Number must be exactly 11 digits and start with '09'.")
+                TxtPhone.Focus() : Return False
+            End If
         End If
-
-        ' 4. IMPROVED: Flexible Email Format (No longer Gmail-only)
-        Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-        If Not Regex.IsMatch(TxtEmail.Text.Trim(), emailPattern) Then
-            MessageBox.Show("Please enter a valid email address.")
-            TxtEmail.Focus() : Return False
+        ' 4. Email (optional – only validate if provided)
+        Dim email As String = TxtEmail.Text.Trim()
+        If Not String.IsNullOrWhiteSpace(email) Then
+            Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            If Not Regex.IsMatch(TxtEmail.Text.Trim(), emailPattern) Then
+                MessageBox.Show("Please enter a valid email address.")
+                TxtEmail.Focus() : Return False
+            End If
         End If
-
         ' 5. Password Check
         If staffID = 0 OrElse TxtPassword.Text.Length > 0 Then
             If TxtPassword.Text.Length < 8 OrElse Not TxtPassword.Text.Any(AddressOf Char.IsUpper) Then
                 MessageBox.Show("Password must be at least 8 characters with one uppercase letter.")
                 TxtPassword.Focus() : Return False
-            End If
-            If TxtPassword.Text <> TxtConfirmPassword.Text Then
-                MessageBox.Show("Passwords do not match.")
-                TxtConfirmPassword.Focus() : Return False
             End If
         End If
 
@@ -401,7 +397,6 @@ Public Class AdminDBStaffMaintenance
 
     Private Sub ChkShowPassword_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowPassword.CheckedChanged
         TxtPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
-        TxtConfirmPassword.UseSystemPasswordChar = Not chkShowPassword.Checked
     End Sub
 
 #End Region
