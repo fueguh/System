@@ -30,11 +30,12 @@ Partial Class StaffDashboard
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.PatientManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.AppointmentToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ClinicSettingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.InventoryManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ItemManagementToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.StockTrackingToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ReportsAnalyticToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BillingAssistance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PaymentHistory = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2Panel4 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
@@ -47,8 +48,6 @@ Partial Class StaffDashboard
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
         Me.label5 = New System.Windows.Forms.Label()
         Me.lblTotalPatients = New System.Windows.Forms.Label()
-        Me.BillingAssistance = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PaymentHistory = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.LogoutPictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -111,7 +110,7 @@ Partial Class StaffDashboard
         Me.lblClinicName.Name = "lblClinicName"
         Me.lblClinicName.Size = New System.Drawing.Size(1342, 123)
         Me.lblClinicName.TabIndex = 21
-        Me.lblClinicName.Text = "Dental Clinic System"
+        Me.lblClinicName.Text = "ARGS Healthy Smiles"
         Me.lblClinicName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
         'MenuStrip1
@@ -121,7 +120,7 @@ Partial Class StaffDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.ClinicSettingToolStripMenuItem, Me.InventoryManagementToolStripMenuItem, Me.BillingAssistance, Me.PaymentHistory})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PatientManagementToolStripMenuItem1, Me.AppointmentToolStripMenuItem2, Me.InventoryManagementToolStripMenuItem, Me.BillingAssistance, Me.PaymentHistory})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 124)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -143,13 +142,6 @@ Partial Class StaffDashboard
         Me.AppointmentToolStripMenuItem2.Name = "AppointmentToolStripMenuItem2"
         Me.AppointmentToolStripMenuItem2.Size = New System.Drawing.Size(217, 41)
         Me.AppointmentToolStripMenuItem2.Text = "Appointment"
-        '
-        'ClinicSettingToolStripMenuItem
-        '
-        Me.ClinicSettingToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClinicSettingToolStripMenuItem.Name = "ClinicSettingToolStripMenuItem"
-        Me.ClinicSettingToolStripMenuItem.Size = New System.Drawing.Size(226, 41)
-        Me.ClinicSettingToolStripMenuItem.Text = "Clinic Setting"
         '
         'InventoryManagementToolStripMenuItem
         '
@@ -182,6 +174,20 @@ Partial Class StaffDashboard
         Me.ReportsAnalyticToolStripMenuItem2.Name = "ReportsAnalyticToolStripMenuItem2"
         Me.ReportsAnalyticToolStripMenuItem2.Size = New System.Drawing.Size(483, 42)
         Me.ReportsAnalyticToolStripMenuItem2.Text = "Reports and Analytics"
+        '
+        'BillingAssistance
+        '
+        Me.BillingAssistance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.BillingAssistance.Name = "BillingAssistance"
+        Me.BillingAssistance.Size = New System.Drawing.Size(153, 41)
+        Me.BillingAssistance.Text = "Payment"
+        '
+        'PaymentHistory
+        '
+        Me.PaymentHistory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.PaymentHistory.Name = "PaymentHistory"
+        Me.PaymentHistory.Size = New System.Drawing.Size(244, 41)
+        Me.PaymentHistory.Text = "Billing History"
         '
         'Guna2Panel4
         '
@@ -312,20 +318,6 @@ Partial Class StaffDashboard
         Me.lblTotalPatients.Text = "0"
         Me.lblTotalPatients.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'BillingAssistance
-        '
-        Me.BillingAssistance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.BillingAssistance.Name = "BillingAssistance"
-        Me.BillingAssistance.Size = New System.Drawing.Size(153, 41)
-        Me.BillingAssistance.Text = "Payment"
-        '
-        'PaymentHistory
-        '
-        Me.PaymentHistory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.PaymentHistory.Name = "PaymentHistory"
-        Me.PaymentHistory.Size = New System.Drawing.Size(244, 41)
-        Me.PaymentHistory.Text = "Billing History"
-        '
         'StaffDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -387,7 +379,6 @@ Partial Class StaffDashboard
     Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents label5 As Label
     Friend WithEvents lblTotalPatients As Label
-    Friend WithEvents ClinicSettingToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents InventoryManagementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ItemManagementToolStripMenuItem1 As ToolStripMenuItem
     Friend WithEvents StockTrackingToolStripMenuItem1 As ToolStripMenuItem
