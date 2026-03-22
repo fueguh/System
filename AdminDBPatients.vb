@@ -36,15 +36,13 @@ Public Class AdminDBPatients
     Private Sub Clearform()
         selectedPatientID = 0
         txtFullName.Clear()
-        txtBirthDate.Clear() ' Changed from dtpBirthDate.Value = DateTime.Now
+        DtpBirthDate.Value = DateTime.Today          ' ← Updated for DateTimePicker
         txtContact.Clear()
         txtEmail.Clear()
         txtAddress.Clear()
         txtAllergy.Clear()
         Guna2TextBox1.Clear() ' This is your search box
-
         DGVPatients.ClearSelection()
-
         ' Reset Button States
         BTNAdd.Enabled = True
         BTNUpdate.Enabled = False
@@ -70,9 +68,13 @@ Public Class AdminDBPatients
 
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@name", txtFullName.Text)
-                cmd.Parameters.AddWithValue("@birth", Date.ParseExact(txtBirthDate.Text, "dd/MM/yyyy", Nothing))
+                cmd.Parameters.AddWithValue("@birth", DtpBirthDate.Value)   ' ← Updated (no ParseExact needed)
                 cmd.Parameters.AddWithValue("@contact", txtContact.Text)
-                cmd.Parameters.AddWithValue("@email", txtEmail.Text)
+                If txtEmail.Text.Trim = "" Then
+                    cmd.Parameters.AddWithValue("@email", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@email", txtEmail.Text)
+                End If
                 cmd.Parameters.AddWithValue("@address", txtAddress.Text)
                 ' New allergy note parameter (optional)
                 If txtAllergy.Text.Trim = "" Then
@@ -117,9 +119,13 @@ Public Class AdminDBPatients
             Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@id", selectedPatientID)
                 cmd.Parameters.AddWithValue("@name", txtFullName.Text)
-                cmd.Parameters.AddWithValue("@birth", Date.ParseExact(txtBirthDate.Text, "dd/MM/yyyy", Nothing))
+                cmd.Parameters.AddWithValue("@birth", DtpBirthDate.Value)   ' ← Updated
                 cmd.Parameters.AddWithValue("@contact", txtContact.Text)
-                cmd.Parameters.AddWithValue("@email", txtEmail.Text)
+                If txtEmail.Text.Trim = "" Then
+                    cmd.Parameters.AddWithValue("@email", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@email", txtEmail.Text)
+                End If
                 cmd.Parameters.AddWithValue("@address", txtAddress.Text)
                 ' New allergy note parameter (optional)
                 If txtAllergy.Text.Trim = "" Then
@@ -184,7 +190,7 @@ Public Class AdminDBPatients
 
         txtFullName.Text = row.Cells("FullName").Value.ToString()
         Dim bDate As Date = Convert.ToDateTime(row.Cells("BirthDate").Value)
-        txtBirthDate.Text = bDate.ToString("ddMMyyyy")
+        DtpBirthDate.Value = bDate                     ' ← Updated (no more manual formatting)
         txtContact.Text = row.Cells("ContactNumber").Value.ToString()
         txtEmail.Text = row.Cells("Email").Value.ToString()
         txtAddress.Text = row.Cells("Address").Value.ToString()
@@ -195,10 +201,7 @@ Public Class AdminDBPatients
         BTNUpdate.Enabled = True
         BTNDelete.Enabled = True
     End Sub
-    Private Sub txtBirthDate_Enter(sender As Object, e As EventArgs) Handles txtBirthDate.Enter
-        ' Moves cursor to the start so they don't type in the middle
-        BeginInvoke(Sub() txtBirthDate.Select(0, 0))
-    End Sub
+
     Private Sub Guna2TextBox1_TextChanged(sender As Object, e As EventArgs) Handles Guna2TextBox1.TextChanged
         ' Use your existing query but add the IsActive filter so deactivated patients don't reappear
         Dim query As String = "SELECT PatientID, FullName, BirthDate, ContactNumber, Email, Address, DateRegistered, NoteAllergy " &
@@ -229,7 +232,7 @@ Public Class AdminDBPatients
             Return False
         End If
 
-        ' 2. Duplicate Name Check (Warning only, not a hard block)
+        ' 2. Duplicate Name Check (Warning only)
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim nameCheckQuery As String = "SELECT COUNT(*) FROM Patients WHERE FullName = @name AND IsActive = 1 AND PatientID <> @id"
@@ -240,7 +243,7 @@ Public Class AdminDBPatients
                 Dim nameCount As Integer = CInt(cmdName.ExecuteScalar())
                 If nameCount > 0 Then
                     Dim result As DialogResult = MessageBox.Show("A patient named '" & fullName & "' is already registered. Is this a different person?",
-                    "Potential Duplicate Name", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                "Potential Duplicate Name", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                     If result = DialogResult.No Then
                         txtFullName.Focus()
@@ -249,68 +252,69 @@ Public Class AdminDBPatients
                 End If
             End Using
 
-            ' 3. Email: Format and Duplicate Check (Hard Block)
+            ' === 3. Email: NOW OPTIONAL ===
             Dim email As String = txtEmail.Text.Trim()
-            Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            If Not String.IsNullOrWhiteSpace(email) Then
+                Dim emailPattern As String = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
-            If String.IsNullOrWhiteSpace(email) OrElse Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
-                MessageBox.Show("Please enter a valid email address.")
-                txtEmail.Focus()
-                Return False
-            End If
-
-            Dim emailCheckQuery As String = "SELECT COUNT(*) FROM Patients WHERE Email=@em AND PatientID <> @id"
-            Using cmdEmail As New SqlCommand(emailCheckQuery, con)
-                cmdEmail.Parameters.AddWithValue("@em", email)
-                cmdEmail.Parameters.AddWithValue("@id", patientID)
-                If CInt(cmdEmail.ExecuteScalar()) > 0 Then
-                    MessageBox.Show("This email is already registered to another patient.")
+                If Not System.Text.RegularExpressions.Regex.IsMatch(email, emailPattern) Then
+                    MessageBox.Show("Please enter a valid email address (or leave it blank).")
                     txtEmail.Focus()
                     Return False
                 End If
-            End Using
-        End Using
 
-        ' 4. Birth Date Validation (PH Standard: DD/MM/YYYY)
-        Dim tempDate As Date
-        If Not Date.TryParseExact(txtBirthDate.Text, "dd/MM/yyyy",
-                      System.Globalization.CultureInfo.InvariantCulture,
-                      System.Globalization.DateTimeStyles.None, tempDate) Then
-            MessageBox.Show("Please enter a valid Birth Date in DD/MM/YYYY format.")
-            txtBirthDate.Focus()
-            Return False
-        End If
+                ' Duplicate email check (only if email was entered)
+                Dim emailCheckQuery As String = "
+    SELECT COUNT(*) 
+    FROM Patients 
+    WHERE Email = @em 
+    AND IsActive = 1
+    AND PatientID <> @id"
+                Using cmdEmail As New SqlCommand(emailCheckQuery, con)
+                    cmdEmail.Parameters.AddWithValue("@em", email)
+                    cmdEmail.Parameters.AddWithValue("@id", patientID)
+                    If CInt(cmdEmail.ExecuteScalar()) > 0 Then
+                        MessageBox.Show("This email is already registered to another patient.")
+                        txtEmail.Focus()
+                        Return False
+                    End If
+                End Using
+            End If
 
-        If tempDate > DateTime.Now Then
-            MessageBox.Show("Birth date cannot be in the future.")
-            txtBirthDate.Focus()
-            Return False
-        End If
-
-        ' 5. Address Validation
-        If String.IsNullOrWhiteSpace(txtAddress.Text) OrElse
-       Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse
-       " -@.,/".Contains(c)) Then
-            MessageBox.Show("Address contains invalid characters.")
-            txtAddress.Focus()
-            Return False
-        End If
-
-        ' 6. Allergy Note (Optional)
-        If Not String.IsNullOrWhiteSpace(txtAllergy.Text) Then
-            If Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-                MessageBox.Show("Allergy note must contain letters only.")
-                txtAllergy.Focus()
+            ' 4. Birth Date Validation (using DateTimePicker from previous update)
+            Dim birthDate As Date = DtpBirthDate.Value
+            If birthDate > DateTime.Now Then
+                MessageBox.Show("Birth date cannot be in the future.")
+                DtpBirthDate.Focus()
                 Return False
             End If
-        End If
 
-        ' 7. Contact Number Validation
-        If String.IsNullOrWhiteSpace(txtContact.Text) OrElse Not txtContact.Text.All(Function(c) Char.IsDigit(c)) Then
-            MessageBox.Show("Contact Number must contain digits only.")
-            txtContact.Focus()
-            Return False
-        End If
+            ' 5. Address Validation
+            If String.IsNullOrWhiteSpace(txtAddress.Text) OrElse
+           Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse
+           " -@.,/".Contains(c)) Then
+                MessageBox.Show("Address contains invalid characters.")
+                txtAddress.Focus()
+                Return False
+            End If
+
+            ' 6. Allergy Note (Optional)
+            If Not String.IsNullOrWhiteSpace(txtAllergy.Text) Then
+                If Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
+                    MessageBox.Show("Allergy note must contain letters only.")
+                    txtAllergy.Focus()
+                    Return False
+                End If
+            End If
+
+            ' 7. Contact Number Validation
+            If String.IsNullOrWhiteSpace(txtContact.Text) OrElse Not txtContact.Text.All(Function(c) Char.IsDigit(c)) Then
+                MessageBox.Show("Contact Number must contain digits only.")
+                txtContact.Focus()
+                Return False
+            End If
+
+        End Using
 
         Return True
     End Function
