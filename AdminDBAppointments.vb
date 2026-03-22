@@ -631,7 +631,7 @@ Public Class AdminDBAppointments
                     cmbStartTime.Items.Add(DateTime.Today.Add(current).ToString("hh:mm tt"))
                 End If
 
-                current = current.Add(TimeSpan.FromMinutes(30))
+                current = current.Add(TimeSpan.FromMinutes(15))
             End While
         End Using
     End Sub
