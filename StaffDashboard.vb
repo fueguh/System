@@ -69,11 +69,6 @@ Public Class StaffDashboard
         End Using
     End Sub
 
-    Private Sub ClinicSettingToolStripMenuItem_Click(sender As Object, e As EventArgs) 
-        ClinicSettings.Show()
-        Me.Hide()
-    End Sub
-
     Private Sub ItemManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ItemManagementToolStripMenuItem1.Click
         AdminDBItemManagement.Show()
         Me.Hide()

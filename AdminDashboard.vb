@@ -55,17 +55,6 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub AdminDashboard_Activated(sender As Object, e As EventArgs) Handles MyBase.Activated
-        LoadDashboardStats() ' runs only when activated
-
-        ' Change clinic name based on ClinicInfo table
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim cmd As New SqlCommand("SELECT ClinicName FROM ClinicInfo WHERE ClinicID=1", con)
-            Dim clinicName As String = TryCast(cmd.ExecuteScalar(), String)
-            lblClinicName.Text = If(clinicName, "Dental Clinic Management System")
-        End Using
-    End Sub
     Public Sub LoadDashboardStats()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
@@ -107,12 +96,6 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub ClinicSettingsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClinicSettingsToolStripMenuItem.Click
-        'show clinic settings form
-        ClinicSettings.Show()
-        Me.Hide()
-    End Sub
-
     Private Sub LogoutPictureBox1_Click(sender As Object, e As EventArgs)
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If result = DialogResult.Yes Then
@@ -146,18 +129,6 @@ Public Class AdminDashboard
             SystemSession.PerformLogout(Me.Name)
             Me.Close()
         End If
-    End Sub
-
-    Private Sub LblClinicName_Click(sender As Object, e As EventArgs) Handles lblClinicName.Click
-
-    End Sub
-
-    Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem2.Click
-
-    End Sub
-
-    Private Sub LblTotalPatients_Click(sender As Object, e As EventArgs) Handles lblTotalPatients.Click
-
     End Sub
 
     Private Sub SupplierMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SupplierMaintenanceToolStripMenuItem.Click
