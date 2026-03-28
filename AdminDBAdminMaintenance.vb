@@ -71,8 +71,9 @@ Public Class AdminDBAdminMaintenance
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
 
         ' Validate fields first
+        If Not ValidateUsername() Then Exit Sub
         If Not ValidatePassword() Then Exit Sub
-
+        If Not ValidateFullName() Then Exit Sub
         ' Check duplicates
         If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim()) Then
             MessageBox.Show("Email or Username already exists. Please choose another.")
@@ -262,6 +263,47 @@ Public Class AdminDBAdminMaintenance
 
 
     '========================================================= VALIDATIONS ======================================================
+    Private Function ValidateFullName() As Boolean
+        Dim fullName As String = TxtName.Text.Trim()
+
+        If String.IsNullOrWhiteSpace(fullName) Then
+            MessageBox.Show("Full Name is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TxtName.Focus()
+            Return False
+        End If
+
+        If fullName.Length < 2 Then
+            MessageBox.Show("Full Name must be at least 2 characters long.")
+            TxtName.Focus()
+            Return False
+        End If
+
+        Return True
+    End Function
+    Private Function ValidateUsername() As Boolean
+        Dim username As String = TxtUsername.Text.Trim()
+
+        If String.IsNullOrWhiteSpace(username) Then
+            MessageBox.Show("Username is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            TxtUsername.Focus()
+            Return False
+        End If
+
+        If username.Length < 3 Then
+            MessageBox.Show("Username must be at least 3 characters long.")
+            TxtUsername.Focus()
+            Return False
+        End If
+
+        ' Optional: Check for invalid characters (already somewhat handled by KeyPress, but good to double-check)
+        If username.Contains(" ") Then
+            MessageBox.Show("Username cannot contain spaces.")
+            TxtUsername.Focus()
+            Return False
+        End If
+
+        Return True
+    End Function
     Private Function ValidatePassword() As Boolean
         Dim password As String = TxtPassword.Text.Trim()
 
@@ -322,11 +364,14 @@ Public Class AdminDBAdminMaintenance
 
 
     Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional userID As Integer = 0) As Boolean
+        ' Early exit if username is missing (should never reach here due to validation, but safety)
+        If String.IsNullOrWhiteSpace(username) Then
+            Return True
+        End If
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            ' Path 1: If email is empty, we only care if the Username is taken.
-            ' Path 2: If email is provided, we check if either the Email OR Username is taken.
             Dim query As String
             If String.IsNullOrWhiteSpace(email) Then
                 query = "SELECT COUNT(*) FROM Users WHERE Username = @un AND UserID <> @id"
@@ -335,16 +380,13 @@ Public Class AdminDBAdminMaintenance
             End If
 
             Using cmd As New SqlCommand(query, con)
-                ' These two are always needed regardless of which path we took
-                cmd.Parameters.AddWithValue("@un", username)
+                cmd.Parameters.AddWithValue("@un", username.Trim())
                 cmd.Parameters.AddWithValue("@id", userID)
 
-                ' Only add @em if we are on Path 2 (Email is not empty)
                 If Not String.IsNullOrWhiteSpace(email) Then
-                    cmd.Parameters.AddWithValue("@em", email)
+                    cmd.Parameters.AddWithValue("@em", email.Trim())
                 End If
 
-                ' Get the result using your preferred step-by-step logic
                 Dim count As Integer = CInt(cmd.ExecuteScalar())
                 Return count > 0
             End Using
