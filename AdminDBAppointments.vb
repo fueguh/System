@@ -534,7 +534,7 @@ Public Class AdminDBAppointments
         For i As Integer = 0 To clbServices.Items.Count - 1
             clbServices.SetItemChecked(i, False)
         Next
-
+        DGVAppointments.ClearSelection()
         selectedAppointmentID = 0
         selectedPatientID = 0
         selectedEndTime = TimeSpan.Zero

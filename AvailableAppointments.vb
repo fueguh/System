@@ -82,7 +82,7 @@ Public Class AvailableAppointments
 
         ' --- THE FIX ---
         ' 1. Create form with NO arguments
-        Dim frm As New TreatmentRecords()
+        Dim frm As New AdminDBTreatmentRecords()
 
         ' 2. Fill the public variables manually
         frm.PassedAppointmentID = apptID

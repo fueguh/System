@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class TreatmentRecords
+Partial Class AdminDBTreatmentRecords
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,7 +22,7 @@ Partial Class TreatmentRecords
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(TreatmentRecords))
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBTreatmentRecords))
         Me.TxtTreatmentNotes = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtPrescriptions = New Guna.UI2.WinForms.Guna2TextBox()
         Me.TxtProceduresDone = New Guna.UI2.WinForms.Guna2TextBox()

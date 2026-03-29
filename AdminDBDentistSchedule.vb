@@ -1,6 +1,6 @@
 ﻿Imports System.Data.SqlClient
 
-Public Class FrmCustomSchedule
+Public Class AdminDBDentistSchedule
     Public Property DentistID As Integer
     Public Property ScheduleSaved As Boolean = False
 

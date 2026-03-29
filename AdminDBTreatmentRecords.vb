@@ -1,6 +1,6 @@
 ﻿Imports System.Data.SqlClient
 
-Public Class TreatmentRecords
+Public Class AdminDBTreatmentRecords
     ' Variables passed from the Appointments List
     Public PassedAppointmentID As Integer = 0
     Public PassedPatientID As Integer = 0
