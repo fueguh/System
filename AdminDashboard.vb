@@ -178,4 +178,9 @@ Public Class AdminDashboard
         AdminDBPatientHistory.Show()
         Me.Hide()
     End Sub
+
+    Private Sub ToolStripMenuItemFollowup_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItemFollowup.Click
+        AdminDBFollowUps.Show()
+        Me.Hide()
+    End Sub
 End Class

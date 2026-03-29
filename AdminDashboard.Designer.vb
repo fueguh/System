@@ -45,6 +45,7 @@ Partial Class AdminDashboard
         Me.ReportsAnalyticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PaymentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PaymentHistory = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuPatientHistory = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
@@ -61,7 +62,7 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
-        Me.ToolStripMenuPatientHistory = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItemFollowup = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -80,7 +81,7 @@ Partial Class AdminDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.TodaysAppointmentToolStripMenuItem, Me.ToolStripMenuItem1, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem3, Me.PaymentToolStripMenuItem, Me.PaymentHistory, Me.ToolStripMenuPatientHistory})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.TodaysAppointmentToolStripMenuItem, Me.ToolStripMenuItem1, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem3, Me.PaymentToolStripMenuItem, Me.PaymentHistory, Me.ToolStripMenuPatientHistory, Me.ToolStripMenuItemFollowup})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -250,6 +251,13 @@ Partial Class AdminDashboard
         Me.PaymentHistory.Name = "PaymentHistory"
         Me.PaymentHistory.Size = New System.Drawing.Size(265, 44)
         Me.PaymentHistory.Text = "Payment History"
+        '
+        'ToolStripMenuPatientHistory
+        '
+        Me.ToolStripMenuPatientHistory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuPatientHistory.Name = "ToolStripMenuPatientHistory"
+        Me.ToolStripMenuPatientHistory.Size = New System.Drawing.Size(240, 44)
+        Me.ToolStripMenuPatientHistory.Text = "Patient History"
         '
         'Guna2CustomGradientPanel1
         '
@@ -434,12 +442,12 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
-        'ToolStripMenuPatientHistory
+        'ToolStripMenuItemFollowup
         '
-        Me.ToolStripMenuPatientHistory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuPatientHistory.Name = "ToolStripMenuPatientHistory"
-        Me.ToolStripMenuPatientHistory.Size = New System.Drawing.Size(240, 44)
-        Me.ToolStripMenuPatientHistory.Text = "Patient History"
+        Me.ToolStripMenuItemFollowup.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItemFollowup.Name = "ToolStripMenuItemFollowup"
+        Me.ToolStripMenuItemFollowup.Size = New System.Drawing.Size(172, 44)
+        Me.ToolStripMenuItemFollowup.Text = "Follow-up"
         '
         'AdminDashboard
         '
@@ -512,4 +520,5 @@ Partial Class AdminDashboard
     Friend WithEvents PaymentToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents PaymentHistory As ToolStripMenuItem
     Friend WithEvents ToolStripMenuPatientHistory As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItemFollowup As ToolStripMenuItem
 End Class
