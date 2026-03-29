@@ -9,7 +9,6 @@ Public Class AdminDBPatientHistory
     Private selectedAppointmentID As Integer = 0
 
     Private isLoading As Boolean = False
-
     Private dtAllPatients As DataTable
 
 #Region "FORM LOAD"
@@ -18,10 +17,16 @@ Public Class AdminDBPatientHistory
         Try
             LoadPatients()
 
-            SafeResetUI()
+            txtSearchPatient.Clear()
+            txtSearchPatient.Focus()
+
+            Try
+                cboPatients.DropDownStyle = ComboBoxStyle.DropDownList
+            Catch
+            End Try
 
         Catch ex As Exception
-            MessageBox.Show("Error loading form: " & ex.Message)
+            MessageBox.Show("Error loading form: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
@@ -55,7 +60,7 @@ Public Class AdminDBPatientHistory
             cboPatients.SelectedIndex = -1
 
         Catch ex As Exception
-            MessageBox.Show("Error loading patients: " & ex.Message)
+            MessageBox.Show("Error loading patients: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Finally
             isLoading = False
         End Try
@@ -64,42 +69,43 @@ Public Class AdminDBPatientHistory
 
 #End Region
 
-#Region "SEARCH (FIXED)"
+#Region "PATIENT SEARCH"
 
     Private Sub txtSearchPatient_TextChanged(sender As Object, e As EventArgs) Handles txtSearchPatient.TextChanged
-        If isLoading Or dtAllPatients Is Nothing Then Exit Sub
+
+        If isLoading OrElse dtAllPatients Is Nothing Then Exit Sub
 
         isLoading = True
 
-        Dim dv As New DataView(dtAllPatients)
+        Try
+            Dim dv As New DataView(dtAllPatients)
 
-        Dim searchText As String = txtSearchPatient.Text.Trim()
+            Dim searchText As String = txtSearchPatient.Text.Trim()
 
-        If searchText <> "" Then
-            dv.RowFilter = "FullName LIKE '%" & searchText.Replace("'", "''") & "%'"
-        Else
-            dv.RowFilter = ""
-        End If
+            If searchText <> "" Then
+                dv.RowFilter = "FullName LIKE '%" & searchText.Replace("'", "''") & "%'"
+            Else
+                dv.RowFilter = ""
+            End If
 
-        ' IMPORTANT FIX:
-        ' prevent SelectedIndexChanged firing while rebinding
-        cboPatients.DataSource = Nothing
+            cboPatients.DataSource = Nothing
+            cboPatients.DataSource = dv
+            cboPatients.DisplayMember = "FullName"
+            cboPatients.ValueMember = "PatientID"
 
-        cboPatients.DataSource = dv
-        cboPatients.DisplayMember = "FullName"
-        cboPatients.ValueMember = "PatientID"
+            cboPatients.SelectedIndex = -1
 
-        cboPatients.SelectedIndex = -1
+        Catch ex As Exception
+            MessageBox.Show("Search error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        Finally
+            isLoading = False
+        End Try
 
-        ' DO NOT clear again inside reset loop (prevents double behavior)
-        ClearGridsAndTreatmentOnly()
-
-        isLoading = False
     End Sub
 
 #End Region
 
-#Region "SELECTION (FIXED ANTI-LOOP)"
+#Region "PATIENT SELECTION"
 
     Private Sub cboPatients_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboPatients.SelectedIndexChanged
 
@@ -107,33 +113,29 @@ Public Class AdminDBPatientHistory
         If cboPatients.SelectedValue Is Nothing Then Exit Sub
         If Not IsNumeric(cboPatients.SelectedValue) Then Exit Sub
 
-        Dim newID As Integer = Convert.ToInt32(cboPatients.SelectedValue)
+        Dim newPatientID As Integer = Convert.ToInt32(cboPatients.SelectedValue)
 
-        If newID <= 0 Then Exit Sub
+        If newPatientID <= 0 Then Exit Sub
+        If newPatientID = selectedPatientID Then Exit Sub
 
-        ' PREVENT RELOAD LOOP
-        If newID = selectedPatientID Then Exit Sub
+        selectedPatientID = newPatientID
 
-        selectedPatientID = newID
-
+        ResetAllSelections()
         LoadPatientData(selectedPatientID)
 
     End Sub
 
 #End Region
 
-#Region "MASTER LOAD"
+#Region "MASTER LOADER"
 
     Private Sub LoadPatientData(patientID As Integer)
-
         Try
             LoadAppointments(patientID)
-            ClearGridsAndTreatmentOnly()
-
+            ClearTreatmentFields()
         Catch ex As Exception
-            MessageBox.Show("Error loading patient data: " & ex.Message)
+            MessageBox.Show("Error loading patient data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
     End Sub
 
 #End Region
@@ -162,11 +164,39 @@ Public Class AdminDBPatientHistory
 
             dgvAppointments.DataSource = dt
 
+            FormatAppointmentsGrid()
+
             dgvAppointments.ClearSelection()
+            dgvAppointments.CurrentCell = Nothing
 
         Catch ex As Exception
-            MessageBox.Show("Error loading appointments: " & ex.Message)
+            MessageBox.Show("Error loading appointments: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
+
+    End Sub
+
+    Private Sub FormatAppointmentsGrid()
+
+        If dgvAppointments.Columns.Count = 0 Then Exit Sub
+
+        With dgvAppointments
+            If .Columns.Contains("AppointmentID") Then
+                .Columns("AppointmentID").Visible = False
+            End If
+
+            If .Columns.Contains("Date") Then
+                .Columns("Date").HeaderText = "Appointment Date"
+                .Columns("Date").DefaultCellStyle.Format = "dd MMM yyyy hh:mm tt"
+            End If
+
+            If .Columns.Contains("Status") Then
+                .Columns("Status").HeaderText = "Status"
+            End If
+
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .ReadOnly = True
+            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        End With
 
     End Sub
 
@@ -187,7 +217,7 @@ Public Class AdminDBPatientHistory
 
 #End Region
 
-#Region "TREATMENT + SERVICES"
+#Region "TREATMENT"
 
     Private Sub LoadTreatment(appointmentID As Integer)
 
@@ -204,25 +234,29 @@ Public Class AdminDBPatientHistory
 
                     conn.Open()
 
-                    Using r = cmd.ExecuteReader()
-
-                        If r.Read() Then
-                            txtNotes.Text = r("TreatmentNotes").ToString()
-                            txtPrescriptions.Text = r("Prescriptions").ToString()
-                            txtProcedures.Text = r("ProceduresDone").ToString()
+                    Using reader = cmd.ExecuteReader()
+                        If reader.Read() Then
+                            txtNotes.Text = reader("TreatmentNotes").ToString()
+                            txtPrescriptions.Text = reader("Prescriptions").ToString()
+                            txtProcedures.Text = reader("ProceduresDone").ToString()
                         Else
-                            ClearGridsAndTreatmentOnly()
+                            ClearTreatmentFields()
                         End If
-
                     End Using
+
                 End Using
             End Using
 
         Catch ex As Exception
-            ClearGridsAndTreatmentOnly()
+            MessageBox.Show("Error loading treatment: " & ex.Message)
+            ClearTreatmentFields()
         End Try
 
     End Sub
+
+#End Region
+
+#Region "SERVICES"
 
     Private Sub LoadServices(appointmentID As Integer)
 
@@ -248,54 +282,92 @@ Public Class AdminDBPatientHistory
 
             dgvServices.DataSource = dt
 
+            FormatServicesGrid()
+
+            dgvServices.ClearSelection()
+            dgvServices.CurrentCell = Nothing
+
         Catch ex As Exception
+            MessageBox.Show("Error loading services: " & ex.Message)
             dgvServices.DataSource = Nothing
         End Try
 
     End Sub
 
-#End Region
+    Private Sub FormatServicesGrid()
 
-#Region "CLEAR (FIXED PROPER RESET)"
+        If dgvServices.Columns.Count = 0 Then Exit Sub
 
-    Private Sub SafeResetUI()
+        With dgvServices
 
-        isLoading = True
+            If .Columns.Contains("ServiceName") Then
+                .Columns("ServiceName").HeaderText = "Service"
+            End If
 
-        selectedPatientID = 0
-        selectedAppointmentID = 0
+            If .Columns.Contains("Price") Then
+                .Columns("Price").HeaderText = "Price"
+                .Columns("Price").DefaultCellStyle.Format = "C2"
+                .Columns("Price").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End If
 
-        txtSearchPatient.Clear() ' ✅ FIX: ALWAYS CLEAR SEARCH BOX
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .ReadOnly = True
 
-        cboPatients.DataSource = Nothing
-        cboPatients.Items.Clear()
-
-        LoadPatients()
-
-        dgvAppointments.DataSource = Nothing
-        dgvServices.DataSource = Nothing
-
-        ClearGridsAndTreatmentOnly()
-
-        cboPatients.SelectedIndex = -1
-
-        isLoading = False
+        End With
 
     End Sub
 
-    Private Sub ClearGridsAndTreatmentOnly()
+#End Region
+
+#Region "CLEAR FUNCTIONS (FIXED)"
+
+    Private Sub ClearTreatmentFields()
 
         txtNotes.Clear()
         txtPrescriptions.Clear()
         txtProcedures.Clear()
 
-        dgvAppointments.ClearSelection()
+        dgvServices.DataSource = Nothing
         dgvServices.ClearSelection()
+        dgvServices.CurrentCell = Nothing
+
+    End Sub
+
+    Private Sub ResetAllSelections()
+
+        selectedAppointmentID = 0
+
+        ClearTreatmentFields()
+
+        dgvAppointments.DataSource = Nothing
+        dgvAppointments.ClearSelection()
+        dgvAppointments.CurrentCell = Nothing
 
     End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-        SafeResetUI()
+
+        isLoading = True
+
+        Try
+            selectedPatientID = 0
+            selectedAppointmentID = 0
+
+            txtSearchPatient.Clear()
+
+            cboPatients.DataSource = Nothing
+            cboPatients.SelectedIndex = -1
+
+            LoadPatients()
+
+            ResetAllSelections()
+
+            txtSearchPatient.Focus()
+
+        Finally
+            isLoading = False
+        End Try
+
     End Sub
 
 #End Region
