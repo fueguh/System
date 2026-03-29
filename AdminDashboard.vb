@@ -173,4 +173,9 @@ Public Class AdminDashboard
         AdminDBPaymentHistory.Show()
         Me.Hide()
     End Sub
+
+    Private Sub ToolStripMenuPatientHistory_Click(sender As Object, e As EventArgs) Handles ToolStripMenuPatientHistory.Click
+        AdminDBPatientHistory.Show()
+        Me.Hide()
+    End Sub
 End Class

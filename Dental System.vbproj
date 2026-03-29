@@ -328,6 +328,9 @@
     <EmbeddedResource Include="AdminDBItemManagement.resx">
       <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBPatientHistory.resx">
+      <DependentUpon>AdminDBPatientHistory.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBPatients.resx">
       <DependentUpon>AdminDBPatients.vb</DependentUpon>
     </EmbeddedResource>
