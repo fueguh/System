@@ -8,7 +8,11 @@ Public Class AdminDBFollowUps
 
     Public PassedPatientID As Integer = 0
     Public PassedAppointmentID As Integer = 0
-
+    Private selectedFollowUpID As Integer = 0
+    Private selectedPatientName As String = ""
+    Private selectedReason As String = ""
+    Private selectedStatus As String = ""
+    Private dvFollowUps As DataView
     Private Sub AdminDBFollowUps_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadFollowUps()
     End Sub
@@ -59,25 +63,29 @@ Public Class AdminDBFollowUps
         ' ==========================================
         ' SAFE REBIND (FIXES GRID GLITCHES)
         ' ==========================================
-        dgvFollowUps.DataSource = Nothing
-        dgvFollowUps.AutoGenerateColumns = True
-        dgvFollowUps.DataSource = dt
-
         dtFollowUps = dt
+        dvFollowUps = dtFollowUps.DefaultView
+
+        dgvFollowUps.AutoGenerateColumns = True
+        dgvFollowUps.DataSource = dvFollowUps
 
         ' Only format AFTER columns exist
         If dgvFollowUps.Columns.Count > 0 Then
             FormatGrid()
         End If
-
+        ClearForm()
     End Sub
 
     ' ==========================================
     ' COLUMN FORMATTING ONLY (NO STYLING)
     ' ==========================================
     Private Sub FormatGrid()
-
         With dgvFollowUps
+
+            ' Hide the ID columns
+            If .Columns.Contains("FollowUpID") Then
+                .Columns("FollowUpID").Visible = False
+            End If
 
             If .Columns.Contains("PatientID") Then
                 .Columns("PatientID").Visible = False
@@ -87,6 +95,7 @@ Public Class AdminDBFollowUps
                 .Columns("AppointmentID").Visible = False
             End If
 
+            ' Optional: Clean headers (you can keep or remove these)
             If .Columns.Contains("PatientName") Then
                 .Columns("PatientName").HeaderText = "Patient"
             End If
@@ -103,12 +112,133 @@ Public Class AdminDBFollowUps
                 .Columns("Status").HeaderText = "Status"
             End If
 
+            If .Columns.Contains("CreatedAt") Then
+                .Columns("CreatedAt").HeaderText = "Created At"
+            End If
+
         End With
+    End Sub
+    Private Sub dgvFollowUps_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvFollowUps.CellClick
+
+        If e.RowIndex < 0 Then Exit Sub
+
+        Dim row As DataGridViewRow = dgvFollowUps.Rows(e.RowIndex)
+
+        ' Store ONLY internal ID (hidden use, not UI)
+        selectedFollowUpID = Convert.ToInt32(row.Cells("FollowUpID").Value)
+
+        ' =========================
+        ' POPULATE DETAIL PANEL
+        ' =========================
+        lblPatientName.Text = row.Cells("PatientName").Value.ToString()
+
+        lblFollowUpDate.Text = Convert.ToDateTime(row.Cells("FollowUpDate").Value).ToString("MMMM dd, yyyy")
+
+        lblStatus.Text = row.Cells("Status").Value.ToString()
+
+        lblReason.Text = row.Cells("Reason").Value.ToString()
+
 
     End Sub
+    Private Sub ClearForm()
 
+        ' Reset internal state
+        selectedFollowUpID = 0
+        selectedPatientName = ""
+        selectedReason = ""
+        selectedStatus = ""
+
+        ' Clear detail panel
+        lblPatientName.Text = ""
+        lblFollowUpDate.Text = ""
+        lblStatus.Text = ""
+        lblReason.Text = ""
+
+        ' Clear grid selection
+        dgvFollowUps.ClearSelection()
+        dgvFollowUps.CurrentCell = Nothing
+
+    End Sub
     Private Sub btnBack_Click_1(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
+    Private Sub btnDone_Click(sender As Object, e As EventArgs) Handles btnDone.Click
+
+        If Not EnsureSelection() Then Exit Sub
+
+        Using conn As New SqlConnection(connectionString)
+            conn.Open()
+
+            Dim query As String = "UPDATE dbo.PatientFollowUps SET Status = 'Done' WHERE FollowUpID = @id"
+
+            Using cmd As New SqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@id", selectedFollowUpID)
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+
+        LoadFollowUps()
+        ClearForm()
+
+    End Sub
+    Private Function EnsureSelection() As Boolean
+        If selectedFollowUpID = 0 Then
+            MessageBox.Show("Please select a follow-up first.")
+            Return False
+        End If
+        Return True
+    End Function
+    Private Sub btnMissed_Click(sender As Object, e As EventArgs) Handles btnMissed.Click
+
+        If Not EnsureSelection() Then Exit Sub
+
+        Using conn As New SqlConnection(connectionString)
+            conn.Open()
+
+            Dim query As String = "UPDATE dbo.PatientFollowUps SET Status = 'Missed' WHERE FollowUpID = @id"
+
+            Using cmd As New SqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@id", selectedFollowUpID)
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+
+        LoadFollowUps()
+        ClearForm()
+
+    End Sub
+    Private Sub btnReschedule_Click(sender As Object, e As EventArgs) Handles btnReschedule.Click
+
+        If Not EnsureSelection() Then Exit Sub
+
+        Using conn As New SqlConnection(connectionString)
+            conn.Open()
+
+            Dim query As String =
+        "UPDATE dbo.PatientFollowUps 
+         SET FollowUpDate = @date, Status = 'Rescheduled'
+         WHERE FollowUpID = @id"
+
+            Using cmd As New SqlCommand(query, conn)
+                cmd.Parameters.AddWithValue("@date", dtpNewDate.Value.Date)
+                cmd.Parameters.AddWithValue("@id", selectedFollowUpID)
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+
+        LoadFollowUps()
+        ClearForm()
+
+    End Sub
+    Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
+
+        If dvFollowUps Is Nothing Then Exit Sub
+
+        Dim search As String = txtSearch.Text.Replace("'", "''")
+
+        dvFollowUps.RowFilter =
+        "PatientName LIKE '%" & search & "%' OR Reason LIKE '%" & search & "%' OR Status LIKE '%" & search & "%'"
+
+    End Sub
 End Class
