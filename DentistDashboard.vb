@@ -30,7 +30,7 @@ Public Class DentistDashboard
 
         Select Case denTab.SelectedTab.Name
             Case "tabAppointment"
-                Dim frmAppt As New AvailableAppointments()
+                Dim frmAppt As New AdminDBAppointmentsToday()
                 frmAppt.Show()
                 Me.Hide()
 

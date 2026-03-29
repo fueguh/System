@@ -1,6 +1,6 @@
 ﻿Imports System.Data.SqlClient
 
-Public Class AvailableAppointments
+Public Class AdminDBAppointmentsToday
     Private connectionString As String = My.Settings.DentalDBConnection2
 
     ' === 1. FORM LOAD ===
@@ -76,8 +76,11 @@ Public Class AvailableAppointments
         Dim patID As Integer = CInt(row.Cells("PatientID").Value)
         Dim assignedDentistID As Integer = CInt(row.Cells("UserID").Value)
         Dim patName As String = row.Cells("Patient").Value.ToString()
+        Dim currentStatus As String = row.Cells("Status").Value.ToString()
 
-        UpdateAppointmentStatus(apptID, "Ongoing")
+        If currentStatus = "Confirmed" Then
+            UpdateAppointmentStatus(apptID, "Ongoing")
+        End If
         SystemSession.LogAudit($"Started Treatment for {patName}", "AvailableAppointments")
 
         ' --- THE FIX ---
@@ -115,16 +118,23 @@ Public Class AvailableAppointments
     ' === 6. DATABASE HELPERS ===
 
     Private Sub UpdateAppointmentStatus(id As Integer, status As String)
-        Try
-            Using con As New SqlConnection(connectionString)
-                con.Open()
-                Dim cmd As New SqlCommand("UPDATE Appointments SET Status = @status WHERE AppointmentID = @id", con)
+
+        Dim query As String = "
+        UPDATE Appointments
+        SET Status = @status
+        WHERE AppointmentID = @id
+        AND Status <> 'Completed'
+        AND NOT (Status = 'Completed' AND @status = 'Ongoing')"
+
+        Using con As New SqlConnection(connectionString)
+            con.Open()
+            Using cmd As New SqlCommand(query, con)
                 cmd.Parameters.AddWithValue("@status", status)
                 cmd.Parameters.AddWithValue("@id", id)
                 cmd.ExecuteNonQuery()
             End Using
-        Catch ex As Exception
-            MessageBox.Show("Failed to update appointment status: " & ex.Message)
-        End Try
+        End Using
+
     End Sub
+
 End Class

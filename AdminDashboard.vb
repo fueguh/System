@@ -160,7 +160,7 @@ Public Class AdminDashboard
     End Sub
 
     Private Sub TodaysAppointmentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TodaysAppointmentToolStripMenuItem.Click
-        AvailableAppointments.Show()
+        AdminDBAppointmentsToday.Show()
         Me.Hide()
     End Sub
 

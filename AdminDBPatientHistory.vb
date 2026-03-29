@@ -108,7 +108,9 @@ Public Class AdminDBPatientHistory
 
         selectedPatientID = newPatientID
 
-        ResetAllSelections()
+        ClearTreatmentFields()
+        selectedAppointmentID = 0
+
         LoadPatientData(selectedPatientID)
 
     End Sub
@@ -196,7 +198,11 @@ Public Class AdminDBPatientHistory
 
         If e.RowIndex < 0 Then Exit Sub
 
-        selectedAppointmentID = Convert.ToInt32(dgvAppointments.Rows(e.RowIndex).Cells("AppointmentID").Value)
+        Dim val = dgvAppointments.Rows(e.RowIndex).Cells("AppointmentID").Value
+
+        If val Is Nothing OrElse IsDBNull(val) Then Exit Sub
+
+        selectedAppointmentID = Convert.ToInt32(val)
 
         LoadTreatment(selectedAppointmentID)
         LoadServices(selectedAppointmentID)
@@ -354,6 +360,84 @@ Public Class AdminDBPatientHistory
 
         Finally
             isLoading = False
+        End Try
+
+    End Sub
+
+    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+        SystemSession.NavigateToDashboard(Me)
+    End Sub
+
+    Private Sub btnFullHistory_Click(sender As Object, e As EventArgs) Handles btnFullHistory.Click
+
+        If selectedPatientID = 0 Then
+            MessageBox.Show("Please select a patient first.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
+        Dim sb As New StringBuilder()
+
+        sb.AppendLine("FULL PATIENT HISTORY")
+        sb.AppendLine("Patient ID: " & selectedPatientID)
+        sb.AppendLine("==================================================")
+        sb.AppendLine()
+
+        Dim query As String = "
+    SELECT 
+        tr.DateCreated,
+        tr.ProceduresDone,
+        tr.TreatmentNotes,
+        tr.Prescriptions,
+        STRING_AGG(s.ServiceName, ', ') AS Services
+    FROM TreatmentRecords tr
+    LEFT JOIN AppointmentServices aps ON tr.AppointmentID = aps.AppointmentID
+    LEFT JOIN Services s ON aps.ServiceID = s.ServiceID
+    WHERE tr.PatientID = @PatientID
+    GROUP BY 
+                tr.DateCreated,
+    tr.RecordID,
+    tr.DateCreated,
+    tr.ProceduresDone,
+    tr.TreatmentNotes,
+    tr.Prescriptions
+    ORDER BY tr.DateCreated DESC"
+
+        Try
+            Using conn As New SqlConnection(connectionString)
+                Using cmd As New SqlCommand(query, conn)
+
+                    cmd.Parameters.AddWithValue("@PatientID", selectedPatientID)
+
+                    conn.Open()
+
+                    Using reader = cmd.ExecuteReader()
+
+                        Dim hasRecords As Boolean = False
+
+                        While reader.Read()
+                            hasRecords = True
+
+                            sb.AppendLine("Date: " & Convert.ToDateTime(reader("DateCreated")).ToString("dd MMM yyyy hh:mm tt"))
+                            sb.AppendLine("Procedures: " & reader("ProceduresDone").ToString())
+                            sb.AppendLine("Notes: " & reader("TreatmentNotes").ToString())
+                            sb.AppendLine("Prescriptions: " & reader("Prescriptions").ToString())
+                            Dim services As String = If(IsDBNull(reader("Services")), "None", reader("Services").ToString())
+                            sb.AppendLine("Services: " & services)
+                            sb.AppendLine("--------------------------------------------------")
+                        End While
+
+                        If Not hasRecords Then
+                            sb.AppendLine("No treatment records found for this patient.")
+                        End If
+
+                    End Using
+                End Using
+            End Using
+
+            MessageBox.Show(sb.ToString(), "Full Patient History", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        Catch ex As Exception
+            MessageBox.Show("Error retrieving full history: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
 
     End Sub

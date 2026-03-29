@@ -39,7 +39,7 @@ Public Class AdminDBAppointments
 
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
-        cmbStatus.Items.AddRange({"Confirmed", "Ongoing", "Completed", "Cancelled"})
+        cmbStatus.Items.AddRange({"Confirmed", "Cancelled"})
         cmbStatus.SelectedIndex = -1
     End Sub
 
@@ -313,24 +313,22 @@ Public Class AdminDBAppointments
 
         ' 2. Date and Status Logic (Past Date Handler)
         If DtpDate.Value.Date < DateTime.Today Then
-            ' Get the status as it exists in the Database/Grid before the update
-            Dim currentStatus As String = DGVAppointments.CurrentRow.Cells("Status").Value.ToString()
-            Dim newStatus As String = cmbStatus.Text
 
-            ' BLOCK 1: Final States (Cannot change once it's done)
-            If currentStatus = "Completed" OrElse currentStatus = "Cancelled" Then
-                MessageBox.Show($"This appointment is already '{currentStatus}' and cannot be modified.", "Record Locked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+            Dim rowStatus As String = DGVAppointments.CurrentRow.Cells("Status").Value.ToString()
+            Dim selectedStatus As String = cmbStatus.Text
+
+            ' lock final states
+            If rowStatus = "Completed" OrElse rowStatus = "Cancelled" Then
+                MessageBox.Show("This appointment is already locked.")
                 Return False
             End If
 
-            ' BLOCK 2: Valid Transitions for Past Appointments
-            ' Allowed: Confirmed -> Cancelled, Confirmed -> Completed, Ongoing -> Completed, Ongoing -> Cancelled
-            Dim isValidTransition As Boolean = (newStatus = "Completed" OrElse newStatus = "Cancelled")
-
-            If Not isValidTransition Then
-                MessageBox.Show("For past appointments, you must set the status to either 'Completed' or 'Cancelled'.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            ' only allow final transitions
+            If selectedStatus <> "Completed" AndAlso selectedStatus <> "Cancelled" Then
+                MessageBox.Show("Past appointments can only be set to Completed or Cancelled.")
                 Return False
             End If
+
         End If
 
         ' --- CLEANED VALIDATION BLOCK ---
@@ -440,13 +438,23 @@ Public Class AdminDBAppointments
 
             If Not cmbStartTime.Items.Contains(formatted) Then cmbStartTime.Items.Add(formatted)
             cmbStartTime.SelectedItem = formatted
+            cmbStatus.SelectedIndex = -1
             cmbStatus.Text = row.Cells("Status").Value.ToString()
+            cmbStatus.Tag = row.Cells("Status").Value.ToString()
 
             LoadCheckedServices(selectedAppointmentID)
             CalculateTotalDuration()
 
+            Dim status As String = row.Cells("Status").Value.ToString()
+
             BTNAdd.Enabled = False
-            BTNUpdate.Enabled = (cmbStatus.Text <> "Cancelled")
+            Dim rowStatus As String = row.Cells("Status").Value.ToString()
+
+            Dim isLocked As Boolean =
+(DGVAppointments.Rows(e.RowIndex).Cells("Status").Value.ToString() = "Cancelled")
+
+            BTNUpdate.Enabled = Not isLocked
+            cmbStatus.Enabled = Not isLocked
         Catch ex As Exception
             MessageBox.Show("Error loading selection: " & ex.Message)
         Finally
