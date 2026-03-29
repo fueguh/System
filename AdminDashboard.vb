@@ -1,6 +1,9 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class AdminDashboard
+    Private Sub AdminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        LoadDashboardStats()
+    End Sub
     Private Sub Guna2PictureBox1_Click(sender As Object, e As EventArgs)
         AdminDBAppointments.Show()
         Me.Hide()
