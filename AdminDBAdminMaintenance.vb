@@ -30,6 +30,7 @@ Public Class AdminDBAdminMaintenance
         TxtPhone.Clear()
         TxtPassword.Clear()
         TxtEmail.Clear()
+        DataGridViewAdmins.ClearSelection()
         chkShowPassword.Checked = False
         TxtPassword.UseSystemPasswordChar = True
         ' Reset logic state

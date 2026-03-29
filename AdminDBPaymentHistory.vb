@@ -17,6 +17,7 @@ Public Class AdminDBPaymentHistory
         dgvHistory.ReadOnly = True
         dgvHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvHistory.AllowUserToAddRows = False
+        clearform()
     End Sub
 
     Private Sub LoadPaymentHistory(Optional searchName As String = "")
@@ -127,6 +128,11 @@ Public Class AdminDBPaymentHistory
             dtServicesForPrinting.Clear()
             da.Fill(dtServicesForPrinting)
         End Using
+    End Sub
+
+    Private Sub clearform()
+        txtSearchPatient.Clear()
+        dgvHistory.ClearSelection()
     End Sub
 
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click

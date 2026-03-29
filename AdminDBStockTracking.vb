@@ -38,6 +38,7 @@ Public Class AdminDBStockTracking
         RadioOut.Checked = False
         NumericUpDownQuantity.Value = 0
         TransactionDate.Value = DateTime.Now.Date
+        DGVTransactions.ClearSelection()
     End Sub
 
     ' =========================

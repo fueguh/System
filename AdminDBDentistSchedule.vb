@@ -11,6 +11,7 @@ Public Class AdminDBDentistSchedule
         SetupScheduleGrid()          ' Creates the grid + time dropdowns
         PopulateEmptyGrid()          ' Shows all 7 days ready to edit
         LoadPartTimeDentists()
+        ClearForm()
     End Sub
 
     Private Sub SetupScheduleGrid()
@@ -382,6 +383,7 @@ Public Class AdminDBDentistSchedule
         DGVPartTimers.ClearSelection()
         cmbBulkStart.SelectedIndex = -1
         cmbBulkEnd.SelectedIndex = -1
+        DgvSchedule.ClearSelection()
     End Sub
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click

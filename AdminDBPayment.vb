@@ -22,6 +22,7 @@ Public Class AdminDBPayment
         dgvPendingPayments.ReadOnly = True
         dgvPendingPayments.AllowUserToAddRows = False
         dgvPendingPayments.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        ClearBillingUI()
     End Sub
 
     ' ================= MERGED DATA FETCH (GRID) =================
@@ -286,6 +287,7 @@ SuccessCleanup:
         txtReferenceNo.Enabled = False
         ' Reset selection in main grid
         dgvPendingPayments.ClearSelection()
+        dgvServices.ClearSelection()
     End Sub
     ' Only allows numbers and backspace in the Reference Number box
     Private Sub txtReferenceNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtReferenceNo.KeyPress
