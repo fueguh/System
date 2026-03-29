@@ -119,8 +119,9 @@ Partial Class AdminDBFollowUps
         DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvFollowUps.DefaultCellStyle = DataGridViewCellStyle3
+        Me.dgvFollowUps.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.dgvFollowUps.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvFollowUps.Location = New System.Drawing.Point(0, 368)
+        Me.dgvFollowUps.Location = New System.Drawing.Point(0, 302)
         Me.dgvFollowUps.Name = "dgvFollowUps"
         Me.dgvFollowUps.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -136,7 +137,7 @@ Partial Class AdminDBFollowUps
         DataGridViewCellStyle5.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.dgvFollowUps.RowsDefaultCellStyle = DataGridViewCellStyle5
         Me.dgvFollowUps.ScrollBars = System.Windows.Forms.ScrollBars.None
-        Me.dgvFollowUps.Size = New System.Drawing.Size(1040, 159)
+        Me.dgvFollowUps.Size = New System.Drawing.Size(1121, 270)
         Me.dgvFollowUps.TabIndex = 92
         Me.dgvFollowUps.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvFollowUps.ThemeStyle.AlternatingRowsStyle.Font = Nothing

@@ -25,28 +25,30 @@ Public Class AdminDBPaymentHistory
             Using con As New SqlConnection(connectionString)
                 con.Open()
 
-                ' Base Query
                 Dim sql As String = "
-                    SELECT 
-                        R.ReceiptID,
-                        R.AppointmentID,
-                        P.FullName AS [Patient Name],
-                        R.TotalAmount AS [Amount Paid],
-                        R.PaymentMethod AS [Method],
-                        R.ReferenceNumber AS [Ref No],
-                        R.DateIssued AS [Payment Date], 
-                        U.FullName AS [Processed By]
-                    FROM Receipts R
-                    INNER JOIN Patients P ON R.PatientID = P.PatientID
-                    INNER JOIN Users U ON R.UserID = U.UserID"
+                SELECT 
+                    R.ReceiptID,
+                    R.AppointmentID,
+                    P.FullName AS [Patient Name],
+                    U.FullName AS [Dentist],          -- Added Dentist column
+                    R.TotalAmount AS [Amount Paid],
+                    R.PaymentMethod AS [Method],
+                    R.ReferenceNumber AS [Ref No],
+                    R.DateIssued AS [Payment Date], 
+                    U2.FullName AS [Processed By]     -- Renamed alias to avoid conflict
+                FROM Receipts R
+                INNER JOIN Patients P ON R.PatientID = P.PatientID
+                INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID  -- Added to get dentist
+                INNER JOIN Users U ON A.UserID = U.UserID                        -- Dentist
+                INNER JOIN Users U2 ON R.UserID = U2.UserID                      -- Processed By
+                "
 
-                ' --- MULTI-FIELD SEARCH LOGIC ---
-                ' This now checks: Name, Receipt ID, Ref Number, and Payment Method
                 If Not String.IsNullOrEmpty(searchName) Then
                     sql &= " WHERE (P.FullName LIKE @search 
-                                OR CAST(R.ReceiptID AS VARCHAR) LIKE @search 
-                                OR R.ReferenceNumber LIKE @search
-                                OR R.PaymentMethod LIKE @search)"
+                            OR U.FullName LIKE @search 
+                            OR CAST(R.ReceiptID AS VARCHAR) LIKE @search 
+                            OR R.ReferenceNumber LIKE @search
+                            OR R.PaymentMethod LIKE @search)"
                 End If
 
                 sql &= " ORDER BY R.DateIssued DESC"
@@ -60,6 +62,15 @@ Public Class AdminDBPaymentHistory
                     Dim dt As New DataTable()
                     da.Fill(dt)
                     dgvHistory.DataSource = dt
+
+                    ' Hide ID columns
+                    If dgvHistory.Columns.Contains("ReceiptID") Then
+                        dgvHistory.Columns("ReceiptID").Visible = False
+                    End If
+
+                    If dgvHistory.Columns.Contains("AppointmentID") Then
+                        dgvHistory.Columns("AppointmentID").Visible = False
+                    End If
                 End Using
             End Using
         Catch ex As Exception
