@@ -7,7 +7,7 @@ Public Class AdminDBPatientHistory
 
     Private selectedPatientID As Integer = 0
     Private selectedAppointmentID As Integer = 0
-
+    Private dvPatients As DataView
     Private isLoading As Boolean = False
     Private dtAllPatients As DataTable
 
@@ -43,9 +43,9 @@ Public Class AdminDBPatientHistory
         FROM Patients
         ORDER BY FullName"
 
-        dtAllPatients = New DataTable()
-
         Try
+            dtAllPatients = New DataTable()
+
             Using conn As New SqlConnection(connectionString)
                 Using cmd As New SqlCommand(query, conn)
                     Dim da As New SqlDataAdapter(cmd)
@@ -53,7 +53,9 @@ Public Class AdminDBPatientHistory
                 End Using
             End Using
 
-            cboPatients.DataSource = dtAllPatients
+            dvPatients = New DataView(dtAllPatients)
+
+            cboPatients.DataSource = dvPatients
             cboPatients.DisplayMember = "FullName"
             cboPatients.ValueMember = "PatientID"
 
@@ -73,33 +75,19 @@ Public Class AdminDBPatientHistory
 
     Private Sub txtSearchPatient_TextChanged(sender As Object, e As EventArgs) Handles txtSearchPatient.TextChanged
 
-        If isLoading OrElse dtAllPatients Is Nothing Then Exit Sub
+        If isLoading OrElse dvPatients Is Nothing Then Exit Sub
 
-        isLoading = True
+        Dim searchText As String = txtSearchPatient.Text.Trim().Replace("'", "''")
 
-        Try
-            Dim dv As New DataView(dtAllPatients)
+        If searchText = "" Then
+            dvPatients.RowFilter = ""
+        Else
+            dvPatients.RowFilter = $"FullName LIKE '%{searchText}%'"
+        End If
 
-            Dim searchText As String = txtSearchPatient.Text.Trim()
-
-            If searchText <> "" Then
-                dv.RowFilter = "FullName LIKE '%" & searchText.Replace("'", "''") & "%'"
-            Else
-                dv.RowFilter = ""
-            End If
-
-            cboPatients.DataSource = Nothing
-            cboPatients.DataSource = dv
-            cboPatients.DisplayMember = "FullName"
-            cboPatients.ValueMember = "PatientID"
-
-            cboPatients.SelectedIndex = -1
-
-        Catch ex As Exception
-            MessageBox.Show("Search error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        Finally
-            isLoading = False
-        End Try
+        ' keep dropdown open while typing
+        cboPatients.DroppedDown = True
+        Cursor.Current = Cursors.Default
 
     End Sub
 
