@@ -80,23 +80,19 @@ Public Class AdminDBAppointmentsToday
 
         If currentStatus = "Confirmed" Then
             UpdateAppointmentStatus(apptID, "Ongoing")
+            SystemSession.LogAudit($"Started Treatment for {patName}", "Todays Appointment")
         End If
-        SystemSession.LogAudit($"Started Treatment for {patName}", "Apointments Today")
 
-        ' --- THE FIX ---
-        ' 1. Create form with NO arguments
+
         Dim frm As New AdminDBTreatmentRecords()
 
-        ' 2. Fill the public variables manually
         frm.PassedAppointmentID = apptID
         frm.PassedPatientID = patID
         frm.CurrentPatientName = patName
         frm.PassedDentistID = assignedDentistID
 
-        ' 3. Show it
         Me.Hide()
         frm.Show()
-        ' --- END FIX ---
 
         AddHandler frm.FormClosed, Sub(s, args)
                                        SystemSession.NavigateToDashboard(Me)

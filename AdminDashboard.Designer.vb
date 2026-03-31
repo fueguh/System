@@ -72,6 +72,9 @@ Partial Class AdminDashboard
         Me.Guna2Panel7 = New Guna.UI2.WinForms.Guna2Panel()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.lblMissedFollowups = New System.Windows.Forms.Label()
+        Me.Guna2Panel8 = New Guna.UI2.WinForms.Guna2Panel()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.lblMissedAppointments = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -82,6 +85,7 @@ Partial Class AdminDashboard
         Me.Guna2Panel5.SuspendLayout()
         Me.Guna2Panel6.SuspendLayout()
         Me.Guna2Panel7.SuspendLayout()
+        Me.Guna2Panel8.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
@@ -560,6 +564,39 @@ Partial Class AdminDashboard
         Me.lblMissedFollowups.Text = "0"
         Me.lblMissedFollowups.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'Guna2Panel8
+        '
+        Me.Guna2Panel8.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.Guna2Panel8.BorderRadius = 10
+        Me.Guna2Panel8.Controls.Add(Me.Label3)
+        Me.Guna2Panel8.Controls.Add(Me.lblMissedAppointments)
+        Me.Guna2Panel8.Location = New System.Drawing.Point(1368, 445)
+        Me.Guna2Panel8.Name = "Guna2Panel8"
+        Me.Guna2Panel8.Size = New System.Drawing.Size(200, 210)
+        Me.Guna2Panel8.TabIndex = 33
+        '
+        'Label3
+        '
+        Me.Label3.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Label3.Location = New System.Drawing.Point(0, 152)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(200, 53)
+        Me.Label3.TabIndex = 25
+        Me.Label3.Text = "Missed Appointments"
+        Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblMissedAppointments
+        '
+        Me.lblMissedAppointments.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblMissedAppointments.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblMissedAppointments.Location = New System.Drawing.Point(0, 0)
+        Me.lblMissedAppointments.Name = "lblMissedAppointments"
+        Me.lblMissedAppointments.Size = New System.Drawing.Size(200, 157)
+        Me.lblMissedAppointments.TabIndex = 25
+        Me.lblMissedAppointments.Text = "0"
+        Me.lblMissedAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -567,6 +604,7 @@ Partial Class AdminDashboard
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
         Me.ControlBox = False
+        Me.Controls.Add(Me.Guna2Panel8)
         Me.Controls.Add(Me.Guna2Panel7)
         Me.Controls.Add(Me.Guna2Panel6)
         Me.Controls.Add(Me.Guna2Panel5)
@@ -595,6 +633,7 @@ Partial Class AdminDashboard
         Me.Guna2Panel5.ResumeLayout(False)
         Me.Guna2Panel6.ResumeLayout(False)
         Me.Guna2Panel7.ResumeLayout(False)
+        Me.Guna2Panel8.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -647,4 +686,7 @@ Partial Class AdminDashboard
     Friend WithEvents Guna2Panel7 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents Label4 As Label
     Friend WithEvents lblMissedFollowups As Label
+    Friend WithEvents Guna2Panel8 As Guna.UI2.WinForms.Guna2Panel
+    Friend WithEvents Label3 As Label
+    Friend WithEvents lblMissedAppointments As Label
 End Class

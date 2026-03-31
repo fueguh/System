@@ -158,20 +158,18 @@ Public Class AdminDBFollowUps
 
         Dim row As DataGridViewRow = dgvFollowUps.Rows(e.RowIndex)
 
-        ' Store ONLY internal ID (hidden use, not UI)
         selectedFollowUpID = Convert.ToInt32(row.Cells("FollowUpID").Value)
 
-        ' =========================
-        ' POPULATE DETAIL PANEL
-        ' =========================
-        lblPatientName.Text = row.Cells("PatientName").Value.ToString()
+        ' STORE VALUES FOR AUDIT
+        selectedPatientName = row.Cells("PatientName").Value.ToString()
+        selectedReason = row.Cells("Reason").Value.ToString()
+        selectedStatus = row.Cells("Status").Value.ToString()
 
+        ' DISPLAY
+        lblPatientName.Text = selectedPatientName
         lblFollowUpDate.Text = Convert.ToDateTime(row.Cells("FollowUpDate").Value).ToString("MMMM dd, yyyy")
-
-        lblStatus.Text = row.Cells("Status").Value.ToString()
-
-        lblReason.Text = row.Cells("Reason").Value.ToString()
-
+        lblStatus.Text = selectedStatus
+        lblReason.Text = selectedReason
 
     End Sub
 
@@ -216,6 +214,11 @@ Public Class AdminDBFollowUps
             End Using
         End Using
 
+        ' 🔥 AUDIT LOG
+        Dim auditMsg As String = $"Follow-Up #{selectedFollowUpID} marked as DONE | Patient: {selectedPatientName}"
+
+        SystemSession.LogAudit(auditMsg, "Follow-Ups", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
         RefreshData()
 
     End Sub
@@ -241,6 +244,11 @@ Public Class AdminDBFollowUps
             End Using
         End Using
 
+        ' 🔥 AUDIT LOG
+        Dim auditMsg As String = $"Follow-Up #{selectedFollowUpID} marked as MISSED | Patient: {selectedPatientName}"
+
+        SystemSession.LogAudit(auditMsg, "Follow-Ups", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
         RefreshData()
 
     End Sub
@@ -248,11 +256,13 @@ Public Class AdminDBFollowUps
 
         If Not EnsureSelection() Then Exit Sub
 
-        ' 🚫 PREVENT PAST DATES
         If dtpNewDate.Value.Date < Date.Today Then
             MessageBox.Show("Please reschedule at a later date.", "Invalid Date", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
+
+        Dim oldDate As Date = Date.Parse(lblFollowUpDate.Text)
+        Dim newDate As Date = dtpNewDate.Value.Date
 
         Using conn As New SqlConnection(connectionString)
             conn.Open()
@@ -263,11 +273,19 @@ Public Class AdminDBFollowUps
          WHERE FollowUpID = @id"
 
             Using cmd As New SqlCommand(query, conn)
-                cmd.Parameters.AddWithValue("@date", dtpNewDate.Value.Date)
+                cmd.Parameters.AddWithValue("@date", newDate)
                 cmd.Parameters.AddWithValue("@id", selectedFollowUpID)
                 cmd.ExecuteNonQuery()
             End Using
         End Using
+
+        ' 🔥 AUDIT LOG WITH CHANGES
+        Dim auditMsg As String =
+        $"Rescheduled Follow-Up #{selectedFollowUpID} | Patient: {selectedPatientName} | Date: {oldDate:MMM dd} -> {newDate:MMM dd}"
+
+        If auditMsg.Length > 300 Then auditMsg = auditMsg.Substring(0, 297) & "..."
+
+        SystemSession.LogAudit(auditMsg, "Follow-Ups", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
         RefreshData()
 
