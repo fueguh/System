@@ -79,33 +79,21 @@ Public Class AdminDashboard
             ", con)
             lblAppointmentsToday.Text = cmd3.ExecuteScalar().ToString()
 
+
+
             ' Completed Appointments
             Dim cmd4 As New SqlCommand("
             SELECT COUNT(*) FROM Appointments 
             WHERE Status = 'Completed'
             ", con)
+
+            ' Missed Appointments
             lblCompletedAppointments.Text = cmd4.ExecuteScalar().ToString()
-
-            ' Upcoming Follow-ups
-            Dim cmd5 As New SqlCommand("
-             SELECT COUNT(*) FROM PatientFollowUps
-             WHERE Status = 'Scheduled'
+            Dim cmd8 As New SqlCommand("
+            SELECT COUNT(*) FROM Appointments 
+            WHERE Status = 'Pending'
             ", con)
-            lblUpcomingFollowups.Text = cmd5.ExecuteScalar().ToString()
 
-            ' Overdue Follow-ups
-            Dim cmd6 As New SqlCommand("
-            SELECT COUNT(*) FROM PatientFollowUps
-            WHERE Status = 'Overdue'
-            ", con)
-            lblOverdueFollowups.Text = cmd6.ExecuteScalar().ToString()
-
-            ' Missed Follow-ups
-            Dim cmd7 As New SqlCommand("
-            SELECT COUNT(*) FROM PatientFollowUps
-            WHERE Status = 'Missed'
-            ", con)
-            lblMissedFollowups.Text = cmd7.ExecuteScalar().ToString()
         End Using
     End Sub
 

@@ -382,37 +382,41 @@ Public Class AdminDBPatientHistory
         sb.AppendLine("==================================================")
         sb.AppendLine()
 
-        Dim query As String = "
-    SELECT 
-        tr.DateCreated,
-        tr.ProceduresDone,
-        tr.TreatmentNotes,
-        tr.Prescriptions,
-        STRING_AGG(s.ServiceName, ', ') AS Services
-    FROM TreatmentRecords tr
-    LEFT JOIN AppointmentServices aps ON tr.AppointmentID = aps.AppointmentID
-    LEFT JOIN Services s ON aps.ServiceID = s.ServiceID
-    WHERE tr.PatientID = @PatientID
-    GROUP BY 
-                tr.DateCreated,
-    tr.RecordID,
-    tr.DateCreated,
-    tr.ProceduresDone,
-    tr.TreatmentNotes,
-    tr.Prescriptions
-    ORDER BY tr.DateCreated DESC"
-
         Try
             Using conn As New SqlConnection(connectionString)
+                conn.Open()
+
+                ' ======================================================
+                ' 1. TREATMENT RECORDS + SERVICES
+                ' ======================================================
+                Dim query As String = "
+                SELECT 
+                    tr.DateCreated,
+                    tr.ProceduresDone,
+                    tr.TreatmentNotes,
+                    tr.Prescriptions,
+                    ISNULL(STRING_AGG(s.ServiceName, ', '), 'None') AS Services
+                FROM TreatmentRecords tr
+                LEFT JOIN AppointmentServices aps ON tr.AppointmentID = aps.AppointmentID
+                LEFT JOIN Services s ON aps.ServiceID = s.ServiceID
+                WHERE tr.PatientID = @PatientID
+                GROUP BY 
+                    tr.DateCreated,
+                    tr.RecordID,
+                    tr.ProceduresDone,
+                    tr.TreatmentNotes,
+                    tr.Prescriptions
+                ORDER BY tr.DateCreated DESC"
+
                 Using cmd As New SqlCommand(query, conn)
-
                     cmd.Parameters.AddWithValue("@PatientID", selectedPatientID)
-
-                    conn.Open()
 
                     Using reader = cmd.ExecuteReader()
 
                         Dim hasRecords As Boolean = False
+
+                        sb.AppendLine("TREATMENT RECORDS")
+                        sb.AppendLine("==================================================")
 
                         While reader.Read()
                             hasRecords = True
@@ -421,17 +425,59 @@ Public Class AdminDBPatientHistory
                             sb.AppendLine("Procedures: " & reader("ProceduresDone").ToString())
                             sb.AppendLine("Notes: " & reader("TreatmentNotes").ToString())
                             sb.AppendLine("Prescriptions: " & reader("Prescriptions").ToString())
-                            Dim services As String = If(IsDBNull(reader("Services")), "None", reader("Services").ToString())
-                            sb.AppendLine("Services: " & services)
+                            sb.AppendLine("Services: " & reader("Services").ToString())
                             sb.AppendLine("--------------------------------------------------")
                         End While
 
                         If Not hasRecords Then
-                            sb.AppendLine("No treatment records found for this patient.")
+                            sb.AppendLine("No treatment records found.")
+                            sb.AppendLine("--------------------------------------------------")
                         End If
 
                     End Using
                 End Using
+
+                ' ======================================================
+                ' 2. FOLLOW-UP RECORDS (NEW ADDITION)
+                ' ======================================================
+                Dim followUpQuery As String = "
+                SELECT 
+                    FollowUpDate,
+                    Reason,
+                    Status,
+                    CreatedAt
+                FROM PatientFollowUps
+                WHERE PatientID = @PatientID
+                ORDER BY FollowUpDate DESC"
+
+                Using cmd2 As New SqlCommand(followUpQuery, conn)
+                    cmd2.Parameters.AddWithValue("@PatientID", selectedPatientID)
+
+                    Using reader2 = cmd2.ExecuteReader()
+
+                        Dim hasFollowUps As Boolean = False
+
+                        sb.AppendLine()
+                        sb.AppendLine("FOLLOW-UP RECORDS")
+                        sb.AppendLine("==================================================")
+
+                        While reader2.Read()
+                            hasFollowUps = True
+
+                            sb.AppendLine("Date: " & Convert.ToDateTime(reader2("FollowUpDate")).ToString("dd MMM yyyy"))
+                            sb.AppendLine("Reason: " & reader2("Reason").ToString())
+                            sb.AppendLine("Status: " & reader2("Status").ToString())
+                            sb.AppendLine("Created: " & Convert.ToDateTime(reader2("CreatedAt")).ToString("dd MMM yyyy"))
+                            sb.AppendLine("--------------------------------------------------")
+                        End While
+
+                        If Not hasFollowUps Then
+                            sb.AppendLine("No follow-up records found.")
+                        End If
+
+                    End Using
+                End Using
+
             End Using
 
             MessageBox.Show(sb.ToString(), "Full Patient History", MessageBoxButtons.OK, MessageBoxIcon.Information)

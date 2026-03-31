@@ -63,18 +63,6 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
-        Me.Guna2Panel5 = New Guna.UI2.WinForms.Guna2Panel()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.lblUpcomingFollowups = New System.Windows.Forms.Label()
-        Me.Guna2Panel6 = New Guna.UI2.WinForms.Guna2Panel()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.lblOverdueFollowups = New System.Windows.Forms.Label()
-        Me.Guna2Panel7 = New Guna.UI2.WinForms.Guna2Panel()
-        Me.Label4 = New System.Windows.Forms.Label()
-        Me.lblMissedFollowups = New System.Windows.Forms.Label()
-        Me.Guna2Panel8 = New Guna.UI2.WinForms.Guna2Panel()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.lblMissedAppointments = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -82,10 +70,6 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.SuspendLayout()
         Me.Guna2Panel4.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.Guna2Panel5.SuspendLayout()
-        Me.Guna2Panel6.SuspendLayout()
-        Me.Guna2Panel7.SuspendLayout()
-        Me.Guna2Panel8.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
@@ -465,138 +449,6 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
-        'Guna2Panel5
-        '
-        Me.Guna2Panel5.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel5.BorderRadius = 10
-        Me.Guna2Panel5.Controls.Add(Me.Label1)
-        Me.Guna2Panel5.Controls.Add(Me.lblUpcomingFollowups)
-        Me.Guna2Panel5.Location = New System.Drawing.Point(436, 445)
-        Me.Guna2Panel5.Name = "Guna2Panel5"
-        Me.Guna2Panel5.Size = New System.Drawing.Size(200, 210)
-        Me.Guna2Panel5.TabIndex = 31
-        '
-        'Label1
-        '
-        Me.Label1.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.Label1.Location = New System.Drawing.Point(0, 152)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(200, 53)
-        Me.Label1.TabIndex = 25
-        Me.Label1.Text = "Upcoming Follow-ups"
-        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lblUpcomingFollowups
-        '
-        Me.lblUpcomingFollowups.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblUpcomingFollowups.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblUpcomingFollowups.Location = New System.Drawing.Point(0, 0)
-        Me.lblUpcomingFollowups.Name = "lblUpcomingFollowups"
-        Me.lblUpcomingFollowups.Size = New System.Drawing.Size(200, 157)
-        Me.lblUpcomingFollowups.TabIndex = 25
-        Me.lblUpcomingFollowups.Text = "0"
-        Me.lblUpcomingFollowups.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Guna2Panel6
-        '
-        Me.Guna2Panel6.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel6.BorderRadius = 10
-        Me.Guna2Panel6.Controls.Add(Me.Label2)
-        Me.Guna2Panel6.Controls.Add(Me.lblOverdueFollowups)
-        Me.Guna2Panel6.Location = New System.Drawing.Point(740, 445)
-        Me.Guna2Panel6.Name = "Guna2Panel6"
-        Me.Guna2Panel6.Size = New System.Drawing.Size(200, 210)
-        Me.Guna2Panel6.TabIndex = 32
-        '
-        'Label2
-        '
-        Me.Label2.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.Label2.Location = New System.Drawing.Point(0, 152)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(200, 53)
-        Me.Label2.TabIndex = 25
-        Me.Label2.Text = "Overdue Follow-ups"
-        Me.Label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lblOverdueFollowups
-        '
-        Me.lblOverdueFollowups.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblOverdueFollowups.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblOverdueFollowups.Location = New System.Drawing.Point(0, 0)
-        Me.lblOverdueFollowups.Name = "lblOverdueFollowups"
-        Me.lblOverdueFollowups.Size = New System.Drawing.Size(200, 157)
-        Me.lblOverdueFollowups.TabIndex = 25
-        Me.lblOverdueFollowups.Text = "0"
-        Me.lblOverdueFollowups.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Guna2Panel7
-        '
-        Me.Guna2Panel7.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel7.BorderRadius = 10
-        Me.Guna2Panel7.Controls.Add(Me.Label4)
-        Me.Guna2Panel7.Controls.Add(Me.lblMissedFollowups)
-        Me.Guna2Panel7.Location = New System.Drawing.Point(1050, 445)
-        Me.Guna2Panel7.Name = "Guna2Panel7"
-        Me.Guna2Panel7.Size = New System.Drawing.Size(200, 210)
-        Me.Guna2Panel7.TabIndex = 32
-        '
-        'Label4
-        '
-        Me.Label4.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.Label4.Location = New System.Drawing.Point(0, 152)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(200, 53)
-        Me.Label4.TabIndex = 25
-        Me.Label4.Text = "Missed Follow-ups"
-        Me.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lblMissedFollowups
-        '
-        Me.lblMissedFollowups.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblMissedFollowups.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblMissedFollowups.Location = New System.Drawing.Point(0, 0)
-        Me.lblMissedFollowups.Name = "lblMissedFollowups"
-        Me.lblMissedFollowups.Size = New System.Drawing.Size(200, 157)
-        Me.lblMissedFollowups.TabIndex = 25
-        Me.lblMissedFollowups.Text = "0"
-        Me.lblMissedFollowups.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Guna2Panel8
-        '
-        Me.Guna2Panel8.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel8.BorderRadius = 10
-        Me.Guna2Panel8.Controls.Add(Me.Label3)
-        Me.Guna2Panel8.Controls.Add(Me.lblMissedAppointments)
-        Me.Guna2Panel8.Location = New System.Drawing.Point(1368, 445)
-        Me.Guna2Panel8.Name = "Guna2Panel8"
-        Me.Guna2Panel8.Size = New System.Drawing.Size(200, 210)
-        Me.Guna2Panel8.TabIndex = 33
-        '
-        'Label3
-        '
-        Me.Label3.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.Label3.Location = New System.Drawing.Point(0, 152)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(200, 53)
-        Me.Label3.TabIndex = 25
-        Me.Label3.Text = "Missed Appointments"
-        Me.Label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lblMissedAppointments
-        '
-        Me.lblMissedAppointments.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblMissedAppointments.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.lblMissedAppointments.Location = New System.Drawing.Point(0, 0)
-        Me.lblMissedAppointments.Name = "lblMissedAppointments"
-        Me.lblMissedAppointments.Size = New System.Drawing.Size(200, 157)
-        Me.lblMissedAppointments.TabIndex = 25
-        Me.lblMissedAppointments.Text = "0"
-        Me.lblMissedAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
         'AdminDashboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -604,10 +456,6 @@ Partial Class AdminDashboard
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
         Me.ControlBox = False
-        Me.Controls.Add(Me.Guna2Panel8)
-        Me.Controls.Add(Me.Guna2Panel7)
-        Me.Controls.Add(Me.Guna2Panel6)
-        Me.Controls.Add(Me.Guna2Panel5)
         Me.Controls.Add(Me.btnLogout)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Guna2Panel4)
@@ -630,10 +478,6 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.ResumeLayout(False)
         Me.Guna2Panel4.ResumeLayout(False)
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.Guna2Panel5.ResumeLayout(False)
-        Me.Guna2Panel6.ResumeLayout(False)
-        Me.Guna2Panel7.ResumeLayout(False)
-        Me.Guna2Panel8.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -677,16 +521,4 @@ Partial Class AdminDashboard
     Friend WithEvents PaymentHistory As ToolStripMenuItem
     Friend WithEvents ToolStripMenuPatientHistory As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItemFollowup As ToolStripMenuItem
-    Friend WithEvents Guna2Panel5 As Guna.UI2.WinForms.Guna2Panel
-    Friend WithEvents Label1 As Label
-    Friend WithEvents lblUpcomingFollowups As Label
-    Friend WithEvents Guna2Panel6 As Guna.UI2.WinForms.Guna2Panel
-    Friend WithEvents Label2 As Label
-    Friend WithEvents lblOverdueFollowups As Label
-    Friend WithEvents Guna2Panel7 As Guna.UI2.WinForms.Guna2Panel
-    Friend WithEvents Label4 As Label
-    Friend WithEvents lblMissedFollowups As Label
-    Friend WithEvents Guna2Panel8 As Guna.UI2.WinForms.Guna2Panel
-    Friend WithEvents Label3 As Label
-    Friend WithEvents lblMissedAppointments As Label
 End Class
