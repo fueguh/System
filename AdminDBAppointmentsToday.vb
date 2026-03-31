@@ -81,7 +81,7 @@ Public Class AdminDBAppointmentsToday
         If currentStatus = "Confirmed" Then
             UpdateAppointmentStatus(apptID, "Ongoing")
         End If
-        SystemSession.LogAudit($"Started Treatment for {patName}", "AvailableAppointments")
+        SystemSession.LogAudit($"Started Treatment for {patName}", "Apointments Today")
 
         ' --- THE FIX ---
         ' 1. Create form with NO arguments
