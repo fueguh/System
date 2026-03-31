@@ -46,6 +46,7 @@ Partial Class AdminDashboard
         Me.PaymentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PaymentHistory = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuPatientHistory = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItemFollowup = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
@@ -62,7 +63,9 @@ Partial Class AdminDashboard
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
-        Me.ToolStripMenuItemFollowup = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Guna2Panel5 = New Guna.UI2.WinForms.Guna2Panel()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.lblUpcomingFollowups = New System.Windows.Forms.Label()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -70,6 +73,7 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.SuspendLayout()
         Me.Guna2Panel4.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Guna2Panel5.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
@@ -259,6 +263,13 @@ Partial Class AdminDashboard
         Me.ToolStripMenuPatientHistory.Size = New System.Drawing.Size(240, 44)
         Me.ToolStripMenuPatientHistory.Text = "Patient History"
         '
+        'ToolStripMenuItemFollowup
+        '
+        Me.ToolStripMenuItemFollowup.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItemFollowup.Name = "ToolStripMenuItemFollowup"
+        Me.ToolStripMenuItemFollowup.Size = New System.Drawing.Size(172, 44)
+        Me.ToolStripMenuItemFollowup.Text = "Follow-up"
+        '
         'Guna2CustomGradientPanel1
         '
         Me.Guna2CustomGradientPanel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -442,12 +453,38 @@ Partial Class AdminDashboard
         Me.btnLogout.TabIndex = 30
         Me.btnLogout.Text = "Logout"
         '
-        'ToolStripMenuItemFollowup
+        'Guna2Panel5
         '
-        Me.ToolStripMenuItemFollowup.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItemFollowup.Name = "ToolStripMenuItemFollowup"
-        Me.ToolStripMenuItemFollowup.Size = New System.Drawing.Size(172, 44)
-        Me.ToolStripMenuItemFollowup.Text = "Follow-up"
+        Me.Guna2Panel5.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.Guna2Panel5.BorderRadius = 10
+        Me.Guna2Panel5.Controls.Add(Me.Label1)
+        Me.Guna2Panel5.Controls.Add(Me.lblUpcomingFollowups)
+        Me.Guna2Panel5.Location = New System.Drawing.Point(436, 445)
+        Me.Guna2Panel5.Name = "Guna2Panel5"
+        Me.Guna2Panel5.Size = New System.Drawing.Size(200, 210)
+        Me.Guna2Panel5.TabIndex = 31
+        '
+        'Label1
+        '
+        Me.Label1.Font = New System.Drawing.Font("Mongolian Baiti", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Label1.Location = New System.Drawing.Point(0, 152)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(200, 53)
+        Me.Label1.TabIndex = 25
+        Me.Label1.Text = "Upcoming Follow-ups"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        '
+        'lblUpcomingFollowups
+        '
+        Me.lblUpcomingFollowups.Font = New System.Drawing.Font("Microsoft Sans Serif", 72.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblUpcomingFollowups.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblUpcomingFollowups.Location = New System.Drawing.Point(0, 0)
+        Me.lblUpcomingFollowups.Name = "lblUpcomingFollowups"
+        Me.lblUpcomingFollowups.Size = New System.Drawing.Size(200, 157)
+        Me.lblUpcomingFollowups.TabIndex = 25
+        Me.lblUpcomingFollowups.Text = "0"
+        Me.lblUpcomingFollowups.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'AdminDashboard
         '
@@ -456,6 +493,7 @@ Partial Class AdminDashboard
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
         Me.ControlBox = False
+        Me.Controls.Add(Me.Guna2Panel5)
         Me.Controls.Add(Me.btnLogout)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Guna2Panel4)
@@ -478,6 +516,7 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.ResumeLayout(False)
         Me.Guna2Panel4.ResumeLayout(False)
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Guna2Panel5.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -521,4 +560,7 @@ Partial Class AdminDashboard
     Friend WithEvents PaymentHistory As ToolStripMenuItem
     Friend WithEvents ToolStripMenuPatientHistory As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItemFollowup As ToolStripMenuItem
+    Friend WithEvents Guna2Panel5 As Guna.UI2.WinForms.Guna2Panel
+    Friend WithEvents Label1 As Label
+    Friend WithEvents lblUpcomingFollowups As Label
 End Class

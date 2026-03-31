@@ -217,7 +217,7 @@ Public Class AdminDBFollowUps
 
             Dim query As String =
         "UPDATE dbo.PatientFollowUps 
-         SET FollowUpDate = @date, Status = 'Rescheduled'
+         SET FollowUpDate = @date, Status = 'Scheduled'
          WHERE FollowUpID = @id"
 
             Using cmd As New SqlCommand(query, conn)

@@ -84,6 +84,13 @@ Public Class AdminDashboard
             WHERE Status = 'Completed'
             ", con)
             lblCompletedAppointments.Text = cmd4.ExecuteScalar().ToString()
+
+            ' Upcoming Follow-ups
+            Dim cmd5 As New SqlCommand("
+             SELECT COUNT(*) FROM PatientFollowUps
+             WHERE Status = 'Scheduled'
+            ", con)
+            lblUpcomingFollowups.Text = cmd5.ExecuteScalar().ToString()
         End Using
     End Sub
 
