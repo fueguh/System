@@ -48,6 +48,7 @@ Partial Class AdminDBFollowUps
         Me.txtSearch = New Guna.UI2.WinForms.Guna2TextBox()
         Me.Guna2HtmlLabel7 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
         Me.Panel1.SuspendLayout()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvFollowUps, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -384,6 +385,7 @@ Partial Class AdminDBFollowUps
         '
         'Panel3
         '
+        Me.Panel3.Controls.Add(Me.btnClear)
         Me.Panel3.Controls.Add(Me.Guna2HtmlLabel7)
         Me.Panel3.Controls.Add(Me.btnReschedule)
         Me.Panel3.Controls.Add(Me.btnMissed)
@@ -393,6 +395,23 @@ Partial Class AdminDBFollowUps
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(1056, 216)
         Me.Panel3.TabIndex = 107
+        '
+        'btnClear
+        '
+        Me.btnClear.BorderRadius = 10
+        Me.btnClear.DisabledState.BorderColor = System.Drawing.Color.DarkGray
+        Me.btnClear.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
+        Me.btnClear.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
+        Me.btnClear.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
+        Me.btnClear.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.btnClear.Font = New System.Drawing.Font("Mongolian Baiti", 15.75!, System.Drawing.FontStyle.Bold)
+        Me.btnClear.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.btnClear.Location = New System.Drawing.Point(460, 138)
+        Me.btnClear.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
+        Me.btnClear.Name = "btnClear"
+        Me.btnClear.Size = New System.Drawing.Size(232, 45)
+        Me.btnClear.TabIndex = 107
+        Me.btnClear.Text = "Clear"
         '
         'AdminDBFollowUps
         '
@@ -443,4 +462,5 @@ Partial Class AdminDBFollowUps
     Friend WithEvents txtSearch As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Guna2HtmlLabel7 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Panel3 As Panel
+    Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
 End Class

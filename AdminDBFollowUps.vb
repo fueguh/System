@@ -5,7 +5,7 @@ Public Class AdminDBFollowUps
 
     Private connectionString As String = My.Settings.DentalDBConnection2
     Private dtFollowUps As DataTable
-
+    Public Shared Dashboard As AdminDashboard
     Public PassedPatientID As Integer = 0
     Public PassedAppointmentID As Integer = 0
     Private selectedFollowUpID As Integer = 0
@@ -14,14 +14,48 @@ Public Class AdminDBFollowUps
     Private selectedStatus As String = ""
     Private dvFollowUps As DataView
     Private Sub AdminDBFollowUps_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadFollowUps()
+        ' Restrict the calendar from showing/selecting dates before today
+        dtpNewDate.MinDate = DateTime.Today
+        RefreshData()
     End Sub
+    ' ====================================================
+    ' AUTO-UPDATE STATUSES (SCHEDULED → OVERDUE → MISSED)
+    ' ====================================================
+    Private Sub AutoUpdateFollowUpStatuses()
 
+        Using conn As New SqlConnection(connectionString)
+            conn.Open()
+
+            Dim query As String =
+        "
+        UPDATE dbo.PatientFollowUps
+        SET Status = 
+            CASE
+                WHEN FollowUpDate < CAST(GETDATE() AS DATE)
+                     AND Status = 'Scheduled'
+                     THEN 'Overdue'
+
+                WHEN FollowUpDate < DATEADD(DAY, -1, CAST(GETDATE() AS DATE))
+                     AND Status = 'Overdue'
+                     THEN 'Missed'
+
+                ELSE Status
+            END
+        "
+
+            Using cmd As New SqlCommand(query, conn)
+                cmd.ExecuteNonQuery()
+            End Using
+
+        End Using
+
+    End Sub
     ' ==========================================
     ' LOAD FOLLOW-UPS INTO GRID (FIXED BINDING)
     ' ==========================================
     Private Sub LoadFollowUps()
-
+        ' 🔥 AUTO STATUS UPDATE FIRST
+        AutoUpdateFollowUpStatuses()
         Dim dt As New DataTable()
 
         Using conn As New SqlConnection(connectionString)
@@ -140,6 +174,7 @@ Public Class AdminDBFollowUps
 
 
     End Sub
+
     Private Sub ClearForm()
 
         ' Reset internal state
@@ -157,6 +192,9 @@ Public Class AdminDBFollowUps
         ' Clear grid selection
         dgvFollowUps.ClearSelection()
         dgvFollowUps.CurrentCell = Nothing
+
+        ' Clear search box  
+        txtSearch.Text = ""
 
     End Sub
     Private Sub btnBack_Click_1(sender As Object, e As EventArgs) Handles btnBack.Click
@@ -178,8 +216,7 @@ Public Class AdminDBFollowUps
             End Using
         End Using
 
-        LoadFollowUps()
-        ClearForm()
+        RefreshData()
 
     End Sub
     Private Function EnsureSelection() As Boolean
@@ -204,13 +241,18 @@ Public Class AdminDBFollowUps
             End Using
         End Using
 
-        LoadFollowUps()
-        ClearForm()
+        RefreshData()
 
     End Sub
     Private Sub btnReschedule_Click(sender As Object, e As EventArgs) Handles btnReschedule.Click
 
         If Not EnsureSelection() Then Exit Sub
+
+        ' 🚫 PREVENT PAST DATES
+        If dtpNewDate.Value.Date < Date.Today Then
+            MessageBox.Show("Please reschedule at a later date.", "Invalid Date", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
 
         Using conn As New SqlConnection(connectionString)
             conn.Open()
@@ -227,8 +269,7 @@ Public Class AdminDBFollowUps
             End Using
         End Using
 
-        LoadFollowUps()
-        ClearForm()
+        RefreshData()
 
     End Sub
     Private Sub txtSearch_TextChanged(sender As Object, e As EventArgs) Handles txtSearch.TextChanged
@@ -240,5 +281,14 @@ Public Class AdminDBFollowUps
         dvFollowUps.RowFilter =
         "PatientName LIKE '%" & search & "%' OR Reason LIKE '%" & search & "%' OR Status LIKE '%" & search & "%'"
 
+    End Sub
+    Private Sub RefreshData()
+        LoadFollowUps()
+        ClearForm()
+        ' If the dashboard exists, tell it to recount the follow-ups
+        Dashboard?.LoadDashboardStats()
+    End Sub
+    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
+        ClearForm()
     End Sub
 End Class

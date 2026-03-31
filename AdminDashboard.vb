@@ -3,6 +3,7 @@
 Public Class AdminDashboard
     Private Sub AdminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadDashboardStats()
+        AutoUpdateFollowUpStatuses()
     End Sub
     Private Sub Guna2PictureBox1_Click(sender As Object, e As EventArgs)
         AdminDBAppointments.Show()
@@ -91,6 +92,20 @@ Public Class AdminDashboard
              WHERE Status = 'Scheduled'
             ", con)
             lblUpcomingFollowups.Text = cmd5.ExecuteScalar().ToString()
+
+            ' Overdue Follow-ups
+            Dim cmd6 As New SqlCommand("
+            SELECT COUNT(*) FROM PatientFollowUps
+            WHERE Status = 'Overdue'
+            ", con)
+            lblOverdueFollowups.Text = cmd6.ExecuteScalar().ToString()
+
+            ' Missed Follow-ups
+            Dim cmd7 As New SqlCommand("
+            SELECT COUNT(*) FROM PatientFollowUps
+            WHERE Status = 'Missed'
+            ", con)
+            lblMissedFollowups.Text = cmd7.ExecuteScalar().ToString()
         End Using
     End Sub
 
@@ -189,5 +204,34 @@ Public Class AdminDashboard
     Private Sub ToolStripMenuItemFollowup_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItemFollowup.Click
         AdminDBFollowUps.Show()
         Me.Hide()
+    End Sub
+    Private Sub AutoUpdateFollowUpStatuses()
+
+        Using conn As New SqlConnection(My.Settings.DentalDBConnection2)
+            conn.Open()
+
+            Dim query As String =
+            "
+        UPDATE dbo.PatientFollowUps
+        SET Status = 
+            CASE
+                WHEN FollowUpDate < CAST(GETDATE() AS DATE)
+                     AND Status = 'Scheduled'
+                     THEN 'Overdue'
+
+                WHEN FollowUpDate < DATEADD(DAY, -1, CAST(GETDATE() AS DATE))
+                     AND Status = 'Overdue'
+                     THEN 'Missed'
+
+                ELSE Status
+            END
+        "
+
+            Using cmd As New SqlCommand(query, conn)
+                cmd.ExecuteNonQuery()
+            End Using
+
+        End Using
+
     End Sub
 End Class
