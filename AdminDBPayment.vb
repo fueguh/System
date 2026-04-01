@@ -8,7 +8,7 @@ Public Class AdminDBPayment
     Public SelectedPatientName As String = ""
     Private SelectedDentistName As String = ""
     Private SelectedTreatmentNotes As String = "" ' Merged Notes Variable
-
+    Private currentTotal As Decimal = 0
     ' ================= FORM LOAD =================
     Private Sub AdminDBPayment_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPendingPayments()
@@ -18,7 +18,6 @@ Public Class AdminDBPayment
         dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
         dgvPendingPayments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
 
-        TextBoxTotal.ReadOnly = True
         dgvPendingPayments.ReadOnly = True
         dgvPendingPayments.AllowUserToAddRows = False
         dgvPendingPayments.SelectionMode = DataGridViewSelectionMode.FullRowSelect
@@ -147,14 +146,21 @@ Public Class AdminDBPayment
     End Sub
 
     Private Sub CalculateTotal()
-        Dim total As Decimal = 0
-        ' Loop through the second grid (dgvServices) instead of clbServices
-        For Each row As DataGridViewRow In dgvServices.Rows
-            If Not row.IsNewRow Then
-                total += Convert.ToDecimal(row.Cells("Price").Value)
-            End If
-        Next
-        TextBoxTotal.Text = total.ToString("F2")
+
+        Dim dt As DataTable = TryCast(dgvServices.DataSource, DataTable)
+        If dt Is Nothing Then Exit Sub
+
+        Dim result = dt.Compute("SUM(Price)", "")
+        Dim total As Decimal = If(IsDBNull(result), 0D, Convert.ToDecimal(result))
+
+        currentTotal = total
+
+        Dim subtotal As Decimal = total / 1.12D
+        Dim vat As Decimal = total - subtotal
+
+        lblTotal.Text = "Total: PHP " & total.ToString("N2")
+        lblSubtotal.Text = "Subtotal: " & subtotal.ToString("N2")
+        lblVATAmount.Text = "VAT (12%): " & vat.ToString("N2")
     End Sub
 
     Private Sub LoadPaymentMethods()
@@ -162,13 +168,20 @@ Public Class AdminDBPayment
         ComboBoxPaymentMethod.Items.AddRange(New String() {"Cash", "Gcash"})
     End Sub
     Private Sub ComboBoxPaymentMethod_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxPaymentMethod.SelectedIndexChanged
-        If ComboBoxPaymentMethod.Text = "Gcash" Then
-            txtReferenceNo.Enabled = True
-            txtReferenceNo.PlaceholderText = "Enter Reference No." ' If using Guna or modern controls
+
+        Dim isGcash As Boolean = (ComboBoxPaymentMethod.Text = "Gcash")
+
+        txtReferenceNo.Enabled = isGcash
+        txtReferenceNo.Clear()
+
+        txtAmountPaid.ReadOnly = isGcash
+        If isGcash Then
+            txtAmountPaid.Text = currentTotal.ToString("F2")
         Else
-            txtReferenceNo.Enabled = False
-            txtReferenceNo.Clear()
+            txtAmountPaid.Clear()
         End If
+
+        CheckReadyToPoint()
     End Sub
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
         ' 1. Security & Validation
@@ -182,14 +195,27 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
+        ' --- NEW: AMOUNT VALIDATION ---
+        If String.IsNullOrWhiteSpace(txtAmountPaid.Text) Then
+            MessageBox.Show("Please enter the amount paid.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtAmountPaid.Focus()
+            Exit Sub
+        End If
+
         ' --- Amount Paid & VAT Calculations ---
-        Dim totalAmount As Decimal = 0
+        Dim totalAmount As Decimal = currentTotal
         Dim amountPaid As Decimal = 0
-        Decimal.TryParse(TextBoxTotal.Text, totalAmount)
+
+        Dim changeAmount As Decimal = amountPaid - totalAmount
+
+        If changeAmount < 0 Then
+            changeAmount = 0
+        End If
+
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
 
         Dim subTotal As Decimal = totalAmount / 1.12D
-        Dim vatAmount As Decimal = totalAmount - subTotal
+            Dim vatAmount As Decimal = totalAmount - subTotal
 
         ' Validate that the patient paid enough
         If amountPaid < totalAmount Then
@@ -237,6 +263,8 @@ Public Class AdminDBPayment
                             cmd.Parameters.Add("@PID", SqlDbType.Int).Value = SelectedPatientID
                             cmd.Parameters.Add("@UID", SqlDbType.Int).Value = SystemSession.LoggedInUserID
                             cmd.Parameters.Add("@Total", SqlDbType.Decimal).Value = totalAmount
+                            cmd.Parameters("@Total").Precision = 18
+                            cmd.Parameters("@Total").Scale = 2
                             cmd.Parameters.Add("@Method", SqlDbType.VarChar).Value = ComboBoxPaymentMethod.Text
                             cmd.Parameters.Add("@Ref", SqlDbType.VarChar).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
                             cmd.Parameters.Add("@Sub", SqlDbType.Decimal).Value = subTotal
@@ -252,7 +280,11 @@ Public Class AdminDBPayment
                                 trans.Commit()
 
                                 ' Audit Logging
-                                Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1}", TextBoxTotal.Text, SelectedPatientName)
+                                Dim auditMsg As String = String.Format(
+                                "Processed payment of P{0} for patient {1}",
+                                totalAmount.ToString("N2"),
+                                SelectedPatientName
+)
                                 SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
                                 ' 3. Unified Printing Call
@@ -270,7 +302,7 @@ Public Class AdminDBPayment
                                         SelectedPatientName,        ' 1
                                         SelectedDentistName,        ' 2
                                         SelectedTreatmentNotes,     ' 3
-                                        TextBoxTotal.Text,          ' 4
+                                        totalAmount.ToString("F2"), ' 4
                                         amountPaid.ToString("F2"),  ' 5. PAID (Value of type DataTable error fixed here)
                                         ComboBoxPaymentMethod.Text, ' 6
                                         txtReferenceNo.Text,        ' 7
@@ -311,24 +343,35 @@ SuccessCleanup:
 
     ' Helper to clean up the screen after saving
     Private Sub ClearBillingUI()
-        ' Reset IDs
+
         SelectedAppointmentID = 0
         SelectedPatientID = 0
-        txtAmountPaid.Clear()
+
         patient_name.Text = "---"
         dentist_name.Text = "---"
-        TextBoxTotal.Text = "0.00"
-        dgvServices.DataSource = Nothing
+
+        txtAmountPaid.Clear()
         txtReferenceNo.Clear()
         txtReferenceNo.Enabled = False
+
+        lblTotal.Text = "Total Amount: PHP 0.00"
+        lblSubtotal.Text = "Subtotal: 0.00"
+        lblVATAmount.Text = "VAT (12%): 0.00"
+
+        dgvServices.DataSource = Nothing
         dgvPendingPayments.ClearSelection()
-        dgvServices.ClearSelection()
     End Sub
     ' Only allows numbers and backspace in the Reference Number box
     Private Sub txtReferenceNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtReferenceNo.KeyPress
-        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
+        ' Only allow numbers and backspace
+        If Not Char.IsDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) Then
             e.Handled = True
         End If
+    End Sub
+
+    ' Add this to trigger the button check while typing the Ref No
+    Private Sub txtReferenceNo_TextChanged(sender As Object, e As EventArgs) Handles txtReferenceNo.TextChanged
+        CheckReadyToPoint()
     End Sub
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearBillingUI()
@@ -353,4 +396,32 @@ SuccessCleanup:
             End Using
         End Using
     End Function
+    Private Sub txtAmountPaid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAmountPaid.KeyPress
+        ' Allow digits, control keys (backspace), and one decimal point
+        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) AndAlso (e.KeyChar <> "."c) Then
+            e.Handled = True
+        End If
+
+        ' Only allow one decimal point
+        If (e.KeyChar = "."c) AndAlso (DirectCast(sender, TextBox).Text.IndexOf("."c) > -1) Then
+            e.Handled = True
+        End If
+    End Sub
+    Private Sub CheckReadyToPoint()
+
+        Dim hasMethod As Boolean = Not String.IsNullOrEmpty(ComboBoxPaymentMethod.Text)
+        Dim hasAmount As Boolean = Not String.IsNullOrWhiteSpace(txtAmountPaid.Text)
+
+        Dim gcashValid As Boolean = True
+
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            gcashValid = System.Text.RegularExpressions.Regex.IsMatch(txtReferenceNo.Text.Trim(), "^\d{13}$")
+        End If
+
+        ButtonGenerateReceipt.Enabled = hasMethod AndAlso hasAmount AndAlso gcashValid
+
+    End Sub
+    Private Sub txtAmountPaid_TextChanged(sender As Object, e As EventArgs) Handles txtAmountPaid.TextChanged
+        CheckReadyToPoint()
+    End Sub
 End Class

@@ -33,7 +33,6 @@ Partial Class AdminDBPayment
         Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Guna2AnimateWindow1 = New Guna.UI2.WinForms.Guna2AnimateWindow(Me.components)
-        Me.TextBoxTotal = New Guna.UI2.WinForms.Guna2TextBox()
         Me.ComboBoxPaymentMethod = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.lblDentist = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
@@ -53,6 +52,9 @@ Partial Class AdminDBPayment
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
         Me.txtReferenceNo = New Guna.UI2.WinForms.Guna2TextBox()
         Me.txtAmountPaid = New Guna.UI2.WinForms.Guna2TextBox()
+        Me.lblVATAmount = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.lblSubtotal = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.lblTotal = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvPendingPayments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -60,30 +62,6 @@ Partial Class AdminDBPayment
         Me.Guna2Panel1.SuspendLayout()
         Me.Guna2Panel2.SuspendLayout()
         Me.SuspendLayout()
-        '
-        'TextBoxTotal
-        '
-        Me.TextBoxTotal.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxTotal.BorderRadius = 10
-        Me.TextBoxTotal.BorderThickness = 2
-        Me.TextBoxTotal.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.TextBoxTotal.DefaultText = ""
-        Me.TextBoxTotal.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
-        Me.TextBoxTotal.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
-        Me.TextBoxTotal.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.TextBoxTotal.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.TextBoxTotal.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TextBoxTotal.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.TextBoxTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxTotal.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TextBoxTotal.Location = New System.Drawing.Point(32, 257)
-        Me.TextBoxTotal.Margin = New System.Windows.Forms.Padding(4)
-        Me.TextBoxTotal.Name = "TextBoxTotal"
-        Me.TextBoxTotal.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxTotal.PlaceholderText = "Subtotal"
-        Me.TextBoxTotal.SelectedText = ""
-        Me.TextBoxTotal.Size = New System.Drawing.Size(279, 50)
-        Me.TextBoxTotal.TabIndex = 12
         '
         'ComboBoxPaymentMethod
         '
@@ -98,7 +76,7 @@ Partial Class AdminDBPayment
         Me.ComboBoxPaymentMethod.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.ComboBoxPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ComboBoxPaymentMethod.ItemHeight = 30
-        Me.ComboBoxPaymentMethod.Location = New System.Drawing.Point(32, 407)
+        Me.ComboBoxPaymentMethod.Location = New System.Drawing.Point(32, 512)
         Me.ComboBoxPaymentMethod.Margin = New System.Windows.Forms.Padding(4)
         Me.ComboBoxPaymentMethod.Name = "ComboBoxPaymentMethod"
         Me.ComboBoxPaymentMethod.Size = New System.Drawing.Size(279, 36)
@@ -120,7 +98,7 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(32, 372)
+        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(32, 477)
         Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
         Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(153, 28)
         Me.Guna2HtmlLabel1.TabIndex = 23
@@ -136,7 +114,7 @@ Partial Class AdminDBPayment
         Me.ButtonGenerateReceipt.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.ButtonGenerateReceipt.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.ButtonGenerateReceipt.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ButtonGenerateReceipt.Location = New System.Drawing.Point(32, 602)
+        Me.ButtonGenerateReceipt.Location = New System.Drawing.Point(32, 646)
         Me.ButtonGenerateReceipt.Name = "ButtonGenerateReceipt"
         Me.ButtonGenerateReceipt.Size = New System.Drawing.Size(279, 83)
         Me.ButtonGenerateReceipt.TabIndex = 24
@@ -430,7 +408,7 @@ Partial Class AdminDBPayment
         Me.txtReferenceNo.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtReferenceNo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtReferenceNo.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtReferenceNo.Location = New System.Drawing.Point(32, 466)
+        Me.txtReferenceNo.Location = New System.Drawing.Point(32, 571)
         Me.txtReferenceNo.Margin = New System.Windows.Forms.Padding(4)
         Me.txtReferenceNo.Name = "txtReferenceNo"
         Me.txtReferenceNo.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -454,14 +432,47 @@ Partial Class AdminDBPayment
         Me.txtAmountPaid.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAmountPaid.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtAmountPaid.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtAmountPaid.Location = New System.Drawing.Point(32, 315)
+        Me.txtAmountPaid.Location = New System.Drawing.Point(32, 420)
         Me.txtAmountPaid.Margin = New System.Windows.Forms.Padding(4)
         Me.txtAmountPaid.Name = "txtAmountPaid"
         Me.txtAmountPaid.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtAmountPaid.PlaceholderText = "Amount Paid"
+        Me.txtAmountPaid.PlaceholderText = "Cash Paid*"
         Me.txtAmountPaid.SelectedText = ""
         Me.txtAmountPaid.Size = New System.Drawing.Size(279, 50)
         Me.txtAmountPaid.TabIndex = 57
+        '
+        'lblVATAmount
+        '
+        Me.lblVATAmount.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblVATAmount.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblVATAmount.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblVATAmount.Location = New System.Drawing.Point(32, 265)
+        Me.lblVATAmount.Name = "lblVATAmount"
+        Me.lblVATAmount.Size = New System.Drawing.Size(50, 28)
+        Me.lblVATAmount.TabIndex = 58
+        Me.lblVATAmount.Text = "VAT:"
+        '
+        'lblSubtotal
+        '
+        Me.lblSubtotal.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblSubtotal.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblSubtotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblSubtotal.Location = New System.Drawing.Point(32, 309)
+        Me.lblSubtotal.Name = "lblSubtotal"
+        Me.lblSubtotal.Size = New System.Drawing.Size(113, 28)
+        Me.lblSubtotal.TabIndex = 59
+        Me.lblSubtotal.Text = "SUBTOTAL:"
+        '
+        'lblTotal
+        '
+        Me.lblTotal.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblTotal.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblTotal.Location = New System.Drawing.Point(32, 358)
+        Me.lblTotal.Name = "lblTotal"
+        Me.lblTotal.Size = New System.Drawing.Size(126, 28)
+        Me.lblTotal.TabIndex = 60
+        Me.lblTotal.Text = "Total Amount:"
         '
         'AdminDBPayment
         '
@@ -470,6 +481,9 @@ Partial Class AdminDBPayment
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1294, 823)
         Me.ControlBox = False
+        Me.Controls.Add(Me.lblTotal)
+        Me.Controls.Add(Me.lblSubtotal)
+        Me.Controls.Add(Me.lblVATAmount)
         Me.Controls.Add(Me.txtAmountPaid)
         Me.Controls.Add(Me.txtReferenceNo)
         Me.Controls.Add(Me.btnClear)
@@ -485,7 +499,6 @@ Partial Class AdminDBPayment
         Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.lblDentist)
         Me.Controls.Add(Me.ComboBoxPaymentMethod)
-        Me.Controls.Add(Me.TextBoxTotal)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBPayment"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
@@ -502,7 +515,6 @@ Partial Class AdminDBPayment
     End Sub
 
     Friend WithEvents Guna2AnimateWindow1 As Guna.UI2.WinForms.Guna2AnimateWindow
-    Friend WithEvents TextBoxTotal As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents ComboBoxPaymentMethod As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents lblDentist As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
@@ -522,4 +534,7 @@ Partial Class AdminDBPayment
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents txtReferenceNo As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents txtAmountPaid As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents lblVATAmount As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents lblSubtotal As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents lblTotal As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class
