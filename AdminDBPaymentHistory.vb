@@ -31,17 +31,28 @@ Public Class AdminDBPaymentHistory
                     R.ReceiptID,
                     R.AppointmentID,
                     P.FullName AS [Patient Name],
-                    U.FullName AS [Dentist],          -- Added Dentist column
+                    U.FullName AS [Dentist],
                     R.TotalAmount AS [Amount Paid],
                     R.PaymentMethod AS [Method],
                     R.ReferenceNumber AS [Ref No],
                     R.DateIssued AS [Payment Date], 
-                    U2.FullName AS [Processed By]     -- Renamed alias to avoid conflict
+                    U2.FullName AS [Processed By],
+
+                    -- 👇 FOLLOW-UPS COLUMN
+                    ISNULL((
+                        SELECT STRING_AGG(
+                            CONVERT(VARCHAR, F.FollowUpDate, 101) + ' (' + F.Reason + ')', 
+                            ', '
+                        )
+                        FROM PatientFollowUps F
+                        WHERE F.AppointmentID = R.AppointmentID
+                    ), 'None') AS [Follow-Ups]
+
                 FROM Receipts R
                 INNER JOIN Patients P ON R.PatientID = P.PatientID
-                INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID  -- Added to get dentist
-                INNER JOIN Users U ON A.UserID = U.UserID                        -- Dentist
-                INNER JOIN Users U2 ON R.UserID = U2.UserID                      -- Processed By
+                INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                INNER JOIN Users U ON A.UserID = U.UserID
+                INNER JOIN Users U2 ON R.UserID = U2.UserID
                 "
 
                 If Not String.IsNullOrEmpty(searchName) Then
@@ -143,7 +154,7 @@ Public Class AdminDBPaymentHistory
             ' 3. Get Follow-Ups
             Dim cmdFU As New SqlCommand("
             SELECT FollowUpDate, Reason 
-            FROM FollowUps 
+            FROM PatientFollowUps 
             WHERE AppointmentID = @AID
             ORDER BY FollowUpDate ASC", con)
 

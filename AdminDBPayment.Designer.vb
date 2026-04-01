@@ -159,7 +159,7 @@ Partial Class AdminDBPayment
         Me.btnBack.FillColor = System.Drawing.Color.LightGray
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1095, 24)
+        Me.btnBack.Location = New System.Drawing.Point(1207, 24)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.btnBack.Size = New System.Drawing.Size(60, 58)
@@ -173,6 +173,8 @@ Partial Class AdminDBPayment
         Me.dgvPendingPayments.AllowUserToDeleteRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.dgvPendingPayments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        Me.dgvPendingPayments.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvPendingPayments.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
@@ -205,7 +207,7 @@ Partial Class AdminDBPayment
         Me.dgvPendingPayments.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.dgvPendingPayments.RowHeadersVisible = False
         Me.dgvPendingPayments.RowHeadersWidth = 51
-        Me.dgvPendingPayments.Size = New System.Drawing.Size(791, 302)
+        Me.dgvPendingPayments.Size = New System.Drawing.Size(906, 302)
         Me.dgvPendingPayments.TabIndex = 32
         Me.dgvPendingPayments.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvPendingPayments.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -233,24 +235,27 @@ Partial Class AdminDBPayment
         '
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.btnBack)
         Me.Guna2CustomGradientPanel1.Controls.Add(Me.Guna2HtmlLabel6)
+        Me.Guna2CustomGradientPanel1.Dock = System.Windows.Forms.DockStyle.Top
         Me.Guna2CustomGradientPanel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.FillColor2 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.FillColor3 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1182, 107)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1294, 107)
         Me.Guna2CustomGradientPanel1.TabIndex = 49
         '
         'Guna2HtmlLabel6
         '
+        Me.Guna2HtmlLabel6.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2HtmlLabel6.AutoSize = False
         Me.Guna2HtmlLabel6.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel6.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel6.Location = New System.Drawing.Point(0, -1)
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
-        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1179, 107)
+        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1294, 107)
         Me.Guna2HtmlLabel6.TabIndex = 47
         Me.Guna2HtmlLabel6.Text = "Payment"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -272,6 +277,8 @@ Partial Class AdminDBPayment
         Me.dgvServices.AllowUserToDeleteRows = False
         DataGridViewCellStyle5.BackColor = System.Drawing.Color.White
         Me.dgvServices.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle5
+        Me.dgvServices.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.dgvServices.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
         DataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
@@ -304,7 +311,7 @@ Partial Class AdminDBPayment
         Me.dgvServices.RowHeadersDefaultCellStyle = DataGridViewCellStyle8
         Me.dgvServices.RowHeadersVisible = False
         Me.dgvServices.RowHeadersWidth = 51
-        Me.dgvServices.Size = New System.Drawing.Size(791, 206)
+        Me.dgvServices.Size = New System.Drawing.Size(906, 206)
         Me.dgvServices.TabIndex = 51
         Me.dgvServices.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvServices.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -341,44 +348,52 @@ Partial Class AdminDBPayment
         '
         'Guna2Panel1
         '
+        Me.Guna2Panel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2Panel1.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Guna2Panel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.Guna2Panel1.Location = New System.Drawing.Point(376, 136)
         Me.Guna2Panel1.Name = "Guna2Panel1"
-        Me.Guna2Panel1.Size = New System.Drawing.Size(791, 66)
+        Me.Guna2Panel1.Size = New System.Drawing.Size(906, 66)
         Me.Guna2Panel1.TabIndex = 53
         '
         'Guna2HtmlLabel3
         '
+        Me.Guna2HtmlLabel3.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2HtmlLabel3.AutoSize = False
         Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(0, -1)
         Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
-        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(791, 67)
+        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(906, 67)
         Me.Guna2HtmlLabel3.TabIndex = 48
         Me.Guna2HtmlLabel3.Text = "Queue"
         Me.Guna2HtmlLabel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Guna2Panel2
         '
+        Me.Guna2Panel2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2Panel2.Controls.Add(Me.Guna2HtmlLabel4)
         Me.Guna2Panel2.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.Guna2Panel2.Location = New System.Drawing.Point(376, 529)
         Me.Guna2Panel2.Name = "Guna2Panel2"
-        Me.Guna2Panel2.Size = New System.Drawing.Size(791, 66)
+        Me.Guna2Panel2.Size = New System.Drawing.Size(906, 66)
         Me.Guna2Panel2.TabIndex = 54
         '
         'Guna2HtmlLabel4
         '
+        Me.Guna2HtmlLabel4.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Guna2HtmlLabel4.AutoSize = False
         Me.Guna2HtmlLabel4.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel4.Font = New System.Drawing.Font("Mongolian Baiti", 26.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel4.Location = New System.Drawing.Point(0, 0)
         Me.Guna2HtmlLabel4.Name = "Guna2HtmlLabel4"
-        Me.Guna2HtmlLabel4.Size = New System.Drawing.Size(791, 67)
+        Me.Guna2HtmlLabel4.Size = New System.Drawing.Size(906, 67)
         Me.Guna2HtmlLabel4.TabIndex = 49
         Me.Guna2HtmlLabel4.Text = "Details"
         Me.Guna2HtmlLabel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -428,7 +443,7 @@ Partial Class AdminDBPayment
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1179, 823)
+        Me.ClientSize = New System.Drawing.Size(1294, 823)
         Me.ControlBox = False
         Me.Controls.Add(Me.txtReferenceNo)
         Me.Controls.Add(Me.btnClear)

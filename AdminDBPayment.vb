@@ -22,6 +22,8 @@ Public Class AdminDBPayment
         dgvPendingPayments.ReadOnly = True
         dgvPendingPayments.AllowUserToAddRows = False
         dgvPendingPayments.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
+        dgvPendingPayments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         ClearBillingUI()
     End Sub
 
@@ -33,23 +35,35 @@ Public Class AdminDBPayment
             ' It uses STRING_AGG to list all services in one cell for the grid
             ' Inside LoadPendingPayments()
             Dim sql As String = "
-    SELECT 
-        A.AppointmentID, 
-        P.PatientID,
-        P.FullName AS [Patient Name], 
-        U.FullName AS [Dentist], -- Added Dentist Name
-        A.Date, 
-        ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
-        (SELECT STRING_AGG(S.ServiceName, ', ') 
-         FROM AppointmentServices AS [AS] 
-         JOIN Services S ON [AS].ServiceID = S.ServiceID 
-         WHERE [AS].AppointmentID = A.AppointmentID) AS [Services Done]
-    FROM Appointments A
-    INNER JOIN Patients P ON A.PatientID = P.PatientID
-    INNER JOIN Users U ON A.UserID = U.UserID -- Join to get Dentist Name
-    LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
-    WHERE A.Status = 'Completed' 
-    AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)"
+            SELECT 
+                A.AppointmentID, 
+                P.PatientID,
+                P.FullName AS [Patient Name], 
+                U.FullName AS [Dentist], 
+                A.Date, 
+                ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
+
+                (SELECT STRING_AGG(S.ServiceName, ', ') 
+                 FROM AppointmentServices AS AP 
+                 JOIN Services S ON AP.ServiceID = S.ServiceID 
+                 WHERE AP.AppointmentID = A.AppointmentID) AS [Services Done],
+
+                -- ✅ NEW: Follow-ups display
+                ISNULL((
+                    SELECT STRING_AGG(
+                        CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + F.Reason,
+                        ' | '
+                    )
+                    FROM PatientFollowUps F
+                    WHERE F.AppointmentID = A.AppointmentID
+                ), 'No follow-ups') AS [Follow Ups]
+
+            FROM Appointments A
+            INNER JOIN Patients P ON A.PatientID = P.PatientID
+            INNER JOIN Users U ON A.UserID = U.UserID
+            LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
+            WHERE A.Status = 'Completed'
+            AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)"
 
             Dim da As New SqlDataAdapter(sql, con)
             Dim dt As New DataTable()
@@ -228,8 +242,14 @@ Public Class AdminDBPayment
 
                                 ' Inside ButtonGenerateReceipt_Click
                                 If askPrint = DialogResult.Yes Then
+
                                     ' 1. Grab the table from the grid
-                                    Dim dtServices As DataTable = CType(dgvServices.DataSource, DataTable)
+                                    Dim dtServices As DataTable = TryCast(dgvServices.DataSource, DataTable)
+
+                                    If dtServices Is Nothing Then
+                                        dtServices = New DataTable()
+                                    End If
+
                                     Dim dtFollowUps As DataTable = GetFollowUps()
                                     ' 2. Call the Unified Module
                                     ReceiptPrinter.PrintReceipt(SelectedPatientName,
@@ -305,7 +325,7 @@ SuccessCleanup:
             con.Open()
 
             Dim sql As String = "SELECT FollowUpDate, Reason, Status 
-                            FROM FollowUps 
+                            FROM PatientFollowUps 
                             WHERE AppointmentID = @AID"
 
             Using cmd As New SqlCommand(sql, con)
