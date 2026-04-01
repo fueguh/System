@@ -195,31 +195,31 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
-        ' --- NEW: AMOUNT VALIDATION ---
+        ' Validate that an amount was entered
         If String.IsNullOrWhiteSpace(txtAmountPaid.Text) Then
             MessageBox.Show("Please enter the amount paid.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             txtAmountPaid.Focus()
             Exit Sub
         End If
 
-        ' --- Amount Paid & VAT Calculations ---
+        ' --- Amount Paid, VAT, and Change Calculations ---
         Dim totalAmount As Decimal = currentTotal
         Dim amountPaid As Decimal = 0
 
-        Dim changeAmount As Decimal = amountPaid - totalAmount
-
-        If changeAmount < 0 Then
-            changeAmount = 0
-        End If
-
+        ' IMPORTANT: Parse the paid amount BEFORE calculating change
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
 
+        ' Calculate Change (Ensure it is not negative)
+        Dim changeAmount As Decimal = amountPaid - totalAmount
+        If changeAmount < 0 Then changeAmount = 0
+
         Dim subTotal As Decimal = totalAmount / 1.12D
-            Dim vatAmount As Decimal = totalAmount - subTotal
+        Dim vatAmount As Decimal = totalAmount - subTotal
 
         ' Validate that the patient paid enough
         If amountPaid < totalAmount Then
             MessageBox.Show("Amount paid cannot be less than the total amount.", "Payment Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            txtAmountPaid.Focus()
             Exit Sub
         End If
 
@@ -238,7 +238,6 @@ Public Class AdminDBPayment
                 Exit Sub
             End If
 
-            ' Philippines standard GCash Ref is 13 digits
             If Not System.Text.RegularExpressions.Regex.IsMatch(refNo, "^\d{13}$") Then
                 Dim confirm = MessageBox.Show("Standard GCash reference numbers are 13 digits. Proceed anyway?",
                                     "Format Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
@@ -255,8 +254,9 @@ Public Class AdminDBPayment
                 con.Open()
                 Using trans As SqlTransaction = con.BeginTransaction()
                     Try
-                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber, SubTotal, VATAmount, GrandTotal, AmountPaid) " &
-                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref, @Sub, @Vat, @Grand, @Paid)"
+                        ' Updated SQL String to include ChangeAmount
+                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber, SubTotal, VATAmount, GrandTotal, AmountPaid, ChangeAmount) " &
+                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref, @Sub, @Vat, @Grand, @Paid, @Change)"
 
                         Using cmd As New SqlCommand(sql, con, trans)
                             cmd.Parameters.Add("@AID", SqlDbType.Int).Value = SelectedAppointmentID
@@ -271,20 +271,20 @@ Public Class AdminDBPayment
                             cmd.Parameters.Add("@Vat", SqlDbType.Decimal).Value = vatAmount
                             cmd.Parameters.Add("@Grand", SqlDbType.Decimal).Value = totalAmount
                             cmd.Parameters.Add("@Paid", SqlDbType.Decimal).Value = amountPaid
+                            ' ✅ ADDED: ChangeAmount Parameter
+                            cmd.Parameters.Add("@Change", SqlDbType.Decimal).Value = changeAmount
 
                             ' Execute the Save
                             Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                             If rowsAffected > 0 Then
-                                ' ✅ COMMIT the database changes FIRST
                                 trans.Commit()
 
                                 ' Audit Logging
-                                Dim auditMsg As String = String.Format(
-                                "Processed payment of P{0} for patient {1}",
-                                totalAmount.ToString("N2"),
-                                SelectedPatientName
-)
+                                Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1}. Change: P{2}",
+                                                                      totalAmount.ToString("N2"),
+                                                                      SelectedPatientName,
+                                                                      changeAmount.ToString("N2"))
                                 SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
                                 ' 3. Unified Printing Call
@@ -292,18 +292,16 @@ Public Class AdminDBPayment
                                                "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                                 If askPrint = DialogResult.Yes Then
-                                    ' Grab the tables for the printer
                                     Dim dtServices As DataTable = TryCast(dgvServices.DataSource, DataTable)
                                     If dtServices Is Nothing Then dtServices = New DataTable()
                                     Dim dtFollowUps As DataTable = GetFollowUps()
 
-                                    ' Call the Module (Strict Order 1-9)
                                     ReceiptPrinter.PrintReceipt(
                                         SelectedPatientName,        ' 1
                                         SelectedDentistName,        ' 2
                                         SelectedTreatmentNotes,     ' 3
                                         totalAmount.ToString("F2"), ' 4
-                                        amountPaid.ToString("F2"),  ' 5. PAID (Value of type DataTable error fixed here)
+                                        amountPaid.ToString("F2"),  ' 5
                                         ComboBoxPaymentMethod.Text, ' 6
                                         txtReferenceNo.Text,        ' 7
                                         dtServices,                 ' 8
@@ -311,22 +309,18 @@ Public Class AdminDBPayment
                                     )
                                 End If
 
-                                ' Refresh UI after successful save/print
                                 GoTo SuccessCleanup
                             Else
-                                ' This triggers if the INSERT failed to write rows
                                 trans.Rollback()
                                 MessageBox.Show("Save failed: No database rows were affected.")
                             End If
                         End Using
                     Catch ex As Exception
-                        ' Triggers if there is a SQL/Transaction error
                         If trans.Connection IsNot Nothing Then trans.Rollback()
                         MessageBox.Show("Transaction Error: " & ex.Message)
                     End Try
                 End Using
             Catch ex As Exception
-                ' Triggers if the connection cannot be opened
                 MessageBox.Show("Connection Error: " & ex.Message)
             End Try
         End Using
