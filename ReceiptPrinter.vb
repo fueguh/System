@@ -94,7 +94,7 @@ Public Module ReceiptPrinter
     ' The Actual Layout Logic
     Private Sub SharedPrintPageHandler(sender As Object, e As PrintPageEventArgs)
         Dim g As Graphics = e.Graphics
-        Dim currentY As Integer = 40
+        Dim currentY As Integer = 80
         Dim fontBody As New Font("Consolas", 8)
         Dim leftMargin As Integer = 5
         Dim rightMargin As Integer = 185
