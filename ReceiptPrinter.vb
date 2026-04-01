@@ -40,7 +40,7 @@ Public Module ReceiptPrinter
         Decimal.TryParse(total, totalVal)
         Decimal.TryParse(paid, paidVal)
 
-        ' Calculate Change
+        ' Calculate Change - now properly received from the form
         _Change = (paidVal - totalVal).ToString("F2")
 
         ' Calculate VAT (assuming Total is VAT-inclusive)

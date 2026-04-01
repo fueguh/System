@@ -271,7 +271,7 @@ Public Class AdminDBPayment
                             cmd.Parameters.Add("@Vat", SqlDbType.Decimal).Value = vatAmount
                             cmd.Parameters.Add("@Grand", SqlDbType.Decimal).Value = totalAmount
                             cmd.Parameters.Add("@Paid", SqlDbType.Decimal).Value = amountPaid
-                            ' ✅ ADDED: ChangeAmount Parameter
+                            ' ✅ ChangeAmount is now correctly passed
                             cmd.Parameters.Add("@Change", SqlDbType.Decimal).Value = changeAmount
 
                             ' Execute the Save
@@ -282,30 +282,89 @@ Public Class AdminDBPayment
 
                                 ' Audit Logging
                                 Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1}. Change: P{2}",
-                                                                      totalAmount.ToString("N2"),
-                                                                      SelectedPatientName,
-                                                                      changeAmount.ToString("N2"))
+                                                                  totalAmount.ToString("N2"),
+                                                                  SelectedPatientName,
+                                                                  changeAmount.ToString("N2"))
                                 SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
-                                ' 3. Unified Printing Call
-                                Dim askPrint As DialogResult = MessageBox.Show("Payment Successful! Would you like to print the receipt now?",
-                                               "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                                ' === FLASH PROMPT SHOWING EXACTLY WHAT THE PRINTED RECEIPT WILL LOOK LIKE ===
+                                Dim flashMsg As String =
+                                    "DENTAL CLINIC RECEIPT" & vbCrLf & vbCrLf &
+                                    "Date: " & DateTime.Now.ToString("G") & vbCrLf &
+                                    "Patient: " & SelectedPatientName & vbCrLf &
+                                    "Doctor:  " & SelectedDentistName & vbCrLf
+
+                                If Not String.IsNullOrEmpty(txtReferenceNo.Text) Then
+                                    flashMsg &= "Ref No:  " & txtReferenceNo.Text & vbCrLf
+                                End If
+
+                                flashMsg &= "--------------------------------" & vbCrLf & vbCrLf
+
+                                ' Services
+                                Dim dtServices As DataTable = TryCast(dgvServices.DataSource, DataTable)
+                                If dtServices IsNot Nothing Then
+                                    For Each row As DataRow In dtServices.Rows
+                                        Dim sName As String = row("ServiceName").ToString()
+                                        Dim sPrice As String = "P" & CDec(row("Price")).ToString("F2")
+                                        flashMsg &= sName & vbTab & sPrice & vbCrLf
+                                    Next
+                                End If
+
+                                flashMsg &= vbCrLf & "--------------------------------" & vbCrLf
+
+                                ' VAT Section (recalculated here)
+                                Dim vatable As Decimal = totalAmount / 1.12D
+                                Dim vat As Decimal = totalAmount - vatable
+
+                                flashMsg &= "VATable Sales:      " & vatable.ToString("F2") & vbCrLf
+                                flashMsg &= "VAT (12%):          " & vat.ToString("F2") & vbCrLf & vbCrLf
+                                flashMsg &= "TOTAL AMOUNT: P" & totalAmount.ToString("F2") & vbCrLf & vbCrLf
+
+                                ' Payment Details
+                                flashMsg &= "Amount Paid:        " & amountPaid.ToString("F2") & vbCrLf
+                                flashMsg &= "CHANGE:             " & changeAmount.ToString("F2") & vbCrLf & vbCrLf
+
+                                ' Follow-Ups
+                                Dim dtFollowUps As DataTable = GetFollowUps()
+                                If dtFollowUps IsNot Nothing AndAlso dtFollowUps.Rows.Count > 0 Then
+                                    flashMsg &= "FOLLOW-UP SCHEDULE:" & vbCrLf
+                                    For Each row As DataRow In dtFollowUps.Rows
+                                        Dim fDate As String = Convert.ToDateTime(row("FollowUpDate")).ToString("MM/dd/yyyy")
+                                        Dim fReason As String = row("Reason").ToString()
+                                        flashMsg &= fDate & " - " & fReason & vbCrLf
+                                    Next
+                                    flashMsg &= vbCrLf
+                                End If
+
+                                ' Notes
+                                flashMsg &= "DENTIST NOTES:" & vbCrLf & SelectedTreatmentNotes & vbCrLf & vbCrLf
+
+                                flashMsg &= "--------------------------------" & vbCrLf
+                                flashMsg &= "TOTAL AMOUNT: P" & totalAmount.ToString("F2") & vbCrLf
+                                flashMsg &= "Method: " & ComboBoxPaymentMethod.Text & vbCrLf & vbCrLf
+                                flashMsg &= "Thank you for visiting!"
+
+                                MessageBox.Show(flashMsg, "RECEIPT - This is exactly how it will be printed", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+                                ' 3. Unified Printing Call (unchanged)
+                                Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
+                                              "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                                 If askPrint = DialogResult.Yes Then
-                                    Dim dtServices As DataTable = TryCast(dgvServices.DataSource, DataTable)
-                                    If dtServices Is Nothing Then dtServices = New DataTable()
-                                    Dim dtFollowUps As DataTable = GetFollowUps()
+                                    Dim dtServicesPrint As DataTable = TryCast(dgvServices.DataSource, DataTable)
+                                    If dtServicesPrint Is Nothing Then dtServicesPrint = New DataTable()
+                                    Dim dtFollowUpsPrint As DataTable = GetFollowUps()
 
                                     ReceiptPrinter.PrintReceipt(
-                                        SelectedPatientName,        ' 1
-                                        SelectedDentistName,        ' 2
-                                        SelectedTreatmentNotes,     ' 3
-                                        totalAmount.ToString("F2"), ' 4
-                                        amountPaid.ToString("F2"),  ' 5
-                                        ComboBoxPaymentMethod.Text, ' 6
-                                        txtReferenceNo.Text,        ' 7
-                                        dtServices,                 ' 8
-                                        dtFollowUps                 ' 9
+                                        SelectedPatientName,
+                                        SelectedDentistName,
+                                        SelectedTreatmentNotes,
+                                        totalAmount.ToString("F2"),
+                                        amountPaid.ToString("F2"),
+                                        ComboBoxPaymentMethod.Text,
+                                        txtReferenceNo.Text,
+                                        dtServicesPrint,
+                                        dtFollowUpsPrint
                                     )
                                 End If
 
