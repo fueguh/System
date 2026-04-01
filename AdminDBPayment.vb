@@ -324,9 +324,9 @@ SuccessCleanup:
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
-            Dim sql As String = "SELECT FollowUpDate, Reason, Status 
-                            FROM PatientFollowUps 
-                            WHERE AppointmentID = @AID"
+            Dim sql As String = "SELECT FollowUpDate, Reason 
+                     FROM PatientFollowUps 
+                     WHERE AppointmentID = @AID"
 
             Using cmd As New SqlCommand(sql, con)
                 cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
