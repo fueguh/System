@@ -21,7 +21,7 @@ Public Module ReceiptPrinter
     Private _Change As String
 
     ' ================= CLINIC INFORMATION (Single Source of Truth) =================
-    Public Const ClinicName As String = "ARG HEALTHY SMILE DENTAL CLINIC"
+    Public Const ClinicName As String = "ARG HEALTHY SMILE CLINIC"
     Public Const ClinicAddress As String = "14 St. Francis St., Taguig, 1632 Metro Manila"
     Public Const ClinicContact As String = "Contact: (02) 8123-4567 | +63 917 123 4567"
 
@@ -100,11 +100,11 @@ Public Module ReceiptPrinter
         Dim rightMargin As Integer = 185
 
         ' Header (uses constants from this module)
-        g.DrawString(ClinicName, New Font("Arial", 11, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        g.DrawString(ClinicName, New Font("Arial", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
         currentY += 18
-        g.DrawString(ClinicAddress, New Font("Arial", 7), Brushes.Black, leftMargin, currentY)
+        g.DrawString(ClinicAddress, New Font("Arial", 5), Brushes.Black, leftMargin, currentY)
         currentY += 15
-        g.DrawString(ClinicContact, New Font("Arial", 7), Brushes.Black, leftMargin, currentY)
+        g.DrawString(ClinicContact, New Font("Arial", 5), Brushes.Black, leftMargin, currentY)
         currentY += 20
 
         g.DrawString("OFFICIAL RECEIPT", New Font("Arial", 10, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
