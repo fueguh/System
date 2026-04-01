@@ -11,11 +11,12 @@ Public Module ReceiptPrinter
     Private _Method As String
     Private _RefNo As String
     Private _ServicesDt As DataTable
+    Private _FollowUpsDt As DataTable
 
     ''' <summary>
     ''' Call this from any form to start a print job.
     ''' </summary>
-    Public Sub PrintReceipt(patient As String, dentist As String, notes As String, total As String, method As String, ref As String, services As DataTable)
+    Public Sub PrintReceipt(patient As String, dentist As String, notes As String, total As String, method As String, ref As String, services As DataTable, followups As DataTable)
         ' Assign values to module-level variables
         _PatientName = patient
         _DentistName = dentist
@@ -24,6 +25,7 @@ Public Module ReceiptPrinter
         _Method = method
         _RefNo = ref
         _ServicesDt = services
+        _FollowUpsDt = followups
 
         Dim pd As New PrintDocument()
         pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
@@ -80,6 +82,23 @@ Public Module ReceiptPrinter
             g.DrawString(sPrice, fontBody, Brushes.Black, rightMargin - g.MeasureString(sPrice, fontBody).Width, currentY)
             currentY += 15
         Next
+
+        ' Follow-Ups Section
+        If _FollowUpsDt IsNot Nothing AndAlso _FollowUpsDt.Rows.Count > 0 Then
+            currentY += 10
+            g.DrawString("FOLLOW-UP SCHEDULE:", New Font("Consolas", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+            currentY += 15
+
+            For Each row As DataRow In _FollowUpsDt.Rows
+                Dim fDate As String = Convert.ToDateTime(row("FollowUpDate")).ToString("MM/dd/yyyy")
+                Dim fReason As String = row("Reason").ToString()
+
+                Dim line As String = fDate & " - " & fReason
+
+                g.DrawString(line, fontBody, Brushes.Black, leftMargin, currentY)
+                currentY += 15
+            Next
+        End If
 
         ' Notes
         currentY += 10

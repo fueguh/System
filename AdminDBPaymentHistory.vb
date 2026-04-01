@@ -10,6 +10,7 @@ Public Class AdminDBPaymentHistory
     Private dtServicesForPrinting As New DataTable()
     Private SelectedDentistName As String = ""
     Private SelectedRefNo As String = ""
+    Private dtFollowUpsForPrinting As New DataTable()
     Private Sub AdminDBPaymentHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPaymentHistory()
 
@@ -97,7 +98,7 @@ Public Class AdminDBPaymentHistory
         SelectedRefNo = row.Cells("Ref No").Value.ToString() '
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        ReceiptPrinter.PrintReceipt(SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes, SelectedTotalAmount, SelectedPaymentMethod, SelectedRefNo, dtServicesForPrinting)
+        ReceiptPrinter.PrintReceipt(SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes, SelectedTotalAmount, SelectedPaymentMethod, SelectedRefNo, dtServicesForPrinting, dtFollowUpsForPrinting)
 
     End Sub
 
@@ -138,6 +139,19 @@ Public Class AdminDBPaymentHistory
             Dim da As New SqlDataAdapter(cmdSvc)
             dtServicesForPrinting.Clear()
             da.Fill(dtServicesForPrinting)
+
+            ' 3. Get Follow-Ups
+            Dim cmdFU As New SqlCommand("
+            SELECT FollowUpDate, Reason 
+            FROM FollowUps 
+            WHERE AppointmentID = @AID
+            ORDER BY FollowUpDate ASC", con)
+
+            cmdFU.Parameters.AddWithValue("@AID", apptID)
+
+            Dim daFU As New SqlDataAdapter(cmdFU)
+            dtFollowUpsForPrinting.Clear()
+            daFU.Fill(dtFollowUpsForPrinting)
         End Using
     End Sub
 

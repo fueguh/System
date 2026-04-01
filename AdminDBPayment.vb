@@ -230,7 +230,7 @@ Public Class AdminDBPayment
                                 If askPrint = DialogResult.Yes Then
                                     ' 1. Grab the table from the grid
                                     Dim dtServices As DataTable = CType(dgvServices.DataSource, DataTable)
-
+                                    Dim dtFollowUps As DataTable = GetFollowUps()
                                     ' 2. Call the Unified Module
                                     ReceiptPrinter.PrintReceipt(SelectedPatientName,
                               SelectedDentistName,
@@ -238,7 +238,8 @@ Public Class AdminDBPayment
                               TextBoxTotal.Text,
                               ComboBoxPaymentMethod.Text,
                               txtReferenceNo.Text,
-                              dtServices)
+                              dtServices,
+                              dtFollowUps)
                                 End If
 
                                 ' Jump to cleanup
@@ -298,4 +299,24 @@ SuccessCleanup:
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearBillingUI()
     End Sub
+
+    Private Function GetFollowUps() As DataTable
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+
+            Dim sql As String = "SELECT FollowUpDate, Reason, Status 
+                            FROM FollowUps 
+                            WHERE AppointmentID = @AID"
+
+            Using cmd As New SqlCommand(sql, con)
+                cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+
+                Dim da As New SqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+
+                Return dt
+            End Using
+        End Using
+    End Function
 End Class
