@@ -32,13 +32,13 @@ Public Class AdminDBPaymentHistory
                     R.AppointmentID,
                     P.FullName AS [Patient Name],
                     U.FullName AS [Dentist],
-                    R.TotalAmount AS [Amount Paid],
+                    R.TotalAmount AS [Total Bill],      -- Amount actually owed
+                    R.AmountPaid AS [Cash Tendered],   -- Amount the patient handed over
+                    (R.AmountPaid - R.TotalAmount) AS [Change Given], -- Math done in SQL
                     R.PaymentMethod AS [Method],
                     R.ReferenceNumber AS [Ref No],
-                    R.DateIssued AS [Payment Date], 
-                    U2.FullName AS [Processed By],
-
-                    -- 👇 FOLLOW-UPS COLUMN
+                    R.DateIssued AS [Payment Date],    -- Removed comma error here
+                    
                     ISNULL((
                         SELECT STRING_AGG(
                             CONVERT(VARCHAR, F.FollowUpDate, 101) + ' (' + F.Reason + ')', 
@@ -58,7 +58,6 @@ Public Class AdminDBPaymentHistory
                 If Not String.IsNullOrEmpty(searchName) Then
                     sql &= " WHERE (P.FullName LIKE @search 
                             OR U.FullName LIKE @search 
-                            OR CAST(R.ReceiptID AS VARCHAR) LIKE @search 
                             OR R.ReferenceNumber LIKE @search
                             OR R.PaymentMethod LIKE @search)"
                 End If
@@ -75,14 +74,14 @@ Public Class AdminDBPaymentHistory
                     da.Fill(dt)
                     dgvHistory.DataSource = dt
 
-                    ' Hide ID columns
-                    If dgvHistory.Columns.Contains("ReceiptID") Then
-                        dgvHistory.Columns("ReceiptID").Visible = False
-                    End If
+                    ' Format Currency Columns in Grid
+                    If dgvHistory.Columns.Contains("Total Bill") Then dgvHistory.Columns("Total Bill").DefaultCellStyle.Format = "N2"
+                    If dgvHistory.Columns.Contains("Cash Tendered") Then dgvHistory.Columns("Cash Tendered").DefaultCellStyle.Format = "N2"
+                    If dgvHistory.Columns.Contains("Change Given") Then dgvHistory.Columns("Change Given").DefaultCellStyle.Format = "N2"
 
-                    If dgvHistory.Columns.Contains("AppointmentID") Then
-                        dgvHistory.Columns("AppointmentID").Visible = False
-                    End If
+                    ' Hide ID columns
+                    If dgvHistory.Columns.Contains("ReceiptID") Then dgvHistory.Columns("ReceiptID").Visible = False
+                    If dgvHistory.Columns.Contains("AppointmentID") Then dgvHistory.Columns("AppointmentID").Visible = False
                 End Using
             End Using
         Catch ex As Exception
@@ -104,13 +103,28 @@ Public Class AdminDBPaymentHistory
         Dim row = dgvHistory.SelectedRows(0)
         SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
         SelectedPatientName = row.Cells("Patient Name").Value.ToString()
-        SelectedTotalAmount = CDec(row.Cells("Amount Paid").Value).ToString("F2")
+
+        ' Pull the two different money values
+        Dim billTotal As String = CDec(row.Cells("Total Bill").Value).ToString("F2")
+        Dim cashGiven As String = CDec(row.Cells("Cash Tendered").Value).ToString("F2")
+
         SelectedPaymentMethod = row.Cells("Method").Value.ToString()
-        SelectedRefNo = row.Cells("Ref No").Value.ToString() '
+        SelectedRefNo = row.Cells("Ref No").Value.ToString()
+
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        ReceiptPrinter.PrintReceipt(SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes, SelectedTotalAmount, SelectedPaymentMethod, SelectedRefNo, dtServicesForPrinting, dtFollowUpsForPrinting)
-
+        ' Send to printer - Slot 4 is the Bill, Slot 5 is the Cash handed over
+        ReceiptPrinter.PrintReceipt(
+            SelectedPatientName,
+            SelectedDentistName,
+            SelectedTreatmentNotes,
+            billTotal,
+            cashGiven,
+            SelectedPaymentMethod,
+            SelectedRefNo,
+            dtServicesForPrinting,
+            dtFollowUpsForPrinting
+        )
     End Sub
 
     ' Helper Function to check if printer is actually on

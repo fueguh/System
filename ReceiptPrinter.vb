@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing.Printing
 Imports System.Management
+Imports System.Web.UI
 
 Public Module ReceiptPrinter
 
@@ -13,10 +14,15 @@ Public Module ReceiptPrinter
     Private _ServicesDt As DataTable
     Private _FollowUpsDt As DataTable
 
+    ' New variables for VAT and Payment
+    Private _VatAmount As String
+    Private _VatExempt As String
+    Private _AmountPaid As String
+    Private _Change As String
     ''' <summary>
     ''' Call this from any form to start a print job.
     ''' </summary>
-    Public Sub PrintReceipt(patient As String, dentist As String, notes As String, total As String, method As String, ref As String, services As DataTable, followups As DataTable)
+    Public Sub PrintReceipt(patient As String, dentist As String, notes As String, total As String, paid As String, method As String, ref As String, services As DataTable, followups As DataTable)
         ' Assign values to module-level variables
         _PatientName = patient
         _DentistName = dentist
@@ -26,7 +32,28 @@ Public Module ReceiptPrinter
         _RefNo = ref
         _ServicesDt = services
         _FollowUpsDt = followups
+        _AmountPaid = paid
 
+        ' --- CALCULATIONS ---
+        Dim totalVal As Decimal = 0
+        Dim paidVal As Decimal = 0
+        Decimal.TryParse(total, totalVal)
+        Decimal.TryParse(paid, paidVal)
+
+        ' Calculate Change
+        _Change = (paidVal - totalVal).ToString("F2")
+
+        ' Calculate VAT (assuming Total is VAT-inclusive)
+        If totalVal > 0 Then
+            Dim vatableSales As Decimal = totalVal / 1.12D
+            Dim vatAmount As Decimal = totalVal - vatableSales
+            _VatExempt = vatableSales.ToString("F2")
+            _VatAmount = vatAmount.ToString("F2")
+        Else
+            _VatExempt = "0.00"
+            _VatAmount = "0.00"
+        End If
+        ' -----------------------
         Dim pd As New PrintDocument()
         pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
         AddHandler pd.PrintPage, AddressOf SharedPrintPageHandler
@@ -82,6 +109,34 @@ Public Module ReceiptPrinter
             g.DrawString(sPrice, fontBody, Brushes.Black, rightMargin - g.MeasureString(sPrice, fontBody).Width, currentY)
             currentY += 15
         Next
+
+        ' VAT SECTION
+        g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
+        currentY += 15
+
+        ' VATable Sales
+        g.DrawString("VATable Sales:", fontBody, Brushes.Black, leftMargin, currentY)
+        g.DrawString(_VatExempt, fontBody, Brushes.Black, rightMargin - g.MeasureString(_VatExempt, fontBody).Width, currentY)
+        currentY += 15
+
+        ' VAT Amount (12%)
+        g.DrawString("VAT (12%):", fontBody, Brushes.Black, leftMargin, currentY)
+        g.DrawString(_VatAmount, fontBody, Brushes.Black, rightMargin - g.MeasureString(_VatAmount, fontBody).Width, currentY)
+        currentY += 15
+
+        ' Total
+        g.DrawString("TOTAL AMOUNT: P" & _Total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        currentY += 25
+
+        ' Amount Paid
+        g.DrawString("Amount Paid:", fontBody, Brushes.Black, leftMargin, currentY)
+        g.DrawString(_AmountPaid, fontBody, Brushes.Black, rightMargin - g.MeasureString(_AmountPaid, fontBody).Width, currentY)
+        currentY += 15
+
+        ' Change
+        g.DrawString("CHANGE:", fontBody, Brushes.Black, leftMargin, currentY)
+        g.DrawString(_Change, fontBody, Brushes.Black, rightMargin - g.MeasureString(_Change, fontBody).Width, currentY)
+        currentY += 25
 
         ' Follow-Ups Section
         If _FollowUpsDt IsNot Nothing AndAlso _FollowUpsDt.Rows.Count > 0 Then

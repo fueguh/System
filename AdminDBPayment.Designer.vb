@@ -52,6 +52,7 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel4 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
         Me.txtReferenceNo = New Guna.UI2.WinForms.Guna2TextBox()
+        Me.txtAmountPaid = New Guna.UI2.WinForms.Guna2TextBox()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvPendingPayments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -75,11 +76,11 @@ Partial Class AdminDBPayment
         Me.TextBoxTotal.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.TextBoxTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.TextBoxTotal.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.TextBoxTotal.Location = New System.Drawing.Point(32, 315)
+        Me.TextBoxTotal.Location = New System.Drawing.Point(32, 257)
         Me.TextBoxTotal.Margin = New System.Windows.Forms.Padding(4)
         Me.TextBoxTotal.Name = "TextBoxTotal"
         Me.TextBoxTotal.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TextBoxTotal.PlaceholderText = "Amount"
+        Me.TextBoxTotal.PlaceholderText = "Subtotal"
         Me.TextBoxTotal.SelectedText = ""
         Me.TextBoxTotal.Size = New System.Drawing.Size(279, 50)
         Me.TextBoxTotal.TabIndex = 12
@@ -438,6 +439,30 @@ Partial Class AdminDBPayment
         Me.txtReferenceNo.Size = New System.Drawing.Size(279, 45)
         Me.txtReferenceNo.TabIndex = 56
         '
+        'txtAmountPaid
+        '
+        Me.txtAmountPaid.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtAmountPaid.BorderRadius = 10
+        Me.txtAmountPaid.BorderThickness = 2
+        Me.txtAmountPaid.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.txtAmountPaid.DefaultText = ""
+        Me.txtAmountPaid.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.txtAmountPaid.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.txtAmountPaid.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtAmountPaid.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.txtAmountPaid.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtAmountPaid.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txtAmountPaid.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtAmountPaid.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.txtAmountPaid.Location = New System.Drawing.Point(32, 315)
+        Me.txtAmountPaid.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtAmountPaid.Name = "txtAmountPaid"
+        Me.txtAmountPaid.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.txtAmountPaid.PlaceholderText = "Amount Paid"
+        Me.txtAmountPaid.SelectedText = ""
+        Me.txtAmountPaid.Size = New System.Drawing.Size(279, 50)
+        Me.txtAmountPaid.TabIndex = 57
+        '
         'AdminDBPayment
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -445,6 +470,7 @@ Partial Class AdminDBPayment
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1294, 823)
         Me.ControlBox = False
+        Me.Controls.Add(Me.txtAmountPaid)
         Me.Controls.Add(Me.txtReferenceNo)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.dgvPendingPayments)
@@ -495,4 +521,5 @@ Partial Class AdminDBPayment
     Friend WithEvents Guna2HtmlLabel4 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents txtReferenceNo As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents txtAmountPaid As Guna.UI2.WinForms.Guna2TextBox
 End Class

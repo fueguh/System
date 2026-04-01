@@ -182,6 +182,21 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
+        ' --- Amount Paid & VAT Calculations ---
+        Dim totalAmount As Decimal = 0
+        Dim amountPaid As Decimal = 0
+        Decimal.TryParse(TextBoxTotal.Text, totalAmount)
+        Decimal.TryParse(txtAmountPaid.Text, amountPaid)
+
+        Dim subTotal As Decimal = totalAmount / 1.12D
+        Dim vatAmount As Decimal = totalAmount - subTotal
+
+        ' Validate that the patient paid enough
+        If amountPaid < totalAmount Then
+            MessageBox.Show("Amount paid cannot be less than the total amount.", "Payment Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
         If String.IsNullOrEmpty(ComboBoxPaymentMethod.Text) Then
             MessageBox.Show("Please select a payment method.")
             Exit Sub
@@ -208,28 +223,32 @@ Public Class AdminDBPayment
             End If
         End If
 
+        ' 2. Database Operation
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             Try
                 con.Open()
                 Using trans As SqlTransaction = con.BeginTransaction()
                     Try
-                        ' 2. Database Insert
-                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber) " &
-                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref)"
+                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber, SubTotal, VATAmount, GrandTotal, AmountPaid) " &
+                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref, @Sub, @Vat, @Grand, @Paid)"
 
                         Using cmd As New SqlCommand(sql, con, trans)
                             cmd.Parameters.Add("@AID", SqlDbType.Int).Value = SelectedAppointmentID
                             cmd.Parameters.Add("@PID", SqlDbType.Int).Value = SelectedPatientID
                             cmd.Parameters.Add("@UID", SqlDbType.Int).Value = SystemSession.LoggedInUserID
-                            cmd.Parameters.Add("@Total", SqlDbType.Decimal).Value = CDec(TextBoxTotal.Text)
+                            cmd.Parameters.Add("@Total", SqlDbType.Decimal).Value = totalAmount
                             cmd.Parameters.Add("@Method", SqlDbType.VarChar).Value = ComboBoxPaymentMethod.Text
-
-                            ' Pass Reference Number or DBNull
                             cmd.Parameters.Add("@Ref", SqlDbType.VarChar).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
+                            cmd.Parameters.Add("@Sub", SqlDbType.Decimal).Value = subTotal
+                            cmd.Parameters.Add("@Vat", SqlDbType.Decimal).Value = vatAmount
+                            cmd.Parameters.Add("@Grand", SqlDbType.Decimal).Value = totalAmount
+                            cmd.Parameters.Add("@Paid", SqlDbType.Decimal).Value = amountPaid
 
+                            ' Execute the Save
                             Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                             If rowsAffected > 0 Then
+                                ' ✅ COMMIT the database changes FIRST
                                 trans.Commit()
 
                                 ' Audit Logging
@@ -240,41 +259,42 @@ Public Class AdminDBPayment
                                 Dim askPrint As DialogResult = MessageBox.Show("Payment Successful! Would you like to print the receipt now?",
                                                "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
-                                ' Inside ButtonGenerateReceipt_Click
                                 If askPrint = DialogResult.Yes Then
-
-                                    ' 1. Grab the table from the grid
+                                    ' Grab the tables for the printer
                                     Dim dtServices As DataTable = TryCast(dgvServices.DataSource, DataTable)
-
-                                    If dtServices Is Nothing Then
-                                        dtServices = New DataTable()
-                                    End If
-
+                                    If dtServices Is Nothing Then dtServices = New DataTable()
                                     Dim dtFollowUps As DataTable = GetFollowUps()
-                                    ' 2. Call the Unified Module
-                                    ReceiptPrinter.PrintReceipt(SelectedPatientName,
-                              SelectedDentistName,
-                              SelectedTreatmentNotes,
-                              TextBoxTotal.Text,
-                              ComboBoxPaymentMethod.Text,
-                              txtReferenceNo.Text,
-                              dtServices,
-                              dtFollowUps)
+
+                                    ' Call the Module (Strict Order 1-9)
+                                    ReceiptPrinter.PrintReceipt(
+                                        SelectedPatientName,        ' 1
+                                        SelectedDentistName,        ' 2
+                                        SelectedTreatmentNotes,     ' 3
+                                        TextBoxTotal.Text,          ' 4
+                                        amountPaid.ToString("F2"),  ' 5. PAID (Value of type DataTable error fixed here)
+                                        ComboBoxPaymentMethod.Text, ' 6
+                                        txtReferenceNo.Text,        ' 7
+                                        dtServices,                 ' 8
+                                        dtFollowUps                 ' 9
+                                    )
                                 End If
 
-                                ' Jump to cleanup
+                                ' Refresh UI after successful save/print
                                 GoTo SuccessCleanup
                             Else
+                                ' This triggers if the INSERT failed to write rows
                                 trans.Rollback()
-                                MessageBox.Show("Save failed: No rows were affected.")
+                                MessageBox.Show("Save failed: No database rows were affected.")
                             End If
                         End Using
                     Catch ex As Exception
+                        ' Triggers if there is a SQL/Transaction error
                         If trans.Connection IsNot Nothing Then trans.Rollback()
                         MessageBox.Show("Transaction Error: " & ex.Message)
                     End Try
                 End Using
             Catch ex As Exception
+                ' Triggers if the connection cannot be opened
                 MessageBox.Show("Connection Error: " & ex.Message)
             End Try
         End Using
@@ -294,19 +314,13 @@ SuccessCleanup:
         ' Reset IDs
         SelectedAppointmentID = 0
         SelectedPatientID = 0
-
-        ' Reset Labels (Assuming these are your Label names)
+        txtAmountPaid.Clear()
         patient_name.Text = "---"
         dentist_name.Text = "---"
-        ' Reset Numeric fields
         TextBoxTotal.Text = "0.00"
-
-        ' Clear the Itemized Grid
         dgvServices.DataSource = Nothing
         txtReferenceNo.Clear()
-        ' Clear reference number and disable it until GCash is selected again
         txtReferenceNo.Enabled = False
-        ' Reset selection in main grid
         dgvPendingPayments.ClearSelection()
         dgvServices.ClearSelection()
     End Sub
