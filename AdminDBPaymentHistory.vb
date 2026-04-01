@@ -11,6 +11,7 @@ Public Class AdminDBPaymentHistory
     Private SelectedDentistName As String = ""
     Private SelectedRefNo As String = ""
     Private dtFollowUpsForPrinting As New DataTable()
+
     Private Sub AdminDBPaymentHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPaymentHistory()
 
@@ -32,12 +33,12 @@ Public Class AdminDBPaymentHistory
                     R.AppointmentID,
                     P.FullName AS [Patient Name],
                     U.FullName AS [Dentist],
-                    R.TotalAmount AS [Total Bill],      -- Amount actually owed
-                    R.AmountPaid AS [Cash Tendered],   -- Amount the patient handed over
-                    (R.AmountPaid - R.TotalAmount) AS [Change Given], -- Math done in SQL
+                    R.TotalAmount AS [Total Bill],
+                    R.AmountPaid AS [Cash Tendered],
+                    (R.AmountPaid - R.TotalAmount) AS [Change Given],
                     R.PaymentMethod AS [Method],
                     R.ReferenceNumber AS [Ref No],
-                    R.DateIssued AS [Payment Date],    -- Removed comma error here
+                    R.DateIssued AS [Payment Date],
                     
                     ISNULL((
                         SELECT STRING_AGG(
@@ -93,7 +94,7 @@ Public Class AdminDBPaymentHistory
         LoadPaymentHistory(txtSearchPatient.Text.Trim())
     End Sub
 
-    ' Action: Reprint Receipt
+    ' Action: Reprint Receipt with Flash Preview
     Private Sub btnReprint_Click(sender As Object, e As EventArgs) Handles btnReprint.Click
         If dgvHistory.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record from the history list.")
@@ -104,30 +105,92 @@ Public Class AdminDBPaymentHistory
         SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
         SelectedPatientName = row.Cells("Patient Name").Value.ToString()
 
-        ' Pull the two different money values
+        ' Pull money values
         Dim billTotal As String = CDec(row.Cells("Total Bill").Value).ToString("F2")
         Dim cashGiven As String = CDec(row.Cells("Cash Tendered").Value).ToString("F2")
 
         SelectedPaymentMethod = row.Cells("Method").Value.ToString()
-        SelectedRefNo = row.Cells("Ref No").Value.ToString()
+        SelectedRefNo = If(row.Cells("Ref No").Value IsNot DBNull.Value, row.Cells("Ref No").Value.ToString(), "")
 
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        ' Send to printer - Slot 4 is the Bill, Slot 5 is the Cash handed over
-        ReceiptPrinter.PrintReceipt(
-            SelectedPatientName,
-            SelectedDentistName,
-            SelectedTreatmentNotes,
-            billTotal,
-            cashGiven,
-            SelectedPaymentMethod,
-            SelectedRefNo,
-            dtServicesForPrinting,
-            dtFollowUpsForPrinting
-        )
-    End Sub
+        ' === FLASH PROMPT - Reuses ReceiptPrinter as single source of truth ===
+        Dim flashMsg As String =
+            ReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
+            "Date: " & DateTime.Now.ToString("G") & vbCrLf &
+            "Patient: " & SelectedPatientName & vbCrLf &
+            "Doctor:  " & SelectedDentistName & vbCrLf
 
-    ' Helper Function to check if printer is actually on
+        If Not String.IsNullOrEmpty(SelectedRefNo) Then
+            flashMsg &= "Ref No:  " & SelectedRefNo & vbCrLf
+        End If
+
+        flashMsg &= "--------------------------------" & vbCrLf & vbCrLf
+
+        ' Services
+        If dtServicesForPrinting.Rows.Count > 0 Then
+            For Each rowSvc As DataRow In dtServicesForPrinting.Rows
+                Dim sName As String = rowSvc("ServiceName").ToString()
+                Dim sPrice As String = "P" & CDec(rowSvc("Price")).ToString("F2")
+                flashMsg &= sName & vbTab & sPrice & vbCrLf
+            Next
+        End If
+
+        flashMsg &= vbCrLf & "--------------------------------" & vbCrLf
+
+        ' VAT Section (recalculated for consistency)
+        Dim totalAmount As Decimal = 0
+        Decimal.TryParse(billTotal, totalAmount)
+        Dim vatable As Decimal = If(totalAmount > 0, totalAmount / 1.12D, 0)
+        Dim vat As Decimal = totalAmount - vatable
+
+        flashMsg &= "VATable Sales:      " & vatable.ToString("F2") & vbCrLf
+        flashMsg &= "VAT (12%):          " & vat.ToString("F2") & vbCrLf & vbCrLf
+        flashMsg &= "TOTAL AMOUNT: P" & totalAmount.ToString("F2") & vbCrLf & vbCrLf
+
+        ' Payment Details
+        flashMsg &= "Amount Paid:        " & cashGiven & vbCrLf
+        flashMsg &= "CHANGE:             " & CDec(row.Cells("Change Given").Value).ToString("F2") & vbCrLf & vbCrLf
+
+        ' Follow-Ups
+        If dtFollowUpsForPrinting.Rows.Count > 0 Then
+            flashMsg &= "FOLLOW-UP SCHEDULE:" & vbCrLf
+            For Each rowFU As DataRow In dtFollowUpsForPrinting.Rows
+                Dim fDate As String = Convert.ToDateTime(rowFU("FollowUpDate")).ToString("MM/dd/yyyy")
+                Dim fReason As String = rowFU("Reason").ToString()
+                flashMsg &= fDate & " - " & fReason & vbCrLf
+            Next
+            flashMsg &= vbCrLf
+        End If
+
+        ' Notes
+        flashMsg &= "DENTIST NOTES:" & vbCrLf & SelectedTreatmentNotes & vbCrLf & vbCrLf
+
+        flashMsg &= "--------------------------------" & vbCrLf
+        flashMsg &= "TOTAL AMOUNT: P" & totalAmount.ToString("F2") & vbCrLf
+        flashMsg &= "Method: " & SelectedPaymentMethod & vbCrLf & vbCrLf
+        flashMsg &= "Thank you for visiting!"
+
+        MessageBox.Show(flashMsg, "RECEIPT PREVIEW - This is exactly how it will be printed", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        ' Ask to print
+        Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
+                                      "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+        If askPrint = DialogResult.Yes Then
+            ReceiptPrinter.PrintReceipt(
+                SelectedPatientName,
+                SelectedDentistName,
+                SelectedTreatmentNotes,
+                billTotal,
+                cashGiven,
+                SelectedPaymentMethod,
+                SelectedRefNo,
+                dtServicesForPrinting,
+                dtFollowUpsForPrinting
+            )
+        End If
+    End Sub
 
     Private Sub FetchDetailsForReprint(apptID As Integer)
         Using con As New SqlConnection(connectionString)

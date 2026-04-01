@@ -14,16 +14,32 @@ Public Module ReceiptPrinter
     Private _ServicesDt As DataTable
     Private _FollowUpsDt As DataTable
 
-    ' New variables for VAT and Payment
+    ' Payment variables
     Private _VatAmount As String
     Private _VatExempt As String
     Private _AmountPaid As String
     Private _Change As String
+
+    ' ================= CLINIC INFORMATION (Single Source of Truth) =================
+    Public Const ClinicName As String = "ARG HEALTHY SMILE DENTAL CLINIC"
+    Public Const ClinicAddress As String = "14 St. Francis St., Taguig, 1632 Metro Manila"
+    Public Const ClinicContact As String = "Contact: (02) 8123-4567 | +63 917 123 4567"
+
+    ''' <summary>
+    ''' Returns the full header text (clinic name + address + contact) for reuse in flash prompt
+    ''' </summary>
+    Public Function GetReceiptHeader() As String
+        Return ClinicName & vbCrLf &
+               ClinicAddress & vbCrLf &
+               ClinicContact & vbCrLf & vbCrLf &
+               "OFFICIAL RECEIPT"
+    End Function
+
     ''' <summary>
     ''' Call this from any form to start a print job.
     ''' </summary>
     Public Sub PrintReceipt(patient As String, dentist As String, notes As String, total As String, paid As String, method As String, ref As String, services As DataTable, followups As DataTable)
-        ' Assign values to module-level variables
+        ' Assign values
         _PatientName = patient
         _DentistName = dentist
         _Notes = notes
@@ -34,16 +50,14 @@ Public Module ReceiptPrinter
         _FollowUpsDt = followups
         _AmountPaid = paid
 
-        ' --- CALCULATIONS ---
+        ' Calculations
         Dim totalVal As Decimal = 0
         Dim paidVal As Decimal = 0
         Decimal.TryParse(total, totalVal)
         Decimal.TryParse(paid, paidVal)
 
-        ' Calculate Change - now properly received from the form
         _Change = (paidVal - totalVal).ToString("F2")
 
-        ' Calculate VAT (assuming Total is VAT-inclusive)
         If totalVal > 0 Then
             Dim vatableSales As Decimal = totalVal / 1.12D
             Dim vatAmount As Decimal = totalVal - vatableSales
@@ -53,7 +67,8 @@ Public Module ReceiptPrinter
             _VatExempt = "0.00"
             _VatAmount = "0.00"
         End If
-        ' -----------------------
+
+        ' Print setup
         Dim pd As New PrintDocument()
         pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
         AddHandler pd.PrintPage, AddressOf SharedPrintPageHandler
@@ -76,7 +91,7 @@ Public Module ReceiptPrinter
         End If
     End Sub
 
-    ' The Actual Layout Logic (Unified)
+    ' The Actual Layout Logic
     Private Sub SharedPrintPageHandler(sender As Object, e As PrintPageEventArgs)
         Dim g As Graphics = e.Graphics
         Dim currentY As Integer = 40
@@ -84,9 +99,17 @@ Public Module ReceiptPrinter
         Dim leftMargin As Integer = 5
         Dim rightMargin As Integer = 185
 
-        ' Header
-        g.DrawString("DENTAL CLINIC RECEIPT", New Font("Arial", 10, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        ' Header (uses constants from this module)
+        g.DrawString(ClinicName, New Font("Arial", 11, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        currentY += 18
+        g.DrawString(ClinicAddress, New Font("Arial", 7), Brushes.Black, leftMargin, currentY)
+        currentY += 15
+        g.DrawString(ClinicContact, New Font("Arial", 7), Brushes.Black, leftMargin, currentY)
         currentY += 20
+
+        g.DrawString("OFFICIAL RECEIPT", New Font("Arial", 10, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
+        currentY += 20
+
         g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
         g.DrawString("Patient: " & _PatientName, fontBody, Brushes.Black, leftMargin, currentY)
@@ -98,10 +121,11 @@ Public Module ReceiptPrinter
             g.DrawString("Ref No:  " & _RefNo, fontBody, Brushes.Black, leftMargin, currentY)
             currentY += 15
         End If
+
         g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
 
-        ' Services Loop
+        ' Services
         For Each row As DataRow In _ServicesDt.Rows
             Dim sName As String = row("ServiceName").ToString()
             Dim sPrice As String = "P" & CDec(row("Price")).ToString("F2")
@@ -114,43 +138,35 @@ Public Module ReceiptPrinter
         g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
 
-        ' VATable Sales
         g.DrawString("VATable Sales:", fontBody, Brushes.Black, leftMargin, currentY)
         g.DrawString(_VatExempt, fontBody, Brushes.Black, rightMargin - g.MeasureString(_VatExempt, fontBody).Width, currentY)
         currentY += 15
 
-        ' VAT Amount (12%)
         g.DrawString("VAT (12%):", fontBody, Brushes.Black, leftMargin, currentY)
         g.DrawString(_VatAmount, fontBody, Brushes.Black, rightMargin - g.MeasureString(_VatAmount, fontBody).Width, currentY)
         currentY += 15
 
-        ' Total
         g.DrawString("TOTAL AMOUNT: P" & _Total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
         currentY += 25
 
-        ' Amount Paid
+        ' Payment
         g.DrawString("Amount Paid:", fontBody, Brushes.Black, leftMargin, currentY)
         g.DrawString(_AmountPaid, fontBody, Brushes.Black, rightMargin - g.MeasureString(_AmountPaid, fontBody).Width, currentY)
         currentY += 15
 
-        ' Change
         g.DrawString("CHANGE:", fontBody, Brushes.Black, leftMargin, currentY)
         g.DrawString(_Change, fontBody, Brushes.Black, rightMargin - g.MeasureString(_Change, fontBody).Width, currentY)
         currentY += 25
 
-        ' Follow-Ups Section
+        ' Follow-Ups
         If _FollowUpsDt IsNot Nothing AndAlso _FollowUpsDt.Rows.Count > 0 Then
             currentY += 10
             g.DrawString("FOLLOW-UP SCHEDULE:", New Font("Consolas", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
             currentY += 15
-
             For Each row As DataRow In _FollowUpsDt.Rows
                 Dim fDate As String = Convert.ToDateTime(row("FollowUpDate")).ToString("MM/dd/yyyy")
                 Dim fReason As String = row("Reason").ToString()
-
-                Dim line As String = fDate & " - " & fReason
-
-                g.DrawString(line, fontBody, Brushes.Black, leftMargin, currentY)
+                g.DrawString(fDate & " - " & fReason, fontBody, Brushes.Black, leftMargin, currentY)
                 currentY += 15
             Next
         End If
@@ -176,7 +192,6 @@ Public Module ReceiptPrinter
         g.DrawString(".", New Font("Arial", 1), Brushes.Black, leftMargin, currentY)
     End Sub
 
-    ' WMI Check moved here
     Public Function IsPrinterOnline(printerName As String) As Boolean
         Try
             Dim query As String = "SELECT * FROM Win32_Printer WHERE Name = '" & printerName.Replace("\", "\\") & "'"

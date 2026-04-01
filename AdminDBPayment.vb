@@ -287,9 +287,9 @@ Public Class AdminDBPayment
                                                                   changeAmount.ToString("N2"))
                                 SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
-                                ' === FLASH PROMPT SHOWING EXACTLY WHAT THE PRINTED RECEIPT WILL LOOK LIKE ===
+                                ' === FLASH PROMPT - Reuses ReceiptPrinter as single source of truth ===
                                 Dim flashMsg As String =
-                                    "DENTAL CLINIC RECEIPT" & vbCrLf & vbCrLf &
+                                    ReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
                                     "Date: " & DateTime.Now.ToString("G") & vbCrLf &
                                     "Patient: " & SelectedPatientName & vbCrLf &
                                     "Doctor:  " & SelectedDentistName & vbCrLf
@@ -312,7 +312,7 @@ Public Class AdminDBPayment
 
                                 flashMsg &= vbCrLf & "--------------------------------" & vbCrLf
 
-                                ' VAT Section (recalculated here)
+                                ' VAT Section
                                 Dim vatable As Decimal = totalAmount / 1.12D
                                 Dim vat As Decimal = totalAmount - vatable
 
