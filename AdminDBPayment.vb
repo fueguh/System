@@ -370,6 +370,8 @@ SuccessCleanup:
 
         txtAmountPaid.Clear()
         txtReferenceNo.Clear()
+        dgvReceiptItems.Rows.Clear()
+
         txtReferenceNo.Enabled = False
 
         lblTotal.Text = "Total Amount: PHP 0.00"
@@ -467,14 +469,43 @@ SuccessCleanup:
         Dim id As Integer = CInt(row.Cells("ItemID").Value)
         Dim name As String = row.Cells("ItemName").Value.ToString()
         Dim price As Decimal = CDec(row.Cells("Price").Value)
+        Dim availableStock As Integer = CInt(row.Cells("Quantity").Value)
 
-        Dim qtyStr As String = InputBox("Enter quantity for " & name, "Prescription Item", "1")
+        Dim qtyStr As String = InputBox($"Enter quantity for {name} (Available: {availableStock})", "Prescription Item", "1")
         Dim qty As Integer
 
         If Not Integer.TryParse(qtyStr, qty) OrElse qty <= 0 Then Exit Sub
 
-        Dim subtotal As Decimal = price * qty
+        ' 🚫 BLOCK if not enough stock
+        If qty > availableStock Then
+            MessageBox.Show($"Not enough stock! Available only: {availableStock}", "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
 
+        ' ===== CHECK IF ITEM ALREADY EXISTS =====
+        For Each r As DataGridViewRow In dgvReceiptItems.Rows
+            If Not r.IsNewRow AndAlso CInt(r.Cells("ItemID").Value) = id Then
+
+                Dim existingQty As Integer = CInt(r.Cells("Quantity").Value)
+                Dim newQty As Integer = existingQty + qty
+
+                ' 🚫 Check combined stock
+                If newQty > availableStock Then
+                    MessageBox.Show($"Total exceeds stock! Available: {availableStock}", "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Exit Sub
+                End If
+
+                ' Update row instead of adding new one
+                r.Cells("Quantity").Value = newQty
+                r.Cells("Subtotal").Value = price * newQty
+
+                RecalculateItemTotal()
+                Exit Sub
+            End If
+        Next
+
+        ' ===== ADD NEW ROW (if not found) =====
+        Dim subtotal As Decimal = price * qty
         dgvReceiptItems.Rows.Add(id, name, price, qty, subtotal)
 
         RecalculateItemTotal()
@@ -491,13 +522,30 @@ SuccessCleanup:
 
     Private Sub RecalculateItemTotal()
 
-        Dim total As Decimal = 0
+        Dim itemTotal As Decimal = 0
+
 
         For Each row As DataGridViewRow In dgvReceiptItems.Rows
             If Not row.IsNewRow Then
-                total += Convert.ToDecimal(row.Cells("Subtotal").Value)
+                itemTotal += Convert.ToDecimal(row.Cells("Subtotal").Value)
             End If
         Next
+
+        ' Combine with service total
+        Dim totalAmount As Decimal = currentTotal + itemTotal
+
+        ' Recompute VAT
+        Dim subtotal As Decimal = totalAmount / 1.12D
+        Dim vat As Decimal = totalAmount - subtotal
+
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            txtAmountPaid.Text = totalAmount.ToString("F2")
+        End If
+
+        ' Update UI
+        lblTotal.Text = "Total: PHP " & totalAmount.ToString("N2")
+        lblSubtotal.Text = "Subtotal: " & subtotal.ToString("N2")
+        lblVATAmount.Text = "VAT (12%): " & vat.ToString("N2")
 
     End Sub
 
