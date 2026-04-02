@@ -20,7 +20,7 @@ Public Class AdminDBItemManagement
     ' ===========================
     Private Sub LoadInventory(Optional searchText As String = "")
         Dim query As String = "SELECT i.ItemID, i.ItemName, i.Price, c.CategoryName, 
-                                      s.SupplierName, i.Quantity, i.ExpirationDate
+                                      s.SupplierName,i.Unit, i.Quantity, i.ExpirationDate
                                FROM ItemManagement i
                                INNER JOIN Categories c ON i.CategoryID = c.CategoryID
                                INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID"
@@ -106,7 +106,7 @@ Public Class AdminDBItemManagement
         End If
 
         Dim query As String = "INSERT INTO ItemManagement 
-                               (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate) 
+                               (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, Unit) 
                                VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate);
                                SELECT SCOPE_IDENTITY();"
 
@@ -119,6 +119,8 @@ Public Class AdminDBItemManagement
             cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
             cmd.Parameters.AddWithValue("@Quantity", 0)
             cmd.Parameters.AddWithValue("@ExpirationDate", CType(DateTimePickerExpiry.Value, Object))
+            cmd.Parameters.AddWithValue("@Unit", ComboBoxUnit.Text.Trim())
+
 
             connection.Open()
             Dim newID As Integer = Convert.ToInt32(cmd.ExecuteScalar())
@@ -150,7 +152,7 @@ Public Class AdminDBItemManagement
 
         Dim query As String = "UPDATE ItemManagement SET 
                                ItemName=@ItemName, Price=@Price, CategoryID=@CategoryID, SupplierID=@SupplierID, 
-                               ExpirationDate=@ExpirationDate
+                               ExpirationDate=@ExpirationDate, Unit=@Unit
                                WHERE ItemID=@ItemID"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
@@ -162,6 +164,7 @@ Public Class AdminDBItemManagement
             cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
             cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
             cmd.Parameters.AddWithValue("@ExpirationDate", CType(DateTimePickerExpiry.Value, Object))
+            cmd.Parameters.AddWithValue("@Unit", ComboBoxUnit.Text.Trim())
 
             connection.Open()
             cmd.ExecuteNonQuery()

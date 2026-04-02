@@ -45,7 +45,7 @@ Partial Class AdminDBItemManagement
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
-        Me.Guna2ComboBox1 = New Guna.UI2.WinForms.Guna2ComboBox()
+        Me.ComboBoxUnit = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.DgvItems, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -398,24 +398,24 @@ Partial Class AdminDBItemManagement
         Me.btnClear.TabIndex = 47
         Me.btnClear.Text = "Clear"
         '
-        'Guna2ComboBox1
+        'ComboBoxUnit
         '
-        Me.Guna2ComboBox1.BackColor = System.Drawing.Color.Transparent
-        Me.Guna2ComboBox1.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2ComboBox1.BorderRadius = 10
-        Me.Guna2ComboBox1.BorderThickness = 2
-        Me.Guna2ComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.Guna2ComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.Guna2ComboBox1.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.Guna2ComboBox1.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.Guna2ComboBox1.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.Guna2ComboBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2ComboBox1.ItemHeight = 30
-        Me.Guna2ComboBox1.Items.AddRange(New Object() {"Piece", "Box", "Pack", "Bottle", "Tube", "Set", "Dozen"})
-        Me.Guna2ComboBox1.Location = New System.Drawing.Point(612, 226)
-        Me.Guna2ComboBox1.Name = "Guna2ComboBox1"
-        Me.Guna2ComboBox1.Size = New System.Drawing.Size(257, 36)
-        Me.Guna2ComboBox1.TabIndex = 48
+        Me.ComboBoxUnit.BackColor = System.Drawing.Color.Transparent
+        Me.ComboBoxUnit.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ComboBoxUnit.BorderRadius = 10
+        Me.ComboBoxUnit.BorderThickness = 2
+        Me.ComboBoxUnit.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.ComboBoxUnit.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.ComboBoxUnit.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ComboBoxUnit.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ComboBoxUnit.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.ComboBoxUnit.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ComboBoxUnit.ItemHeight = 30
+        Me.ComboBoxUnit.Items.AddRange(New Object() {"pcs", "tablet", "capsule", "ml", "bottle", "box", "vial", "ampule"})
+        Me.ComboBoxUnit.Location = New System.Drawing.Point(612, 226)
+        Me.ComboBoxUnit.Name = "ComboBoxUnit"
+        Me.ComboBoxUnit.Size = New System.Drawing.Size(257, 36)
+        Me.ComboBoxUnit.TabIndex = 48
         '
         'Guna2HtmlLabel1
         '
@@ -435,7 +435,7 @@ Partial Class AdminDBItemManagement
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1544, 926)
         Me.Controls.Add(Me.Guna2HtmlLabel1)
-        Me.Controls.Add(Me.Guna2ComboBox1)
+        Me.Controls.Add(Me.ComboBoxUnit)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
         Me.Controls.Add(Me.Guna2HtmlLabel5)
@@ -482,6 +482,6 @@ Partial Class AdminDBItemManagement
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents Guna2ComboBox1 As Guna.UI2.WinForms.Guna2ComboBox
+    Friend WithEvents ComboBoxUnit As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class
