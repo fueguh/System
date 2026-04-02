@@ -114,64 +114,21 @@ Public Class AdminDBPaymentHistory
 
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        ' === FLASH PROMPT - Reuses ReceiptPrinter as single source of truth ===
-        Dim flashMsg As String =
-            AdminDBPaymentReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
-            "Date: " & DateTime.Now.ToString("G") & vbCrLf &
-            "Patient: " & SelectedPatientName & vbCrLf &
-            "Doctor:  " & SelectedDentistName & vbCrLf
+        ' === FLASH PROMPT - Single source of truth ===
+        Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
+    SelectedPatientName,
+    SelectedDentistName,
+    SelectedTreatmentNotes,
+    billTotal,
+    cashGiven,
+    SelectedPaymentMethod,
+    SelectedRefNo,
+    dtServicesForPrinting,
+    dtFollowUpsForPrinting
+)
 
-        If Not String.IsNullOrEmpty(SelectedRefNo) Then
-            flashMsg &= "Ref No:  " & SelectedRefNo & vbCrLf
-        End If
-
-        flashMsg &= "--------------------------------" & vbCrLf & vbCrLf
-
-        ' Services
-        If dtServicesForPrinting.Rows.Count > 0 Then
-            For Each rowSvc As DataRow In dtServicesForPrinting.Rows
-                Dim sName As String = rowSvc("ServiceName").ToString()
-                Dim sPrice As String = "P" & CDec(rowSvc("Price")).ToString("F2")
-                flashMsg &= sName & vbTab & sPrice & vbCrLf
-            Next
-        End If
-
-        flashMsg &= vbCrLf & "--------------------------------" & vbCrLf
-
-        ' VAT Section (recalculated for consistency)
-        Dim totalAmount As Decimal = 0
-        Decimal.TryParse(billTotal, totalAmount)
-        Dim vatable As Decimal = If(totalAmount > 0, totalAmount / 1.12D, 0)
-        Dim vat As Decimal = totalAmount - vatable
-
-        flashMsg &= "VATable Sales:      " & vatable.ToString("F2") & vbCrLf
-        flashMsg &= "VAT (12%):          " & vat.ToString("F2") & vbCrLf & vbCrLf
-        flashMsg &= "TOTAL AMOUNT: P" & totalAmount.ToString("F2") & vbCrLf & vbCrLf
-
-        ' Payment Details
-        flashMsg &= "Amount Paid:        " & cashGiven & vbCrLf
-        flashMsg &= "CHANGE:             " & CDec(row.Cells("Change Given").Value).ToString("F2") & vbCrLf & vbCrLf
-
-        ' Follow-Ups
-        If dtFollowUpsForPrinting.Rows.Count > 0 Then
-            flashMsg &= "FOLLOW-UP SCHEDULE:" & vbCrLf
-            For Each rowFU As DataRow In dtFollowUpsForPrinting.Rows
-                Dim fDate As String = Convert.ToDateTime(rowFU("FollowUpDate")).ToString("MM/dd/yyyy")
-                Dim fReason As String = rowFU("Reason").ToString()
-                flashMsg &= fDate & " - " & fReason & vbCrLf
-            Next
-            flashMsg &= vbCrLf
-        End If
-
-        ' Notes
-        flashMsg &= "DENTIST NOTES:" & vbCrLf & SelectedTreatmentNotes & vbCrLf & vbCrLf
-
-        flashMsg &= "--------------------------------" & vbCrLf
-        flashMsg &= "TOTAL AMOUNT: P" & totalAmount.ToString("F2") & vbCrLf
-        flashMsg &= "Method: " & SelectedPaymentMethod & vbCrLf & vbCrLf
-        flashMsg &= "Thank you for visiting!"
-
-        MessageBox.Show(flashMsg, "RECEIPT PREVIEW - This is exactly how it will be printed", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show(flashMsg, "RECEIPT PREVIEW - This is exactly how it will be printed",
+                MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         ' Ask to print
         Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
