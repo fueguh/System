@@ -117,7 +117,7 @@ Public Class AdminDBItemManagement
 
         Dim query As String = "INSERT INTO ItemManagement 
                                (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, Unit) 
-                               VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate);
+                               VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate, @Unit);
                                SELECT SCOPE_IDENTITY();"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
