@@ -7,7 +7,7 @@ Public Class AdminDBItemManagement
     ' Form Load
     ' ===========================
     Private Sub AdminDBItemManagement_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        DateTimePickerExpiry.Enabled = False
+        DateTimePickerExpiry.Enabled = True
         DateTimePickerExpiry.Value = DateTime.Now
         LoadInventory()
         LoadSuppliers()
@@ -20,7 +20,7 @@ Public Class AdminDBItemManagement
     ' ===========================
     Private Sub LoadInventory(Optional searchText As String = "")
         Dim query As String = "SELECT i.ItemID, i.ItemName, i.Price, c.CategoryName, 
-                                      s.SupplierName, i.Quantity, i.ExpirationDate, i.HasExpiry
+                                      s.SupplierName, i.Quantity, i.ExpirationDate
                                FROM ItemManagement i
                                INNER JOIN Categories c ON i.CategoryID = c.CategoryID
                                INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID"
@@ -85,8 +85,7 @@ Public Class AdminDBItemManagement
         ComboBoxCategory.SelectedIndex = -1
         ComboBoxSupplier.SelectedIndex = -1
         DateTimePickerExpiry.Value = DateTime.Now
-        DateTimePickerExpiry.Enabled = False
-        chkHasExpiry.Checked = False
+        DateTimePickerExpiry.Enabled = True
         selectedItemID = 0
         DgvItems.ClearSelection()
 
@@ -107,8 +106,8 @@ Public Class AdminDBItemManagement
         End If
 
         Dim query As String = "INSERT INTO ItemManagement 
-                               (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate, HasExpiry) 
-                               VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate, @HasExpiry);
+                               (ItemName, Price, CategoryID, SupplierID, Quantity, ExpirationDate) 
+                               VALUES (@ItemName, @Price, @CategoryID, @SupplierID, @Quantity, @ExpirationDate);
                                SELECT SCOPE_IDENTITY();"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
@@ -119,8 +118,7 @@ Public Class AdminDBItemManagement
             cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
             cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
             cmd.Parameters.AddWithValue("@Quantity", 0)
-            cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
-            cmd.Parameters.AddWithValue("@ExpirationDate", If(chkHasExpiry.Checked, CType(DateTimePickerExpiry.Value, Object), DBNull.Value))
+            cmd.Parameters.AddWithValue("@ExpirationDate", CType(DateTimePickerExpiry.Value, Object))
 
             connection.Open()
             Dim newID As Integer = Convert.ToInt32(cmd.ExecuteScalar())
@@ -152,7 +150,7 @@ Public Class AdminDBItemManagement
 
         Dim query As String = "UPDATE ItemManagement SET 
                                ItemName=@ItemName, Price=@Price, CategoryID=@CategoryID, SupplierID=@SupplierID, 
-                               ExpirationDate=@ExpirationDate, HasExpiry=@HasExpiry
+                               ExpirationDate=@ExpirationDate
                                WHERE ItemID=@ItemID"
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2),
@@ -163,8 +161,7 @@ Public Class AdminDBItemManagement
             cmd.Parameters.AddWithValue("@Price", price)
             cmd.Parameters.AddWithValue("@CategoryID", ComboBoxCategory.SelectedValue)
             cmd.Parameters.AddWithValue("@SupplierID", ComboBoxSupplier.SelectedValue)
-            cmd.Parameters.AddWithValue("@HasExpiry", chkHasExpiry.Checked)
-            cmd.Parameters.AddWithValue("@ExpirationDate", If(chkHasExpiry.Checked, CType(DateTimePickerExpiry.Value, Object), DBNull.Value))
+            cmd.Parameters.AddWithValue("@ExpirationDate", CType(DateTimePickerExpiry.Value, Object))
 
             connection.Open()
             cmd.ExecuteNonQuery()
@@ -233,13 +230,7 @@ Public Class AdminDBItemManagement
         TextBoxSearch.Clear()
     End Sub
 
-    ' ===========================
-    ' Handle Expiry Checkbox
-    ' ===========================
-    Private Sub chkHasExpiry_CheckedChanged(sender As Object, e As EventArgs) Handles chkHasExpiry.CheckedChanged
-        DateTimePickerExpiry.Enabled = chkHasExpiry.Checked
-        If chkHasExpiry.Checked Then DateTimePickerExpiry.Value = DateTime.Now
-    End Sub
+    ' Expiration is handled directly via DateTimePickerExpiry (checkbox removed)
 
     ' ===========================
     ' Handle Selection
@@ -266,7 +257,6 @@ Public Class AdminDBItemManagement
         ComboBoxCategory.Text = row.Cells("CategoryName").Value.ToString()
         ComboBoxSupplier.Text = row.Cells("SupplierName").Value.ToString()
 
-        chkHasExpiry.Checked = Convert.ToBoolean(row.Cells("HasExpiry").Value)
         DateTimePickerExpiry.Value = If(IsDBNull(row.Cells("ExpirationDate").Value), DateTime.Now, Convert.ToDateTime(row.Cells("ExpirationDate").Value))
     End Sub
 
