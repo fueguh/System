@@ -23,7 +23,7 @@ Public Module ReceiptPrinter
     ' ================= CLINIC INFORMATION (Single Source of Truth) =================
     Public Const ClinicName As String = "ARG HEALTHY SMILE CLINIC"
     Public Const ClinicAddress As String = "14 St. Francis St., Taguig, 1632 Metro Manila"
-    Public Const ClinicContact As String = "Contact: (02) 8123-4567 | +63 917 123 4567"
+    Public Const ClinicContact As String = "Contact: +63 917 123 4567"
 
     ''' <summary>
     ''' Returns the full header text (clinic name + address + contact) for reuse in flash prompt
@@ -102,7 +102,7 @@ Public Module ReceiptPrinter
         ' Header (uses constants from this module)
         g.DrawString(ClinicName, New Font("Arial", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
         currentY += 18
-        g.DrawString(ClinicAddress, New Font("Arial", 5), Brushes.Black, leftMargin, currentY)
+        g.DrawString(ClinicAddress, New Font("Arial", 4), Brushes.Black, leftMargin, currentY)
         currentY += 15
         g.DrawString(ClinicContact, New Font("Arial", 5), Brushes.Black, leftMargin, currentY)
         currentY += 20
