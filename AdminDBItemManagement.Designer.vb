@@ -411,7 +411,7 @@ Partial Class AdminDBItemManagement
         Me.ComboBoxUnit.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.ComboBoxUnit.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ComboBoxUnit.ItemHeight = 30
-        Me.ComboBoxUnit.Items.AddRange(New Object() {"pcs", "tablet", "capsule", "ml", "bottle", "box", "vial", "ampule"})
+        Me.ComboBoxUnit.Items.AddRange(New Object() {"pcs", "tablet", "capsule", "ml", "bottle", "box", "vial", "ampule", "sachet"})
         Me.ComboBoxUnit.Location = New System.Drawing.Point(612, 226)
         Me.ComboBoxUnit.Name = "ComboBoxUnit"
         Me.ComboBoxUnit.Size = New System.Drawing.Size(257, 36)
