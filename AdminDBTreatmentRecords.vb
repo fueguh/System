@@ -42,8 +42,46 @@ Public Class AdminDBTreatmentRecords
         LoadAppointmentStatus()
         FetchAssignedDentist()
         LoadExistingTreatmentData()
+
+        ' If there is no existing procedures text, autofill from services linked to the appointment
+        PopulateProceduresFromAppointment()
+
         LoadFollowUp()
 
+    End Sub
+
+    ' =======================
+    ' SIMPLE PROCEDURES AUTOFILL
+    ' =======================
+    Private Sub PopulateProceduresFromAppointment()
+        Try
+            ' Don't overwrite if the treatment record already provided procedures
+            If Not String.IsNullOrWhiteSpace(TxtProceduresDone.Text) Then Return
+
+            Dim list As New List(Of String)()
+
+            Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+                con.Open()
+                Dim sql As String = "SELECT S.ServiceName FROM AppointmentServices ASV JOIN Services S ON ASV.ServiceID = S.ServiceID WHERE ASV.AppointmentID = @appt ORDER BY S.ServiceName"
+                Using cmd As New SqlCommand(sql, con)
+                    cmd.Parameters.AddWithValue("@appt", PassedAppointmentID)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            Dim s = reader("ServiceName").ToString()
+                            If Not String.IsNullOrWhiteSpace(s) Then list.Add(s)
+                        End While
+                    End Using
+                End Using
+            End Using
+
+            If list.Count > 0 Then
+                TxtProceduresDone.Text = String.Join(", ", list)
+            End If
+
+        Catch ex As Exception
+            ' Silent fail — textbox remains empty
+            Debug.WriteLine("PopulateProceduresFromAppointment failed: " & ex.Message)
+        End Try
     End Sub
 
 
