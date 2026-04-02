@@ -461,7 +461,7 @@ SuccessCleanup:
         dgvReceiptItems.Columns("ItemID").Visible = False
 
     End Sub
-    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellContentClick
+    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row = dgvInventoryItems.Rows(e.RowIndex)
@@ -511,11 +511,11 @@ SuccessCleanup:
         RecalculateItemTotal()
     End Sub
 
-    Private Sub dgvReceiptItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvReceiptItems.CellContentClick
+    Private Sub dgvReceiptItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
         ' this is for the receipt details displayed from the inventory items dgv. It is read only and just for display, so no actions needed here.
     End Sub
 
-    Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
+    Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs)
         ' Trigger inventory filtering as the user types
         LoadInventoryItems(ItemSearch.Text.Trim())
     End Sub
@@ -566,8 +566,8 @@ SuccessCleanup:
                 Dim da As New SqlDataAdapter(cmd)
                 Dim dt As New DataTable()
                 da.Fill(dt)
-                If dgvInventoryItems.Columns.Contains("ItemID") Then dgvInventoryItems.Columns("ItemID").Visible = False
                 dgvInventoryItems.DataSource = dt
+                If dgvInventoryItems.Columns.Contains("ItemID") Then dgvInventoryItems.Columns("ItemID").Visible = False
             End Using
         End Using
     End Sub
@@ -584,4 +584,5 @@ SuccessCleanup:
         Return total
 
     End Function
+
 End Class
