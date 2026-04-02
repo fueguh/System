@@ -19,6 +19,9 @@ Public Class AdminDBAppointments
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         isFormLoading = True
 
+        ' Ensure schedule date defaults to today on form load
+        DtpDate.Value = Date.Today
+
         SetupStatusCombo()
         LoadComboBoxes()
 
@@ -40,7 +43,8 @@ Public Class AdminDBAppointments
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
         cmbStatus.Items.AddRange({"Confirmed", "Cancelled"})
-        cmbStatus.SelectedIndex = -1
+        ' Default to Confirmed to speed up creating new appointments
+        cmbStatus.SelectedIndex = 0
     End Sub
 
     ' ==========================================
@@ -216,6 +220,11 @@ Public Class AdminDBAppointments
         newServices.Sort()
         If String.Join(", ", oldServices) <> String.Join(", ", newServices) Then
             changes.Add($"Services: [{String.Join(", ", oldServices)}] -> [{String.Join(", ", newServices)}]")
+        End If
+        ' If nothing changed, skip the update
+        If changes.Count = 0 Then
+            MessageBox.Show("No changes detected. Update skipped.", "No Changes", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
         End If
         ' 3. DATABASE OPERATIONS
         Dim isUpdateSuccessful As Boolean = False
@@ -556,7 +565,12 @@ Public Class AdminDBAppointments
         CmbDent.SelectedIndex = -1
         CmbDent.Text = ""
 
-        cmbStatus.SelectedIndex = -1
+        ' Default status for new appointments
+        If cmbStatus.Items.Count > 0 Then
+            cmbStatus.SelectedIndex = 0
+        Else
+            cmbStatus.SelectedIndex = -1
+        End If
         cmbStartTime.Items.Clear()
         cmbStartTime.Text = ""
         DtpDate.Value = Date.Today
