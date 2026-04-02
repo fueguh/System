@@ -116,7 +116,7 @@ Public Class AdminDBPaymentHistory
 
         ' === FLASH PROMPT - Reuses ReceiptPrinter as single source of truth ===
         Dim flashMsg As String =
-            ReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
+            AdminDBPaymentReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
             "Date: " & DateTime.Now.ToString("G") & vbCrLf &
             "Patient: " & SelectedPatientName & vbCrLf &
             "Doctor:  " & SelectedDentistName & vbCrLf
@@ -178,7 +178,7 @@ Public Class AdminDBPaymentHistory
                                       "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
         If askPrint = DialogResult.Yes Then
-            ReceiptPrinter.PrintReceipt(
+            AdminDBPaymentReceiptPrinter.PrintReceipt(
                 SelectedPatientName,
                 SelectedDentistName,
                 SelectedTreatmentNotes,

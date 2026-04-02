@@ -289,7 +289,7 @@ Public Class AdminDBPayment
 
                                 ' === FLASH PROMPT - Reuses ReceiptPrinter as single source of truth ===
                                 Dim flashMsg As String =
-                                    ReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
+                                    AdminDBPaymentReceiptPrinter.GetReceiptHeader() & vbCrLf & vbCrLf &
                                     "Date: " & DateTime.Now.ToString("G") & vbCrLf &
                                     "Patient: " & SelectedPatientName & vbCrLf &
                                     "Doctor:  " & SelectedDentistName & vbCrLf
@@ -355,7 +355,7 @@ Public Class AdminDBPayment
                                     If dtServicesPrint Is Nothing Then dtServicesPrint = New DataTable()
                                     Dim dtFollowUpsPrint As DataTable = GetFollowUps()
 
-                                    ReceiptPrinter.PrintReceipt(
+                                    AdminDBPaymentReceiptPrinter.PrintReceipt(
                                         SelectedPatientName,
                                         SelectedDentistName,
                                         SelectedTreatmentNotes,

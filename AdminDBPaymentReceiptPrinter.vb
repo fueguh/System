@@ -2,7 +2,7 @@
 Imports System.Management
 Imports System.Web.UI
 
-Public Module ReceiptPrinter
+Public Module AdminDBPaymentReceiptPrinter
 
     ' Variables to hold data temporarily for the print job
     Private _PatientName As String
@@ -205,4 +205,84 @@ Public Module ReceiptPrinter
         End Try
         Return False
     End Function
+
+    ''' <summary>
+    ''' Generates the exact flash preview message (MessageBox) that matches the printed receipt layout.
+    ''' Call this from AdminDBPayment or AdminDBPaymentHistory to avoid code duplication.
+    ''' </summary>
+    Public Function GetReceiptFlashPreview(
+        patientName As String,
+        dentistName As String,
+        notes As String,
+        total As String,
+        amountPaid As String,
+        method As String,
+        refNo As String,
+        servicesDt As DataTable,
+        followUpsDt As DataTable) As String
+
+        Dim flashMsg As String = GetReceiptHeader() & vbCrLf & vbCrLf
+
+        flashMsg &= "Date: " & DateTime.Now.ToString("G") & vbCrLf
+        flashMsg &= "Patient: " & patientName & vbCrLf
+        flashMsg &= "Doctor:  " & dentistName & vbCrLf
+
+        If Not String.IsNullOrEmpty(refNo) Then
+            flashMsg &= "Ref No:  " & refNo & vbCrLf
+        End If
+
+        flashMsg &= "--------------------------------" & vbCrLf & vbCrLf
+
+        ' Services
+        If servicesDt IsNot Nothing Then
+            For Each row As DataRow In servicesDt.Rows
+                Dim sName As String = row("ServiceName").ToString()
+                Dim sPrice As String = "P" & CDec(row("Price")).ToString("F2")
+                flashMsg &= sName & vbTab & sPrice & vbCrLf
+            Next
+        End If
+
+        flashMsg &= vbCrLf & "--------------------------------" & vbCrLf
+
+        ' VAT Section (recalculated for consistency with printer)
+        Dim totalVal As Decimal = 0
+        Decimal.TryParse(total, totalVal)
+        Dim vatableSales As Decimal = If(totalVal > 0, totalVal / 1.12D, 0)
+        Dim vatAmount As Decimal = totalVal - vatableSales
+
+        flashMsg &= "VATable Sales:      " & vatableSales.ToString("F2") & vbCrLf
+        flashMsg &= "VAT (12%):          " & vatAmount.ToString("F2") & vbCrLf & vbCrLf
+        flashMsg &= "TOTAL AMOUNT: P" & totalVal.ToString("F2") & vbCrLf & vbCrLf
+
+        ' Payment Details
+        Dim paidVal As Decimal = 0
+        Decimal.TryParse(amountPaid, paidVal)
+        Dim changeVal As Decimal = paidVal - totalVal
+        If changeVal < 0 Then changeVal = 0
+
+        flashMsg &= "Amount Paid:        " & paidVal.ToString("F2") & vbCrLf
+        flashMsg &= "CHANGE:             " & changeVal.ToString("F2") & vbCrLf & vbCrLf
+
+        ' Follow-Ups
+        If followUpsDt IsNot Nothing AndAlso followUpsDt.Rows.Count > 0 Then
+            flashMsg &= "FOLLOW-UP SCHEDULE:" & vbCrLf
+            For Each row As DataRow In followUpsDt.Rows
+                Dim fDate As String = Convert.ToDateTime(row("FollowUpDate")).ToString("MM/dd/yyyy")
+                Dim fReason As String = row("Reason").ToString()
+                flashMsg &= fDate & " - " & fReason & vbCrLf
+            Next
+            flashMsg &= vbCrLf
+        End If
+
+        ' Notes
+        flashMsg &= "DENTIST NOTES:" & vbCrLf & notes & vbCrLf & vbCrLf
+
+        flashMsg &= "--------------------------------" & vbCrLf
+        flashMsg &= "TOTAL AMOUNT: P" & totalVal.ToString("F2") & vbCrLf
+        flashMsg &= "Method: " & method & vbCrLf & vbCrLf
+        flashMsg &= "Thank you for visiting!"
+
+        Return flashMsg
+    End Function
+
 End Module
