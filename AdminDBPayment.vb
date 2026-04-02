@@ -499,8 +499,6 @@ SuccessCleanup:
             End If
         Next
 
-        lblItemTotal.Text = "Medicine Total: " & total.ToString("N2")
-
     End Sub
 
     Private Sub TextBoxPrescriptionNotes_TextChanged(sender As Object, e As EventArgs) Handles TextBoxPrescriptionNotes.TextChanged
