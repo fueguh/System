@@ -434,4 +434,16 @@ SuccessCleanup:
     Private Sub txtAmountPaid_TextChanged(sender As Object, e As EventArgs) Handles txtAmountPaid.TextChanged
         CheckReadyToPoint()
     End Sub
+
+    Private Sub dgvIInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvIInventoryItems.CellContentClick
+        'this is dgv for items for manual selection of medicines to add to the receipt. 
+    End Sub
+
+    Private Sub dgvReceiptItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvReceiptItems.CellContentClick
+        ' this is for the receipt details displayed from the inventory items dgv. It is read only and just for display, so no actions needed here.
+    End Sub
+
+    Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
+        'for filtering and searching items in the inventory items dgv when manually adding items to the receipt.
+    End Sub
 End Class
