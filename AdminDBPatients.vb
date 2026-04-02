@@ -75,7 +75,11 @@ Public Class AdminDBPatients
                 Else
                     cmd.Parameters.AddWithValue("@email", txtEmail.Text)
                 End If
-                cmd.Parameters.AddWithValue("@address", txtAddress.Text)
+                If txtAddress.Text.Trim() = "" Then
+                    cmd.Parameters.AddWithValue("@address", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@address", txtAddress.Text)
+                End If
                 ' New allergy note parameter (optional)
                 If txtAllergy.Text.Trim = "" Then
                     cmd.Parameters.AddWithValue("@allergy", DBNull.Value)
@@ -126,7 +130,11 @@ Public Class AdminDBPatients
                 Else
                     cmd.Parameters.AddWithValue("@email", txtEmail.Text)
                 End If
-                cmd.Parameters.AddWithValue("@address", txtAddress.Text)
+                If txtAddress.Text.Trim() = "" Then
+                    cmd.Parameters.AddWithValue("@address", DBNull.Value)
+                Else
+                    cmd.Parameters.AddWithValue("@address", txtAddress.Text)
+                End If
                 ' New allergy note parameter (optional)
                 If txtAllergy.Text.Trim = "" Then
                     cmd.Parameters.AddWithValue("@allergy", DBNull.Value)
@@ -192,8 +200,8 @@ Public Class AdminDBPatients
         Dim bDate As Date = Convert.ToDateTime(row.Cells("BirthDate").Value)
         DtpBirthDate.Value = bDate                     ' ← Updated (no more manual formatting)
         txtContact.Text = row.Cells("ContactNumber").Value.ToString()
-        txtEmail.Text = row.Cells("Email").Value.ToString()
-        txtAddress.Text = row.Cells("Address").Value.ToString()
+        txtEmail.Text = If(row.Cells("Email").Value Is DBNull.Value, "", row.Cells("Email").Value.ToString())
+        txtAddress.Text = If(row.Cells("Address").Value Is DBNull.Value, "", row.Cells("Address").Value.ToString())
         txtAllergy.Text = If(row.Cells("NoteAllergy").Value Is DBNull.Value, "", row.Cells("NoteAllergy").Value.ToString())
 
         ' Switch UI to Update Mode
@@ -289,19 +297,19 @@ Public Class AdminDBPatients
                 Return False
             End If
 
-            ' 5. Address Validation
-            If String.IsNullOrWhiteSpace(txtAddress.Text) OrElse
-           Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse
-           " -@.,/".Contains(c)) Then
-                MessageBox.Show("Address contains invalid characters.")
-                txtAddress.Focus()
-                Return False
+            ' 5. Address Validation (optional)
+            If Not String.IsNullOrWhiteSpace(txtAddress.Text) Then
+                If Not txtAddress.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse " -@.,/()#'""".IndexOf(c) >= 0) Then
+                    MessageBox.Show("Address contains invalid characters.")
+                    txtAddress.Focus()
+                    Return False
+                End If
             End If
 
-            ' 6. Allergy Note (Optional)
+            ' 6. Allergy Note (Optional) - allow flexible characters (letters, digits, common punctuation)
             If Not String.IsNullOrWhiteSpace(txtAllergy.Text) Then
-                If Not txtAllergy.Text.All(Function(c) Char.IsLetter(c) OrElse c = " "c) Then
-                    MessageBox.Show("Allergy note must contain letters only.")
+                If Not txtAllergy.Text.All(Function(c) Char.IsLetterOrDigit(c) OrElse " -',;()/.#".IndexOf(c) >= 0) Then
+                    MessageBox.Show("Allergy note contains invalid characters.")
                     txtAllergy.Focus()
                     Return False
                 End If
@@ -343,8 +351,8 @@ Public Class AdminDBPatients
         If Char.IsControl(e.KeyChar) Then Return
 
         ' Allow letters, digits, spaces, and common address txtBirthDate
-        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse e.KeyChar = " "c OrElse e.KeyChar = "-"c OrElse e.KeyChar = "@"c _
-        OrElse e.KeyChar = "."c OrElse e.KeyChar = ","c OrElse e.KeyChar = "/"c) Then
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsWhiteSpace(e.KeyChar) OrElse e.KeyChar = "-"c OrElse e.KeyChar = "@"c _
+        OrElse e.KeyChar = "."c OrElse e.KeyChar = ","c OrElse e.KeyChar = "/"c OrElse e.KeyChar = "("c OrElse e.KeyChar = ")"c OrElse e.KeyChar = "#"c OrElse e.KeyChar = "'"c OrElse e.KeyChar = """"c) Then
             e.Handled = True
         End If
     End Sub
@@ -352,7 +360,9 @@ Public Class AdminDBPatients
     Private Sub txtAllergy_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAllergy.KeyPress
         If Char.IsControl(e.KeyChar) Then Return
 
-        If Not (Char.IsLetter(e.KeyChar) OrElse e.KeyChar = " "c) Then
+        ' Allow letters, digits, spaces and common punctuation used in allergy descriptions
+        If Not (Char.IsLetterOrDigit(e.KeyChar) OrElse Char.IsWhiteSpace(e.KeyChar) OrElse e.KeyChar = "-"c OrElse e.KeyChar = ","c _
+            OrElse e.KeyChar = "'"c OrElse e.KeyChar = ";"c OrElse e.KeyChar = "("c OrElse e.KeyChar = ")"c OrElse e.KeyChar = "/"c OrElse e.KeyChar = "."c OrElse e.KeyChar = "#"c) Then
             e.Handled = True
         End If
     End Sub
