@@ -501,9 +501,6 @@ SuccessCleanup:
 
     End Sub
 
-    Private Sub TextBoxPrescriptionNotes_TextChanged(sender As Object, e As EventArgs) Handles TextBoxPrescriptionNotes.TextChanged
-        ' here loads from the dentist notes of the appointment, used for the staff, display only and not editable, just for reference of the staff when adding the prescriptions for the patients to buy from the clinic.
-    End Sub
     Private Sub LoadInventoryItems(Optional search As String = "")
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             Dim sql As String = "
