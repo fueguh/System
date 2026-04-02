@@ -133,7 +133,7 @@ Partial Class AdminDBTreatmentRecords
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(2395, 17)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(2300, 17)
         Me.Guna2CirclePictureBox1.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
@@ -173,7 +173,7 @@ Partial Class AdminDBTreatmentRecords
         Me.btnBack.FillColor = System.Drawing.Color.LightGray
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1594, 25)
+        Me.btnBack.Location = New System.Drawing.Point(1499, 25)
         Me.btnBack.Margin = New System.Windows.Forms.Padding(5)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
@@ -195,7 +195,7 @@ Partial Class AdminDBTreatmentRecords
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1680, 107)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1585, 107)
         Me.Guna2CustomGradientPanel1.TabIndex = 47
         '
         'btnBack1
@@ -205,7 +205,7 @@ Partial Class AdminDBTreatmentRecords
         Me.btnBack1.FillColor = System.Drawing.Color.Transparent
         Me.btnBack1.Image = CType(resources.GetObject("btnBack1.Image"), System.Drawing.Image)
         Me.btnBack1.ImageRotate = 0!
-        Me.btnBack1.Location = New System.Drawing.Point(1254, 23)
+        Me.btnBack1.Location = New System.Drawing.Point(1159, 23)
         Me.btnBack1.Name = "btnBack1"
         Me.btnBack1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.btnBack1.Size = New System.Drawing.Size(60, 58)
@@ -223,7 +223,7 @@ Partial Class AdminDBTreatmentRecords
         Me.Guna2HtmlLabel6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel6.Location = New System.Drawing.Point(0, 0)
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
-        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1342, 107)
+        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1247, 107)
         Me.Guna2HtmlLabel6.TabIndex = 47
         Me.Guna2HtmlLabel6.Text = "Treatment Record"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -363,7 +363,7 @@ Partial Class AdminDBTreatmentRecords
         Me.dtpFollowUpDate.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.dtpFollowUpDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.dtpFollowUpDate.Format = System.Windows.Forms.DateTimePickerFormat.[Long]
-        Me.dtpFollowUpDate.Location = New System.Drawing.Point(31, 232)
+        Me.dtpFollowUpDate.Location = New System.Drawing.Point(19, 170)
         Me.dtpFollowUpDate.Margin = New System.Windows.Forms.Padding(4)
         Me.dtpFollowUpDate.MaxDate = New Date(9998, 12, 31, 0, 0, 0, 0)
         Me.dtpFollowUpDate.MinDate = New Date(1753, 1, 1, 0, 0, 0, 0)
@@ -387,14 +387,14 @@ Partial Class AdminDBTreatmentRecords
         Me.txtFollowUpReason.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.txtFollowUpReason.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtFollowUpReason.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtFollowUpReason.Location = New System.Drawing.Point(31, 343)
+        Me.txtFollowUpReason.Location = New System.Drawing.Point(19, 281)
         Me.txtFollowUpReason.Margin = New System.Windows.Forms.Padding(6, 7, 6, 7)
         Me.txtFollowUpReason.Multiline = True
         Me.txtFollowUpReason.Name = "txtFollowUpReason"
         Me.txtFollowUpReason.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtFollowUpReason.PlaceholderText = "Reason..."
         Me.txtFollowUpReason.SelectedText = ""
-        Me.txtFollowUpReason.Size = New System.Drawing.Size(532, 104)
+        Me.txtFollowUpReason.Size = New System.Drawing.Size(365, 157)
         Me.txtFollowUpReason.TabIndex = 90
         '
         'chkNeedsFollowUp
@@ -402,7 +402,7 @@ Partial Class AdminDBTreatmentRecords
         Me.chkNeedsFollowUp.AutoSize = True
         Me.chkNeedsFollowUp.Font = New System.Drawing.Font("Palatino Linotype", 14.25!)
         Me.chkNeedsFollowUp.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.chkNeedsFollowUp.Location = New System.Drawing.Point(31, 130)
+        Me.chkNeedsFollowUp.Location = New System.Drawing.Point(19, 68)
         Me.chkNeedsFollowUp.Name = "chkNeedsFollowUp"
         Me.chkNeedsFollowUp.Size = New System.Drawing.Size(310, 30)
         Me.chkNeedsFollowUp.TabIndex = 69
@@ -420,17 +420,17 @@ Partial Class AdminDBTreatmentRecords
         Me.grpFollowup.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.grpFollowup.Location = New System.Drawing.Point(675, 200)
         Me.grpFollowup.Name = "grpFollowup"
-        Me.grpFollowup.Size = New System.Drawing.Size(652, 509)
+        Me.grpFollowup.Size = New System.Drawing.Size(517, 509)
         Me.grpFollowup.TabIndex = 91
         Me.grpFollowup.TabStop = False
-        Me.grpFollowup.Text = "Follow-up Options"
+        Me.grpFollowup.Text = "Follow-up "
         '
         'Guna2HtmlLabel11
         '
         Me.Guna2HtmlLabel11.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel11.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel11.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel11.Location = New System.Drawing.Point(31, 195)
+        Me.Guna2HtmlLabel11.Location = New System.Drawing.Point(19, 133)
         Me.Guna2HtmlLabel11.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
         Me.Guna2HtmlLabel11.Name = "Guna2HtmlLabel11"
         Me.Guna2HtmlLabel11.Size = New System.Drawing.Size(136, 28)
@@ -442,7 +442,7 @@ Partial Class AdminDBTreatmentRecords
         Me.Guna2HtmlLabel10.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel10.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel10.Location = New System.Drawing.Point(31, 303)
+        Me.Guna2HtmlLabel10.Location = New System.Drawing.Point(19, 241)
         Me.Guna2HtmlLabel10.Margin = New System.Windows.Forms.Padding(3, 5, 3, 5)
         Me.Guna2HtmlLabel10.Name = "Guna2HtmlLabel10"
         Me.Guna2HtmlLabel10.Size = New System.Drawing.Size(68, 28)
@@ -493,7 +493,7 @@ Partial Class AdminDBTreatmentRecords
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 19.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1339, 833)
+        Me.ClientSize = New System.Drawing.Size(1244, 833)
         Me.ControlBox = False
         Me.Controls.Add(Me.grpTreatment)
         Me.Controls.Add(Me.grpFollowup)
