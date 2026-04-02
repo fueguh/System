@@ -95,6 +95,9 @@ Public Class AdminDBPayment
             patient_name.Text = SelectedPatientName
             dentist_name.Text = SelectedDentistName ' Update your dentist label here
 
+            ' 3.5 Sync the dentist/treatment notes into the prescription notes textbox (read-only reference)
+            TextBoxPrescriptionNotes.Text = SelectedTreatmentNotes
+
             ' 4. Sync Services
             LoadAppointmentServices()
         End If
@@ -482,8 +485,8 @@ SuccessCleanup:
     End Sub
 
     Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
-        'for filtering and searching items in the inventory items dgv when manually adding items to the receipt.
-        LoadInventoryItems(ItemSearch.Text)
+        ' Trigger inventory filtering as the user types
+        LoadInventoryItems(ItemSearch.Text.Trim())
     End Sub
 
     Private Sub RecalculateItemTotal()
@@ -505,7 +508,6 @@ SuccessCleanup:
     End Sub
     Private Sub LoadInventoryItems(Optional search As String = "")
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-
             Dim sql As String = "
                        SELECT 
                             ItemID AS ItemID,
@@ -513,6 +515,7 @@ SuccessCleanup:
                             Price AS Price,
                             Quantity AS Quantity
                        FROM ItemManagement
+                       WHERE ItemName LIKE @Search OR CONVERT(VARCHAR(50), ItemID) LIKE @Search
             "
             Using cmd As New SqlCommand(sql, con)
                 cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
