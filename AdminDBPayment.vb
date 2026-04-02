@@ -523,7 +523,7 @@ SuccessCleanup:
                 Dim da As New SqlDataAdapter(cmd)
                 Dim dt As New DataTable()
                 da.Fill(dt)
-
+                If dgvInventoryItems.Columns.Contains("ItemID") Then dgvInventoryItems.Columns("ItemID").Visible = False
                 dgvInventoryItems.DataSource = dt
             End Using
         End Using
