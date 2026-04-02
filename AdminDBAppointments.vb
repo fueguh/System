@@ -149,6 +149,13 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
+        ' === NEW: Prevent updating Completed appointments (DB is source of truth) ===
+        If IsAppointmentCompleted(selectedAppointmentID) Then
+            MessageBox.Show("This appointment is already Completed and cannot be updated.",
+                       "Update Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
         If Not ValidateFields() Then Exit Sub
 
         ' 2. PREPARE DATA
@@ -411,7 +418,22 @@ Public Class AdminDBAppointments
             Return "" ' No conflict
         End Using
     End Function
-
+    ' ==========================================
+    ' HELPER: Check if appointment is Completed (DB source of truth)
+    ' ==========================================
+    Private Function IsAppointmentCompleted(appointmentID As Integer) As Boolean
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Using cmd As New SqlCommand("SELECT Status FROM Appointments WHERE AppointmentID = @id", con)
+                cmd.Parameters.AddWithValue("@id", appointmentID)
+                Dim status As Object = cmd.ExecuteScalar()
+                If status IsNot Nothing Then
+                    Return status.ToString().Trim().Equals("Completed", StringComparison.OrdinalIgnoreCase)
+                End If
+            End Using
+        End Using
+        Return False
+    End Function
     ' ==========================================
     ' UI EVENT HANDLERS
     ' ==========================================
