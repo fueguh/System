@@ -43,7 +43,7 @@ Public Class AdminDBPayment
                 U.FullName AS [Dentist], 
                 A.Date, 
                 ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
-
+                ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
                 (SELECT STRING_AGG(S.ServiceName, ', ') 
                  FROM AppointmentServices AS AP 
                  JOIN Services S ON AP.ServiceID = S.ServiceID 
@@ -70,7 +70,7 @@ Public Class AdminDBPayment
             Dim dt As New DataTable()
             da.Fill(dt)
             dgvPendingPayments.DataSource = dt
-
+            If dgvPendingPayments.Columns.Contains("Prescription") Then dgvPendingPayments.Columns("Prescription").Visible = False
             ' Hide IDs to keep it clean
             If dgvPendingPayments.Columns.Contains("AppointmentID") Then dgvPendingPayments.Columns("AppointmentID").Visible = False
             If dgvPendingPayments.Columns.Contains("PatientID") Then dgvPendingPayments.Columns("PatientID").Visible = False
@@ -96,7 +96,7 @@ Public Class AdminDBPayment
             dentist_name.Text = SelectedDentistName ' Update your dentist label here
 
             ' 3.5 Sync the dentist/treatment notes into the prescription notes textbox (read-only reference)
-            TextBoxPrescriptionNotes.Text = SelectedTreatmentNotes
+            TextBoxPrescriptionNotes.Text = row.Cells("Prescription").Value.ToString()
 
             ' 4. Sync Services
             LoadAppointmentServices()
