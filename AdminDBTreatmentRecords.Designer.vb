@@ -80,6 +80,7 @@ Partial Class AdminDBTreatmentRecords
         Me.TxtPrescriptions.Name = "TxtPrescriptions"
         Me.TxtPrescriptions.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.TxtPrescriptions.PlaceholderText = "Prescriptions..."
+        Me.TxtPrescriptions.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.TxtPrescriptions.SelectedText = ""
         Me.TxtPrescriptions.Size = New System.Drawing.Size(532, 104)
         Me.TxtPrescriptions.TabIndex = 3
