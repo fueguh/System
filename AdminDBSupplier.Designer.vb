@@ -57,7 +57,7 @@ Partial Class AdminDBSupplier
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1034, 107)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1402, 107)
         Me.Guna2CustomGradientPanel1.TabIndex = 49
         '
         'Guna2CirclePictureBox1
@@ -67,7 +67,7 @@ Partial Class AdminDBSupplier
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.Transparent
         Me.Guna2CirclePictureBox1.Image = CType(resources.GetObject("Guna2CirclePictureBox1.Image"), System.Drawing.Image)
         Me.Guna2CirclePictureBox1.ImageRotate = 0!
-        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(947, 28)
+        Me.Guna2CirclePictureBox1.Location = New System.Drawing.Point(1315, 28)
         Me.Guna2CirclePictureBox1.Name = "Guna2CirclePictureBox1"
         Me.Guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.Guna2CirclePictureBox1.Size = New System.Drawing.Size(60, 58)
@@ -85,7 +85,7 @@ Partial Class AdminDBSupplier
         Me.Guna2HtmlLabel6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel6.Location = New System.Drawing.Point(0, 2)
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
-        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1034, 107)
+        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1402, 107)
         Me.Guna2HtmlLabel6.TabIndex = 47
         Me.Guna2HtmlLabel6.Text = "Supplier Maintenance"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -146,6 +146,8 @@ Partial Class AdminDBSupplier
         Me.DataGridViewSuppliers.AllowUserToResizeRows = False
         DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
         Me.DataGridViewSuppliers.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        Me.DataGridViewSuppliers.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         DataGridViewCellStyle2.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -177,7 +179,7 @@ Partial Class AdminDBSupplier
         Me.DataGridViewSuppliers.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.DataGridViewSuppliers.RowHeadersVisible = False
         Me.DataGridViewSuppliers.RowHeadersWidth = 51
-        Me.DataGridViewSuppliers.Size = New System.Drawing.Size(694, 558)
+        Me.DataGridViewSuppliers.Size = New System.Drawing.Size(1040, 558)
         Me.DataGridViewSuppliers.TabIndex = 53
         Me.DataGridViewSuppliers.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DataGridViewSuppliers.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -300,6 +302,8 @@ Partial Class AdminDBSupplier
         '
         'SupplierSearch
         '
+        Me.SupplierSearch.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.SupplierSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.SupplierSearch.BorderRadius = 10
         Me.SupplierSearch.BorderThickness = 2
@@ -319,7 +323,7 @@ Partial Class AdminDBSupplier
         Me.SupplierSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.SupplierSearch.PlaceholderText = "Search supplier.."
         Me.SupplierSearch.SelectedText = ""
-        Me.SupplierSearch.Size = New System.Drawing.Size(693, 50)
+        Me.SupplierSearch.Size = New System.Drawing.Size(1040, 50)
         Me.SupplierSearch.TabIndex = 60
         '
         'btnClear
@@ -343,7 +347,7 @@ Partial Class AdminDBSupplier
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1036, 736)
+        Me.ClientSize = New System.Drawing.Size(1404, 736)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.SupplierSearch)
         Me.Controls.Add(Me.TextBoxEmail)
