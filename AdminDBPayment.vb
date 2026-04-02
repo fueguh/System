@@ -79,28 +79,36 @@ Public Class AdminDBPayment
 
     ' ================= GRID SELECTION LOGIC =================
     Private Sub dgvPendingPayments_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvPendingPayments.CellClick
-        If e.RowIndex >= 0 Then
+
+        Try
+            If e.RowIndex < 0 Then Exit Sub
+            If dgvPendingPayments.Rows.Count = 0 Then Exit Sub
+
             Dim row = dgvPendingPayments.Rows(e.RowIndex)
 
-            ' 1. Transfer IDs
-            SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
-            SelectedPatientID = CInt(row.Cells("PatientID").Value)
+            If row Is Nothing Then Exit Sub
+            If row.Cells("AppointmentID").Value Is Nothing Then Exit Sub
 
-            ' 2. Update Labels directly from Grid data
-            SelectedPatientName = row.Cells("Patient Name").Value.ToString()
-            SelectedDentistName = row.Cells("Dentist").Value.ToString() ' Get from Grid
-            SelectedTreatmentNotes = row.Cells("Dentist Notes").Value.ToString()
+            SelectedAppointmentID = Convert.ToInt32(row.Cells("AppointmentID").Value)
+            SelectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
 
-            ' 3. Sync the UI Labels
+            SelectedPatientName = Convert.ToString(row.Cells("Patient Name").Value)
+            SelectedDentistName = Convert.ToString(row.Cells("Dentist").Value)
+            SelectedTreatmentNotes = Convert.ToString(row.Cells("Dentist Notes").Value)
+
             patient_name.Text = SelectedPatientName
-            dentist_name.Text = SelectedDentistName ' Update your dentist label here
+            dentist_name.Text = SelectedDentistName
+            TextBoxPrescriptionNotes.Text = Convert.ToString(row.Cells("Prescription").Value)
 
-            ' 3.5 Sync the dentist/treatment notes into the prescription notes textbox (read-only reference)
-            TextBoxPrescriptionNotes.Text = row.Cells("Prescription").Value.ToString()
+            dgvReceiptItems.Rows.Clear()
 
-            ' 4. Sync Services
             LoadAppointmentServices()
-        End If
+            RecalculateItemTotal()
+
+        Catch ex As Exception
+            MessageBox.Show("Selection error: " & ex.Message)
+        End Try
+
     End Sub
 
     Private Sub FetchDentistName()
@@ -461,7 +469,7 @@ SuccessCleanup:
         dgvReceiptItems.Columns("ItemID").Visible = False
 
     End Sub
-    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
+    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellContentClick
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row = dgvInventoryItems.Rows(e.RowIndex)
@@ -515,11 +523,6 @@ SuccessCleanup:
         ' this is for the receipt details displayed from the inventory items dgv. It is read only and just for display, so no actions needed here.
     End Sub
 
-    Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs)
-        ' Trigger inventory filtering as the user types
-        LoadInventoryItems(ItemSearch.Text.Trim())
-    End Sub
-
     Private Sub RecalculateItemTotal()
 
         Dim itemTotal As Decimal = 0
@@ -534,13 +537,14 @@ SuccessCleanup:
         ' Combine with service total
         Dim totalAmount As Decimal = currentTotal + itemTotal
 
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            txtAmountPaid.Text = totalAmount.ToString("F2")
+        End If
+
         ' Recompute VAT
         Dim subtotal As Decimal = totalAmount / 1.12D
         Dim vat As Decimal = totalAmount - subtotal
 
-        If ComboBoxPaymentMethod.Text = "Gcash" Then
-            txtAmountPaid.Text = totalAmount.ToString("F2")
-        End If
 
         ' Update UI
         lblTotal.Text = "Total: PHP " & totalAmount.ToString("N2")
@@ -585,4 +589,7 @@ SuccessCleanup:
 
     End Function
 
+    Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
+        LoadInventoryItems(ItemSearch.Text.Trim())
+    End Sub
 End Class
