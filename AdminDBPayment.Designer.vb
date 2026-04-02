@@ -32,14 +32,14 @@ Partial Class AdminDBPayment
         Dim DataGridViewCellStyle6 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle7 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle8 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle13 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle14 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle15 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle16 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle9 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle10 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle11 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle12 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle13 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle14 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle15 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle16 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.Guna2AnimateWindow1 = New Guna.UI2.WinForms.Guna2AnimateWindow(Me.components)
         Me.ComboBoxPaymentMethod = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.lblDentist = New Guna.UI2.WinForms.Guna2HtmlLabel()
@@ -65,9 +65,10 @@ Partial Class AdminDBPayment
         Me.lblTotal = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.TextBoxPrescriptionNotes = New Guna.UI2.WinForms.Guna2TextBox()
         Me.PrescriptionInterpretationPanel = New System.Windows.Forms.Panel()
-        Me.dgvIInventoryItems = New Guna.UI2.WinForms.Guna2DataGridView()
-        Me.dgvReceiptItems = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.ItemSearch = New Guna.UI2.WinForms.Guna2TextBox()
+        Me.dgvReceiptItems = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.dgvInventoryItems = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.lblItemTotal = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvPendingPayments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -75,8 +76,8 @@ Partial Class AdminDBPayment
         Me.Guna2Panel1.SuspendLayout()
         Me.Guna2Panel2.SuspendLayout()
         Me.PrescriptionInterpretationPanel.SuspendLayout()
-        CType(Me.dgvIInventoryItems, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvReceiptItems, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgvInventoryItems, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ComboBoxPaymentMethod
@@ -510,76 +511,39 @@ Partial Class AdminDBPayment
         '
         'PrescriptionInterpretationPanel
         '
+        Me.PrescriptionInterpretationPanel.Controls.Add(Me.lblItemTotal)
         Me.PrescriptionInterpretationPanel.Controls.Add(Me.ItemSearch)
         Me.PrescriptionInterpretationPanel.Controls.Add(Me.dgvReceiptItems)
-        Me.PrescriptionInterpretationPanel.Controls.Add(Me.dgvIInventoryItems)
+        Me.PrescriptionInterpretationPanel.Controls.Add(Me.dgvInventoryItems)
         Me.PrescriptionInterpretationPanel.Controls.Add(Me.TextBoxPrescriptionNotes)
         Me.PrescriptionInterpretationPanel.Location = New System.Drawing.Point(1260, 136)
         Me.PrescriptionInterpretationPanel.Name = "PrescriptionInterpretationPanel"
         Me.PrescriptionInterpretationPanel.Size = New System.Drawing.Size(523, 665)
         Me.PrescriptionInterpretationPanel.TabIndex = 92
         '
-        'dgvIInventoryItems
+        'ItemSearch
         '
-        Me.dgvIInventoryItems.AllowUserToAddRows = False
-        Me.dgvIInventoryItems.AllowUserToDeleteRows = False
-        DataGridViewCellStyle13.BackColor = System.Drawing.Color.White
-        Me.dgvIInventoryItems.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle13
-        Me.dgvIInventoryItems.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
-        DataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle14.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle14.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle14.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle14.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle14.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvIInventoryItems.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle14
-        Me.dgvIInventoryItems.ColumnHeadersHeight = 30
-        DataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle15.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle15.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle15.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgvIInventoryItems.DefaultCellStyle = DataGridViewCellStyle15
-        Me.dgvIInventoryItems.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvIInventoryItems.Location = New System.Drawing.Point(20, 284)
-        Me.dgvIInventoryItems.Name = "dgvIInventoryItems"
-        Me.dgvIInventoryItems.ReadOnly = True
-        DataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle16.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        DataGridViewCellStyle16.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle16.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle16.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.dgvIInventoryItems.RowHeadersDefaultCellStyle = DataGridViewCellStyle16
-        Me.dgvIInventoryItems.RowHeadersVisible = False
-        Me.dgvIInventoryItems.RowHeadersWidth = 51
-        Me.dgvIInventoryItems.Size = New System.Drawing.Size(488, 156)
-        Me.dgvIInventoryItems.TabIndex = 92
-        Me.dgvIInventoryItems.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
-        Me.dgvIInventoryItems.ThemeStyle.AlternatingRowsStyle.Font = Nothing
-        Me.dgvIInventoryItems.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty
-        Me.dgvIInventoryItems.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty
-        Me.dgvIInventoryItems.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty
-        Me.dgvIInventoryItems.ThemeStyle.BackColor = System.Drawing.Color.White
-        Me.dgvIInventoryItems.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvIInventoryItems.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvIInventoryItems.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        Me.dgvIInventoryItems.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.dgvIInventoryItems.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.dgvIInventoryItems.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
-        Me.dgvIInventoryItems.ThemeStyle.HeaderStyle.Height = 30
-        Me.dgvIInventoryItems.ThemeStyle.ReadOnly = True
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.Height = 22
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvIInventoryItems.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.ItemSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ItemSearch.BorderRadius = 10
+        Me.ItemSearch.BorderThickness = 2
+        Me.ItemSearch.Cursor = System.Windows.Forms.Cursors.IBeam
+        Me.ItemSearch.DefaultText = ""
+        Me.ItemSearch.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
+        Me.ItemSearch.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
+        Me.ItemSearch.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.ItemSearch.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
+        Me.ItemSearch.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ItemSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.ItemSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ItemSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ItemSearch.Location = New System.Drawing.Point(20, 173)
+        Me.ItemSearch.Margin = New System.Windows.Forms.Padding(4)
+        Me.ItemSearch.Name = "ItemSearch"
+        Me.ItemSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ItemSearch.PlaceholderText = "Search item.."
+        Me.ItemSearch.SelectedText = ""
+        Me.ItemSearch.Size = New System.Drawing.Size(345, 50)
+        Me.ItemSearch.TabIndex = 94
         '
         'dgvReceiptItems
         '
@@ -606,7 +570,7 @@ Partial Class AdminDBPayment
         DataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvReceiptItems.DefaultCellStyle = DataGridViewCellStyle11
         Me.dgvReceiptItems.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvReceiptItems.Location = New System.Drawing.Point(20, 466)
+        Me.dgvReceiptItems.Location = New System.Drawing.Point(20, 407)
         Me.dgvReceiptItems.Name = "dgvReceiptItems"
         Me.dgvReceiptItems.ReadOnly = True
         DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -643,29 +607,78 @@ Partial Class AdminDBPayment
         Me.dgvReceiptItems.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.dgvReceiptItems.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
-        'ItemSearch
+        'dgvInventoryItems
         '
-        Me.ItemSearch.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ItemSearch.BorderRadius = 10
-        Me.ItemSearch.BorderThickness = 2
-        Me.ItemSearch.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me.ItemSearch.DefaultText = ""
-        Me.ItemSearch.DisabledState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer), CType(CType(208, Byte), Integer))
-        Me.ItemSearch.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer), CType(CType(226, Byte), Integer))
-        Me.ItemSearch.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.ItemSearch.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer), CType(CType(138, Byte), Integer))
-        Me.ItemSearch.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ItemSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.ItemSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ItemSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ItemSearch.Location = New System.Drawing.Point(20, 213)
-        Me.ItemSearch.Margin = New System.Windows.Forms.Padding(4)
-        Me.ItemSearch.Name = "ItemSearch"
-        Me.ItemSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ItemSearch.PlaceholderText = "Search item.."
-        Me.ItemSearch.SelectedText = ""
-        Me.ItemSearch.Size = New System.Drawing.Size(345, 50)
-        Me.ItemSearch.TabIndex = 94
+        Me.dgvInventoryItems.AllowUserToAddRows = False
+        Me.dgvInventoryItems.AllowUserToDeleteRows = False
+        DataGridViewCellStyle13.BackColor = System.Drawing.Color.White
+        Me.dgvInventoryItems.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle13
+        Me.dgvInventoryItems.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
+        DataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle14.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle14.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle14.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle14.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle14.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvInventoryItems.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle14
+        Me.dgvInventoryItems.ColumnHeadersHeight = 30
+        DataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle15.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle15.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle15.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvInventoryItems.DefaultCellStyle = DataGridViewCellStyle15
+        Me.dgvInventoryItems.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.dgvInventoryItems.Location = New System.Drawing.Point(20, 230)
+        Me.dgvInventoryItems.Name = "dgvInventoryItems"
+        Me.dgvInventoryItems.ReadOnly = True
+        DataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle16.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        DataGridViewCellStyle16.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle16.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle16.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.dgvInventoryItems.RowHeadersDefaultCellStyle = DataGridViewCellStyle16
+        Me.dgvInventoryItems.RowHeadersVisible = False
+        Me.dgvInventoryItems.RowHeadersWidth = 51
+        Me.dgvInventoryItems.Size = New System.Drawing.Size(488, 156)
+        Me.dgvInventoryItems.TabIndex = 92
+        Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
+        Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.Font = Nothing
+        Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty
+        Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty
+        Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty
+        Me.dgvInventoryItems.ThemeStyle.BackColor = System.Drawing.Color.White
+        Me.dgvInventoryItems.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.dgvInventoryItems.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.dgvInventoryItems.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        Me.dgvInventoryItems.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.dgvInventoryItems.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
+        Me.dgvInventoryItems.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.dgvInventoryItems.ThemeStyle.HeaderStyle.Height = 30
+        Me.dgvInventoryItems.ThemeStyle.ReadOnly = True
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.Height = 22
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.dgvInventoryItems.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        '
+        'lblItemTotal
+        '
+        Me.lblItemTotal.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblItemTotal.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblItemTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblItemTotal.Location = New System.Drawing.Point(20, 593)
+        Me.lblItemTotal.Name = "lblItemTotal"
+        Me.lblItemTotal.Size = New System.Drawing.Size(95, 28)
+        Me.lblItemTotal.TabIndex = 95
+        Me.lblItemTotal.Text = "Item Total:"
         '
         'AdminDBPayment
         '
@@ -704,8 +717,9 @@ Partial Class AdminDBPayment
         Me.Guna2Panel1.ResumeLayout(False)
         Me.Guna2Panel2.ResumeLayout(False)
         Me.PrescriptionInterpretationPanel.ResumeLayout(False)
-        CType(Me.dgvIInventoryItems, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PrescriptionInterpretationPanel.PerformLayout()
         CType(Me.dgvReceiptItems, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgvInventoryItems, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -737,6 +751,7 @@ Partial Class AdminDBPayment
     Friend WithEvents TextBoxPrescriptionNotes As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents PrescriptionInterpretationPanel As Panel
     Friend WithEvents dgvReceiptItems As Guna.UI2.WinForms.Guna2DataGridView
-    Friend WithEvents dgvIInventoryItems As Guna.UI2.WinForms.Guna2DataGridView
+    Friend WithEvents dgvInventoryItems As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents ItemSearch As Guna.UI2.WinForms.Guna2TextBox
+    Friend WithEvents lblItemTotal As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class

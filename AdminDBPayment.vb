@@ -13,6 +13,8 @@ Public Class AdminDBPayment
     Private Sub AdminDBPayment_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPendingPayments()
         LoadPaymentMethods()
+        LoadInventoryItems()
+        SetupReceiptGrid()
         txtReferenceNo.Enabled = False ' Ensure it starts disabled
         ' Formatting the Grid for Word Wrap (For those long dentist notes)
         dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
@@ -203,7 +205,10 @@ Public Class AdminDBPayment
         End If
 
         ' --- Amount Paid, VAT, and Change Calculations ---
-        Dim totalAmount As Decimal = currentTotal
+        Dim serviceTotal As Decimal = currentTotal
+        Dim itemTotal As Decimal = CalculateItemTotal()
+
+        Dim totalAmount As Decimal = serviceTotal + itemTotal
         Dim amountPaid As Decimal = 0
 
         ' IMPORTANT: Parse the paid amount BEFORE calculating change
@@ -435,8 +440,41 @@ SuccessCleanup:
         CheckReadyToPoint()
     End Sub
 
-    Private Sub dgvIInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvIInventoryItems.CellContentClick
-        'this is dgv for items for manual selection of medicines to add to the receipt. 
+    '======================================================================================================================================================
+    ' New feature for perscription connected to selling items from the inventory, this is for the staff to add the items to the receipt for the patients to buy from the clinic, it is connected to the dentist notes of the appointment for reference of the staff when adding the items to the receipt.
+    '======================================================================================================================================================
+    Private Sub SetupReceiptGrid()
+
+        dgvReceiptItems.Columns.Clear()
+
+        dgvReceiptItems.Columns.Add("ItemID", "ItemID")
+        dgvReceiptItems.Columns.Add("ItemName", "Item Name")
+        dgvReceiptItems.Columns.Add("Price", "Price")
+        dgvReceiptItems.Columns.Add("Quantity", "Qty")
+        dgvReceiptItems.Columns.Add("Subtotal", "Subtotal")
+
+        dgvReceiptItems.Columns("ItemID").Visible = False
+
+    End Sub
+    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellContentClick
+        If e.RowIndex < 0 Then Exit Sub
+
+        Dim row = dgvInventoryItems.Rows(e.RowIndex)
+
+        Dim id As Integer = CInt(row.Cells("ItemID").Value)
+        Dim name As String = row.Cells("ItemName").Value.ToString()
+        Dim price As Decimal = CDec(row.Cells("Price").Value)
+
+        Dim qtyStr As String = InputBox("Enter quantity for " & name, "Prescription Item", "1")
+        Dim qty As Integer
+
+        If Not Integer.TryParse(qtyStr, qty) OrElse qty <= 0 Then Exit Sub
+
+        Dim subtotal As Decimal = price * qty
+
+        dgvReceiptItems.Rows.Add(id, name, price, qty, subtotal)
+
+        RecalculateItemTotal()
     End Sub
 
     Private Sub dgvReceiptItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvReceiptItems.CellContentClick
@@ -445,5 +483,59 @@ SuccessCleanup:
 
     Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
         'for filtering and searching items in the inventory items dgv when manually adding items to the receipt.
+        LoadInventoryItems(ItemSearch.Text)
     End Sub
+
+    Private Sub RecalculateItemTotal()
+
+        Dim total As Decimal = 0
+
+        For Each row As DataGridViewRow In dgvReceiptItems.Rows
+            If Not row.IsNewRow Then
+                total += Convert.ToDecimal(row.Cells("Subtotal").Value)
+            End If
+        Next
+
+        lblItemTotal.Text = "Medicine Total: " & total.ToString("N2")
+
+    End Sub
+
+    Private Sub TextBoxPrescriptionNotes_TextChanged(sender As Object, e As EventArgs) Handles TextBoxPrescriptionNotes.TextChanged
+        ' here loads from the dentist notes of the appointment, used for the staff, display only and not editable, just for reference of the staff when adding the prescriptions for the patients to buy from the clinic.
+    End Sub
+    Private Sub LoadInventoryItems(Optional search As String = "")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+
+            Dim sql As String = "
+                       SELECT 
+                            ItemID AS ItemID,
+                            ItemName AS ItemName,
+                            Price AS Price,
+                            Quantity AS Quantity
+                       FROM ItemManagement
+            "
+            Using cmd As New SqlCommand(sql, con)
+                cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
+
+                Dim da As New SqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+
+                dgvInventoryItems.DataSource = dt
+            End Using
+        End Using
+    End Sub
+    Private Function CalculateItemTotal() As Decimal
+
+        Dim total As Decimal = 0
+
+        For Each row As DataGridViewRow In dgvReceiptItems.Rows
+            If Not row.IsNewRow Then
+                total += Convert.ToDecimal(row.Cells("Subtotal").Value)
+            End If
+        Next
+
+        Return total
+
+    End Function
 End Class
