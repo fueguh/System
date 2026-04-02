@@ -83,12 +83,15 @@ Public Class AdminDBItemManagement
         TextBoxItemName.Clear()
         TextBoxPrice.Clear()
         ComboBoxCategory.SelectedIndex = -1
+        ComboBoxCategory.Text = ""
         ComboBoxSupplier.SelectedIndex = -1
+        ComboBoxUnit.SelectedIndex = -1
+        ComboBoxUnit.Text = ""
         DateTimePickerExpiry.Value = DateTime.Now
         DateTimePickerExpiry.Enabled = True
         selectedItemID = 0
         DgvItems.ClearSelection()
-
+        TextBoxSearch.Clear()
         ' BUTTON LOGIC: Allow adding new items, but hide edit options
         BtnAdd.Enabled = True
         BtnUpdate.Enabled = False
@@ -99,6 +102,13 @@ Public Class AdminDBItemManagement
     ' Add Item
     ' ===========================
     Private Sub BtnAdd_Click(sender As Object, e As EventArgs) Handles BtnAdd.Click
+        ' If user hasn't entered any details, show a helpful message
+        If String.IsNullOrWhiteSpace(TextBoxItemName.Text) AndAlso String.IsNullOrWhiteSpace(TextBoxPrice.Text) _
+           AndAlso ComboBoxCategory.SelectedIndex = -1 AndAlso ComboBoxSupplier.SelectedIndex = -1 AndAlso String.IsNullOrWhiteSpace(ComboBoxUnit.Text) Then
+            MessageBox.Show("Please enter item details before adding.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
         Dim price As Decimal
         If Not Decimal.TryParse(TextBoxPrice.Text.Trim(), price) OrElse price < 0 Then
             MessageBox.Show("Please enter a valid price.")
@@ -230,7 +240,6 @@ Public Class AdminDBItemManagement
     ' ===========================
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearInputs()
-        TextBoxSearch.Clear()
     End Sub
 
     ' Expiration is handled directly via DateTimePickerExpiry (checkbox removed)
@@ -259,6 +268,10 @@ Public Class AdminDBItemManagement
         TextBoxPrice.Text = row.Cells("Price").Value.ToString()
         ComboBoxCategory.Text = row.Cells("CategoryName").Value.ToString()
         ComboBoxSupplier.Text = row.Cells("SupplierName").Value.ToString()
+
+        ' Populate unit (handle DBNull safely)
+        Dim unitVal As String = If(IsDBNull(row.Cells("Unit").Value), String.Empty, row.Cells("Unit").Value.ToString())
+        ComboBoxUnit.Text = unitVal
 
         DateTimePickerExpiry.Value = If(IsDBNull(row.Cells("ExpirationDate").Value), DateTime.Now, Convert.ToDateTime(row.Cells("ExpirationDate").Value))
     End Sub
