@@ -16,15 +16,7 @@ Public Class AdminDBPayment
         LoadInventoryItems()
         SetupReceiptGrid()
         txtReferenceNo.Enabled = False ' Ensure it starts disabled
-        ' Formatting the Grid for Word Wrap (For those long dentist notes)
-        dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
-        dgvPendingPayments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
 
-        dgvPendingPayments.ReadOnly = True
-        dgvPendingPayments.AllowUserToAddRows = False
-        dgvPendingPayments.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
-        dgvPendingPayments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         ClearBillingUI()
     End Sub
 
