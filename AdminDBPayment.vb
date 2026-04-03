@@ -16,7 +16,7 @@ Public Class AdminDBPayment
         LoadInventoryItems()
         SetupReceiptGrid()
         txtReferenceNo.Enabled = False ' Ensure it starts disabled
-
+        SetPrescriptionControlsEnabled(False)
         ClearBillingUI()
     End Sub
 
@@ -82,6 +82,7 @@ Public Class AdminDBPayment
             If row.Cells("AppointmentID").Value Is Nothing Then Exit Sub
 
             SelectedAppointmentID = Convert.ToInt32(row.Cells("AppointmentID").Value)
+            SetPrescriptionControlsEnabled(True) ' enable prescription controls when an appointment is selected
             SelectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
 
             SelectedPatientName = Convert.ToString(row.Cells("Patient Name").Value)
@@ -371,15 +372,17 @@ SuccessCleanup:
         txtAmountPaid.Clear()
         txtReferenceNo.Clear()
         dgvReceiptItems.Rows.Clear()
-
-        txtReferenceNo.Enabled = False
+        TextBoxPrescriptionNotes.Clear()
+        dgvPendingPayments.ClearSelection()
 
         lblTotal.Text = "Total Amount: PHP 0.00"
         lblSubtotal.Text = "Subtotal: 0.00"
         lblVATAmount.Text = "VAT (12%): 0.00"
 
+        txtReferenceNo.Enabled = False
+        SetPrescriptionControlsEnabled(False)
+
         dgvServices.DataSource = Nothing
-        dgvPendingPayments.ClearSelection()
     End Sub
     ' Only allows numbers and backspace in the Reference Number box
     Private Sub txtReferenceNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtReferenceNo.KeyPress
@@ -583,5 +586,10 @@ SuccessCleanup:
 
     Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
         LoadInventoryItems(ItemSearch.Text.Trim())
+    End Sub
+    Private Sub SetPrescriptionControlsEnabled(enabled As Boolean)
+        dgvInventoryItems.Enabled = enabled
+        dgvReceiptItems.Enabled = enabled
+        ItemSearch.Enabled = enabled
     End Sub
 End Class
