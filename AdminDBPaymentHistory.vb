@@ -26,35 +26,35 @@ Public Class AdminDBPaymentHistory
         Try
             Using con As New SqlConnection(connectionString)
                 con.Open()
-
                 Dim sql As String = "
-                SELECT 
-                    R.ReceiptID,
-                    R.AppointmentID,
-                    P.FullName AS [Patient Name],
-                    U.FullName AS [Dentist],
-                    R.TotalAmount AS [Total Bill],
-                    R.AmountPaid AS [Cash Tendered],
-                    (R.AmountPaid - R.TotalAmount) AS [Change Given],
-                    R.PaymentMethod AS [Method],
-                    R.ReferenceNumber AS [Ref No],
-                    R.DateIssued AS [Payment Date],
-                    
-                    ISNULL((
-                        SELECT STRING_AGG(
-                            CONVERT(VARCHAR, F.FollowUpDate, 101) + ' (' + F.Reason + ')', 
-                            ', '
-                        )
-                        FROM PatientFollowUps F
-                        WHERE F.AppointmentID = R.AppointmentID
-                    ), 'None') AS [Follow-Ups]
+                                    SELECT 
+                                        R.ReceiptID,
+                                        R.AppointmentID,
+                                        P.FullName AS [Patient Name],
+                                        U.FullName AS [Dentist],
+                                        R.TotalAmount AS [Total Bill],
+                                        R.AmountPaid AS [Cash Tendered],
+                                        (R.AmountPaid - R.TotalAmount) AS [Change Given],
+                                        R.PaymentMethod AS [Method],
+                                        R.ReferenceNumber AS [Ref No],
+                                        R.DateIssued AS [Payment Date],
+                                        R.Status,
 
-                FROM Receipts R
-                INNER JOIN Patients P ON R.PatientID = P.PatientID
-                INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
-                INNER JOIN Users U ON A.UserID = U.UserID
-                INNER JOIN Users U2 ON R.UserID = U2.UserID
-                "
+                                        ISNULL((
+                                            SELECT STRING_AGG(
+                                                CONVERT(VARCHAR, F.FollowUpDate, 101) + ' (' + F.Reason + ')', 
+                                                ', '
+                                            )
+                                            FROM PatientFollowUps F
+                                            WHERE F.AppointmentID = R.AppointmentID
+                                        ), 'None') AS [Follow-Ups]
+
+                                    FROM Receipts R
+                                    INNER JOIN Patients P ON R.PatientID = P.PatientID
+                                    INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                                    INNER JOIN Users U ON A.UserID = U.UserID
+                                    INNER JOIN Users U2 ON R.UserID = U2.UserID
+                                    "
 
                 If Not String.IsNullOrEmpty(searchName) Then
                     sql &= " WHERE (P.FullName LIKE @search 
@@ -74,6 +74,14 @@ Public Class AdminDBPaymentHistory
                     Dim dt As New DataTable()
                     da.Fill(dt)
                     dgvHistory.DataSource = dt
+
+                    ' Highlight VOIDED rows
+                    For Each row As DataGridViewRow In dgvHistory.Rows
+                        If row.Cells("Status").Value IsNot Nothing AndAlso row.Cells("Status").Value.ToString() = "Voided" Then
+                            row.DefaultCellStyle.BackColor = Color.LightGray
+                            row.DefaultCellStyle.ForeColor = Color.Red
+                        End If
+                    Next
 
                     ' Format Currency Columns in Grid
                     If dgvHistory.Columns.Contains("Total Bill") Then dgvHistory.Columns("Total Bill").DefaultCellStyle.Format = "N2"
@@ -102,6 +110,13 @@ Public Class AdminDBPaymentHistory
         End If
 
         Dim row = dgvHistory.SelectedRows(0)
+
+        ' Prevent reprint if voided
+        If row.Cells("Status").Value IsNot Nothing AndAlso row.Cells("Status").Value.ToString() = "Voided" Then
+            MessageBox.Show("Cannot reprint a voided receipt.")
+            Exit Sub
+        End If
+
         SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
         SelectedPatientName = row.Cells("Patient Name").Value.ToString()
 
@@ -148,7 +163,62 @@ Public Class AdminDBPaymentHistory
             )
         End If
     End Sub
+    Private Sub VoidReceipt(receiptID As Integer)
+        ' Admin only
+        If SystemSession.LoggedInRole <> "Admin" Then
+            MessageBox.Show("Only admins can void receipts.")
+            Exit Sub
+        End If
 
+        Using con As New SqlConnection(connectionString)
+            con.Open()
+
+            Using trans As SqlTransaction = con.BeginTransaction()
+                Try
+                    ' Check if already voided
+                    Dim checkCmd As New SqlCommand("SELECT Status FROM Receipts WHERE ReceiptID=@id", con, trans)
+                    checkCmd.Parameters.AddWithValue("@id", receiptID)
+
+                    Dim status = checkCmd.ExecuteScalar()?.ToString()
+
+                    If status = "Voided" Then
+                        MessageBox.Show("This receipt is already voided.")
+                        Exit Sub
+                    End If
+
+                    ' Void it
+                    Dim voidCmd As New SqlCommand("
+                    UPDATE Receipts
+                    SET Status='Voided',
+                        VoidedAt = GETDATE(),
+                        VoidedBy = @user
+                    WHERE ReceiptID=@id", con, trans)
+
+                    voidCmd.Parameters.AddWithValue("@id", receiptID)
+                    voidCmd.Parameters.AddWithValue("@user", SystemSession.LoggedInFullName)
+                    voidCmd.ExecuteNonQuery()
+
+                    trans.Commit()
+
+                    ' Audit log
+                    SystemSession.LogAudit(
+                    $"Voided Receipt #{receiptID}",
+                    "Payment History",
+                    SystemSession.LoggedInUserID,
+                    SystemSession.LoggedInFullName,
+                    SystemSession.LoggedInRole
+                )
+
+                    MessageBox.Show("Receipt voided successfully.")
+                    LoadPaymentHistory()
+
+                Catch ex As Exception
+                    trans.Rollback()
+                    MessageBox.Show("Error voiding receipt: " & ex.Message)
+                End Try
+            End Using
+        End Using
+    End Sub
     Private Sub FetchDetailsForReprint(apptID As Integer)
         Using con As New SqlConnection(connectionString)
             con.Open()
@@ -199,7 +269,25 @@ Public Class AdminDBPaymentHistory
             daFU.Fill(dtFollowUpsForPrinting)
         End Using
     End Sub
+    Private Sub dgvHistory_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvHistory.CellMouseClick
+        If e.RowIndex < 0 Then Exit Sub
 
+        If e.Button = MouseButtons.Right Then
+            Dim row = dgvHistory.Rows(e.RowIndex)
+            Dim receiptID = CInt(row.Cells("ReceiptID").Value)
+            Dim status = row.Cells("Status").Value.ToString()
+
+            If status = "Voided" Then
+                MessageBox.Show("This receipt is already voided.")
+                Exit Sub
+            End If
+
+            If MessageBox.Show("Void this receipt?", "Confirm Void",
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
+                VoidReceipt(receiptID)
+            End If
+        End If
+    End Sub
     Private Sub clearform()
         txtSearchPatient.Clear()
         dgvHistory.ClearSelection()
