@@ -2,58 +2,55 @@
 
 Public Class AdminDBReports
 
-    ' ===================== Class-level variables =====================
     Public Shared adminDBReports As AdminDBReports
 
-    ' ===================== Form Load =====================
     Private Sub AdminDBReports_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        ' FIX: initialize revenue filter options
         cmbRevenueFilter.Items.Clear()
         cmbRevenueFilter.Items.AddRange(New String() {"Weekly", "Monthly", "Yearly"})
-        cmbRevenueFilter.SelectedIndex = 1 ' Default = Monthly
+        cmbRevenueFilter.SelectedIndex = 1
 
         LoadPaymentHistory()
         LoadServiceUsage()
         LoadPatientHistory()
         LoadAppointmentHistory()
         LoadMonthlyRevenue()
+
     End Sub
 
-    ' ===================== Public Methods =====================
-    ' Refresh history (called from other forms)
     Public Sub RefreshHistory()
         LoadAppointmentHistory()
         LoadPaymentHistory()
     End Sub
 
-    ' ===================== Data Loading Methods =====================
-
-    ' ===================== Payment History (NEW REPLACES Daily Appointments) =====================
-    ' Payment History - FIXED: now includes ReceiptStatus for visibility of voided receipts
+    ' ===================== PAYMENT HISTORY =====================
     Private Sub LoadPaymentHistory()
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
-        SELECT 
-            R.ReceiptID,
-            A.AppointmentID,
-            P.FullName AS Patient,
-            U.FullName AS Dentist,
-            R.TotalAmount,
-            R.PaymentMethod,
-            R.AmountPaid,
-            R.ChangeAmount,
-            R.DateIssued,
-            R.Status   -- FIX: ADDED visibility for void/valid tracking
-
-        FROM Receipts R
-        INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
-        INNER JOIN Patients P ON A.PatientID = P.PatientID
-        INNER JOIN Users U ON A.UserID = U.UserID
-        WHERE U.Role = 'Dentist'
-        ORDER BY R.DateIssued DESC"
+            SELECT 
+                R.ReceiptID,
+                A.AppointmentID,
+                P.FullName AS Patient,
+                U.FullName AS Dentist,
+                R.TotalAmount,
+                R.PaymentMethod,
+                R.AmountPaid,
+                R.ChangeAmount,
+                R.DateIssued,
+                R.Status
+            FROM Receipts R
+            INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+            INNER JOIN Patients P ON A.PatientID = P.PatientID
+            INNER JOIN Users U ON A.UserID = U.UserID
+            WHERE U.Role = 'Dentist'
+              AND R.ReceiptStatus = 'Valid'
+              AND R.Status = 'Completed'
+              AND R.VoidedAt IS NULL
+              AND A.Status = 'Completed'
+            ORDER BY R.DateIssued DESC"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
@@ -61,94 +58,94 @@ Public Class AdminDBReports
 
             DGVDaily.DataSource = dt
 
-            ' Hide IDs for cleaner UI (unchanged)
             If DGVDaily.Columns.Contains("ReceiptID") Then
                 DGVDaily.Columns("ReceiptID").Visible = False
             End If
             If DGVDaily.Columns.Contains("AppointmentID") Then
                 DGVDaily.Columns("AppointmentID").Visible = False
             End If
+
         End Using
     End Sub
 
-    ' Service Usage
-    ' Service Usage - Fixed to show 0 revenue for unused services
-    ' Service Usage - FIXED: properly excludes voided receipts + prevents wrong revenue inflation
+    ' ===================== SERVICE USAGE (FIXED) =====================
     Private Sub LoadServiceUsage()
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
-        -- FIXED: voided receipts fully excluded from ALL calculations
-        DECLARE @GrandTotal DECIMAL(18,2);
+            WITH ValidAppointments AS (
+                SELECT 
+                    A.AppointmentID,
+                    ASV.ServiceID
+                FROM Appointments A
+                INNER JOIN AppointmentServices ASV 
+                    ON A.AppointmentID = ASV.AppointmentID
+                WHERE A.Status = 'Completed'
+            ),
 
-        SELECT @GrandTotal = SUM(S.Price)
-        FROM AppointmentServices ASV
-        INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
-        INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
-        INNER JOIN Receipts R 
-    ON A.AppointmentID = R.AppointmentID 
-    AND R.Status = 'Valid'
-        WHERE R.Status = 'Valid';  -- FIX: excludes voided receipts
+            ValidReceipts AS (
+                SELECT 
+                    R.AppointmentID,
+                    R.TotalAmount
+                FROM Receipts R
+                INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                WHERE R.ReceiptStatus = 'Valid'
+                  AND R.Status = 'Completed'
+                  AND R.VoidedAt IS NULL
+                  AND A.Status = 'Completed'
+            )
 
-        SELECT 
-            S.ServiceName AS [Service Name],
-            COUNT(ASV.ServiceID) AS [Total Procedures],
+            SELECT 
+                S.ServiceName AS [Service Name],
+                COUNT(VA.ServiceID) AS [Total Procedures],
+                ISNULL(SUM(VR.TotalAmount), 0) AS [Gross Revenue],
+                DENSE_RANK() OVER (ORDER BY ISNULL(SUM(VR.TotalAmount), 0) DESC) AS [Profit Rank]
 
-            -- FIX: revenue now strictly based on valid receipts only
-            SUM(CASE 
-                WHEN R.Status = 'Valid' 
-                THEN R.TotalAmount 
-                ELSE 0 
-            END) AS [Gross Revenue],
+            FROM Services S
 
-            CAST((SUM(S.Price) / NULLIF(@GrandTotal, 0)) * 100 AS DECIMAL(10,2)) AS [% Contribution],
+            LEFT JOIN ValidAppointments VA 
+                ON S.ServiceID = VA.ServiceID
 
-            DENSE_RANK() OVER (ORDER BY SUM(S.Price) DESC) AS [Profit Rank]
+            LEFT JOIN ValidReceipts VR 
+                ON VA.AppointmentID = VR.AppointmentID
 
-        FROM Services S
-        INNER JOIN AppointmentServices ASV ON S.ServiceID = ASV.ServiceID
-        INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
-        INNER JOIN Receipts R 
-    ON A.AppointmentID = R.AppointmentID 
-    AND R.Status = 'Valid'
-        WHERE R.Status = 'Valid'   -- FIX: ensures voided receipts excluded
-
-        GROUP BY S.ServiceName
-        ORDER BY [Gross Revenue] DESC"
+            GROUP BY S.ServiceName
+            ORDER BY [Gross Revenue] DESC;
+            "
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
+
             DgvServiceUsage.DataSource = dt
 
-            ' UI formatting unchanged
             If DgvServiceUsage.Columns.Contains("Gross Revenue") Then
                 DgvServiceUsage.Columns("Gross Revenue").DefaultCellStyle.Format = "N2"
             End If
-            If DgvServiceUsage.Columns.Contains("% Contribution") Then
-                DgvServiceUsage.Columns("% Contribution").DefaultCellStyle.Format = "0.0'%'"
-            End If
+
         End Using
     End Sub
 
-    ' ===================== Patient History (FIXED - SAFE COLUMN MAPPING) =====================
+    ' ===================== PATIENT HISTORY =====================
     Private Sub LoadPatientHistory()
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
             Dim query As String = "
-        -- ===================== SAFE VERSION (NO ASSUMED COLUMNS) =====================
-        SELECT 
-            P.PatientID,
-            P.FullName AS Patient,
-            P.DateRegistered,
-            COUNT(A.AppointmentID) AS TotalAppointments,
-            MAX(A.Date) AS LastVisit
-        FROM Patients P
-        LEFT JOIN Appointments A ON P.PatientID = A.PatientID
-        GROUP BY P.PatientID, P.FullName, P.DateRegistered
-        ORDER BY LastVisit DESC"
+            SELECT 
+                P.PatientID,
+                P.FullName AS Patient,
+                P.DateRegistered,
+                COUNT(A.AppointmentID) AS TotalAppointments,
+                MAX(A.Date) AS LastVisit
+            FROM Patients P
+            LEFT JOIN Appointments A ON P.PatientID = A.PatientID
+            WHERE A.Status = 'Completed' OR A.Status IS NULL
+            GROUP BY P.PatientID, P.FullName, P.DateRegistered
+            ORDER BY LastVisit DESC"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
@@ -159,13 +156,16 @@ Public Class AdminDBReports
             If DgvPatientSummary.Columns.Contains("PatientID") Then
                 DgvPatientSummary.Columns("PatientID").Visible = False
             End If
+
         End Using
     End Sub
 
-    ' Appointment History (Completed)
+    ' ===================== APPOINTMENT HISTORY =====================
     Public Sub LoadAppointmentHistory()
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
+
             Dim query As String = "
             SELECT 
                 A.AppointmentID,
@@ -183,20 +183,22 @@ Public Class AdminDBReports
             LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
             WHERE A.Status = 'Completed'
             GROUP BY A.AppointmentID, P.FullName, U.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-            ORDER BY A.Date DESC, A.StartTime ASC
-            "
+            ORDER BY A.Date DESC, A.StartTime ASC"
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
+
             DgvAppointmentHistory.DataSource = dt
+
             If DgvAppointmentHistory.Columns.Contains("AppointmentID") Then
                 DgvAppointmentHistory.Columns("AppointmentID").Visible = False
             End If
+
         End Using
     End Sub
 
-    ' Revenue Report - FIXED: now supports Weekly / Monthly / Yearly filtering
-    ' FIXED: Revenue report - stable GROUP BY for Weekly / Monthly / Yearly
+    ' ===================== MONTHLY REVENUE =====================
     Private Sub LoadMonthlyRevenue()
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
@@ -206,61 +208,59 @@ Public Class AdminDBReports
 
             Select Case cmbRevenueFilter.Text
 
-            ' ===================== WEEKLY =====================
                 Case "Weekly"
                     query = "
-                SELECT 
-                    CONCAT('Week ', DATEPART(WEEK, A.Date), ' - ', YEAR(A.Date)) AS [Period],
-                    COUNT(DISTINCT A.AppointmentID) AS [Total Appointments],
-                    SUM(CASE WHEN R.Status = 'Valid' THEN R.TotalAmount ELSE 0 END) AS [Gross Revenue]
-                FROM Appointments A
-                INNER JOIN Receipts R 
-    ON A.AppointmentID = R.AppointmentID 
-    AND R.Status = 'Valid'
-                WHERE A.Status = 'Completed'
-                GROUP BY DATEPART(WEEK, A.Date), YEAR(A.Date)
-                ORDER BY YEAR(A.Date) DESC, DATEPART(WEEK, A.Date) DESC
-                "
+                    SELECT 
+                        CONCAT('Week ', DATEPART(WEEK, R.DateIssued), ' - ', YEAR(R.DateIssued)) AS Period,
+                        COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
+                        SUM(R.TotalAmount) AS [Gross Revenue]
+                    FROM Receipts R
+                    INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                    WHERE R.ReceiptStatus = 'Valid'
+                      AND R.Status = 'Completed'
+                      AND R.VoidedAt IS NULL
+                      AND A.Status = 'Completed'
+                    GROUP BY DATEPART(WEEK, R.DateIssued), YEAR(R.DateIssued)
+                    ORDER BY YEAR(R.DateIssued) DESC, DATEPART(WEEK, R.DateIssued) DESC"
 
-            ' ===================== YEARLY =====================
                 Case "Yearly"
                     query = "
-                SELECT 
-                    CAST(YEAR(A.Date) AS VARCHAR) AS [Period],
-                    COUNT(DISTINCT A.AppointmentID) AS [Total Appointments],
-                    SUM(CASE WHEN R.Status = 'Valid' THEN R.TotalAmount ELSE 0 END) AS [Gross Revenue]
-                FROM Appointments A
-                INNER JOIN Receipts R 
-    ON A.AppointmentID = R.AppointmentID 
-    AND R.Status = 'Valid'
-                WHERE A.Status = 'Completed'
-                GROUP BY YEAR(A.Date)
-                ORDER BY YEAR(A.Date) DESC
-                "
+                    SELECT 
+                        CAST(YEAR(R.DateIssued) AS VARCHAR(4)) AS Period,
+                        COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
+                        SUM(R.TotalAmount) AS [Gross Revenue]
+                    FROM Receipts R
+                    INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                    WHERE R.ReceiptStatus = 'Valid'
+                      AND R.Status = 'Completed'
+                      AND R.VoidedAt IS NULL
+                      AND A.Status = 'Completed'
+                    GROUP BY YEAR(R.DateIssued)
+                    ORDER BY YEAR(R.DateIssued) DESC"
 
-                    ' ===================== MONTHLY (DEFAULT) =====================
                 Case Else
                     query = "
-                SELECT 
-                    FORMAT(A.Date, 'MMMM yyyy') AS [Period],
-                    COUNT(DISTINCT A.AppointmentID) AS [Total Appointments],
-                    SUM(CASE WHEN R.Status = 'Valid' THEN R.TotalAmount ELSE 0 END) AS [Gross Revenue]
-                FROM Appointments A
-                INNER JOIN Receipts R 
-    ON A.AppointmentID = R.AppointmentID 
-    AND R.Status = 'Valid'
-                WHERE A.Status = 'Completed'
-                GROUP BY YEAR(A.Date), MONTH(A.Date), FORMAT(A.Date, 'MMMM yyyy')
-                ORDER BY YEAR(A.Date) DESC, MONTH(A.Date) DESC
-                "
+                    SELECT 
+                        CAST(YEAR(R.DateIssued) AS VARCHAR(4)) + '-' + 
+                        RIGHT('0' + CAST(MONTH(R.DateIssued) AS VARCHAR(2)), 2) AS Period,
+                        COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
+                        SUM(R.TotalAmount) AS [Gross Revenue]
+                    FROM Receipts R
+                    INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                    WHERE R.ReceiptStatus = 'Valid'
+                      AND R.Status = 'Completed'
+                      AND R.VoidedAt IS NULL
+                      AND A.Status = 'Completed'
+                    GROUP BY YEAR(R.DateIssued), MONTH(R.DateIssued)
+                    ORDER BY YEAR(R.DateIssued) DESC, MONTH(R.DateIssued) DESC"
             End Select
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
+
             DGVMonthly.DataSource = dt
 
-            ' FORMAT UI
             If DGVMonthly.Columns.Contains("Gross Revenue") Then
                 DGVMonthly.Columns("Gross Revenue").DefaultCellStyle.Format = "C2"
             End If
@@ -268,7 +268,11 @@ Public Class AdminDBReports
         End Using
     End Sub
 
-    ' ===================== UI Handlers =====================
+    ' ===================== EVENTS =====================
+    Private Sub cmbRevenueFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbRevenueFilter.SelectedIndexChanged
+        LoadMonthlyRevenue()
+    End Sub
+
     Private Sub TabRep_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabRep.SelectedIndexChanged
         Select Case TabRep.SelectedIndex
             Case 0 : LoadPaymentHistory()
@@ -276,30 +280,10 @@ Public Class AdminDBReports
             Case 2 : LoadPatientHistory()
             Case 3 : LoadMonthlyRevenue()
         End Select
+    End Sub
 
-        If TabRep.SelectedTab.Name = "tabHistory" Then
-            Dim historyForm As New AdminDBReports()
-            historyForm.Show()
-            historyForm.RefreshHistory()
-        End If
-    End Sub
-    ' FIX: Reload revenue when filter changes
-    Private Sub cmbRevenueFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbRevenueFilter.SelectedIndexChanged
-        LoadMonthlyRevenue()
-    End Sub
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
-    Private Sub PnlHeader_Paint(sender As Object, e As PaintEventArgs) Handles pnlHeader.Paint
-
-    End Sub
-
-    Private Sub DGVPatientCount_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-
-    End Sub
-
-    Private Sub DGVDentistPerformance_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-
-    End Sub
 End Class
