@@ -7,52 +7,59 @@ Public Class AdminDBReports
 
     ' ===================== Form Load =====================
     Private Sub AdminDBReports_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadDailyAppointments()
+        LoadPaymentHistory()
         LoadDentistWorkload()
         LoadServiceUsage()
-        LoadPatientSummary()
+        LoadPatientHistory()
         LoadAppointmentHistory()
         LoadMonthlyRevenue()
         LoadDentistPerformance()
-        LoadPatientCount()
     End Sub
 
     ' ===================== Public Methods =====================
     ' Refresh history (called from other forms)
     Public Sub RefreshHistory()
         LoadAppointmentHistory()
-        LoadDailyAppointments()
+        LoadPaymentHistory()
     End Sub
 
     ' ===================== Data Loading Methods =====================
 
-    ' Daily Appointments
-    Private Sub LoadDailyAppointments()
+    ' ===================== Payment History (NEW REPLACES Daily Appointments) =====================
+    Private Sub LoadPaymentHistory()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
+
             Dim query As String = "
-            SELECT 
-                A.AppointmentID,
-                P.FullName AS Patient,
-                U.FullName AS Dentist,
-                STRING_AGG(S.ServiceName, ', ') AS Services,
-                A.Date,
-                A.StartTime,
-                A.EndTime,
-                A.Status
-            FROM Appointments A
-            JOIN Patients P ON A.PatientID = P.PatientID
-            JOIN Users U ON A.UserID = U.UserID AND U.Role = 'Dentist'
-            LEFT JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-            LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
-            WHERE CAST(A.Date AS DATE) = CAST(GETDATE() AS DATE)
-            GROUP BY A.AppointmentID, P.FullName, U.FullName, A.Date, A.StartTime, A.EndTime, A.Status
-            ORDER BY A.StartTime
-            "
+        -- ===================== PAYMENT / RECEIPT HISTORY =====================
+        SELECT 
+            R.ReceiptID,
+            A.AppointmentID,
+            P.FullName AS Patient,
+            U.FullName AS Dentist,
+            R.TotalAmount,
+            R.PaymentMethod,
+            R.AmountPaid,
+            R.ChangeAmount,
+            R.DateIssued,
+            R.ReceiptStatus
+        FROM Receipts R
+        INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+        INNER JOIN Patients P ON A.PatientID = P.PatientID
+        INNER JOIN Users U ON A.UserID = U.UserID
+        WHERE U.Role = 'Dentist'
+        ORDER BY R.DateIssued DESC"
+
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
-            DGVDaily.DataSource = dt
+
+            DGVDaily.DataSource = dt   ' KEEP GRID (no UI change)
+
+            ' Hide ID for cleaner UI
+            If DGVDaily.Columns.Contains("ReceiptID") Then
+                DGVDaily.Columns("ReceiptID").Visible = False
+            End If
             If DGVDaily.Columns.Contains("AppointmentID") Then
                 DGVDaily.Columns("AppointmentID").Visible = False
             End If
@@ -131,23 +138,33 @@ ORDER BY [Gross Revenue] DESC"
         End Using
     End Sub
 
-    ' Patient Summary
-    Private Sub LoadPatientSummary()
+    ' ===================== Patient History (FIXED - SAFE COLUMN MAPPING) =====================
+    Private Sub LoadPatientHistory()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            ' This query groups registrations by month to show clinic growth
+
             Dim query As String = "
+        -- ===================== SAFE VERSION (NO ASSUMED COLUMNS) =====================
         SELECT 
-            FORMAT(DateRegistered, 'MMMM yyyy') AS [Month Joined],
-            COUNT(PatientID) AS [New Patients]
-        FROM Patients
-        GROUP BY FORMAT(DateRegistered, 'MMMM yyyy'), YEAR(DateRegistered), MONTH(DateRegistered)
-        ORDER BY YEAR(DateRegistered) DESC, MONTH(DateRegistered) DESC"
+            P.PatientID,
+            P.FullName AS Patient,
+            P.DateRegistered,
+            COUNT(A.AppointmentID) AS TotalAppointments,
+            MAX(A.Date) AS LastVisit
+        FROM Patients P
+        LEFT JOIN Appointments A ON P.PatientID = A.PatientID
+        GROUP BY P.PatientID, P.FullName, P.DateRegistered
+        ORDER BY LastVisit DESC"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
             da.Fill(dt)
+
             DgvPatientSummary.DataSource = dt
+
+            If DgvPatientSummary.Columns.Contains("PatientID") Then
+                DgvPatientSummary.Columns("PatientID").Visible = False
+            End If
         End Using
     End Sub
 
@@ -250,27 +267,16 @@ ORDER BY [YearNum] DESC, [MonthNum] DESC"
     End Sub
 
     ' Patient Count
-    Private Sub LoadPatientCount()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim query As String = "SELECT COUNT(PatientID) AS TotalPatients FROM Patients"
-            Dim da As New SqlDataAdapter(query, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            DGVPatientCount.DataSource = dt
-        End Using
-    End Sub
 
     ' ===================== UI Handlers =====================
     Private Sub TabRep_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabRep.SelectedIndexChanged
         Select Case TabRep.SelectedIndex
-            Case 0 : LoadDailyAppointments()
+            Case 0 : LoadPaymentHistory()
             Case 1 : LoadDentistWorkload()
             Case 2 : LoadServiceUsage()
-            Case 3 : LoadPatientSummary()
+            Case 3 : LoadPatientHistory()
             Case 4 : LoadDentistPerformance()
             Case 5 : LoadMonthlyRevenue()
-            Case 6 : LoadPatientCount()
         End Select
 
         If TabRep.SelectedTab.Name = "tabHistory" Then
