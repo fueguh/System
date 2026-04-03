@@ -24,29 +24,30 @@ Partial Class AdminDashboard
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDashboard))
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
-        Me.ManageForm = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ManageUsersForm = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ManageDentistsForm = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ManagePatientsForm = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ManageServicesForm = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SupplierMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CategoryMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.AvailabilityMaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.AuditTrailToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SystemOverviewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.TodaysAppointmentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ReportsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ItemManagementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.StockTrackingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ReportsAnalyticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PaymentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PaymentHistory = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuPatientHistory = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItemFollowup = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DashboardMenu = New System.Windows.Forms.ToolStripMenuItem()
+        Me.MaintenanceMenu = New System.Windows.Forms.ToolStripMenuItem()
+        Me.User_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Dentist_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Admin_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Staff_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Patient_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Service_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Supplier_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Category_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Availability_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AuditTrail = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Appointment = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TodaysAppointment = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Treatment_Record = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Reports = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Inventory_Management = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Item_Management = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Stock_Tracking = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Analytics = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Payment = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Payment_History = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Patient_History = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Follow_up = New System.Windows.Forms.ToolStripMenuItem()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.lblClinicName = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2Panel1 = New Guna.UI2.WinForms.Guna2Panel()
@@ -62,7 +63,20 @@ Partial Class AdminDashboard
         Me.label8 = New System.Windows.Forms.Label()
         Me.lblCompletedAppointments = New System.Windows.Forms.Label()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
-        Me.btnLogout = New Guna.UI2.WinForms.Guna2Button()
+        Me.MenuStrip2 = New System.Windows.Forms.MenuStrip()
+        Me.Logout = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem6 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem7 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem8 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem9 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem10 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem11 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem20 = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         Me.Guna2Panel1.SuspendLayout()
@@ -70,201 +84,211 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.SuspendLayout()
         Me.Guna2Panel4.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.MenuStrip2.SuspendLayout()
         Me.SuspendLayout()
         '
         'MenuStrip1
         '
         Me.MenuStrip1.AllowItemReorder = True
         Me.MenuStrip1.AllowMerge = False
+        Me.MenuStrip1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.MenuStrip1.AutoSize = False
         Me.MenuStrip1.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageForm, Me.AuditTrailToolStripMenuItem, Me.SystemOverviewToolStripMenuItem, Me.TodaysAppointmentToolStripMenuItem, Me.ToolStripMenuItem1, Me.ReportsToolStripMenuItem, Me.ToolStripMenuItem3, Me.PaymentToolStripMenuItem, Me.PaymentHistory, Me.ToolStripMenuPatientHistory, Me.ToolStripMenuItemFollowup})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DashboardMenu, Me.MaintenanceMenu, Me.AuditTrail, Me.Appointment, Me.TodaysAppointment, Me.Treatment_Record, Me.Reports, Me.Inventory_Management, Me.Payment, Me.Payment_History, Me.Patient_History, Me.Follow_up})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
-        Me.MenuStrip1.Size = New System.Drawing.Size(354, 806)
+        Me.MenuStrip1.Size = New System.Drawing.Size(354, 932)
         Me.MenuStrip1.TabIndex = 19
         Me.MenuStrip1.Text = "MenuStrip1"
         '
-        'ManageForm
+        'DashboardMenu
         '
-        Me.ManageForm.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ManageUsersForm, Me.ToolStripMenuItem4, Me.ToolStripMenuItem5, Me.ManageDentistsForm, Me.ManagePatientsForm, Me.ManageServicesForm, Me.SupplierMaintenanceToolStripMenuItem, Me.CategoryMaintenanceToolStripMenuItem, Me.AvailabilityMaintenanceToolStripMenuItem})
-        Me.ManageForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ManageForm.Name = "ManageForm"
-        Me.ManageForm.Size = New System.Drawing.Size(210, 44)
-        Me.ManageForm.Text = "Maintenance"
+        Me.DashboardMenu.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.DashboardMenu.Name = "DashboardMenu"
+        Me.DashboardMenu.Size = New System.Drawing.Size(183, 44)
+        Me.DashboardMenu.Text = "Dashboard"
         '
-        'ManageUsersForm
+        'MaintenanceMenu
         '
-        Me.ManageUsersForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ManageUsersForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ManageUsersForm.Name = "ManageUsersForm"
-        Me.ManageUsersForm.Size = New System.Drawing.Size(443, 44)
-        Me.ManageUsersForm.Text = "Users Maintenance"
+        Me.MaintenanceMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.User_Maintenance, Me.Dentist_Maintenance, Me.Admin_Maintenance, Me.Staff_Maintenance, Me.Patient_Maintenance, Me.Service_Maintenance, Me.Supplier_Maintenance, Me.Category_Maintenance, Me.Availability_Maintenance})
+        Me.MaintenanceMenu.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.MaintenanceMenu.Name = "MaintenanceMenu"
+        Me.MaintenanceMenu.Size = New System.Drawing.Size(210, 44)
+        Me.MaintenanceMenu.Text = "Maintenance"
         '
-        'ToolStripMenuItem4
+        'User_Maintenance
         '
-        Me.ToolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ToolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
-        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(443, 44)
-        Me.ToolStripMenuItem4.Text = "Dentist Maintenance"
+        Me.User_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.User_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.User_Maintenance.Name = "User_Maintenance"
+        Me.User_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.User_Maintenance.Text = "Users Maintenance"
         '
-        'ToolStripMenuItem5
+        'Dentist_Maintenance
         '
-        Me.ToolStripMenuItem5.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ToolStripMenuItem5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
-        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(443, 44)
-        Me.ToolStripMenuItem5.Text = "Admin Maintenance"
+        Me.Dentist_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Dentist_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Dentist_Maintenance.Name = "Dentist_Maintenance"
+        Me.Dentist_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Dentist_Maintenance.Text = "Dentist Maintenance"
         '
-        'ManageDentistsForm
+        'Admin_Maintenance
         '
-        Me.ManageDentistsForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ManageDentistsForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ManageDentistsForm.Name = "ManageDentistsForm"
-        Me.ManageDentistsForm.Size = New System.Drawing.Size(443, 44)
-        Me.ManageDentistsForm.Text = "Staff Maintenance"
+        Me.Admin_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Admin_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Admin_Maintenance.Name = "Admin_Maintenance"
+        Me.Admin_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Admin_Maintenance.Text = "Admin Maintenance"
         '
-        'ManagePatientsForm
+        'Staff_Maintenance
         '
-        Me.ManagePatientsForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ManagePatientsForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ManagePatientsForm.Name = "ManagePatientsForm"
-        Me.ManagePatientsForm.Size = New System.Drawing.Size(443, 44)
-        Me.ManagePatientsForm.Text = "Patient Maintenance"
+        Me.Staff_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Staff_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Staff_Maintenance.Name = "Staff_Maintenance"
+        Me.Staff_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Staff_Maintenance.Text = "Staff Maintenance"
         '
-        'ManageServicesForm
+        'Patient_Maintenance
         '
-        Me.ManageServicesForm.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ManageServicesForm.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ManageServicesForm.Name = "ManageServicesForm"
-        Me.ManageServicesForm.Size = New System.Drawing.Size(443, 44)
-        Me.ManageServicesForm.Text = "Services Maintenance"
+        Me.Patient_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Patient_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Patient_Maintenance.Name = "Patient_Maintenance"
+        Me.Patient_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Patient_Maintenance.Text = "Patient Maintenance"
         '
-        'SupplierMaintenanceToolStripMenuItem
+        'Service_Maintenance
         '
-        Me.SupplierMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.SupplierMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.SupplierMaintenanceToolStripMenuItem.Name = "SupplierMaintenanceToolStripMenuItem"
-        Me.SupplierMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
-        Me.SupplierMaintenanceToolStripMenuItem.Text = "Supplier Maintenance"
+        Me.Service_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Service_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Service_Maintenance.Name = "Service_Maintenance"
+        Me.Service_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Service_Maintenance.Text = "Services Maintenance"
         '
-        'CategoryMaintenanceToolStripMenuItem
+        'Supplier_Maintenance
         '
-        Me.CategoryMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.CategoryMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.CategoryMaintenanceToolStripMenuItem.Name = "CategoryMaintenanceToolStripMenuItem"
-        Me.CategoryMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
-        Me.CategoryMaintenanceToolStripMenuItem.Text = "Category Maintenance"
+        Me.Supplier_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Supplier_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Supplier_Maintenance.Name = "Supplier_Maintenance"
+        Me.Supplier_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Supplier_Maintenance.Text = "Supplier Maintenance"
         '
-        'AvailabilityMaintenanceToolStripMenuItem
+        'Category_Maintenance
         '
-        Me.AvailabilityMaintenanceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.AvailabilityMaintenanceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.AvailabilityMaintenanceToolStripMenuItem.Name = "AvailabilityMaintenanceToolStripMenuItem"
-        Me.AvailabilityMaintenanceToolStripMenuItem.Size = New System.Drawing.Size(443, 44)
-        Me.AvailabilityMaintenanceToolStripMenuItem.Text = "Availability Maintenance"
+        Me.Category_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Category_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Category_Maintenance.Name = "Category_Maintenance"
+        Me.Category_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Category_Maintenance.Text = "Category Maintenance"
         '
-        'AuditTrailToolStripMenuItem
+        'Availability_Maintenance
         '
-        Me.AuditTrailToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.AuditTrailToolStripMenuItem.Name = "AuditTrailToolStripMenuItem"
-        Me.AuditTrailToolStripMenuItem.Size = New System.Drawing.Size(182, 44)
-        Me.AuditTrailToolStripMenuItem.Text = "Audit Trail"
+        Me.Availability_Maintenance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Availability_Maintenance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Availability_Maintenance.Name = "Availability_Maintenance"
+        Me.Availability_Maintenance.Size = New System.Drawing.Size(443, 44)
+        Me.Availability_Maintenance.Text = "Availability Maintenance"
         '
-        'SystemOverviewToolStripMenuItem
+        'AuditTrail
         '
-        Me.SystemOverviewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.SystemOverviewToolStripMenuItem.Name = "SystemOverviewToolStripMenuItem"
-        Me.SystemOverviewToolStripMenuItem.Size = New System.Drawing.Size(213, 44)
-        Me.SystemOverviewToolStripMenuItem.Text = "Appointment"
+        Me.AuditTrail.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.AuditTrail.Name = "AuditTrail"
+        Me.AuditTrail.Size = New System.Drawing.Size(182, 44)
+        Me.AuditTrail.Text = "Audit Trail"
         '
-        'TodaysAppointmentToolStripMenuItem
+        'Appointment
         '
-        Me.TodaysAppointmentToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.TodaysAppointmentToolStripMenuItem.Name = "TodaysAppointmentToolStripMenuItem"
-        Me.TodaysAppointmentToolStripMenuItem.Size = New System.Drawing.Size(321, 44)
-        Me.TodaysAppointmentToolStripMenuItem.Text = "Todays Appointment"
+        Me.Appointment.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Appointment.Name = "Appointment"
+        Me.Appointment.Size = New System.Drawing.Size(213, 44)
+        Me.Appointment.Text = "Appointment"
         '
-        'ToolStripMenuItem1
+        'TodaysAppointment
         '
-        Me.ToolStripMenuItem1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(281, 44)
-        Me.ToolStripMenuItem1.Text = "Treatment Record"
+        Me.TodaysAppointment.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.TodaysAppointment.Name = "TodaysAppointment"
+        Me.TodaysAppointment.Size = New System.Drawing.Size(321, 44)
+        Me.TodaysAppointment.Text = "Todays Appointment"
         '
-        'ReportsToolStripMenuItem
+        'Treatment_Record
         '
-        Me.ReportsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ReportsToolStripMenuItem.Name = "ReportsToolStripMenuItem"
-        Me.ReportsToolStripMenuItem.ShowShortcutKeys = False
-        Me.ReportsToolStripMenuItem.Size = New System.Drawing.Size(138, 44)
-        Me.ReportsToolStripMenuItem.Text = "Reports"
+        Me.Treatment_Record.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Treatment_Record.Name = "Treatment_Record"
+        Me.Treatment_Record.Size = New System.Drawing.Size(281, 44)
+        Me.Treatment_Record.Text = "Treatment Record"
         '
-        'ToolStripMenuItem3
+        'Reports
         '
-        Me.ToolStripMenuItem3.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ItemManagementToolStripMenuItem, Me.StockTrackingToolStripMenuItem, Me.ReportsAnalyticsToolStripMenuItem})
-        Me.ToolStripMenuItem3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
-        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(355, 44)
-        Me.ToolStripMenuItem3.Text = "Inventory Management"
+        Me.Reports.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Reports.Name = "Reports"
+        Me.Reports.ShowShortcutKeys = False
+        Me.Reports.Size = New System.Drawing.Size(138, 44)
+        Me.Reports.Text = "Reports"
         '
-        'ItemManagementToolStripMenuItem
+        'Inventory_Management
         '
-        Me.ItemManagementToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ItemManagementToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ItemManagementToolStripMenuItem.Name = "ItemManagementToolStripMenuItem"
-        Me.ItemManagementToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
-        Me.ItemManagementToolStripMenuItem.Text = "Item Management"
+        Me.Inventory_Management.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Item_Management, Me.Stock_Tracking, Me.Analytics})
+        Me.Inventory_Management.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Inventory_Management.Name = "Inventory_Management"
+        Me.Inventory_Management.Size = New System.Drawing.Size(355, 44)
+        Me.Inventory_Management.Text = "Inventory Management"
         '
-        'StockTrackingToolStripMenuItem
+        'Item_Management
         '
-        Me.StockTrackingToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.StockTrackingToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.StockTrackingToolStripMenuItem.Name = "StockTrackingToolStripMenuItem"
-        Me.StockTrackingToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
-        Me.StockTrackingToolStripMenuItem.Text = "Stock Tracking/Transaction"
+        Me.Item_Management.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Item_Management.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Item_Management.Name = "Item_Management"
+        Me.Item_Management.Size = New System.Drawing.Size(349, 44)
+        Me.Item_Management.Text = "Item Management"
         '
-        'ReportsAnalyticsToolStripMenuItem
+        'Stock_Tracking
         '
-        Me.ReportsAnalyticsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.ReportsAnalyticsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ReportsAnalyticsToolStripMenuItem.Name = "ReportsAnalyticsToolStripMenuItem"
-        Me.ReportsAnalyticsToolStripMenuItem.Size = New System.Drawing.Size(480, 44)
-        Me.ReportsAnalyticsToolStripMenuItem.Text = "Reports and Analytics"
+        Me.Stock_Tracking.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Stock_Tracking.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Stock_Tracking.Name = "Stock_Tracking"
+        Me.Stock_Tracking.Size = New System.Drawing.Size(349, 44)
+        Me.Stock_Tracking.Text = "Stock Tracking"
         '
-        'PaymentToolStripMenuItem
+        'Analytics
         '
-        Me.PaymentToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.PaymentToolStripMenuItem.Name = "PaymentToolStripMenuItem"
-        Me.PaymentToolStripMenuItem.Size = New System.Drawing.Size(152, 44)
-        Me.PaymentToolStripMenuItem.Text = "Payment"
+        Me.Analytics.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Analytics.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Analytics.Name = "Analytics"
+        Me.Analytics.Size = New System.Drawing.Size(349, 44)
+        Me.Analytics.Text = "Analytics"
         '
-        'PaymentHistory
+        'Payment
         '
-        Me.PaymentHistory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.PaymentHistory.Name = "PaymentHistory"
-        Me.PaymentHistory.Size = New System.Drawing.Size(265, 44)
-        Me.PaymentHistory.Text = "Payment History"
+        Me.Payment.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Payment.Name = "Payment"
+        Me.Payment.Size = New System.Drawing.Size(152, 44)
+        Me.Payment.Text = "Payment"
         '
-        'ToolStripMenuPatientHistory
+        'Payment_History
         '
-        Me.ToolStripMenuPatientHistory.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuPatientHistory.Name = "ToolStripMenuPatientHistory"
-        Me.ToolStripMenuPatientHistory.Size = New System.Drawing.Size(240, 44)
-        Me.ToolStripMenuPatientHistory.Text = "Patient History"
+        Me.Payment_History.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Payment_History.Name = "Payment_History"
+        Me.Payment_History.Size = New System.Drawing.Size(265, 44)
+        Me.Payment_History.Text = "Payment History"
         '
-        'ToolStripMenuItemFollowup
+        'Patient_History
         '
-        Me.ToolStripMenuItemFollowup.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ToolStripMenuItemFollowup.Name = "ToolStripMenuItemFollowup"
-        Me.ToolStripMenuItemFollowup.Size = New System.Drawing.Size(172, 44)
-        Me.ToolStripMenuItemFollowup.Text = "Follow-up"
+        Me.Patient_History.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Patient_History.Name = "Patient_History"
+        Me.Patient_History.Size = New System.Drawing.Size(240, 44)
+        Me.Patient_History.Text = "Patient History"
+        '
+        'Follow_up
+        '
+        Me.Follow_up.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Follow_up.Name = "Follow_up"
+        Me.Follow_up.Size = New System.Drawing.Size(172, 44)
+        Me.Follow_up.Text = "Follow-up"
         '
         'Guna2CustomGradientPanel1
         '
@@ -433,21 +457,126 @@ Partial Class AdminDashboard
         Me.PictureBox1.TabIndex = 29
         Me.PictureBox1.TabStop = False
         '
-        'btnLogout
+        'MenuStrip2
         '
-        Me.btnLogout.CustomBorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.btnLogout.DisabledState.BorderColor = System.Drawing.Color.DarkGray
-        Me.btnLogout.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray
-        Me.btnLogout.DisabledState.FillColor = System.Drawing.Color.FromArgb(CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer), CType(CType(169, Byte), Integer))
-        Me.btnLogout.DisabledState.ForeColor = System.Drawing.Color.FromArgb(CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer), CType(CType(141, Byte), Integer))
-        Me.btnLogout.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.btnLogout.Font = New System.Drawing.Font("Times New Roman", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnLogout.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnLogout.Location = New System.Drawing.Point(0, 862)
-        Me.btnLogout.Name = "btnLogout"
-        Me.btnLogout.Size = New System.Drawing.Size(354, 65)
-        Me.btnLogout.TabIndex = 30
-        Me.btnLogout.Text = "Logout"
+        Me.MenuStrip2.AllowItemReorder = True
+        Me.MenuStrip2.AllowMerge = False
+        Me.MenuStrip2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.MenuStrip2.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.MenuStrip2.Dock = System.Windows.Forms.DockStyle.None
+        Me.MenuStrip2.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.MenuStrip2.ImageScalingSize = New System.Drawing.Size(20, 20)
+        Me.MenuStrip2.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Logout})
+        Me.MenuStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
+        Me.MenuStrip2.Location = New System.Drawing.Point(101, 861)
+        Me.MenuStrip2.Name = "MenuStrip2"
+        Me.MenuStrip2.Padding = New System.Windows.Forms.Padding(4, 2, 0, 2)
+        Me.MenuStrip2.Size = New System.Drawing.Size(133, 48)
+        Me.MenuStrip2.TabIndex = 31
+        Me.MenuStrip2.Text = "MenuStrip2"
+        '
+        'Logout
+        '
+        Me.Logout.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Logout.Name = "Logout"
+        Me.Logout.Size = New System.Drawing.Size(129, 44)
+        Me.Logout.Text = "Logout"
+        '
+        'ToolStripMenuItem3
+        '
+        Me.ToolStripMenuItem3.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem3.Text = "Users Maintenance"
+        '
+        'ToolStripMenuItem4
+        '
+        Me.ToolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem4.Text = "Dentist Maintenance"
+        '
+        'ToolStripMenuItem5
+        '
+        Me.ToolStripMenuItem5.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
+        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem5.Text = "Admin Maintenance"
+        '
+        'ToolStripMenuItem6
+        '
+        Me.ToolStripMenuItem6.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem6.Name = "ToolStripMenuItem6"
+        Me.ToolStripMenuItem6.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem6.Text = "Staff Maintenance"
+        '
+        'ToolStripMenuItem7
+        '
+        Me.ToolStripMenuItem7.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem7.Name = "ToolStripMenuItem7"
+        Me.ToolStripMenuItem7.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem7.Text = "Patient Maintenance"
+        '
+        'ToolStripMenuItem8
+        '
+        Me.ToolStripMenuItem8.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem8.Name = "ToolStripMenuItem8"
+        Me.ToolStripMenuItem8.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem8.Text = "Services Maintenance"
+        '
+        'ToolStripMenuItem9
+        '
+        Me.ToolStripMenuItem9.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem9.Name = "ToolStripMenuItem9"
+        Me.ToolStripMenuItem9.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem9.Text = "Supplier Maintenance"
+        '
+        'ToolStripMenuItem10
+        '
+        Me.ToolStripMenuItem10.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem10.Name = "ToolStripMenuItem10"
+        Me.ToolStripMenuItem10.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem10.Text = "Category Maintenance"
+        '
+        'ToolStripMenuItem11
+        '
+        Me.ToolStripMenuItem11.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem11.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem11.Name = "ToolStripMenuItem11"
+        Me.ToolStripMenuItem11.Size = New System.Drawing.Size(204, 22)
+        Me.ToolStripMenuItem11.Text = "Availability Maintenance"
+        '
+        'ToolStripMenuItem18
+        '
+        Me.ToolStripMenuItem18.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem18.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem18.Name = "ToolStripMenuItem18"
+        Me.ToolStripMenuItem18.Size = New System.Drawing.Size(172, 22)
+        Me.ToolStripMenuItem18.Text = "Item Management"
+        '
+        'ToolStripMenuItem19
+        '
+        Me.ToolStripMenuItem19.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem19.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem19.Name = "ToolStripMenuItem19"
+        Me.ToolStripMenuItem19.Size = New System.Drawing.Size(172, 22)
+        Me.ToolStripMenuItem19.Text = "Stock Tracking"
+        '
+        'ToolStripMenuItem20
+        '
+        Me.ToolStripMenuItem20.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.ToolStripMenuItem20.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.ToolStripMenuItem20.Name = "ToolStripMenuItem20"
+        Me.ToolStripMenuItem20.Size = New System.Drawing.Size(172, 22)
+        Me.ToolStripMenuItem20.Text = "Analytics"
         '
         'AdminDashboard
         '
@@ -456,7 +585,7 @@ Partial Class AdminDashboard
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
         Me.ControlBox = False
-        Me.Controls.Add(Me.btnLogout)
+        Me.Controls.Add(Me.MenuStrip2)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Guna2Panel4)
         Me.Controls.Add(Me.Guna2Panel3)
@@ -470,6 +599,7 @@ Partial Class AdminDashboard
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AdminDashboard"
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
@@ -478,19 +608,22 @@ Partial Class AdminDashboard
         Me.Guna2Panel3.ResumeLayout(False)
         Me.Guna2Panel4.ResumeLayout(False)
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.MenuStrip2.ResumeLayout(False)
+        Me.MenuStrip2.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents MenuStrip1 As MenuStrip
-    Friend WithEvents SystemOverviewToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ManageForm As ToolStripMenuItem
-    Friend WithEvents AuditTrailToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ReportsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents Appointment As ToolStripMenuItem
+    Friend WithEvents MaintenanceMenu As ToolStripMenuItem
+    Friend WithEvents AuditTrail As ToolStripMenuItem
+    Friend WithEvents Reports As ToolStripMenuItem
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
-    Friend WithEvents ManageUsersForm As ToolStripMenuItem
-    Friend WithEvents ManageDentistsForm As ToolStripMenuItem
-    Friend WithEvents ManagePatientsForm As ToolStripMenuItem
-    Friend WithEvents ManageServicesForm As ToolStripMenuItem
+    Friend WithEvents User_Maintenance As ToolStripMenuItem
+    Friend WithEvents Staff_Maintenance As ToolStripMenuItem
+    Friend WithEvents Patient_Maintenance As ToolStripMenuItem
+    Friend WithEvents Service_Maintenance As ToolStripMenuItem
     Friend WithEvents Guna2Panel1 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents Guna2Panel2 As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents label5 As Label
@@ -503,22 +636,36 @@ Partial Class AdminDashboard
     Friend WithEvents label7 As Label
     Friend WithEvents label6 As Label
     Friend WithEvents label8 As Label
-    Friend WithEvents ToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents Treatment_Record As ToolStripMenuItem
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents btnLogout As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents lblClinicName As Guna.UI2.WinForms.Guna2HtmlLabel
-    Friend WithEvents SupplierMaintenanceToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents CategoryMaintenanceToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents Supplier_Maintenance As ToolStripMenuItem
+    Friend WithEvents Category_Maintenance As ToolStripMenuItem
+    Friend WithEvents Dentist_Maintenance As ToolStripMenuItem
+    Friend WithEvents Admin_Maintenance As ToolStripMenuItem
+    Friend WithEvents Availability_Maintenance As ToolStripMenuItem
+    Friend WithEvents TodaysAppointment As ToolStripMenuItem
+    Friend WithEvents Inventory_Management As ToolStripMenuItem
+    Friend WithEvents Item_Management As ToolStripMenuItem
+    Friend WithEvents Stock_Tracking As ToolStripMenuItem
+    Friend WithEvents Analytics As ToolStripMenuItem
+    Friend WithEvents Payment As ToolStripMenuItem
+    Friend WithEvents Payment_History As ToolStripMenuItem
+    Friend WithEvents Patient_History As ToolStripMenuItem
+    Friend WithEvents Follow_up As ToolStripMenuItem
+    Friend WithEvents DashboardMenu As ToolStripMenuItem
+    Friend WithEvents MenuStrip2 As MenuStrip
+    Friend WithEvents Logout As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem4 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
-    Friend WithEvents AvailabilityMaintenanceToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents TodaysAppointmentToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
-    Friend WithEvents ItemManagementToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents StockTrackingToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ReportsAnalyticsToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents PaymentToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents PaymentHistory As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuPatientHistory As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItemFollowup As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem6 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem7 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem8 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem9 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem10 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem11 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem18 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem19 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem20 As ToolStripMenuItem
 End Class

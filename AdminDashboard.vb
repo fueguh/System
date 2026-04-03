@@ -1,6 +1,11 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class AdminDashboard
+    Private Sub DashboardMenu_Click(sender As Object, e As EventArgs) Handles DashboardMenu.Click
+        Dim frm As New AdminDashboard()
+        frm.Show()
+        Me.Hide()
+    End Sub
     Private Sub AdminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadDashboardStats()
         AutoUpdateFollowUpStatuses()
@@ -30,32 +35,31 @@ Public Class AdminDashboard
         AdminDBReports.Show()
         Me.Hide()
     End Sub
-    Private Sub SystemOverviewToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SystemOverviewToolStripMenuItem.Click
+    Private Sub Appointment_Click(sender As Object, e As EventArgs) Handles Appointment.Click
         AdminDBAppointments.Show()
         Me.Hide()
     End Sub
-    Private Sub ReportsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsToolStripMenuItem.Click
+    Private Sub Reports_Click(sender As Object, e As EventArgs) Handles Reports.Click
         AdminDBReports.Show()
         Me.Hide()
     End Sub
 
-    Private Sub UserManagementToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ManageUsersForm.Click
+    Private Sub User_Maintenance_Click(sender As Object, e As EventArgs) Handles User_Maintenance.Click
         AdminDBUsers.Show()
         Me.Hide()
     End Sub
 
-    Private Sub DentistManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManageDentistsForm.Click
+    Private Sub Staff_Maintenance_Click(sender As Object, e As EventArgs) Handles Staff_Maintenance.Click
         AdminDBStaffMaintenance.Show()
         Me.Hide()
     End Sub
 
-    Private Sub PatientManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManagePatientsForm.Click
+    Private Sub Patient_Maintenance_Click(sender As Object, e As EventArgs) Handles Patient_Maintenance.Click
         AdminDBPatients.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ServicesManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ManageServicesForm.Click
-        AdminDBServices.Show()
+    Private Sub Service_Maintenance_Click(sender As Object, e As EventArgs) Handles Service_Maintenance.Click
         Me.Hide()
     End Sub
 
@@ -97,14 +101,14 @@ Public Class AdminDashboard
         End Using
     End Sub
 
-    Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
+    Private Sub Treatment_Record_Click(sender As Object, e As EventArgs) Handles Treatment_Record.Click
         ' Create the form as an "object" first to avoid the reference error
         Dim frm As New AdminDBTreatmentRecords()
         frm.Show()
         Me.Hide()
     End Sub
 
-    Private Sub AuditTrailToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AuditTrailToolStripMenuItem.Click
+    Private Sub AuditTrail_Click(sender As Object, e As EventArgs) Handles AuditTrail.Click
         AdminAuditTrailForm.Show()
         Me.Hide()
     End Sub
@@ -116,27 +120,23 @@ Public Class AdminDashboard
             Me.Close()
         End If
     End Sub
-    Private Sub ToolStripMenuItem3_Click(sender As Object, e As EventArgs)
-        AdminDBPayment.Show()
-        Me.Hide()
-    End Sub
 
-    Private Sub ItemManagementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ItemManagementToolStripMenuItem.Click
+    Private Sub Item_Management_Click(sender As Object, e As EventArgs) Handles Item_Management.Click
         AdminDBItemManagement.Show()
         Me.Hide()
     End Sub
 
-    Private Sub StockTrackingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles StockTrackingToolStripMenuItem.Click
+    Private Sub Stock_Tracking_Click(sender As Object, e As EventArgs) Handles Stock_Tracking.Click
         AdminDBStockTracking.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ReportsAnalyticsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReportsAnalyticsToolStripMenuItem.Click
+    Private Sub Analytics_Click(sender As Object, e As EventArgs) Handles Analytics.Click
         AdminDBRepandAnalytics.Show()
         Me.Hide()
     End Sub
 
-    Private Sub BtnLogout_Click(sender As Object, e As EventArgs) Handles btnLogout.Click
+    Private Sub BtnLogout_Click(sender As Object, e As EventArgs)
         Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If result = DialogResult.Yes Then
             SystemSession.PerformLogout(Me.Name)
@@ -144,52 +144,52 @@ Public Class AdminDashboard
         End If
     End Sub
 
-    Private Sub SupplierMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SupplierMaintenanceToolStripMenuItem.Click
+    Private Sub Supplier_Maintenance_Click(sender As Object, e As EventArgs) Handles Supplier_Maintenance.Click
         AdminDBSupplier.Show()
         Me.Hide()
     End Sub
 
-    Private Sub CategoryMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CategoryMaintenanceToolStripMenuItem.Click
+    Private Sub Category_Maintenance_Click(sender As Object, e As EventArgs) Handles Category_Maintenance.Click
         AdminDBCategory.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ToolStripMenuItem4_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem4.Click
+    Private Sub Dentist_Maintenance_Click(sender As Object, e As EventArgs) Handles Dentist_Maintenance.Click
         AdminDBDentists.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ToolStripMenuItem5_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem5.Click
+    Private Sub Admin_Maintenance_Click(sender As Object, e As EventArgs) Handles Admin_Maintenance.Click
         AdminDBAdminMaintenance.Show()
         Me.Hide()
     End Sub
 
-    Private Sub AvailabilityMaintenanceToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AvailabilityMaintenanceToolStripMenuItem.Click
+    Private Sub Availability_Maintenance_Click(sender As Object, e As EventArgs) Handles Availability_Maintenance.Click
         AdminDBDentistSchedule.Show()
         Me.Hide()
     End Sub
 
-    Private Sub TodaysAppointmentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles TodaysAppointmentToolStripMenuItem.Click
+    Private Sub TodaysAppointment_Click(sender As Object, e As EventArgs) Handles TodaysAppointment.Click
         AdminDBAppointmentsToday.Show()
         Me.Hide()
     End Sub
 
-    Private Sub PaymentToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PaymentToolStripMenuItem.Click
+    Private Sub Payment_Click(sender As Object, e As EventArgs) Handles Payment.Click
         AdminDBPayment.Show()
         Me.Hide()
     End Sub
 
-    Private Sub PaymentHistory_Click_1(sender As Object, e As EventArgs) Handles PaymentHistory.Click
+    Private Sub Payment_History_Click_1(sender As Object, e As EventArgs) Handles Payment_History.Click
         AdminDBPaymentHistory.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ToolStripMenuPatientHistory_Click(sender As Object, e As EventArgs) Handles ToolStripMenuPatientHistory.Click
+    Private Sub Patient_History_Click(sender As Object, e As EventArgs) Handles Patient_History.Click
         AdminDBPatientHistory.Show()
         Me.Hide()
     End Sub
 
-    Private Sub ToolStripMenuItemFollowup_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItemFollowup.Click
+    Private Sub Follow_up_Click(sender As Object, e As EventArgs) Handles Follow_up.Click
         AdminDBFollowUps.Show()
         Me.Hide()
     End Sub
@@ -221,5 +221,13 @@ Public Class AdminDashboard
 
         End Using
 
+    End Sub
+
+    Private Sub Logout_Click(sender As Object, e As EventArgs) Handles Logout.Click
+        Dim result As DialogResult = MessageBox.Show("Are you sure you want to logout?", "Logout Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If result = DialogResult.Yes Then
+            SystemSession.PerformLogout(Me.Name)
+            Me.Close()
+        End If
     End Sub
 End Class
