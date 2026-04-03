@@ -461,8 +461,35 @@ SuccessCleanup:
         dgvReceiptItems.Columns.Add("Quantity", "Qty")
         dgvReceiptItems.Columns.Add("Subtotal", "Subtotal")
 
+        dgvReceiptItems.Columns("ItemName").HeaderText = "Item"
+        dgvReceiptItems.Columns("Quantity").HeaderText = "Quantity"
+        dgvReceiptItems.Columns("Price").HeaderText = "Price"
+        dgvReceiptItems.Columns("Subtotal").HeaderText = "Total"
+
         dgvReceiptItems.Columns("ItemID").Visible = False
 
+    End Sub
+    Private Sub LoadInventoryItems(Optional search As String = "")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            Dim sql As String = "
+                        SELECT 
+                            ItemID,
+                            ItemName AS [Item],
+                            Price AS [Unit Price],
+                            Quantity AS [Stock]
+                        FROM ItemManagement
+                        WHERE ItemName LIKE @Search OR CONVERT(VARCHAR(50), ItemID) LIKE @Search
+             "
+            Using cmd As New SqlCommand(sql, con)
+                cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
+
+                Dim da As New SqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                dgvInventoryItems.DataSource = dt
+                If dgvInventoryItems.Columns.Contains("ItemID") Then dgvInventoryItems.Columns("ItemID").Visible = False
+            End Using
+        End Using
     End Sub
     Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellContentClick
         If e.RowIndex < 0 Then Exit Sub
@@ -470,9 +497,9 @@ SuccessCleanup:
         Dim row = dgvInventoryItems.Rows(e.RowIndex)
 
         Dim id As Integer = CInt(row.Cells("ItemID").Value)
-        Dim name As String = row.Cells("ItemName").Value.ToString()
-        Dim price As Decimal = CDec(row.Cells("Price").Value)
-        Dim availableStock As Integer = CInt(row.Cells("Quantity").Value)
+        Dim name As String = row.Cells("Item").Value.ToString()
+        Dim price As Decimal = CDec(row.Cells("Unit Price").Value)
+        Dim availableStock As Integer = CInt(row.Cells("Stock").Value)
 
         Dim qtyStr As String = InputBox($"Enter quantity for {name} (Available: {availableStock})", "Prescription Item", "1")
         Dim qty As Integer
@@ -548,28 +575,6 @@ SuccessCleanup:
 
     End Sub
 
-    Private Sub LoadInventoryItems(Optional search As String = "")
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            Dim sql As String = "
-                       SELECT 
-                            ItemID AS ItemID,
-                            ItemName AS ItemName,
-                            Price AS Price,
-                            Quantity AS Quantity
-                       FROM ItemManagement
-                       WHERE ItemName LIKE @Search OR CONVERT(VARCHAR(50), ItemID) LIKE @Search
-            "
-            Using cmd As New SqlCommand(sql, con)
-                cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
-
-                Dim da As New SqlDataAdapter(cmd)
-                Dim dt As New DataTable()
-                da.Fill(dt)
-                dgvInventoryItems.DataSource = dt
-                If dgvInventoryItems.Columns.Contains("ItemID") Then dgvInventoryItems.Columns("ItemID").Visible = False
-            End Using
-        End Using
-    End Sub
     Private Function CalculateItemTotal() As Decimal
 
         Dim total As Decimal = 0
