@@ -584,7 +584,6 @@ Partial Class AdminDashboard
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1648, 927)
-        Me.ControlBox = False
         Me.Controls.Add(Me.MenuStrip2)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Guna2Panel4)
