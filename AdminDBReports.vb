@@ -86,31 +86,35 @@ Public Class AdminDBReports
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
-        -- 1. Get the total clinic revenue first to calculate shares
-        DECLARE @GrandTotal DECIMAL(18,2);
-        SELECT @GrandTotal = SUM(S.Price) 
-        FROM AppointmentServices ASV
-        INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
-        INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
-        INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
-        WHERE A.Status = 'Completed';
+-- ===================== UPDATED: VOID SUPPORT ADDED =====================
+DECLARE @GrandTotal DECIMAL(18,2);
 
-        -- 2. Generate the descriptive report
-        SELECT 
-            S.ServiceName AS [Service Name],
-            COUNT(ASV.ServiceID) AS [Total Procedures],
-            SUM(S.Price) AS [Gross Revenue],
-            -- Descriptive: Shows importance of service to the business
-            CAST((SUM(S.Price) / NULLIF(@GrandTotal, 0)) * 100 AS DECIMAL(10,2)) AS [% Contribution],
-            -- Descriptive: Ranking (1 = Most Profitable)
-            DENSE_RANK() OVER (ORDER BY SUM(S.Price) DESC) AS [Profit Rank]
-        FROM Services S
-        INNER JOIN AppointmentServices ASV ON S.ServiceID = ASV.ServiceID
-        INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
-        INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
-        WHERE A.Status = 'Completed'
-        GROUP BY S.ServiceName
-        ORDER BY [Gross Revenue] DESC"
+SELECT @GrandTotal = SUM(S.Price)
+FROM AppointmentServices ASV
+INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
+INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
+INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+WHERE A.Status = 'Completed'
+AND R.ReceiptStatus = 'Valid';  -- ✅ ADDED: excludes voided receipts
+
+SELECT 
+    S.ServiceName AS [Service Name],
+    COUNT(ASV.ServiceID) AS [Total Procedures],
+    SUM(S.Price) AS [Gross Revenue],
+
+    CAST((SUM(S.Price) / NULLIF(@GrandTotal, 0)) * 100 AS DECIMAL(10,2)) AS [% Contribution],
+    DENSE_RANK() OVER (ORDER BY SUM(S.Price) DESC) AS [Profit Rank]
+
+FROM Services S
+INNER JOIN AppointmentServices ASV ON S.ServiceID = ASV.ServiceID
+INNER JOIN Appointments A ON ASV.AppointmentID = A.AppointmentID
+INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+
+WHERE A.Status = 'Completed'
+AND R.ReceiptStatus = 'Valid'  -- ✅ ADDED: excludes voided receipts
+
+GROUP BY S.ServiceName
+ORDER BY [Gross Revenue] DESC"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
@@ -185,25 +189,29 @@ Public Class AdminDBReports
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim query As String = "
-        WITH MonthlyStats AS (
-            SELECT 
-                FORMAT(A.Date, 'MMMM yyyy') AS [Month],
-                YEAR(A.Date) as [YearNum],
-                MONTH(A.Date) as [MonthNum],
-                COUNT(DISTINCT A.AppointmentID) AS [Total Appointments],
-                SUM(R.TotalAmount) AS [Gross Revenue]
-            FROM Appointments A
-            INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
-            WHERE A.Status = 'Completed'
-            GROUP BY FORMAT(A.Date, 'MMMM yyyy'), YEAR(A.Date), MONTH(A.Date)
-        )
-        SELECT 
-            [Month],
-            [Total Appointments],
-            [Gross Revenue],
-            CAST([Gross Revenue] / NULLIF([Total Appointments], 0) AS DECIMAL(10,2)) AS [Avg Per Patient]
-        FROM MonthlyStats
-        ORDER BY [YearNum] DESC, [MonthNum] DESC"
+WITH MonthlyStats AS (
+    SELECT 
+        FORMAT(A.Date, 'MMMM yyyy') AS [Month],
+        YEAR(A.Date) as [YearNum],
+        MONTH(A.Date) as [MonthNum],
+        COUNT(DISTINCT A.AppointmentID) AS [Total Appointments],
+        SUM(R.TotalAmount) AS [Gross Revenue]
+
+    FROM Appointments A
+    INNER JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+
+    WHERE A.Status = 'Completed'
+    AND R.ReceiptStatus = 'Valid'   -- ✅ ADDED: exclude voided receipts
+
+    GROUP BY FORMAT(A.Date, 'MMMM yyyy'), YEAR(A.Date), MONTH(A.Date)
+)
+SELECT 
+    [Month],
+    [Total Appointments],
+    [Gross Revenue],
+    CAST([Gross Revenue] / NULLIF([Total Appointments], 0) AS DECIMAL(10,2)) AS [Avg Per Patient]
+FROM MonthlyStats
+ORDER BY [YearNum] DESC, [MonthNum] DESC"
 
             Dim da As New SqlDataAdapter(query, con)
             Dim dt As New DataTable()
