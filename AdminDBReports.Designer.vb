@@ -43,20 +43,10 @@ Partial Class AdminDBReports
         Dim DataGridViewCellStyle19 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle20 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle21 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle22 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle23 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle24 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle25 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle26 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle27 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle28 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Dim DataGridViewCellStyle29 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBReports))
         Me.TabRep = New Guna.UI2.WinForms.Guna2TabControl()
         Me.Payment_History = New System.Windows.Forms.TabPage()
         Me.DGVDaily = New Guna.UI2.WinForms.Guna2DataGridView()
-        Me.Dentist_Workload = New System.Windows.Forms.TabPage()
-        Me.DGVDentistWorkload = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Service_Usage = New System.Windows.Forms.TabPage()
         Me.DgvServiceUsage = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Patient_History = New System.Windows.Forms.TabPage()
@@ -65,17 +55,15 @@ Partial Class AdminDBReports
         Me.DgvAppointmentHistory = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Revenue = New System.Windows.Forms.TabPage()
         Me.DGVMonthly = New Guna.UI2.WinForms.Guna2DataGridView()
-        Me.TabPerformance = New System.Windows.Forms.TabPage()
-        Me.DGVDentistPerformance = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.pnlHeader = New Guna.UI2.WinForms.Guna2Panel()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.cmbRevenueFilter = New Guna.UI2.WinForms.Guna2ComboBox()
+        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.TabRep.SuspendLayout()
         Me.Payment_History.SuspendLayout()
         CType(Me.DGVDaily, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.Dentist_Workload.SuspendLayout()
-        CType(Me.DGVDentistWorkload, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Service_Usage.SuspendLayout()
         CType(Me.DgvServiceUsage, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Patient_History.SuspendLayout()
@@ -84,8 +72,6 @@ Partial Class AdminDBReports
         CType(Me.DgvAppointmentHistory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Revenue.SuspendLayout()
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabPerformance.SuspendLayout()
-        CType(Me.DGVDentistPerformance, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlHeader.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -95,12 +81,10 @@ Partial Class AdminDBReports
         '
         Me.TabRep.Alignment = System.Windows.Forms.TabAlignment.Left
         Me.TabRep.Controls.Add(Me.Payment_History)
-        Me.TabRep.Controls.Add(Me.Dentist_Workload)
         Me.TabRep.Controls.Add(Me.Service_Usage)
         Me.TabRep.Controls.Add(Me.Patient_History)
         Me.TabRep.Controls.Add(Me.Appointment_History)
         Me.TabRep.Controls.Add(Me.Revenue)
-        Me.TabRep.Controls.Add(Me.TabPerformance)
         Me.TabRep.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabRep.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.TabRep.ItemSize = New System.Drawing.Size(180, 40)
@@ -209,81 +193,6 @@ Partial Class AdminDBReports
         Me.DGVDaily.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVDaily.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
-        'Dentist_Workload
-        '
-        Me.Dentist_Workload.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Dentist_Workload.Controls.Add(Me.DGVDentistWorkload)
-        Me.Dentist_Workload.Location = New System.Drawing.Point(184, 4)
-        Me.Dentist_Workload.Name = "Dentist_Workload"
-        Me.Dentist_Workload.Padding = New System.Windows.Forms.Padding(3)
-        Me.Dentist_Workload.Size = New System.Drawing.Size(1237, 685)
-        Me.Dentist_Workload.TabIndex = 1
-        Me.Dentist_Workload.Text = "Dentist Workload"
-        '
-        'DGVDentistWorkload
-        '
-        Me.DGVDentistWorkload.AllowUserToAddRows = False
-        Me.DGVDentistWorkload.AllowUserToDeleteRows = False
-        DataGridViewCellStyle6.BackColor = System.Drawing.Color.White
-        DataGridViewCellStyle6.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        Me.DGVDentistWorkload.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle6
-        Me.DGVDentistWorkload.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
-        DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle7.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DGVDentistWorkload.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle7
-        Me.DGVDentistWorkload.ColumnHeadersHeight = 30
-        DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle8.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVDentistWorkload.DefaultCellStyle = DataGridViewCellStyle8
-        Me.DGVDentistWorkload.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.DGVDentistWorkload.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistWorkload.Location = New System.Drawing.Point(3, 3)
-        Me.DGVDentistWorkload.Name = "DGVDentistWorkload"
-        Me.DGVDentistWorkload.ReadOnly = True
-        DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle9.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVDentistWorkload.RowHeadersDefaultCellStyle = DataGridViewCellStyle9
-        Me.DGVDentistWorkload.RowHeadersVisible = False
-        Me.DGVDentistWorkload.RowHeadersWidth = 51
-        Me.DGVDentistWorkload.Size = New System.Drawing.Size(1231, 679)
-        Me.DGVDentistWorkload.TabIndex = 26
-        Me.DGVDentistWorkload.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
-        Me.DGVDentistWorkload.ThemeStyle.AlternatingRowsStyle.Font = Nothing
-        Me.DGVDentistWorkload.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty
-        Me.DGVDentistWorkload.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty
-        Me.DGVDentistWorkload.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty
-        Me.DGVDentistWorkload.ThemeStyle.BackColor = System.Drawing.Color.White
-        Me.DGVDentistWorkload.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistWorkload.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistWorkload.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        Me.DGVDentistWorkload.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DGVDentistWorkload.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVDentistWorkload.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
-        Me.DGVDentistWorkload.ThemeStyle.HeaderStyle.Height = 30
-        Me.DGVDentistWorkload.ThemeStyle.ReadOnly = True
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.Height = 22
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistWorkload.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        '
         'Service_Usage
         '
         Me.Service_Usage.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -299,38 +208,38 @@ Partial Class AdminDBReports
         '
         Me.DgvServiceUsage.AllowUserToAddRows = False
         Me.DgvServiceUsage.AllowUserToDeleteRows = False
-        DataGridViewCellStyle10.BackColor = System.Drawing.Color.White
-        Me.DgvServiceUsage.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle10
-        DataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle11.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle11.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DgvServiceUsage.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle11
+        DataGridViewCellStyle6.BackColor = System.Drawing.Color.White
+        Me.DgvServiceUsage.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle6
+        DataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle7.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DgvServiceUsage.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle7
         Me.DgvServiceUsage.ColumnHeadersHeight = 30
-        DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle12.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle12.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle12.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DgvServiceUsage.DefaultCellStyle = DataGridViewCellStyle12
+        DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle8.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvServiceUsage.DefaultCellStyle = DataGridViewCellStyle8
         Me.DgvServiceUsage.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DgvServiceUsage.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvServiceUsage.Location = New System.Drawing.Point(3, 3)
         Me.DgvServiceUsage.Name = "DgvServiceUsage"
         Me.DgvServiceUsage.ReadOnly = True
-        DataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle13.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle13.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle13.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle13.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle13.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DgvServiceUsage.RowHeadersDefaultCellStyle = DataGridViewCellStyle13
+        DataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle9.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvServiceUsage.RowHeadersDefaultCellStyle = DataGridViewCellStyle9
         Me.DgvServiceUsage.RowHeadersVisible = False
         Me.DgvServiceUsage.RowHeadersWidth = 51
         Me.DgvServiceUsage.Size = New System.Drawing.Size(1231, 679)
@@ -372,38 +281,38 @@ Partial Class AdminDBReports
         '
         Me.DgvPatientSummary.AllowUserToAddRows = False
         Me.DgvPatientSummary.AllowUserToDeleteRows = False
-        DataGridViewCellStyle14.BackColor = System.Drawing.Color.White
-        Me.DgvPatientSummary.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle14
-        DataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle15.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle15.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle15.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DgvPatientSummary.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle15
+        DataGridViewCellStyle10.BackColor = System.Drawing.Color.White
+        Me.DgvPatientSummary.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle10
+        DataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle11.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle11.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DgvPatientSummary.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle11
         Me.DgvPatientSummary.ColumnHeadersHeight = 30
-        DataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle16.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle16.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle16.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle16.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DgvPatientSummary.DefaultCellStyle = DataGridViewCellStyle16
+        DataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle12.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle12.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle12.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvPatientSummary.DefaultCellStyle = DataGridViewCellStyle12
         Me.DgvPatientSummary.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DgvPatientSummary.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvPatientSummary.Location = New System.Drawing.Point(3, 3)
         Me.DgvPatientSummary.Name = "DgvPatientSummary"
         Me.DgvPatientSummary.ReadOnly = True
-        DataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle17.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle17.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle17.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle17.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle17.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DgvPatientSummary.RowHeadersDefaultCellStyle = DataGridViewCellStyle17
+        DataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle13.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle13.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle13.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle13.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle13.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvPatientSummary.RowHeadersDefaultCellStyle = DataGridViewCellStyle13
         Me.DgvPatientSummary.RowHeadersVisible = False
         Me.DgvPatientSummary.RowHeadersWidth = 51
         Me.DgvPatientSummary.Size = New System.Drawing.Size(1231, 679)
@@ -445,38 +354,38 @@ Partial Class AdminDBReports
         '
         Me.DgvAppointmentHistory.AllowUserToAddRows = False
         Me.DgvAppointmentHistory.AllowUserToDeleteRows = False
-        DataGridViewCellStyle18.BackColor = System.Drawing.Color.White
-        Me.DgvAppointmentHistory.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle18
-        DataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle19.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle19.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle19.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle19.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle19.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DgvAppointmentHistory.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle19
+        DataGridViewCellStyle14.BackColor = System.Drawing.Color.White
+        Me.DgvAppointmentHistory.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle14
+        DataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle15.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle15.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle15.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle15.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DgvAppointmentHistory.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle15
         Me.DgvAppointmentHistory.ColumnHeadersHeight = 30
-        DataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle20.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle20.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle20.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle20.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle20.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DgvAppointmentHistory.DefaultCellStyle = DataGridViewCellStyle20
+        DataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle16.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle16.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle16.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle16.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvAppointmentHistory.DefaultCellStyle = DataGridViewCellStyle16
         Me.DgvAppointmentHistory.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DgvAppointmentHistory.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DgvAppointmentHistory.Location = New System.Drawing.Point(3, 3)
         Me.DgvAppointmentHistory.Name = "DgvAppointmentHistory"
         Me.DgvAppointmentHistory.ReadOnly = True
-        DataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle21.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle21.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle21.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle21.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle21.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DgvAppointmentHistory.RowHeadersDefaultCellStyle = DataGridViewCellStyle21
+        DataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle17.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle17.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle17.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle17.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle17.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DgvAppointmentHistory.RowHeadersDefaultCellStyle = DataGridViewCellStyle17
         Me.DgvAppointmentHistory.RowHeadersVisible = False
         Me.DgvAppointmentHistory.RowHeadersWidth = 51
         Me.DgvAppointmentHistory.Size = New System.Drawing.Size(1231, 679)
@@ -506,6 +415,8 @@ Partial Class AdminDBReports
         'Revenue
         '
         Me.Revenue.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Revenue.Controls.Add(Me.Guna2HtmlLabel1)
+        Me.Revenue.Controls.Add(Me.cmbRevenueFilter)
         Me.Revenue.Controls.Add(Me.DGVMonthly)
         Me.Revenue.Location = New System.Drawing.Point(184, 4)
         Me.Revenue.Name = "Revenue"
@@ -518,41 +429,40 @@ Partial Class AdminDBReports
         '
         Me.DGVMonthly.AllowUserToAddRows = False
         Me.DGVMonthly.AllowUserToDeleteRows = False
-        DataGridViewCellStyle22.BackColor = System.Drawing.Color.White
-        Me.DGVMonthly.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle22
-        DataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle23.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle23.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle23.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle23.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle23.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DGVMonthly.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle23
+        DataGridViewCellStyle18.BackColor = System.Drawing.Color.White
+        Me.DGVMonthly.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle18
+        DataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle19.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle19.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle19.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle19.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle19.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DGVMonthly.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle19
         Me.DGVMonthly.ColumnHeadersHeight = 30
-        DataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle24.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle24.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle24.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle24.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle24.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVMonthly.DefaultCellStyle = DataGridViewCellStyle24
-        Me.DGVMonthly.Dock = System.Windows.Forms.DockStyle.Fill
+        DataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle20.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle20.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle20.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle20.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle20.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVMonthly.DefaultCellStyle = DataGridViewCellStyle20
         Me.DGVMonthly.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVMonthly.Location = New System.Drawing.Point(3, 3)
+        Me.DGVMonthly.Location = New System.Drawing.Point(3, 52)
         Me.DGVMonthly.Name = "DGVMonthly"
         Me.DGVMonthly.ReadOnly = True
-        DataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle25.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle25.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle25.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle25.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle25.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle25.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVMonthly.RowHeadersDefaultCellStyle = DataGridViewCellStyle25
+        DataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle21.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle21.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle21.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle21.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle21.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle21.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVMonthly.RowHeadersDefaultCellStyle = DataGridViewCellStyle21
         Me.DGVMonthly.RowHeadersVisible = False
         Me.DGVMonthly.RowHeadersWidth = 51
-        Me.DGVMonthly.Size = New System.Drawing.Size(1231, 679)
+        Me.DGVMonthly.Size = New System.Drawing.Size(1231, 630)
         Me.DGVMonthly.TabIndex = 26
         Me.DGVMonthly.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.DGVMonthly.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -575,79 +485,6 @@ Partial Class AdminDBReports
         Me.DGVMonthly.ThemeStyle.RowsStyle.Height = 22
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        '
-        'TabPerformance
-        '
-        Me.TabPerformance.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.TabPerformance.Controls.Add(Me.DGVDentistPerformance)
-        Me.TabPerformance.Location = New System.Drawing.Point(184, 4)
-        Me.TabPerformance.Name = "TabPerformance"
-        Me.TabPerformance.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPerformance.Size = New System.Drawing.Size(1237, 685)
-        Me.TabPerformance.TabIndex = 6
-        Me.TabPerformance.Text = "Dentist Performance"
-        '
-        'DGVDentistPerformance
-        '
-        Me.DGVDentistPerformance.AllowUserToAddRows = False
-        Me.DGVDentistPerformance.AllowUserToDeleteRows = False
-        DataGridViewCellStyle26.BackColor = System.Drawing.Color.White
-        Me.DGVDentistPerformance.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle26
-        DataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle27.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle27.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle27.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle27.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
-        DataGridViewCellStyle27.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle27.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.DGVDentistPerformance.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle27
-        Me.DGVDentistPerformance.ColumnHeadersHeight = 30
-        DataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle28.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle28.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle28.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle28.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        DataGridViewCellStyle28.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle28.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVDentistPerformance.DefaultCellStyle = DataGridViewCellStyle28
-        Me.DGVDentistPerformance.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.DGVDentistPerformance.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistPerformance.Location = New System.Drawing.Point(3, 3)
-        Me.DGVDentistPerformance.Name = "DGVDentistPerformance"
-        Me.DGVDentistPerformance.ReadOnly = True
-        DataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle29.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle29.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
-        DataGridViewCellStyle29.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle29.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle29.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle29.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
-        Me.DGVDentistPerformance.RowHeadersDefaultCellStyle = DataGridViewCellStyle29
-        Me.DGVDentistPerformance.RowHeadersVisible = False
-        Me.DGVDentistPerformance.RowHeadersWidth = 51
-        Me.DGVDentistPerformance.Size = New System.Drawing.Size(1231, 679)
-        Me.DGVDentistPerformance.TabIndex = 26
-        Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
-        Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.Font = Nothing
-        Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty
-        Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty
-        Me.DGVDentistPerformance.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty
-        Me.DGVDentistPerformance.ThemeStyle.BackColor = System.Drawing.Color.White
-        Me.DGVDentistPerformance.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
-        Me.DGVDentistPerformance.ThemeStyle.HeaderStyle.Height = 30
-        Me.DGVDentistPerformance.ThemeStyle.ReadOnly = True
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.Height = 22
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.DGVDentistPerformance.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
         'Guna2CirclePictureBox1
         '
@@ -698,6 +535,36 @@ Partial Class AdminDBReports
         Me.Guna2HtmlLabel6.Text = "Reports"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
+        'cmbRevenueFilter
+        '
+        Me.cmbRevenueFilter.BackColor = System.Drawing.Color.Transparent
+        Me.cmbRevenueFilter.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.cmbRevenueFilter.BorderRadius = 10
+        Me.cmbRevenueFilter.BorderThickness = 2
+        Me.cmbRevenueFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cmbRevenueFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbRevenueFilter.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.cmbRevenueFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.cmbRevenueFilter.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.cmbRevenueFilter.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.cmbRevenueFilter.ItemHeight = 30
+        Me.cmbRevenueFilter.Items.AddRange(New Object() {"Weekly", "Monthly", "Yearly"})
+        Me.cmbRevenueFilter.Location = New System.Drawing.Point(951, 10)
+        Me.cmbRevenueFilter.Name = "cmbRevenueFilter"
+        Me.cmbRevenueFilter.Size = New System.Drawing.Size(257, 36)
+        Me.cmbRevenueFilter.TabIndex = 49
+        '
+        'Guna2HtmlLabel1
+        '
+        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
+        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(894, 10)
+        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
+        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(51, 28)
+        Me.Guna2HtmlLabel1.TabIndex = 88
+        Me.Guna2HtmlLabel1.Text = "Filter:"
+        '
         'AdminDBReports
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -713,8 +580,6 @@ Partial Class AdminDBReports
         Me.TabRep.ResumeLayout(False)
         Me.Payment_History.ResumeLayout(False)
         CType(Me.DGVDaily, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.Dentist_Workload.ResumeLayout(False)
-        CType(Me.DGVDentistWorkload, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Service_Usage.ResumeLayout(False)
         CType(Me.DgvServiceUsage, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Patient_History.ResumeLayout(False)
@@ -722,9 +587,8 @@ Partial Class AdminDBReports
         Me.Appointment_History.ResumeLayout(False)
         CType(Me.DgvAppointmentHistory, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Revenue.ResumeLayout(False)
+        Me.Revenue.PerformLayout()
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabPerformance.ResumeLayout(False)
-        CType(Me.DGVDentistPerformance, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlHeader.ResumeLayout(False)
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
@@ -734,21 +598,19 @@ Partial Class AdminDBReports
 
     Friend WithEvents TabRep As Guna.UI2.WinForms.Guna2TabControl
     Friend WithEvents Payment_History As TabPage
-    Friend WithEvents Dentist_Workload As TabPage
     Friend WithEvents Service_Usage As TabPage
     Friend WithEvents Patient_History As TabPage
     Friend WithEvents Guna2CirclePictureBox1 As Guna.UI2.WinForms.Guna2CirclePictureBox
     Friend WithEvents Appointment_History As TabPage
     Friend WithEvents Revenue As TabPage
-    Friend WithEvents TabPerformance As TabPage
     Friend WithEvents pnlHeader As Guna.UI2.WinForms.Guna2Panel
     Friend WithEvents DGVDaily As Guna.UI2.WinForms.Guna2DataGridView
-    Friend WithEvents DGVDentistWorkload As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents DgvServiceUsage As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents DgvPatientSummary As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents DgvAppointmentHistory As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents DGVMonthly As Guna.UI2.WinForms.Guna2DataGridView
-    Friend WithEvents DGVDentistPerformance As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents Guna2CustomGradientPanel1 As Guna.UI2.WinForms.Guna2CustomGradientPanel
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents cmbRevenueFilter As Guna.UI2.WinForms.Guna2ComboBox
+    Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class
