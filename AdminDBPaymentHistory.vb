@@ -6,6 +6,7 @@ Public Class AdminDBPaymentHistory
 
     ' Selected Data for Reprint
     Private SelectedAppointmentID As Integer = 0
+    Private SelectedReceiptID As Integer = 0
     Private SelectedPatientName As String = ""
     Private SelectedTreatmentNotes As String = ""
     Private SelectedDentistName As String = ""
@@ -20,6 +21,7 @@ Public Class AdminDBPaymentHistory
     Private SelectedChange As Decimal = 0D
 
     Private dtServicesForPrinting As New DataTable()
+    Private dtItemsForPrinting As New DataTable()
     Private dtFollowUpsForPrinting As New DataTable()
 
     ' ================= LOAD =================
@@ -75,7 +77,6 @@ Public Class AdminDBPaymentHistory
                 sql &= " ORDER BY R.DateIssued DESC"
 
                 Using cmd As New SqlCommand(sql, con)
-
                     If Not String.IsNullOrWhiteSpace(searchName) Then
                         cmd.Parameters.AddWithValue("@search", "%" & searchName & "%")
                     End If
@@ -86,30 +87,29 @@ Public Class AdminDBPaymentHistory
 
                     dgvHistory.DataSource = dt
 
+                    ' Hide ID columns
                     If dgvHistory.Columns.Contains("ReceiptID") Then dgvHistory.Columns("ReceiptID").Visible = False
                     If dgvHistory.Columns.Contains("AppointmentID") Then dgvHistory.Columns("AppointmentID").Visible = False
 
-                    ' highlight voided
+                    ' Highlight voided rows
                     For Each row As DataGridViewRow In dgvHistory.Rows
-                        If row.Cells("Status").Value IsNot Nothing AndAlso
-                           row.Cells("Status").Value.ToString() = "Voided" Then
+                        If row.Cells("Status").Value?.ToString() = "Voided" Then
                             row.DefaultCellStyle.BackColor = Color.LightGray
                             row.DefaultCellStyle.ForeColor = Color.Red
                         End If
                     Next
 
-                    ' formatting
+                    ' Number formatting
                     If dgvHistory.Columns.Contains("Total Bill") Then dgvHistory.Columns("Total Bill").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("Cash Tendered") Then dgvHistory.Columns("Cash Tendered").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("Change Given") Then dgvHistory.Columns("Change Given").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATable Sales") Then dgvHistory.Columns("VATable Sales").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATAmount") Then dgvHistory.Columns("VATAmount").DefaultCellStyle.Format = "N2"
-
                 End Using
             End Using
 
         Catch ex As Exception
-            MessageBox.Show("Error loading history: " & ex.Message)
+            MessageBox.Show("Error loading history: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
@@ -118,21 +118,22 @@ Public Class AdminDBPaymentHistory
         LoadPaymentHistory(txtSearchPatient.Text.Trim())
     End Sub
 
-    ' ================= REPRINT =================
+    ' ================= REPRINT - WITH DEBUG =================
     Private Sub btnReprint_Click(sender As Object, e As EventArgs) Handles btnReprint.Click
-
         If dgvHistory.SelectedRows.Count = 0 Then
-            MessageBox.Show("Please select a record.")
+            MessageBox.Show("Please select a record to reprint.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
         Dim row = dgvHistory.SelectedRows(0)
 
         If row.Cells("Status").Value?.ToString() = "Voided" Then
-            MessageBox.Show("Cannot reprint a voided receipt.")
+            MessageBox.Show("Cannot reprint a voided receipt.", "Voided Receipt", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Exit Sub
         End If
 
+        ' Capture basic info
+        SelectedReceiptID = CInt(row.Cells("ReceiptID").Value)
         SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
         SelectedPatientName = row.Cells("Patient Name").Value.ToString()
         SelectedPaymentMethod = row.Cells("Method").Value.ToString()
@@ -142,16 +143,32 @@ Public Class AdminDBPaymentHistory
         SelectedAmountPaid = Convert.ToDecimal(row.Cells("Cash Tendered").Value)
         SelectedChange = Convert.ToDecimal(row.Cells("Change Given").Value)
 
-        SelectedVatAmount = If(row.Cells("VATAmount").Value Is DBNull.Value,
-                               0D,
-                               Convert.ToDecimal(row.Cells("VATAmount").Value))
+        SelectedVatAmount = If(row.Cells("VATAmount").Value Is DBNull.Value, 0D, Convert.ToDecimal(row.Cells("VATAmount").Value))
 
-        SelectedVatExempt = If(SelectedTotalAmount > 0,
-                               SelectedTotalAmount / 1.12D,
-                               0D)
+        If SelectedVatAmount > 0 Then
+            SelectedVatExempt = SelectedTotalAmount - SelectedVatAmount
+        Else
+            SelectedVatExempt = Math.Round(SelectedTotalAmount / 1.12D, 2)
+        End If
 
-        FetchDetailsForReprint(SelectedAppointmentID)
+        ' Fetch details
+        FetchDetailsForReprint(SelectedAppointmentID, SelectedReceiptID)
 
+        ' ================= DEBUG: Check what was loaded =================
+        Dim msg As String = $"ReceiptID: {SelectedReceiptID}" & vbCrLf &
+                           $"Services: {dtServicesForPrinting.Rows.Count} row(s)" & vbCrLf &
+                           $"Items: {dtItemsForPrinting.Rows.Count} row(s)" & vbCrLf &
+                           $"Follow-ups: {dtFollowUpsForPrinting.Rows.Count} row(s)"
+
+        MessageBox.Show(msg, "Debug - Data Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        If dtItemsForPrinting.Rows.Count = 0 Then
+            MessageBox.Show("No items were found for this receipt in the ReceiptItems table." & vbCrLf &
+                           "Make sure items were saved with ItemType = 'Item' when the payment was created.",
+                           "No Items Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End If
+
+        ' Generate preview
         Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
             SelectedPatientName,
             SelectedDentistName,
@@ -165,12 +182,14 @@ Public Class AdminDBPaymentHistory
             SelectedPaymentMethod,
             SelectedRefNo,
             dtServicesForPrinting,
+            dtItemsForPrinting,        ' ← Items DataTable
             dtFollowUpsForPrinting
         )
 
-        MessageBox.Show(flashMsg, "PREVIEW", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        If MessageBox.Show("Print receipt?", "Confirm", MessageBoxButtons.YesNo) = DialogResult.Yes Then
+        If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
 
             AdminDBPaymentReceiptPrinter.PrintReceipt(
                 SelectedPatientName,
@@ -185,31 +204,33 @@ Public Class AdminDBPaymentHistory
                 SelectedPaymentMethod,
                 SelectedRefNo,
                 dtServicesForPrinting,
-                dtFollowUpsForPrinting
+                dtFollowUpsForPrinting,
+                dtItemsForPrinting
             )
-
         End If
-
     End Sub
 
-    ' ================= DETAILS =================
-    Private Sub FetchDetailsForReprint(apptID As Integer)
+    ' ================= FETCH DETAILS FOR REPRINT =================
+    Private Sub FetchDetailsForReprint(apptID As Integer, receiptID As Integer)
+        dtServicesForPrinting.Clear()
+        dtItemsForPrinting.Clear()
+        dtFollowUpsForPrinting.Clear()
 
         Using con As New SqlConnection(connectionString)
             con.Open()
 
-            Dim sql As String = "
+            ' 1. Dentist + Notes
+            Dim sqlInfo As String = "
             SELECT 
                 U.FullName AS DentistName,
-                ISNULL(T.TreatmentNotes,'No notes') AS Notes
+                ISNULL(T.TreatmentNotes, 'No notes available.') AS Notes
             FROM Appointments A
             INNER JOIN Users U ON A.UserID = U.UserID
             LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
             WHERE A.AppointmentID = @AID"
 
-            Using cmd As New SqlCommand(sql, con)
+            Using cmd As New SqlCommand(sqlInfo, con)
                 cmd.Parameters.AddWithValue("@AID", apptID)
-
                 Using r = cmd.ExecuteReader()
                     If r.Read() Then
                         SelectedDentistName = r("DentistName").ToString()
@@ -218,39 +239,60 @@ Public Class AdminDBPaymentHistory
                 End Using
             End Using
 
+            ' 2. Services
             Dim cmdSvc As New SqlCommand("
-                SELECT S.ServiceName, S.Price
+                SELECT S.ServiceName, S.Price 
                 FROM AppointmentServices ASV
                 INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
                 WHERE ASV.AppointmentID = @AID", con)
-
             cmdSvc.Parameters.AddWithValue("@AID", apptID)
+            Dim daSvc As New SqlDataAdapter(cmdSvc)
+            daSvc.Fill(dtServicesForPrinting)
 
-            dtServicesForPrinting.Clear()
-            Dim da As New SqlDataAdapter(cmdSvc)
-            da.Fill(dtServicesForPrinting)
+            ' 3. ITEMS - FIXED to match your saving logic
+            Dim cmdItems As New SqlCommand("
+                SELECT 
+                    ItemName,
+                    Quantity,
+                    UnitPrice AS Price
+                FROM ReceiptItems 
+                WHERE ReceiptID = @ReceiptID 
+                  AND ItemType IN ('Item', 'Inventory')   -- ← Changed here
+                ORDER BY ReceiptItemID", con)
 
+            cmdItems.Parameters.AddWithValue("@ReceiptID", receiptID)
+            Dim daItems As New SqlDataAdapter(cmdItems)
+            daItems.Fill(dtItemsForPrinting)
+
+            ' Safety: Ensure "Price" column exists for the preview/print
+            If Not dtItemsForPrinting.Columns.Contains("Price") Then
+                If dtItemsForPrinting.Columns.Contains("UnitPrice") Then
+                    dtItemsForPrinting.Columns("UnitPrice").ColumnName = "Price"
+                End If
+            End If
+
+            ' 4. Follow-ups
             Dim cmdFU As New SqlCommand("
                 SELECT FollowUpDate, Reason
                 FROM PatientFollowUps
                 WHERE AppointmentID = @AID
                 ORDER BY FollowUpDate", con)
-
             cmdFU.Parameters.AddWithValue("@AID", apptID)
-
-            dtFollowUpsForPrinting.Clear()
-            Dim da2 As New SqlDataAdapter(cmdFU)
-            da2.Fill(dtFollowUpsForPrinting)
+            Dim daFU As New SqlDataAdapter(cmdFU)
+            daFU.Fill(dtFollowUpsForPrinting)
 
         End Using
-
     End Sub
 
-    ' ================= VOID =================
+    ' ================= VOID ================= (unchanged)
     Private Sub VoidReceipt(receiptID As Integer)
-
         If SystemSession.LoggedInRole <> "Admin" Then
-            MessageBox.Show("Admins only.")
+            MessageBox.Show("Only Admins can void receipts.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
+        If MessageBox.Show("Are you sure you want to void this receipt?", "Confirm Void",
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Warning) <> DialogResult.Yes Then
             Exit Sub
         End If
 
@@ -259,80 +301,65 @@ Public Class AdminDBPaymentHistory
                 con.Open()
                 Using trans = con.BeginTransaction()
 
-                    Dim check As New SqlCommand("
-                        SELECT Status FROM Receipts WHERE ReceiptID=@id",
-                        con, trans)
-
-                    check.Parameters.AddWithValue("@id", receiptID)
-
-                    Dim status = If(check.ExecuteScalar(), "").ToString()
+                    Dim checkCmd As New SqlCommand("SELECT Status FROM Receipts WHERE ReceiptID=@id", con, trans)
+                    checkCmd.Parameters.AddWithValue("@id", receiptID)
+                    Dim status = If(checkCmd.ExecuteScalar(), "").ToString()
 
                     If status = "Voided" Then
-                        MessageBox.Show("Already voided.")
+                        MessageBox.Show("This receipt is already voided.", "Already Voided")
                         trans.Rollback()
                         Exit Sub
                     End If
 
-                    Dim cmd As New SqlCommand("
-                        UPDATE Receipts
-                        SET Status='Voided',
-                            VoidedAt=GETDATE(),
-                            VoidedBy=@user
-                        WHERE ReceiptID=@id", con, trans)
+                    Dim voidCmd As New SqlCommand("
+                        UPDATE Receipts 
+                        SET Status = 'Voided',
+                            VoidedAt = GETDATE(),
+                            VoidedBy = @user
+                        WHERE ReceiptID = @id", con, trans)
 
-                    cmd.Parameters.AddWithValue("@id", receiptID)
-                    cmd.Parameters.AddWithValue("@user", SystemSession.LoggedInFullName)
-                    cmd.ExecuteNonQuery()
+                    voidCmd.Parameters.AddWithValue("@id", receiptID)
+                    voidCmd.Parameters.AddWithValue("@user", SystemSession.LoggedInFullName)
+                    voidCmd.ExecuteNonQuery()
 
                     trans.Commit()
                 End Using
             End Using
 
-            SystemSession.LogAudit("Voided Receipt #" & receiptID,
-                                   "Payment History",
-                                   SystemSession.LoggedInUserID,
-                                   SystemSession.LoggedInFullName,
-                                   SystemSession.LoggedInRole)
+            SystemSession.LogAudit("Voided Receipt #" & receiptID, "Payment History",
+                                   SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
             LoadPaymentHistory()
+            MessageBox.Show("Receipt has been voided successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         Catch ex As Exception
-            MessageBox.Show("Void error: " & ex.Message)
+            MessageBox.Show("Error voiding receipt: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
     End Sub
 
     ' ================= RIGHT CLICK VOID =================
     Private Sub dgvHistory_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvHistory.CellMouseClick
-
         If e.RowIndex < 0 Then Exit Sub
 
         If e.Button = MouseButtons.Right Then
-
             Dim row = dgvHistory.Rows(e.RowIndex)
-            Dim id = CInt(row.Cells("ReceiptID").Value)
+            Dim receiptID = CInt(row.Cells("ReceiptID").Value)
 
             If row.Cells("Status").Value?.ToString() = "Voided" Then
-                MessageBox.Show("Already voided.")
+                MessageBox.Show("This receipt is already voided.")
                 Exit Sub
             End If
 
-            If MessageBox.Show("Void this receipt?", "Confirm",
-                               MessageBoxButtons.YesNo) = DialogResult.Yes Then
-                VoidReceipt(id)
-            End If
-
+            VoidReceipt(receiptID)
         End If
-
     End Sub
 
-    ' ================= CLEAR =================
+    ' ================= CLEAR & BACK =================
     Private Sub clearform()
         txtSearchPatient.Clear()
         dgvHistory.ClearSelection()
     End Sub
 
-    ' ================= BACK =================
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
