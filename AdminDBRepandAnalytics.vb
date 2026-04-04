@@ -11,7 +11,6 @@ Public Class AdminDBRepandAnalytics
     ' FORM LOAD
     ' =========================
     Private Sub AdminDBRepandAnalytics_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Default dates to today
         DtpFrom.Value = DateTime.Now
         DtpTo.Value = DateTime.Now
 
@@ -23,11 +22,9 @@ Public Class AdminDBRepandAnalytics
     ' MASTER REFRESH
     ' =========================
     Private Sub RefreshAllData()
-        ' Load filtered data once
         filteredTransactions = GetFilteredTransactions()
         filteredItems = GetFilteredItems()
 
-        ' Update UI
         LoadTransactionGrid()
         LoadItemGrid()
         LoadStockLevelsChart()
@@ -36,9 +33,10 @@ Public Class AdminDBRepandAnalytics
     End Sub
 
     ' =========================
-    ' DATA RETRIEVAL
+    ' TRANSACTIONS
     ' =========================
     Private Function GetFilteredTransactions() As DataTable
+
         Dim query As String = "
             SELECT t.TransactionID, t.TransactionDate, t.TransactionType, t.Quantity,
                    i.ItemName, s.SupplierName
@@ -48,42 +46,74 @@ Public Class AdminDBRepandAnalytics
             WHERE t.TransactionDate BETWEEN @From AND @To
         "
 
-        If CmbSupplier.SelectedIndex > 0 Then query &= " AND s.SupplierName = @Supplier"
+        If CmbSupplier.SelectedIndex > 0 Then
+            query &= " AND s.SupplierName = @Supplier"
+        End If
+
         If BRIn.Checked Then query &= " AND t.TransactionType = 'IN'"
         If RBOut.Checked Then query &= " AND t.TransactionType = 'OUT'"
 
         Dim dt As New DataTable()
+
         Using conn As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, conn)
+
             cmd.Parameters.AddWithValue("@From", DtpFrom.Value.Date)
             cmd.Parameters.AddWithValue("@To", DtpTo.Value.Date)
-            If CmbSupplier.SelectedIndex > 0 Then cmd.Parameters.AddWithValue("@Supplier", CmbSupplier.Text)
+
+            If CmbSupplier.SelectedIndex > 0 Then
+                cmd.Parameters.AddWithValue("@Supplier", CmbSupplier.Text)
+            End If
 
             Using adapter As New SqlDataAdapter(cmd)
                 adapter.Fill(dt)
             End Using
         End Using
+
         Return dt
     End Function
 
+    ' =========================
+    ' ITEMS (FIXED STOCK LOGIC)
+    ' =========================
     Private Function GetFilteredItems() As DataTable
+
         Dim query As String = "
-            SELECT i.ItemID, i.ItemName, i.Quantity, i.Price
+            SELECT 
+                i.ItemID,
+                i.ItemName,
+                i.Price,
+                ISNULL(SUM(CASE 
+                    WHEN t.TransactionType = 'IN' THEN t.Quantity
+                    WHEN t.TransactionType = 'OUT' THEN -t.Quantity
+                    ELSE 0 END), 0) AS Quantity
             FROM ItemManagement i
-            INNER JOIN Suppliers s ON i.SupplierID = s.SupplierID
+            LEFT JOIN StockTransactions t ON i.ItemID = t.ItemID
+            LEFT JOIN Suppliers s ON i.SupplierID = s.SupplierID
         "
 
-        If CmbSupplier.SelectedIndex > 0 Then query &= " WHERE s.SupplierName = @Supplier"
+        If CmbSupplier.SelectedIndex > 0 Then
+            query &= " WHERE s.SupplierName = @Supplier"
+        End If
+
+        query &= "
+            GROUP BY i.ItemID, i.ItemName, i.Price
+        "
 
         Dim dt As New DataTable()
+
         Using conn As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, conn)
-            If CmbSupplier.SelectedIndex > 0 Then cmd.Parameters.AddWithValue("@Supplier", CmbSupplier.Text)
+
+            If CmbSupplier.SelectedIndex > 0 Then
+                cmd.Parameters.AddWithValue("@Supplier", CmbSupplier.Text)
+            End If
 
             Using adapter As New SqlDataAdapter(cmd)
                 adapter.Fill(dt)
             End Using
         End Using
+
         Return dt
     End Function
 
@@ -91,6 +121,7 @@ Public Class AdminDBRepandAnalytics
     ' SUPPLIERS
     ' =========================
     Private Sub LoadSuppliers()
+
         Dim query As String = "
             SELECT DISTINCT s.SupplierName
             FROM Suppliers s
@@ -100,10 +131,13 @@ Public Class AdminDBRepandAnalytics
 
         Using conn As New SqlConnection(My.Settings.DentalDBConnection2),
               cmd As New SqlCommand(query, conn)
+
             conn.Open()
+
             Using reader = cmd.ExecuteReader()
                 CmbSupplier.Items.Clear()
                 CmbSupplier.Items.Add("All")
+
                 While reader.Read()
                     CmbSupplier.Items.Add(reader("SupplierName").ToString())
                 End While
@@ -114,18 +148,31 @@ Public Class AdminDBRepandAnalytics
     End Sub
 
     ' =========================
-    ' DATAGRIDS
+    ' GRIDS
     ' =========================
     Private Sub LoadTransactionGrid()
+
         DGVStockTrackTransaction.DataSource = filteredTransactions
-        If DGVStockTrackTransaction.Columns.Contains("TransactionID") Then DGVStockTrackTransaction.Columns("TransactionID").Visible = False
+
+        If DGVStockTrackTransaction.Columns.Contains("TransactionID") Then
+            DGVStockTrackTransaction.Columns("TransactionID").Visible = False
+        End If
+
         FormatDGV(DGVStockTrackTransaction)
-        If DGVStockTrackTransaction.Columns.Contains("TransactionDate") Then DGVStockTrackTransaction.Columns("TransactionDate").DefaultCellStyle.Format = "dd/MM/yyyy"
+
+        If DGVStockTrackTransaction.Columns.Contains("TransactionDate") Then
+            DGVStockTrackTransaction.Columns("TransactionDate").DefaultCellStyle.Format = "dd/MM/yyyy"
+        End If
     End Sub
 
     Private Sub LoadItemGrid()
+
         DGVItemManagement.DataSource = filteredItems
-        If DGVItemManagement.Columns.Contains("ItemID") Then DGVItemManagement.Columns("ItemID").Visible = False
+
+        If DGVItemManagement.Columns.Contains("ItemID") Then
+            DGVItemManagement.Columns("ItemID").Visible = False
+        End If
+
         FormatDGV(DGVItemManagement)
     End Sub
 
@@ -140,6 +187,7 @@ Public Class AdminDBRepandAnalytics
     ' CHARTS
     ' =========================
     Private Sub LoadStockLevelsChart()
+
         ChartStockLevels.Series.Clear()
         Dim series = ChartStockLevels.Series.Add("Stock")
         series.ChartType = SeriesChartType.Bar
@@ -147,24 +195,30 @@ Public Class AdminDBRepandAnalytics
 
         If filteredItems IsNot Nothing Then
             For Each row As DataRow In filteredItems.Rows
-                series.Points.AddXY(row("ItemName"), row("Quantity"))
+                series.Points.AddXY(row("ItemName").ToString(),
+                                    Convert.ToInt32(row("Quantity")))
             Next
         End If
     End Sub
 
     Private Sub LoadTransactionTrendsChart()
+
         ChartTransactionTrends.Series.Clear()
+
         Dim sIn = ChartTransactionTrends.Series.Add("IN")
         Dim sOut = ChartTransactionTrends.Series.Add("OUT")
+
         sIn.ChartType = SeriesChartType.Column
         sOut.ChartType = SeriesChartType.Column
+
         sIn.Color = Color.Green
         sOut.Color = Color.Red
 
-        ' Aggregate by date
         If filteredTransactions IsNot Nothing AndAlso filteredTransactions.Rows.Count > 0 Then
+
             Dim grouped = From row In filteredTransactions.AsEnumerable()
-                          Group row By tDate = CDate(row("TransactionDate")).Date, tType = row("TransactionType").ToString()
+                          Group row By tDate = CDate(row("TransactionDate")).Date,
+                                      tType = row("TransactionType").ToString()
                           Into TotalQty = Sum(Convert.ToInt32(row("Quantity")))
                           Order By tDate
                           Select tDate, tType, TotalQty
@@ -180,12 +234,26 @@ Public Class AdminDBRepandAnalytics
     End Sub
 
     ' =========================
-    ' SUMMARY BOXES
+    ' SUMMARY
     ' =========================
     Private Sub LoadSummaryBoxes()
-        Dim totalIn = If(filteredTransactions IsNot Nothing, filteredTransactions.AsEnumerable().Where(Function(r) r("TransactionType").ToString() = "IN").Sum(Function(r) Convert.ToInt32(r("Quantity"))), 0)
-        Dim totalOut = If(filteredTransactions IsNot Nothing, filteredTransactions.AsEnumerable().Where(Function(r) r("TransactionType").ToString() = "OUT").Sum(Function(r) Convert.ToInt32(r("Quantity"))), 0)
-        Dim currentStock = If(filteredItems IsNot Nothing, filteredItems.AsEnumerable().Sum(Function(r) Convert.ToInt32(r("Quantity"))), 0)
+
+        Dim totalIn = If(filteredTransactions IsNot Nothing,
+            filteredTransactions.AsEnumerable().
+                Where(Function(r) r("TransactionType").ToString() = "IN").
+                Sum(Function(r) Convert.ToInt32(r("Quantity"))),
+            0)
+
+        Dim totalOut = If(filteredTransactions IsNot Nothing,
+            filteredTransactions.AsEnumerable().
+                Where(Function(r) r("TransactionType").ToString() = "OUT").
+                Sum(Function(r) Convert.ToInt32(r("Quantity"))),
+            0)
+
+        Dim currentStock = If(filteredItems IsNot Nothing,
+            filteredItems.AsEnumerable().
+                Sum(Function(r) Convert.ToInt32(r("Quantity"))),
+            0)
 
         LBLTotalIn.Text = totalIn.ToString()
         LBLTotalOut.Text = totalOut.ToString()
