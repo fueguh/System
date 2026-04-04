@@ -204,7 +204,7 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
-        ' --- Calculations ---
+        ' --- Calculations (only raw sums + what we need for DB) ---
         Dim serviceTotal As Decimal = currentTotal
         Dim itemTotal As Decimal = GetItemTotal()
         Dim totalAmount As Decimal = serviceTotal + itemTotal
@@ -212,17 +212,18 @@ Public Class AdminDBPayment
         Dim amountPaid As Decimal = 0
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
 
-        Dim changeAmount As Decimal = amountPaid - totalAmount
-        If changeAmount < 0 Then changeAmount = 0
-
-        Dim subTotal As Decimal = totalAmount / 1.12D
-        Dim vatAmount As Decimal = totalAmount - subTotal
-
         If amountPaid < totalAmount Then
             MessageBox.Show("Amount paid cannot be less than the total amount.", "Payment Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             txtAmountPaid.Focus()
             Exit Sub
         End If
+
+        Dim changeAmount As Decimal = amountPaid - totalAmount
+        If changeAmount < 0 Then changeAmount = 0
+
+        ' VAT Breakdown (required for DB and receipt)
+        Dim subTotal As Decimal = If(totalAmount > 0, totalAmount / 1.12D, 0D)
+        Dim vatAmount As Decimal = totalAmount - subTotal
 
         If String.IsNullOrEmpty(ComboBoxPaymentMethod.Text) Then
             MessageBox.Show("Please select a payment method.")
@@ -284,13 +285,17 @@ Public Class AdminDBPayment
                                                                   changeAmount.ToString("N2"))
                                 SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
-                                ' Flash Preview
+                                ' === UPDATED: Flash Preview - Pass pre-computed values ===
                                 Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
                                     SelectedPatientName,
                                     SelectedDentistName,
                                     SelectedTreatmentNotes,
-                                    totalAmount.ToString("F2"),
-                                    amountPaid.ToString("F2"),
+                                    subTotal.ToString("F2"),           ' subtotal
+                                    subTotal.ToString("F2"),           ' vatExempt (VATable Sales)
+                                    vatAmount.ToString("F2"),          ' vatAmount
+                                    totalAmount.ToString("F2"),        ' total
+                                    amountPaid.ToString("F2"),         ' amountPaid
+                                    changeAmount.ToString("F2"),       ' change
                                     ComboBoxPaymentMethod.Text,
                                     txtReferenceNo.Text.Trim(),
                                     TryCast(dgvServices.DataSource, DataTable),
@@ -298,7 +303,7 @@ Public Class AdminDBPayment
                                 )
 
                                 MessageBox.Show(flashMsg, "RECEIPT PREVIEW - This is exactly how it will be printed",
-                                 MessageBoxButtons.OK, MessageBoxIcon.Information)
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                                 ' Ask to Print
                                 Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
@@ -309,14 +314,19 @@ Public Class AdminDBPayment
                                     If dtServicesPrint Is Nothing Then dtServicesPrint = New DataTable()
                                     Dim dtFollowUpsPrint As DataTable = GetFollowUps()
 
+                                    ' === UPDATED: PrintReceipt - Pass pre-computed values ===
                                     AdminDBPaymentReceiptPrinter.PrintReceipt(
                                         SelectedPatientName,
                                         SelectedDentistName,
                                         SelectedTreatmentNotes,
-                                        totalAmount.ToString("F2"),
-                                        amountPaid.ToString("F2"),
+                                        subTotal.ToString("F2"),           ' subtotal
+                                        subTotal.ToString("F2"),           ' vatExempt
+                                        vatAmount.ToString("F2"),          ' vatAmount
+                                        totalAmount.ToString("F2"),        ' total
+                                        amountPaid.ToString("F2"),         ' paid
+                                        changeAmount.ToString("F2"),       ' change
                                         ComboBoxPaymentMethod.Text,
-                                        txtReferenceNo.Text,
+                                        txtReferenceNo.Text.Trim(),
                                         dtServicesPrint,
                                         dtFollowUpsPrint
                                     )
@@ -480,18 +490,18 @@ SuccessCleanup:
 
     Private Sub UpdateGrandTotalDisplay()
         Dim itemTotal As Decimal = GetItemTotal()
-        Dim grandTotal As Decimal = currentTotal + itemTotal
+        Dim grandTotal As Decimal = currentTotal + itemTotal   ' This is the real Total Amount Due
 
-        ' VAT Calculation (12%)
-        Dim subTotal As Decimal = If(grandTotal > 0, grandTotal / 1.12D, 0D)
-        Dim vatAmount As Decimal = grandTotal - subTotal
+        ' Correct VAT Breakdown (VAT Inclusive)
+        Dim vatAmount As Decimal = If(grandTotal > 0, grandTotal - (grandTotal / 1.12D), 0D)
+        Dim vatExempt As Decimal = grandTotal - vatAmount      ' VATable Sales
 
-        ' Update main totals
+        ' Update UI Labels
         lblTotal.Text = "Total: PHP " & grandTotal.ToString("N2")
-        lblSubtotal.Text = "Subtotal: " & subTotal.ToString("N2")
+        lblSubtotal.Text = "Subtotal: " & grandTotal.ToString("N2")   ' Show Gross as Subtotal
         lblVATAmount.Text = "VAT (12%): " & vatAmount.ToString("N2")
 
-        ' === NEW: Calculate and show Change ===
+        ' Change calculation
         Dim amountPaid As Decimal = 0
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
 
