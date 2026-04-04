@@ -2,18 +2,15 @@
 
 Public Class AdminDBReports
 
-    ' Shared reference (optional global access)
     Public Shared adminDBReports As AdminDBReports
 
     ' ===================== FORM LOAD =====================
     Private Sub AdminDBReports_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        ' Setup revenue filter dropdown
         cmbRevenueFilter.Items.Clear()
         cmbRevenueFilter.Items.AddRange(New String() {"Weekly", "Monthly", "Yearly"})
-        cmbRevenueFilter.SelectedIndex = 1 ' Default: Monthly
+        cmbRevenueFilter.SelectedIndex = 1
 
-        ' Initial data load
         LoadPaymentHistory()
         LoadServiceUsage()
         LoadPatientHistory()
@@ -21,8 +18,7 @@ Public Class AdminDBReports
         LoadMonthlyRevenue()
     End Sub
 
-    ' ===================== COMMON QUERY EXECUTOR =====================
-    ' Reusable function to reduce repeated connection + adapter code
+    ' ===================== COMMON QUERY =====================
     Private Function ExecuteQuery(query As String) As DataTable
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             Using da As New SqlDataAdapter(query, con)
@@ -33,16 +29,9 @@ Public Class AdminDBReports
         End Using
     End Function
 
-    ' Refresh selected tables manually
-    Public Sub RefreshHistory()
-        LoadAppointmentHistory()
-        LoadPaymentHistory()
-    End Sub
-
     ' ===================== PAYMENT HISTORY =====================
     Private Sub LoadPaymentHistory()
 
-        ' Query: Load all completed + active receipts
         Dim query As String = "
             SELECT 
                 R.ReceiptID,
@@ -62,17 +51,15 @@ Public Class AdminDBReports
             INNER JOIN Patients P ON A.PatientID = P.PatientID
             INNER JOIN Users U ON A.UserID = U.UserID
             WHERE U.Role = 'Dentist'
-              AND R.Status = 'Active'
-              AND A.Status = 'Completed'
+              AND R.Status <> 'Voided'
+              AND R.VoidedAt IS NULL
             ORDER BY R.DateIssued DESC"
 
         DGVDaily.DataSource = ExecuteQuery(query)
 
-        ' Hide internal IDs
         If DGVDaily.Columns.Contains("ReceiptID") Then DGVDaily.Columns("ReceiptID").Visible = False
         If DGVDaily.Columns.Contains("AppointmentID") Then DGVDaily.Columns("AppointmentID").Visible = False
 
-        ' Apply currency formatting
         For Each col In {"TotalAmount", "VATableSales", "VATAmount", "AmountPaid", "ChangeAmount"}
             If DGVDaily.Columns.Contains(col) Then
                 DGVDaily.Columns(col).DefaultCellStyle.Format = "N2"
@@ -83,27 +70,32 @@ Public Class AdminDBReports
     ' ===================== SERVICE USAGE =====================
     Private Sub LoadServiceUsage()
 
-        ' Query: Count usage + revenue per service
         Dim query As String = "
-            WITH ValidReceipts AS (
-                SELECT ASV.ServiceID, R.TotalAmount
+            WITH ValidServices AS (
+                SELECT 
+                    ASV.ServiceID,
+                    S.Price
                 FROM Receipts R
-                INNER JOIN AppointmentServices ASV ON R.AppointmentID = ASV.AppointmentID
-                WHERE R.Status = 'Active' AND R.VoidedAt IS NULL
+                INNER JOIN AppointmentServices ASV 
+                    ON R.AppointmentID = ASV.AppointmentID
+                INNER JOIN Services S 
+                    ON ASV.ServiceID = S.ServiceID
+                WHERE R.Status <> 'Voided'
+                  AND R.VoidedAt IS NULL
             )
             SELECT 
                 S.ServiceName AS [Service Name],
-                COUNT(VR.ServiceID) AS [Total Procedures],
-                ISNULL(SUM(VR.TotalAmount), 0) AS [Gross Revenue],
-                DENSE_RANK() OVER (ORDER BY ISNULL(SUM(VR.TotalAmount), 0) DESC) AS [Rank]
+                COUNT(VS.ServiceID) AS [Total Procedures],
+                ISNULL(SUM(VS.Price), 0) AS [Gross Revenue],
+                DENSE_RANK() OVER (ORDER BY ISNULL(SUM(VS.Price), 0) DESC) AS [Rank]
             FROM Services S
-            LEFT JOIN ValidReceipts VR ON S.ServiceID = VR.ServiceID
+            LEFT JOIN ValidServices VS 
+                ON S.ServiceID = VS.ServiceID
             GROUP BY S.ServiceName
             ORDER BY [Gross Revenue] DESC;"
 
         DgvServiceUsage.DataSource = ExecuteQuery(query)
 
-        ' Format currency
         If DgvServiceUsage.Columns.Contains("Gross Revenue") Then
             DgvServiceUsage.Columns("Gross Revenue").DefaultCellStyle.Format = "N2"
         End If
@@ -112,7 +104,6 @@ Public Class AdminDBReports
     ' ===================== PATIENT HISTORY =====================
     Private Sub LoadPatientHistory()
 
-        ' Query: Patient summary with visit count + last visit
         Dim query As String = "
             SELECT 
                 P.PatientID,
@@ -121,14 +112,13 @@ Public Class AdminDBReports
                 COUNT(A.AppointmentID) AS TotalAppointments,
                 MAX(A.Date) AS LastVisit
             FROM Patients P
-            LEFT JOIN Appointments A ON P.PatientID = A.PatientID
-            WHERE A.Status = 'Completed' OR A.Status IS NULL
+            LEFT JOIN Appointments A 
+                ON P.PatientID = A.PatientID AND A.Status = 'Completed'
             GROUP BY P.PatientID, P.FullName, P.DateRegistered
             ORDER BY LastVisit DESC"
 
         DgvPatientSummary.DataSource = ExecuteQuery(query)
 
-        ' Hide internal ID
         If DgvPatientSummary.Columns.Contains("PatientID") Then
             DgvPatientSummary.Columns("PatientID").Visible = False
         End If
@@ -137,7 +127,6 @@ Public Class AdminDBReports
     ' ===================== APPOINTMENT HISTORY =====================
     Public Sub LoadAppointmentHistory()
 
-        ' Query: Show completed appointments + services list
         Dim query As String = "
             SELECT 
                 A.AppointmentID,
@@ -159,7 +148,6 @@ Public Class AdminDBReports
 
         DgvAppointmentHistory.DataSource = ExecuteQuery(query)
 
-        ' Hide internal ID
         If DgvAppointmentHistory.Columns.Contains("AppointmentID") Then
             DgvAppointmentHistory.Columns("AppointmentID").Visible = False
         End If
@@ -170,7 +158,6 @@ Public Class AdminDBReports
 
         Dim query As String = ""
 
-        ' Select query based on filter (Weekly / Monthly / Yearly)
         Select Case cmbRevenueFilter.Text
 
             Case "Weekly"
@@ -181,7 +168,8 @@ Public Class AdminDBReports
                         COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
                         SUM(R.TotalAmount) AS [Gross Revenue]
                     FROM Receipts R
-                    WHERE R.Status = 'Active' AND R.VoidedAt IS NULL
+                    WHERE R.Status <> 'Voided'
+                      AND R.VoidedAt IS NULL
                     GROUP BY DATEPART(WEEK, R.DateIssued), YEAR(R.DateIssued)
                     ORDER BY YEAR(R.DateIssued) DESC, DATEPART(WEEK, R.DateIssued) DESC"
 
@@ -193,11 +181,12 @@ Public Class AdminDBReports
                         COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
                         SUM(R.TotalAmount) AS [Gross Revenue]
                     FROM Receipts R
-                    WHERE R.Status = 'Active' AND R.VoidedAt IS NULL
+                    WHERE R.Status <> 'Voided'
+                      AND R.VoidedAt IS NULL
                     GROUP BY YEAR(R.DateIssued)
                     ORDER BY YEAR(R.DateIssued) DESC"
 
-            Case Else ' Monthly (FIXED - no FORMAT bug)
+            Case Else
                 query = "
                     SELECT 
                         CONCAT(YEAR(R.DateIssued), '-', RIGHT('0' + CAST(MONTH(R.DateIssued) AS VARCHAR), 2)) AS Period,
@@ -205,27 +194,24 @@ Public Class AdminDBReports
                         COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
                         SUM(R.TotalAmount) AS [Gross Revenue]
                     FROM Receipts R
-                    WHERE R.Status = 'Active' AND R.VoidedAt IS NULL
+                    WHERE R.Status <> 'Voided'
+                      AND R.VoidedAt IS NULL
                     GROUP BY YEAR(R.DateIssued), MONTH(R.DateIssued)
                     ORDER BY YEAR(R.DateIssued) DESC, MONTH(R.DateIssued) DESC"
         End Select
 
         DGVMonthly.DataSource = ExecuteQuery(query)
 
-        ' Format revenue column
         If DGVMonthly.Columns.Contains("Gross Revenue") Then
             DGVMonthly.Columns("Gross Revenue").DefaultCellStyle.Format = "N2"
         End If
     End Sub
 
-    ' ===================== UI EVENTS =====================
-
-    ' Reload revenue when filter changes
+    ' ===================== EVENTS =====================
     Private Sub cmbRevenueFilter_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbRevenueFilter.SelectedIndexChanged
         LoadMonthlyRevenue()
     End Sub
 
-    ' Load data depending on selected tab
     Private Sub TabRep_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabRep.SelectedIndexChanged
         Select Case TabRep.SelectedIndex
             Case 0 : LoadPaymentHistory()
@@ -236,7 +222,6 @@ Public Class AdminDBReports
         End Select
     End Sub
 
-    ' Navigate back to dashboard
     Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
