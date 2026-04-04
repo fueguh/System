@@ -24,7 +24,6 @@ Partial Class AdminDashboard
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDashboard))
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
-        Me.DashboardMenu = New System.Windows.Forms.ToolStripMenuItem()
         Me.MaintenanceMenu = New System.Windows.Forms.ToolStripMenuItem()
         Me.User_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
         Me.Dentist_Maintenance = New System.Windows.Forms.ToolStripMenuItem()
@@ -98,7 +97,7 @@ Partial Class AdminDashboard
         Me.MenuStrip1.Dock = System.Windows.Forms.DockStyle.None
         Me.MenuStrip1.Font = New System.Drawing.Font("Times New Roman", 26.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.DashboardMenu, Me.MaintenanceMenu, Me.AuditTrail, Me.Appointment, Me.TodaysAppointment, Me.Treatment_Record, Me.Reports, Me.Inventory_Management, Me.Payment, Me.Payment_History, Me.Patient_History, Me.Follow_up})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MaintenanceMenu, Me.AuditTrail, Me.Appointment, Me.TodaysAppointment, Me.Treatment_Record, Me.Reports, Me.Inventory_Management, Me.Payment, Me.Payment_History, Me.Patient_History, Me.Follow_up})
         Me.MenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 122)
         Me.MenuStrip1.Name = "MenuStrip1"
@@ -106,13 +105,6 @@ Partial Class AdminDashboard
         Me.MenuStrip1.Size = New System.Drawing.Size(354, 932)
         Me.MenuStrip1.TabIndex = 19
         Me.MenuStrip1.Text = "MenuStrip1"
-        '
-        'DashboardMenu
-        '
-        Me.DashboardMenu.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.DashboardMenu.Name = "DashboardMenu"
-        Me.DashboardMenu.Size = New System.Drawing.Size(183, 44)
-        Me.DashboardMenu.Text = "Dashboard"
         '
         'MaintenanceMenu
         '
@@ -652,7 +644,6 @@ Partial Class AdminDashboard
     Friend WithEvents Payment_History As ToolStripMenuItem
     Friend WithEvents Patient_History As ToolStripMenuItem
     Friend WithEvents Follow_up As ToolStripMenuItem
-    Friend WithEvents DashboardMenu As ToolStripMenuItem
     Friend WithEvents MenuStrip2 As MenuStrip
     Friend WithEvents Logout As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem

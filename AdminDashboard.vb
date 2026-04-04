@@ -1,11 +1,6 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class AdminDashboard
-    Private Sub DashboardMenu_Click(sender As Object, e As EventArgs) Handles DashboardMenu.Click
-        Dim frm As New AdminDashboard()
-        frm.Show()
-        Me.Hide()
-    End Sub
     Private Sub AdminDashboard_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadDashboardStats()
         AutoUpdateFollowUpStatuses()
@@ -61,6 +56,7 @@ Public Class AdminDashboard
 
     Private Sub Service_Maintenance_Click(sender As Object, e As EventArgs) Handles Service_Maintenance.Click
         Me.Hide()
+        AdminDBServices.Show()
     End Sub
 
     Public Sub LoadDashboardStats()

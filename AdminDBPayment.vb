@@ -36,35 +36,38 @@ Public Class AdminDBPayment
                 A.Date, 
                 ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
                 ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
-                (SELECT STRING_AGG(S.ServiceName, ', ') 
-                 FROM AppointmentServices AS AP 
-                 JOIN Services S ON AP.ServiceID = S.ServiceID 
-                 WHERE AP.AppointmentID = A.AppointmentID) AS [Services Done],
+                ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
                 ISNULL((
-                    SELECT STRING_AGG(
-                        CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + F.Reason,
-                        ' | '
-                    )
-                    FROM PatientFollowUps F
+                    SELECT STRING_AGG(CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + F.Reason, ' | ')
+                    FROM PatientFollowUps F 
                     WHERE F.AppointmentID = A.AppointmentID
                 ), 'No follow-ups') AS [Follow Ups]
             FROM Appointments A
             INNER JOIN Patients P ON A.PatientID = P.PatientID
             INNER JOIN Users U ON A.UserID = U.UserID
             LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
+            LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
+            LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
             WHERE A.Status = 'Completed'
-            AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)"
+            AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)
+            GROUP BY 
+                A.AppointmentID, P.PatientID, P.FullName, U.FullName, 
+                A.Date, T.TreatmentNotes, T.Prescriptions
+            ORDER BY A.Date DESC"
 
-            Dim da As New SqlDataAdapter(sql, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
+            Using da As New SqlDataAdapter(sql, con)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                dgvPendingPayments.DataSource = dt
+            End Using
 
-            dgvPendingPayments.DataSource = dt
-
-            ' Hide unnecessary columns
-            If dgvPendingPayments.Columns.Contains("Prescription") Then dgvPendingPayments.Columns("Prescription").Visible = False
-            If dgvPendingPayments.Columns.Contains("AppointmentID") Then dgvPendingPayments.Columns("AppointmentID").Visible = False
-            If dgvPendingPayments.Columns.Contains("PatientID") Then dgvPendingPayments.Columns("PatientID").Visible = False
+            ' Hide columns
+            For Each col As DataGridViewColumn In dgvPendingPayments.Columns
+                Select Case col.Name
+                    Case "AppointmentID", "PatientID", "Prescription"
+                        col.Visible = False
+                End Select
+            Next
         End Using
     End Sub
 
@@ -432,6 +435,15 @@ SuccessCleanup:
 
         RecalculateItemTotal()
     End Sub
+
+    ' Single source of thruth for VAT calculations (if needed in the future for more complex scenarios)
+    Private Function CalculateVATComponents(totalAmount As Decimal) As (Subtotal As Decimal, VAT As Decimal)
+        If totalAmount <= 0 Then Return (0D, 0D)
+
+        Dim subtotal As Decimal = totalAmount / 1.12D
+        Dim vat As Decimal = totalAmount - subtotal
+        Return (subtotal, vat)
+    End Function
 
     Private Sub RecalculateItemTotal()
         Dim itemTotal As Decimal = 0
