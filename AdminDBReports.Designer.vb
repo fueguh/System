@@ -44,6 +44,10 @@ Partial Class AdminDBReports
         Dim DataGridViewCellStyle20 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle21 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBReports))
+        Dim DataGridViewCellStyle22 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle23 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle24 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle25 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.TabRep = New Guna.UI2.WinForms.Guna2TabControl()
         Me.Payment_History = New System.Windows.Forms.TabPage()
         Me.DGVDaily = New Guna.UI2.WinForms.Guna2DataGridView()
@@ -54,13 +58,15 @@ Partial Class AdminDBReports
         Me.Appointment_History = New System.Windows.Forms.TabPage()
         Me.DgvAppointmentHistory = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.Revenue = New System.Windows.Forms.TabPage()
+        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.cmbRevenueFilter = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.DGVMonthly = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.Item = New System.Windows.Forms.TabPage()
         Me.Guna2CirclePictureBox1 = New Guna.UI2.WinForms.Guna2CirclePictureBox()
         Me.pnlHeader = New Guna.UI2.WinForms.Guna2Panel()
         Me.Guna2CustomGradientPanel1 = New Guna.UI2.WinForms.Guna2CustomGradientPanel()
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
-        Me.cmbRevenueFilter = New Guna.UI2.WinForms.Guna2ComboBox()
-        Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
+        Me.DGVItemReports = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.TabRep.SuspendLayout()
         Me.Payment_History.SuspendLayout()
         CType(Me.DGVDaily, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -72,9 +78,11 @@ Partial Class AdminDBReports
         CType(Me.DgvAppointmentHistory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Revenue.SuspendLayout()
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Item.SuspendLayout()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.pnlHeader.SuspendLayout()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
+        CType(Me.DGVItemReports, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TabRep
@@ -85,6 +93,7 @@ Partial Class AdminDBReports
         Me.TabRep.Controls.Add(Me.Patient_History)
         Me.TabRep.Controls.Add(Me.Appointment_History)
         Me.TabRep.Controls.Add(Me.Revenue)
+        Me.TabRep.Controls.Add(Me.Item)
         Me.TabRep.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabRep.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.TabRep.ItemSize = New System.Drawing.Size(180, 40)
@@ -136,7 +145,7 @@ Partial Class AdminDBReports
         Me.DGVDaily.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        DataGridViewCellStyle2.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("Mongolian Baiti", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
         DataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
@@ -145,7 +154,7 @@ Partial Class AdminDBReports
         Me.DGVDaily.ColumnHeadersHeight = 30
         DataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle3.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle3.Font = New System.Drawing.Font("Mongolian Baiti", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         DataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         DataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
@@ -158,7 +167,7 @@ Partial Class AdminDBReports
         Me.DGVDaily.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        DataGridViewCellStyle4.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle4.Font = New System.Drawing.Font("Mongolian Baiti", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         DataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         DataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         DataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
@@ -425,6 +434,36 @@ Partial Class AdminDBReports
         Me.Revenue.TabIndex = 5
         Me.Revenue.Text = "Revenue"
         '
+        'Guna2HtmlLabel1
+        '
+        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
+        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(894, 10)
+        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
+        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(51, 28)
+        Me.Guna2HtmlLabel1.TabIndex = 88
+        Me.Guna2HtmlLabel1.Text = "Filter:"
+        '
+        'cmbRevenueFilter
+        '
+        Me.cmbRevenueFilter.BackColor = System.Drawing.Color.Transparent
+        Me.cmbRevenueFilter.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.cmbRevenueFilter.BorderRadius = 10
+        Me.cmbRevenueFilter.BorderThickness = 2
+        Me.cmbRevenueFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cmbRevenueFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbRevenueFilter.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.cmbRevenueFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.cmbRevenueFilter.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
+        Me.cmbRevenueFilter.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.cmbRevenueFilter.ItemHeight = 30
+        Me.cmbRevenueFilter.Items.AddRange(New Object() {"Weekly", "Monthly", "Yearly"})
+        Me.cmbRevenueFilter.Location = New System.Drawing.Point(951, 10)
+        Me.cmbRevenueFilter.Name = "cmbRevenueFilter"
+        Me.cmbRevenueFilter.Size = New System.Drawing.Size(257, 36)
+        Me.cmbRevenueFilter.TabIndex = 49
+        '
         'DGVMonthly
         '
         Me.DGVMonthly.AllowUserToAddRows = False
@@ -486,6 +525,16 @@ Partial Class AdminDBReports
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.DGVMonthly.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'Item
+        '
+        Me.Item.Controls.Add(Me.DGVItemReports)
+        Me.Item.Location = New System.Drawing.Point(184, 4)
+        Me.Item.Name = "Item"
+        Me.Item.Size = New System.Drawing.Size(1237, 685)
+        Me.Item.TabIndex = 6
+        Me.Item.Text = "Item Transactions"
+        Me.Item.UseVisualStyleBackColor = True
+        '
         'Guna2CirclePictureBox1
         '
         Me.Guna2CirclePictureBox1.FillColor = System.Drawing.Color.IndianRed
@@ -535,35 +584,67 @@ Partial Class AdminDBReports
         Me.Guna2HtmlLabel6.Text = "Reports"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'cmbRevenueFilter
+        'DGVItemReports
         '
-        Me.cmbRevenueFilter.BackColor = System.Drawing.Color.Transparent
-        Me.cmbRevenueFilter.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.cmbRevenueFilter.BorderRadius = 10
-        Me.cmbRevenueFilter.BorderThickness = 2
-        Me.cmbRevenueFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.cmbRevenueFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbRevenueFilter.FocusedColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbRevenueFilter.FocusedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.cmbRevenueFilter.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.cmbRevenueFilter.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.cmbRevenueFilter.ItemHeight = 30
-        Me.cmbRevenueFilter.Items.AddRange(New Object() {"Weekly", "Monthly", "Yearly"})
-        Me.cmbRevenueFilter.Location = New System.Drawing.Point(951, 10)
-        Me.cmbRevenueFilter.Name = "cmbRevenueFilter"
-        Me.cmbRevenueFilter.Size = New System.Drawing.Size(257, 36)
-        Me.cmbRevenueFilter.TabIndex = 49
-        '
-        'Guna2HtmlLabel1
-        '
-        Me.Guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent
-        Me.Guna2HtmlLabel1.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Guna2HtmlLabel1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.Guna2HtmlLabel1.Location = New System.Drawing.Point(894, 10)
-        Me.Guna2HtmlLabel1.Name = "Guna2HtmlLabel1"
-        Me.Guna2HtmlLabel1.Size = New System.Drawing.Size(51, 28)
-        Me.Guna2HtmlLabel1.TabIndex = 88
-        Me.Guna2HtmlLabel1.Text = "Filter:"
+        Me.DGVItemReports.AllowUserToAddRows = False
+        Me.DGVItemReports.AllowUserToDeleteRows = False
+        DataGridViewCellStyle22.BackColor = System.Drawing.Color.White
+        Me.DGVItemReports.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle22
+        DataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle23.BackColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle23.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle23.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle23.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(122, Byte), Integer), CType(CType(178, Byte), Integer), CType(CType(178, Byte), Integer))
+        DataGridViewCellStyle23.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle23.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.DGVItemReports.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle23
+        Me.DGVItemReports.ColumnHeadersHeight = 30
+        DataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle24.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle24.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle24.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle24.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        DataGridViewCellStyle24.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle24.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVItemReports.DefaultCellStyle = DataGridViewCellStyle24
+        Me.DGVItemReports.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DGVItemReports.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.DGVItemReports.Location = New System.Drawing.Point(0, 0)
+        Me.DGVItemReports.Name = "DGVItemReports"
+        Me.DGVItemReports.ReadOnly = True
+        DataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle25.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle25.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
+        DataGridViewCellStyle25.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle25.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        DataGridViewCellStyle25.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        DataGridViewCellStyle25.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
+        Me.DGVItemReports.RowHeadersDefaultCellStyle = DataGridViewCellStyle25
+        Me.DGVItemReports.RowHeadersVisible = False
+        Me.DGVItemReports.RowHeadersWidth = 51
+        Me.DGVItemReports.Size = New System.Drawing.Size(1237, 685)
+        Me.DGVItemReports.TabIndex = 27
+        Me.DGVItemReports.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
+        Me.DGVItemReports.ThemeStyle.AlternatingRowsStyle.Font = Nothing
+        Me.DGVItemReports.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty
+        Me.DGVItemReports.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = System.Drawing.Color.Empty
+        Me.DGVItemReports.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = System.Drawing.Color.Empty
+        Me.DGVItemReports.ThemeStyle.BackColor = System.Drawing.Color.White
+        Me.DGVItemReports.ThemeStyle.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.DGVItemReports.ThemeStyle.HeaderStyle.BackColor = System.Drawing.Color.FromArgb(CType(CType(100, Byte), Integer), CType(CType(88, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.DGVItemReports.ThemeStyle.HeaderStyle.BorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None
+        Me.DGVItemReports.ThemeStyle.HeaderStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.DGVItemReports.ThemeStyle.HeaderStyle.ForeColor = System.Drawing.Color.White
+        Me.DGVItemReports.ThemeStyle.HeaderStyle.HeaightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing
+        Me.DGVItemReports.ThemeStyle.HeaderStyle.Height = 30
+        Me.DGVItemReports.ThemeStyle.ReadOnly = True
+        Me.DGVItemReports.ThemeStyle.RowsStyle.BackColor = System.Drawing.Color.White
+        Me.DGVItemReports.ThemeStyle.RowsStyle.BorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal
+        Me.DGVItemReports.ThemeStyle.RowsStyle.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.DGVItemReports.ThemeStyle.RowsStyle.ForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
+        Me.DGVItemReports.ThemeStyle.RowsStyle.Height = 22
+        Me.DGVItemReports.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.DGVItemReports.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
         'AdminDBReports
         '
@@ -589,9 +670,11 @@ Partial Class AdminDBReports
         Me.Revenue.ResumeLayout(False)
         Me.Revenue.PerformLayout()
         CType(Me.DGVMonthly, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Item.ResumeLayout(False)
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.pnlHeader.ResumeLayout(False)
         Me.Guna2CustomGradientPanel1.ResumeLayout(False)
+        CType(Me.DGVItemReports, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -613,4 +696,6 @@ Partial Class AdminDBReports
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents cmbRevenueFilter As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
+    Friend WithEvents Item As TabPage
+    Friend WithEvents DGVItemReports As Guna.UI2.WinForms.Guna2DataGridView
 End Class
