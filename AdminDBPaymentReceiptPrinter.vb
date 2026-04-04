@@ -35,28 +35,22 @@ Public Module AdminDBPaymentReceiptPrinter
     ''' Print Receipt - Now includes Items from ReceiptItems table
     ''' </summary>
     Public Sub PrintReceipt(
-        patient As String,
-        dentist As String,
-        notes As String,
-        subtotal As String,
-        vatExempt As String,
-        vatAmount As String,
-        total As String,
-        paid As String,
-        change As String,
-        method As String,
-        ref As String,
-        services As DataTable,
-        followups As DataTable,
-        items As DataTable)
+    patient As String,
+    dentist As String,
+    notes As String,
+    total As String,
+    paid As String,
+    change As String,
+    method As String,
+    ref As String,
+    services As DataTable,
+    followups As DataTable,
+    items As DataTable)
 
         ' Assign values
         _PatientName = patient
         _DentistName = dentist
         _Notes = notes
-        _Subtotal = subtotal
-        _VatExempt = vatExempt
-        _VatAmount = vatAmount
         _Total = total
         _AmountPaid = paid
         _Change = change
@@ -68,8 +62,8 @@ Public Module AdminDBPaymentReceiptPrinter
 
         ' Print setup - Better for 80mm thermal printer
         Dim pd As New PrintDocument()
-        pd.DefaultPageSettings.PaperSize = New PaperSize("80mm Thermal", 315, 0)  ' Continuous roll
-        pd.DefaultPageSettings.Margins = New Margins(10, 10, 10, 10)
+        pd.DefaultPageSettings.PaperSize = New PaperSize("58mm", 228, 1000) ' Continuous roll
+        pd.DefaultPageSettings.Margins = New Margins(5, 5, 5, 5)
 
         AddHandler pd.PrintPage, AddressOf SharedPrintPageHandler
 
@@ -95,156 +89,162 @@ Public Module AdminDBPaymentReceiptPrinter
 
     Private Sub SharedPrintPageHandler(sender As Object, e As PrintPageEventArgs)
         Dim g As Graphics = e.Graphics
-        Dim currentY As Single = 15.0F
-        Dim fontHeader As New Font("Consolas", 9, FontStyle.Bold)
-        Dim fontBody As New Font("Consolas", 8)
+        Dim y As Single = 30.0F
         Dim fontBold As New Font("Consolas", 8, FontStyle.Bold)
-        Dim leftMargin As Single = 8
-        Dim rightMargin As Single = 290
+        Dim fontBody As New Font("Consolas", 7)
+        Dim left As Single = 5
+        Dim right As Single = 185
 
-        Dim sfRight As New StringFormat() With {.Alignment = StringAlignment.Far}
-        Dim sfCenter As New StringFormat() With {.Alignment = StringAlignment.Center}
+        Dim rightAlign As New StringFormat() With {.Alignment = StringAlignment.Far}
+        Dim center As New StringFormat() With {.Alignment = StringAlignment.Center}
 
         ' ================= HEADER =================
         g.DrawString(ClinicName, New Font("Consolas", 10, FontStyle.Bold), Brushes.Black,
-                     New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 30), sfCenter)
-        currentY += 28
+                     New RectangleF(left, y, right - left, 30), center)
+        y += 40
 
         g.DrawString(ClinicAddress, New Font("Consolas", 7), Brushes.Black,
-                     New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 30), sfCenter)
-        currentY += 18
+                     New RectangleF(left, y, right - left, 25), center)
+        y += 30
 
         g.DrawString(ClinicContact, New Font("Consolas", 7), Brushes.Black,
-                     New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 20), sfCenter)
-        currentY += 22
+                     New RectangleF(left, y, right - left, 20), center)
+        y += 30
 
         g.DrawString("OFFICIAL RECEIPT", New Font("Consolas", 11, FontStyle.Bold), Brushes.Black,
-                     New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 30), sfCenter)
-        currentY += 30
+                     New RectangleF(left, y, right - left, 30), center)
+        y += 32
 
-        ' Basic Info
-        g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 16
-        g.DrawString("Patient: " & _PatientName, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 16
-        g.DrawString("Doctor: " & _DentistName, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 16
+        ' Info
+        g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, left, y)
+        y += 16
+        g.DrawString("Patient: " & _PatientName, fontBody, Brushes.Black, left, y)
+        y += 16
+        g.DrawString("Doctor: " & _DentistName, fontBody, Brushes.Black, left, y)
+        y += 18
 
         If Not String.IsNullOrEmpty(_RefNo) Then
-            g.DrawString("Ref No: " & _RefNo, fontBody, Brushes.Black, leftMargin, currentY)
-            currentY += 16
+            g.DrawString("Ref No: " & _RefNo, fontBody, Brushes.Black, left, y)
+            y += 16
         End If
 
-        g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 20
+        g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, left, y)
+        y += 20
 
-        ' ================= SERVICES =================
+        ' Services
         For Each row As DataRow In _ServicesDt.Rows
-            Dim sName As String = row("ServiceName").ToString().Trim()
-            Dim sPrice As String = "P" & CDec(row("Price")).ToString("F2")
+            Dim name As String = row("ServiceName").ToString().Trim()
+            Dim price As String = "P" & CDec(row("Price")).ToString("F2")
 
-            If g.MeasureString(sName, fontBody).Width > rightMargin - leftMargin - 70 Then
-                sName = sName.Substring(0, 28) & ".."
+            ' Services Truncation
+            If g.MeasureString(name, fontBody).Width > (right - left - 60) Then
+                ' Only substring if the name is actually longer than 25 chars
+                If name.Length > 25 Then
+                    name = name.Substring(0, 22) & ".."
+                End If
             End If
 
-            g.DrawString(sName, fontBody, Brushes.Black, leftMargin, currentY)
-            g.DrawString(sPrice, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-            currentY += 16
+            g.DrawString(name, fontBody, Brushes.Black, left, y)
+            g.DrawString(price, fontBody, Brushes.Black, right, y, rightAlign)
+            y += 16
         Next
 
-        g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 18
+        g.DrawString("".PadRight(32, "-"), fontBody, Brushes.Black, left, y)
+        y += 18
 
-        ' ================= ITEMS (from ReceiptItems) =================
+        ' Items
         If _ItemsDt IsNot Nothing AndAlso _ItemsDt.Rows.Count > 0 Then
-            g.DrawString("ITEMS USED:", fontBold, Brushes.Black, leftMargin, currentY)
-            currentY += 18
+            g.DrawString("ITEMS USED:", fontBold, Brushes.Black, left, y)
+            y += 18
 
             For Each row As DataRow In _ItemsDt.Rows
-                Dim itemName As String = row("ItemName").ToString().Trim()
-                Dim qty As Integer = Convert.ToInt32(row("Quantity"))
-                Dim lineTotal As Decimal = qty * Convert.ToDecimal(row("Price"))
+                Dim name As String = row("ItemName").ToString().Trim()
+                Dim qty As Integer = CInt(row("Quantity"))
+                Dim lineTotal As Decimal = qty * CDec(row("Price"))
 
-                Dim leftText As String = itemName & " x" & qty
+                Dim leftText As String = name & " x" & qty
                 Dim rightText As String = "P" & lineTotal.ToString("F2")
-
-                If g.MeasureString(leftText, fontBody).Width > rightMargin - leftMargin - 70 Then
-                    leftText = leftText.Substring(0, 25) & ".. x" & qty
+                ' Items Truncation
+                If g.MeasureString(leftText, fontBody).Width > (right - left - 85) Then
+                    ' Only substring if the text is actually longer than 25 chars
+                    If leftText.Length > 25 Then
+                        leftText = leftText.Substring(0, 22) & ".."
+                    End If
                 End If
 
-                g.DrawString(leftText, fontBody, Brushes.Black, leftMargin, currentY)
-                g.DrawString(rightText, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-                currentY += 16
+                g.DrawString(leftText, fontBody, Brushes.Black, left, y)
+                g.DrawString(rightText, fontBody, Brushes.Black, right, y, rightAlign)
+                y += 16
             Next
 
-            g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, leftMargin, currentY)
-            currentY += 18
+            g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, left, y)
+            y += 18
         End If
+        Dim totalDec As Decimal = CDec(_Total)
+        Dim vatExemptDec As Decimal = Math.Round(totalDec / 1.12D, 2)
+        Dim vatAmountDec As Decimal = Math.Round(totalDec - vatExemptDec, 2)
+        ' ================= VAT SECTION - CLEAN & PROFESSIONAL =================
+        g.DrawString("SUBTOTAL:", fontBody, Brushes.Black, left, y)
+        g.DrawString("P" & totalDec.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
+        y += 16
 
-        ' ================= VAT & TOTAL =================
-        g.DrawString("SUBTOTAL:", fontBody, Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & _Subtotal, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-        currentY += 16
+        g.DrawString("VATable Sales:", fontBody, Brushes.Black, left, y)
+        g.DrawString("P" & vatExemptDec.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
+        y += 16
 
-        g.DrawString("VATable Sales:", fontBody, Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & _VatExempt, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-        currentY += 16
+        g.DrawString("VAT (12%):", fontBody, Brushes.Black, left, y)
+        g.DrawString("P" & vatAmountDec.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
+        y += 22
 
-        g.DrawString("VAT (12%):", fontBody, Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & _VatAmount, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-        currentY += 20
+        ' Grand Total
+        g.DrawString("TOTAL AMOUNT:", New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, left, y)
+        g.DrawString("P" & _Total, New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, right, y, rightAlign)
+        y += 28
 
-        g.DrawString("TOTAL AMOUNT:", fontBold, Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & _Total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, rightMargin, currentY, sfRight)
-        currentY += 28
+        ' Payment
+        g.DrawString("Amount Paid:", fontBody, Brushes.Black, left, y)
+        g.DrawString("P" & _AmountPaid, fontBody, Brushes.Black, right, y, rightAlign)
+        y += 16
 
-        ' ================= PAYMENT =================
-        g.DrawString("Amount Paid:", fontBody, Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & _AmountPaid, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-        currentY += 16
+        g.DrawString("CHANGE:", fontBody, Brushes.Black, left, y)
+        g.DrawString("P" & _Change, fontBody, Brushes.Black, right, y, rightAlign)
+        y += 25
 
-        g.DrawString("CHANGE:", fontBody, Brushes.Black, leftMargin, currentY)
-        g.DrawString("P" & _Change, fontBody, Brushes.Black, rightMargin, currentY, sfRight)
-        currentY += 28
-
-        ' ================= FOLLOW-UPS =================
+        ' Follow-up
         If _FollowUpsDt IsNot Nothing AndAlso _FollowUpsDt.Rows.Count > 0 Then
-            g.DrawString("FOLLOW-UP SCHEDULE:", fontBold, Brushes.Black, leftMargin, currentY)
-            currentY += 18
-
+            g.DrawString("FOLLOW-UP SCHEDULE:", fontBold, Brushes.Black, left, y)
+            y += 18
             For Each row As DataRow In _FollowUpsDt.Rows
                 Dim fDate As String = Convert.ToDateTime(row("FollowUpDate")).ToString("MM/dd/yyyy")
-                Dim fReason As String = row("Reason").ToString()
-                g.DrawString(fDate & " - " & fReason, fontBody, Brushes.Black, leftMargin, currentY)
-                currentY += 16
+                Dim reason As String = row("Reason").ToString()
+                g.DrawString(fDate & " - " & reason, fontBody, Brushes.Black, left, y)
+                y += 16
             Next
-            currentY += 10
+            y += 12
         End If
 
-        ' ================= NOTES =================
-        g.DrawString("DENTIST NOTES:", fontBold, Brushes.Black, leftMargin, currentY)
-        currentY += 18
-
-        Dim notesRect As New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 160)
+        ' Notes
+        g.DrawString("DENTIST NOTES:", fontBold, Brushes.Black, left, y)
+        y += 18
+        Dim notesRect As New RectangleF(left, y, right - left, 140)
         g.DrawString(_Notes, fontBody, Brushes.Black, notesRect)
         Dim measured = g.MeasureString(_Notes, fontBody, notesRect.Size)
-        currentY += measured.Height + 20
+        y += measured.Height + 20
 
-        ' ================= FOOTER =================
-        g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 18
+        ' Footer
+        g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, left, y)
+        y += 18
 
-        g.DrawString("TOTAL AMOUNT: P" & _Total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
-        currentY += 22
-        g.DrawString("Method: " & _Method, fontBody, Brushes.Black, leftMargin, currentY)
-        currentY += 25
+        g.DrawString("TOTAL AMOUNT: P" & _Total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, left, y)
+        y += 20
+        g.DrawString("Method: " & _Method, fontBody, Brushes.Black, left, y)
+        y += 25
 
         g.DrawString("Thank you for visiting!", fontBody, Brushes.Black,
-                     New RectangleF(leftMargin, currentY, rightMargin - leftMargin, 40), sfCenter)
-
+                     New RectangleF(left, y, right - left, 40), center)
+        y += 65
         e.HasMorePages = False
     End Sub
-
     Public Function IsPrinterOnline(printerName As String) As Boolean
         Try
             Dim query As String = "SELECT * FROM Win32_Printer WHERE Name = '" & printerName.Replace("\", "\\") & "'"
@@ -266,9 +266,6 @@ Public Module AdminDBPaymentReceiptPrinter
         patientName As String,
         dentistName As String,
         notes As String,
-        subtotal As String,
-        vatExempt As String,
-        vatAmount As String,
         total As String,
         amountPaid As String,
         change As String,
@@ -277,7 +274,9 @@ Public Module AdminDBPaymentReceiptPrinter
         servicesDt As DataTable,
         itemsDt As DataTable,
         followUpsDt As DataTable) As String
-
+        Dim totalDec As Decimal = CDec(total)
+        Dim vatExemptDec As Decimal = Math.Round(totalDec / 1.12D, 2)
+        Dim vatAmountDec As Decimal = Math.Round(totalDec - vatExemptDec, 2)
         Dim flashMsg As String = GetReceiptHeader() & vbCrLf & vbCrLf
 
         flashMsg &= "Date: " & DateTime.Now.ToString("G") & vbCrLf
@@ -313,9 +312,9 @@ Public Module AdminDBPaymentReceiptPrinter
         flashMsg &= "--------------------------------" & vbCrLf
 
         ' Financials
-        flashMsg &= "SUBTOTAL:           P" & subtotal & vbCrLf
-        flashMsg &= "VATable Sales:      P" & vatExempt & vbCrLf
-        flashMsg &= "VAT (12%):          P" & vatAmount & vbCrLf & vbCrLf
+        flashMsg &= "SUBTOTAL:           P" & totalDec.ToString("F2") & vbCrLf
+        flashMsg &= "VATable Sales:      P" & vatExemptDec.ToString("F2") & vbCrLf
+        flashMsg &= "VAT (12%):          P" & vatAmountDec.ToString("F2") & vbCrLf & vbCrLf
         flashMsg &= "TOTAL AMOUNT:       P" & total & vbCrLf & vbCrLf
 
         ' Payment

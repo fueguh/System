@@ -15,8 +15,6 @@ Public Class AdminDBPaymentHistory
 
     ' Receipt values
     Private SelectedTotalAmount As Decimal = 0D
-    Private SelectedVatExempt As Decimal = 0D
-    Private SelectedVatAmount As Decimal = 0D
     Private SelectedAmountPaid As Decimal = 0D
     Private SelectedChange As Decimal = 0D
 
@@ -132,7 +130,7 @@ Public Class AdminDBPaymentHistory
             Exit Sub
         End If
 
-        ' Capture basic info
+        ' ================= BASIC INFO =================
         SelectedReceiptID = CInt(row.Cells("ReceiptID").Value)
         SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
         SelectedPatientName = row.Cells("Patient Name").Value.ToString()
@@ -143,70 +141,51 @@ Public Class AdminDBPaymentHistory
         SelectedAmountPaid = Convert.ToDecimal(row.Cells("Cash Tendered").Value)
         SelectedChange = Convert.ToDecimal(row.Cells("Change Given").Value)
 
-        SelectedVatAmount = If(row.Cells("VATAmount").Value Is DBNull.Value, 0D, Convert.ToDecimal(row.Cells("VATAmount").Value))
-
-        If SelectedVatAmount > 0 Then
-            SelectedVatExempt = SelectedTotalAmount - SelectedVatAmount
-        Else
-            SelectedVatExempt = Math.Round(SelectedTotalAmount / 1.12D, 2)
-        End If
-
-        ' Fetch details
+        ' ================= FETCH DETAILS =================
         FetchDetailsForReprint(SelectedAppointmentID, SelectedReceiptID)
 
-        ' ================= DEBUG: Check what was loaded =================
+        ' ================= DEBUG =================
         Dim msg As String = $"ReceiptID: {SelectedReceiptID}" & vbCrLf &
-                           $"Services: {dtServicesForPrinting.Rows.Count} row(s)" & vbCrLf &
-                           $"Items: {dtItemsForPrinting.Rows.Count} row(s)" & vbCrLf &
-                           $"Follow-ups: {dtFollowUpsForPrinting.Rows.Count} row(s)"
+                        $"Services: {dtServicesForPrinting.Rows.Count} row(s)" & vbCrLf &
+                        $"Items: {dtItemsForPrinting.Rows.Count} row(s)" & vbCrLf &
+                        $"Follow-ups: {dtFollowUpsForPrinting.Rows.Count} row(s)"
 
         MessageBox.Show(msg, "Debug - Data Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        If dtItemsForPrinting.Rows.Count = 0 Then
-            MessageBox.Show("No items were found for this receipt in the ReceiptItems table." & vbCrLf &
-                           "Make sure items were saved with ItemType = 'Item' when the payment was created.",
-                           "No Items Found", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-        End If
-
-        ' Generate preview
+        ' ================= PREVIEW =================
         Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
-            SelectedPatientName,
-            SelectedDentistName,
-            SelectedTreatmentNotes,
-            SelectedTotalAmount.ToString("F2"),
-            SelectedVatExempt.ToString("F2"),
-            SelectedVatAmount.ToString("F2"),
-            SelectedTotalAmount.ToString("F2"),
-            SelectedAmountPaid.ToString("F2"),
-            SelectedChange.ToString("F2"),
-            SelectedPaymentMethod,
-            SelectedRefNo,
-            dtServicesForPrinting,
-            dtItemsForPrinting,        ' ← Items DataTable
-            dtFollowUpsForPrinting
-        )
+    SelectedPatientName,
+    SelectedDentistName,
+    SelectedTreatmentNotes,
+    SelectedTotalAmount.ToString("F2"),
+    SelectedAmountPaid.ToString("F2"),
+    SelectedChange.ToString("F2"),
+    SelectedPaymentMethod,
+    SelectedRefNo,
+    dtServicesForPrinting,
+    dtItemsForPrinting,
+    dtFollowUpsForPrinting
+)
 
         MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
+        ' ================= PRINT =================
         If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
-                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                       MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
 
             AdminDBPaymentReceiptPrinter.PrintReceipt(
-                SelectedPatientName,
-                SelectedDentistName,
-                SelectedTreatmentNotes,
-                SelectedTotalAmount.ToString("F2"),
-                SelectedVatExempt.ToString("F2"),
-                SelectedVatAmount.ToString("F2"),
-                SelectedTotalAmount.ToString("F2"),
-                SelectedAmountPaid.ToString("F2"),
-                SelectedChange.ToString("F2"),
-                SelectedPaymentMethod,
-                SelectedRefNo,
-                dtServicesForPrinting,
-                dtFollowUpsForPrinting,
-                dtItemsForPrinting
-            )
+    SelectedPatientName,
+    SelectedDentistName,
+    SelectedTreatmentNotes,
+    SelectedTotalAmount.ToString("F2"),
+    SelectedAmountPaid.ToString("F2"),
+    SelectedChange.ToString("F2"),
+    SelectedPaymentMethod,
+    SelectedRefNo,
+    dtServicesForPrinting,
+    dtFollowUpsForPrinting,
+    dtItemsForPrinting
+)
         End If
     End Sub
 
