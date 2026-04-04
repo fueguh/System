@@ -223,9 +223,7 @@ Public Class AdminDBPayment
         End If
 
         If ComboBoxPaymentMethod.Text = "Gcash" Then
-            Dim refNo As String = txtReferenceNo.Text.Trim()
-
-            If String.IsNullOrWhiteSpace(refNo) Then
+            If String.IsNullOrWhiteSpace(txtReferenceNo.Text) Then
                 MessageBox.Show("Enter GCash reference number.")
                 Exit Sub
             End If
@@ -233,81 +231,108 @@ Public Class AdminDBPayment
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
+
             Using trans As SqlTransaction = con.BeginTransaction()
 
                 Try
-                    ' ================= CHECK DUPLICATE =================
+                    ' ================= CHECK EXISTING RECEIPT =================
                     Dim checkCmd As New SqlCommand("
-                    SELECT ReceiptID FROM Receipts WHERE AppointmentID = @AID
-                ", con, trans)
+                        SELECT ReceiptID FROM Receipts WHERE AppointmentID = @AID
+                    ", con, trans)
 
                     checkCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
 
                     Dim existingID As Object = checkCmd.ExecuteScalar()
-
                     Dim receiptID As Integer = 0
 
+                    ' ===========================================================
+                    ' UPDATE EXISTING RECEIPT (NO STOCK DEDUCTION HERE)
+                    ' ===========================================================
                     If existingID IsNot Nothing Then
+
                         receiptID = Convert.ToInt32(existingID)
 
-                        ' ================= UPDATE =================
                         Dim updateCmd As New SqlCommand("
-                        UPDATE Receipts
-                        SET TotalAmount = @Total,
-                            VATableSales = @VATable,
-                            VATAmount = @VAT,
-                            PaymentMethod = @Method,
-                            ReferenceNumber = @Ref,
-                            AmountPaid = @Paid,
-                            ChangeAmount = @Change,
-                            Status = 'Completed',
-                            voidedAt = Null
-
-                        WHERE ReceiptID = @RID
-                    ", con, trans)
+                            UPDATE Receipts
+                            SET TotalAmount = @Total,
+                                VATableSales = @VATable,
+                                VATAmount = @VAT,
+                                PaymentMethod = @Method,
+                                ReferenceNumber = @Ref,
+                                AmountPaid = @Paid,
+                                ChangeAmount = @Change,
+                                Status = 'Completed',
+                                voidedAt = NULL
+                            WHERE ReceiptID = @RID
+                        ", con, trans)
 
                         updateCmd.Parameters.AddWithValue("@RID", receiptID)
-
                         updateCmd.Parameters.AddWithValue("@Total", totalAmount)
                         updateCmd.Parameters.AddWithValue("@VATable", vatExempt)
                         updateCmd.Parameters.AddWithValue("@VAT", vatAmount)
                         updateCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
                         updateCmd.Parameters.AddWithValue("@Ref",
-                        If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                            If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
                         updateCmd.Parameters.AddWithValue("@Paid", amountPaid)
                         updateCmd.Parameters.AddWithValue("@Change", changeAmount)
 
                         updateCmd.ExecuteNonQuery()
 
                     Else
-                        ' ================= INSERT =================
+
+                        ' ===========================================================
+                        ' INSERT NEW RECEIPT
+                        ' ===========================================================
                         Dim insertCmd As New SqlCommand("
-                        INSERT INTO Receipts
-                        (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount,
-                         PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
-                        VALUES
-                        (@AID, @PID, @UID, @Total, @VATable, @VAT,
-                         @Method, @Ref, @Paid, @Change, 'Completed')
-                    ", con, trans)
+                            INSERT INTO Receipts
+                            (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount,
+                             PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
+                            VALUES
+                            (@AID, @PID, @UID, @Total, @VATable, @VAT,
+                             @Method, @Ref, @Paid, @Change, 'Completed')
+                        ", con, trans)
 
                         insertCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
                         insertCmd.Parameters.AddWithValue("@PID", SelectedPatientID)
                         insertCmd.Parameters.AddWithValue("@UID", SystemSession.LoggedInUserID)
-
                         insertCmd.Parameters.AddWithValue("@Total", totalAmount)
                         insertCmd.Parameters.AddWithValue("@VATable", vatExempt)
                         insertCmd.Parameters.AddWithValue("@VAT", vatAmount)
-
                         insertCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
                         insertCmd.Parameters.AddWithValue("@Ref",
-                        If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                            If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
                         insertCmd.Parameters.AddWithValue("@Paid", amountPaid)
                         insertCmd.Parameters.AddWithValue("@Change", changeAmount)
 
                         insertCmd.ExecuteNonQuery()
+
+                        ' ===========================================================
+                        ' ✅ STOCK DEDUCTION (NEW FEATURE ADDED HERE)
+                        ' ===========================================================
+                        For Each row As DataGridViewRow In dgvReceiptItems.Rows
+                            If Not row.IsNewRow Then
+
+                                Dim itemID As Integer = Convert.ToInt32(row.Cells("ItemID").Value)
+                                Dim qty As Integer = Convert.ToInt32(row.Cells("Quantity").Value)
+
+                                Dim stockCmd As New SqlCommand("
+                                    INSERT INTO StockTransactions
+                                    (ItemID, TransactionType, Quantity, TransactionDate)
+                                    VALUES
+                                    (@ItemID, 'OUT', @Qty, @Date)
+                                ", con, trans)
+
+                                stockCmd.Parameters.AddWithValue("@ItemID", itemID)
+                                stockCmd.Parameters.AddWithValue("@Qty", qty)
+                                stockCmd.Parameters.AddWithValue("@Date", DateTime.Now)
+
+                                stockCmd.ExecuteNonQuery()
+
+                            End If
+                        Next
+
                     End If
 
-                    ' ================= COMMIT =================
                     trans.Commit()
 
                 Catch ex As Exception
@@ -320,12 +345,12 @@ Public Class AdminDBPayment
 
         ' ================= AUDIT =================
         SystemSession.LogAudit(
-        $"Payment P{totalAmount:N2} for {SelectedPatientName}",
-        "Payment",
-        SystemSession.LoggedInUserID,
-        SystemSession.LoggedInFullName,
-        SystemSession.LoggedInRole
-    )
+            $"Payment P{totalAmount:N2} for {SelectedPatientName}",
+            "Payment",
+            SystemSession.LoggedInUserID,
+            SystemSession.LoggedInFullName,
+            SystemSession.LoggedInRole
+        )
 
         LoadPendingPayments()
         ClearBillingUI()
