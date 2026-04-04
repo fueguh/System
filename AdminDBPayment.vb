@@ -28,32 +28,36 @@ Public Class AdminDBPayment
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim sql As String = "
-            SELECT 
-                A.AppointmentID, 
-                P.PatientID,
-                P.FullName AS [Patient Name], 
-                U.FullName AS [Dentist], 
-                A.Date, 
-                ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
-                ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
-                ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
-                ISNULL((
-                    SELECT STRING_AGG(CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + F.Reason, ' | ')
-                    FROM PatientFollowUps F 
-                    WHERE F.AppointmentID = A.AppointmentID
-                ), 'No follow-ups') AS [Follow Ups]
-            FROM Appointments A
-            INNER JOIN Patients P ON A.PatientID = P.PatientID
-            INNER JOIN Users U ON A.UserID = U.UserID
-            LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
-            LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
-            LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
-            WHERE A.Status = 'Completed'
-            AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)
-            GROUP BY 
-                A.AppointmentID, P.PatientID, P.FullName, U.FullName, 
-                A.Date, T.TreatmentNotes, T.Prescriptions
-            ORDER BY A.Date DESC"
+                SELECT 
+                    A.AppointmentID, 
+                    P.PatientID,
+                    P.FullName AS [Patient Name], 
+                    U.FullName AS [Dentist], 
+                    A.Date, 
+                    ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
+                    ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
+                    ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
+                    ISNULL((
+                        SELECT STRING_AGG(CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + ISNULL(F.Reason, ''), ' | ')
+                        FROM PatientFollowUps F 
+                        WHERE F.AppointmentID = A.AppointmentID
+                    ), 'No follow-ups') AS [Follow Ups]
+                FROM Appointments A
+                INNER JOIN Patients P ON A.PatientID = P.PatientID
+                INNER JOIN Users U ON A.UserID = U.UserID
+                LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
+                LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
+                LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
+                WHERE A.Status = 'Completed'
+                  AND NOT EXISTS (
+                        SELECT 1 FROM Receipts R 
+                        WHERE R.AppointmentID = A.AppointmentID 
+                          AND R.Status = 'Active'           -- Only active receipts block pending
+                  )
+                GROUP BY 
+                    A.AppointmentID, P.PatientID, P.FullName, U.FullName, 
+                    A.Date, T.TreatmentNotes, T.Prescriptions
+                ORDER BY A.Date DESC"
 
             Using da As New SqlDataAdapter(sql, con)
                 Dim dt As New DataTable()
@@ -103,16 +107,6 @@ Public Class AdminDBPayment
         End Try
     End Sub
 
-    Private Sub FetchDentistName()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim cmd As New SqlCommand("SELECT U.FullName FROM Appointments A INNER JOIN Users U ON A.UserID = U.UserID WHERE A.AppointmentID = @AID", con)
-            cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
-            Dim res = cmd.ExecuteScalar()
-            SelectedDentistName = If(res IsNot Nothing, res.ToString(), "N/A")
-        End Using
-    End Sub
-
     ' ==================================================================
     ' REGION: SERVICES LOADING & CALCULATION
     ' ==================================================================
@@ -128,30 +122,19 @@ Public Class AdminDBPayment
 
             dgvServices.DataSource = dt
 
-            ' Hide ServiceID column
-            If dgvServices.Columns.Contains("ServiceID") Then
-                dgvServices.Columns("ServiceID").Visible = False
-            End If
+            If dgvServices.Columns.Contains("ServiceID") Then dgvServices.Columns("ServiceID").Visible = False
+            If dgvServices.Columns.Contains("ServiceName") Then dgvServices.Columns("ServiceName").AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
-            If dgvServices.Columns.Contains("ServiceName") Then
-                dgvServices.Columns("ServiceName").AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-            End If
-
-            ' === IMPORTANT: Calculate service total and update UI ===
             CalculateServiceTotal()
         End Using
     End Sub
 
     Private Sub CalculateServiceTotal()
         Dim dt As DataTable = TryCast(dgvServices.DataSource, DataTable)
-        If dt Is Nothing Then
-            currentTotal = 0D
-        Else
-            Dim result = dt.Compute("SUM(Price)", "")
-            currentTotal = If(IsDBNull(result), 0D, Convert.ToDecimal(result))
-        End If
+        currentTotal = If(dt Is Nothing, 0D,
+                        If(IsDBNull(dt.Compute("SUM(Price)", "")), 0D, Convert.ToDecimal(dt.Compute("SUM(Price)", ""))))
 
-        UpdateGrandTotalDisplay()   ' This will now correctly include services + items
+        UpdateGrandTotalDisplay()
     End Sub
 
     ' ==================================================================
@@ -171,11 +154,10 @@ Public Class AdminDBPayment
         txtAmountPaid.ReadOnly = isGcash
 
         If isGcash Then
-            UpdateGrandTotalDisplay()        ' Clean & consistent
+            UpdateGrandTotalDisplay()
         Else
-            ' For Cash: preserve user input when possible
             If String.IsNullOrWhiteSpace(txtAmountPaid.Text) OrElse
-           Decimal.TryParse(txtAmountPaid.Text, 0D) = currentTotal Then
+               Decimal.TryParse(txtAmountPaid.Text, 0D) = currentTotal Then
                 txtAmountPaid.Clear()
             End If
         End If
@@ -204,10 +186,10 @@ Public Class AdminDBPayment
             Exit Sub
         End If
 
-        ' --- Calculations (only raw sums + what we need for DB) ---
+        ' --- Calculations ---
         Dim serviceTotal As Decimal = currentTotal
         Dim itemTotal As Decimal = GetItemTotal()
-        Dim totalAmount As Decimal = serviceTotal + itemTotal
+        Dim totalAmount As Decimal = serviceTotal + itemTotal          ' Gross Total (VAT Inclusive)
 
         Dim amountPaid As Decimal = 0
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
@@ -221,9 +203,9 @@ Public Class AdminDBPayment
         Dim changeAmount As Decimal = amountPaid - totalAmount
         If changeAmount < 0 Then changeAmount = 0
 
-        ' VAT Breakdown (required for DB and receipt)
-        Dim subTotal As Decimal = If(totalAmount > 0, totalAmount / 1.12D, 0D)
-        Dim vatAmount As Decimal = totalAmount - subTotal
+        ' Correct VAT Breakdown
+        Dim vatAmount As Decimal = If(totalAmount > 0, totalAmount - (totalAmount / 1.12D), 0D)
+        Dim vatExempt As Decimal = totalAmount - vatAmount               ' VATable Sales
 
         If String.IsNullOrEmpty(ComboBoxPaymentMethod.Text) Then
             MessageBox.Show("Please select a payment method.")
@@ -239,9 +221,9 @@ Public Class AdminDBPayment
                 Exit Sub
             End If
 
-            If Not System.Text.RegularExpressions.Regex.IsMatch(refNo, "^\d{13}$") Then
-                Dim confirm = MessageBox.Show("Standard GCash reference numbers are 13 digits. Proceed anyway?",
-                                    "Format Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            If Not System.Text.RegularExpressions.Regex.IsMatch(refNo, "^\d{10,20}$") Then
+                Dim confirm = MessageBox.Show("GCash reference number should be 10-20 digits. Proceed anyway?",
+                                              "Format Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                 If confirm = DialogResult.No Then
                     txtReferenceNo.Focus()
                     Exit Sub
@@ -255,23 +237,33 @@ Public Class AdminDBPayment
                 con.Open()
                 Using trans As SqlTransaction = con.BeginTransaction()
                     Try
-                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber, SubTotal, VATAmount, GrandTotal, AmountPaid, ChangeAmount) " &
-                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref, @Sub, @Vat, @Grand, @Paid, @Change)"
+                        Dim sql As String = "
+                            INSERT INTO Receipts 
+                            (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount, 
+                             PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
+                            VALUES 
+                            (@AID, @PID, @UID, @TotalAmount, @VATableSales, @VATAmount, 
+                             @Method, @Ref, @AmountPaid, @ChangeAmount, 'Active')"
 
                         Using cmd As New SqlCommand(sql, con, trans)
                             cmd.Parameters.Add("@AID", SqlDbType.Int).Value = SelectedAppointmentID
                             cmd.Parameters.Add("@PID", SqlDbType.Int).Value = SelectedPatientID
                             cmd.Parameters.Add("@UID", SqlDbType.Int).Value = SystemSession.LoggedInUserID
-                            cmd.Parameters.Add("@Total", SqlDbType.Decimal).Value = totalAmount
-                            cmd.Parameters("@Total").Precision = 18
-                            cmd.Parameters("@Total").Scale = 2
-                            cmd.Parameters.Add("@Method", SqlDbType.VarChar).Value = ComboBoxPaymentMethod.Text
-                            cmd.Parameters.Add("@Ref", SqlDbType.VarChar).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
-                            cmd.Parameters.Add("@Sub", SqlDbType.Decimal).Value = subTotal
-                            cmd.Parameters.Add("@Vat", SqlDbType.Decimal).Value = vatAmount
-                            cmd.Parameters.Add("@Grand", SqlDbType.Decimal).Value = totalAmount
-                            cmd.Parameters.Add("@Paid", SqlDbType.Decimal).Value = amountPaid
-                            cmd.Parameters.Add("@Change", SqlDbType.Decimal).Value = changeAmount
+
+                            cmd.Parameters.Add("@TotalAmount", SqlDbType.Decimal).Value = totalAmount
+                            cmd.Parameters.Add("@VATableSales", SqlDbType.Decimal).Value = vatExempt
+                            cmd.Parameters.Add("@VATAmount", SqlDbType.Decimal).Value = vatAmount
+
+                            cmd.Parameters.Add("@Method", SqlDbType.VarChar, 20).Value = ComboBoxPaymentMethod.Text
+                            cmd.Parameters.Add("@Ref", SqlDbType.VarChar, 50).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
+                            cmd.Parameters.Add("@AmountPaid", SqlDbType.Decimal).Value = amountPaid
+                            cmd.Parameters.Add("@ChangeAmount", SqlDbType.Decimal).Value = changeAmount
+
+                            ' Precision for decimal fields
+                            For Each p In {"@TotalAmount", "@VATableSales", "@VATAmount", "@AmountPaid", "@ChangeAmount"}
+                                cmd.Parameters(p).Precision = 18
+                                cmd.Parameters(p).Scale = 2
+                            Next
 
                             Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
@@ -279,23 +271,20 @@ Public Class AdminDBPayment
                                 trans.Commit()
 
                                 ' Audit Logging
-                                Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1}. Change: P{2}",
-                                                                  totalAmount.ToString("N2"),
-                                                                  SelectedPatientName,
-                                                                  changeAmount.ToString("N2"))
+                                Dim auditMsg As String = $"Processed payment of P{totalAmount:N2} for patient {SelectedPatientName}. Change: P{changeAmount:N2}"
                                 SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
 
-                                ' === UPDATED: Flash Preview - Pass pre-computed values ===
+                                ' Flash Preview
                                 Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
                                     SelectedPatientName,
                                     SelectedDentistName,
                                     SelectedTreatmentNotes,
-                                    subTotal.ToString("F2"),           ' subtotal
-                                    subTotal.ToString("F2"),           ' vatExempt (VATable Sales)
-                                    vatAmount.ToString("F2"),          ' vatAmount
-                                    totalAmount.ToString("F2"),        ' total
-                                    amountPaid.ToString("F2"),         ' amountPaid
-                                    changeAmount.ToString("F2"),       ' change
+                                    totalAmount.ToString("F2"),      ' Gross Subtotal
+                                    vatExempt.ToString("F2"),        ' VATable Sales
+                                    vatAmount.ToString("F2"),        ' VAT Amount
+                                    totalAmount.ToString("F2"),      ' Total
+                                    amountPaid.ToString("F2"),
+                                    changeAmount.ToString("F2"),
                                     ComboBoxPaymentMethod.Text,
                                     txtReferenceNo.Text.Trim(),
                                     TryCast(dgvServices.DataSource, DataTable),
@@ -307,24 +296,22 @@ Public Class AdminDBPayment
 
                                 ' Ask to Print
                                 Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
-                                              "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                                    "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
 
                                 If askPrint = DialogResult.Yes Then
-                                    Dim dtServicesPrint As DataTable = TryCast(dgvServices.DataSource, DataTable)
-                                    If dtServicesPrint Is Nothing Then dtServicesPrint = New DataTable()
+                                    Dim dtServicesPrint As DataTable = If(TryCast(dgvServices.DataSource, DataTable), New DataTable())
                                     Dim dtFollowUpsPrint As DataTable = GetFollowUps()
 
-                                    ' === UPDATED: PrintReceipt - Pass pre-computed values ===
                                     AdminDBPaymentReceiptPrinter.PrintReceipt(
                                         SelectedPatientName,
                                         SelectedDentistName,
                                         SelectedTreatmentNotes,
-                                        subTotal.ToString("F2"),           ' subtotal
-                                        subTotal.ToString("F2"),           ' vatExempt
-                                        vatAmount.ToString("F2"),          ' vatAmount
-                                        totalAmount.ToString("F2"),        ' total
-                                        amountPaid.ToString("F2"),         ' paid
-                                        changeAmount.ToString("F2"),       ' change
+                                        totalAmount.ToString("F2"),
+                                        vatExempt.ToString("F2"),
+                                        vatAmount.ToString("F2"),
+                                        totalAmount.ToString("F2"),
+                                        amountPaid.ToString("F2"),
+                                        changeAmount.ToString("F2"),
                                         ComboBoxPaymentMethod.Text,
                                         txtReferenceNo.Text.Trim(),
                                         dtServicesPrint,
@@ -332,7 +319,9 @@ Public Class AdminDBPayment
                                     )
                                 End If
 
-                                GoTo SuccessCleanup
+                                LoadPendingPayments()
+                                ClearBillingUI()
+                                MessageBox.Show("Payment processed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
                             Else
                                 trans.Rollback()
                                 MessageBox.Show("Save failed: No database rows were affected.")
@@ -347,16 +336,13 @@ Public Class AdminDBPayment
                 MessageBox.Show("Connection Error: " & ex.Message)
             End Try
         End Using
-        Exit Sub
-
-SuccessCleanup:
-        LoadPendingPayments()
-        ClearBillingUI()
     End Sub
 
     ' ==================================================================
     ' REGION: INVENTORY & PRESCRIPTION ITEMS (NEW FEATURE)
     ' ==================================================================
+    ' (Your inventory code is fine - no changes needed here)
+
     Private Sub SetupReceiptGrid()
         dgvReceiptItems.Columns.Clear()
 
@@ -373,7 +359,6 @@ SuccessCleanup:
 
         dgvReceiptItems.Columns("ItemID").Visible = False
 
-        ' Important for right-click functionality
         dgvReceiptItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvReceiptItems.AllowUserToAddRows = False
         dgvReceiptItems.ReadOnly = True

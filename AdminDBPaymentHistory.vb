@@ -12,11 +12,10 @@ Public Class AdminDBPaymentHistory
     Private SelectedRefNo As String = ""
     Private SelectedPaymentMethod As String = ""
 
-    ' Corrected variables from Receipts table
-    Private SelectedSubTotal As String = "0.00"      ' Gross Subtotal (VAT Inclusive) = Total
-    Private SelectedVatExempt As String = "0.00"     ' VATable Sales (Net)
+    ' Correct variables from Receipts table (matching your current table)
+    Private SelectedTotalAmount As String = "0.00"     ' Gross Total (what patient paid)
+    Private SelectedVatExempt As String = "0.00"      ' VATableSales (Net of VAT)
     Private SelectedVatAmount As String = "0.00"
-    Private SelectedTotalAmount As String = "0.00"
     Private SelectedAmountPaid As String = "0.00"
     Private SelectedChange As String = "0.00"
 
@@ -42,9 +41,9 @@ Public Class AdminDBPaymentHistory
                         R.AppointmentID,
                         P.FullName AS [Patient Name],
                         U.FullName AS [Dentist],
-                        R.SubTotal,
-                        R.VATAmount,
                         R.TotalAmount AS [Total Bill],
+                        R.VATableSales AS [VATable Sales],
+                        R.VATAmount,
                         R.AmountPaid AS [Cash Tendered],
                         R.ChangeAmount AS [Change Given],
                         R.PaymentMethod AS [Method],
@@ -65,7 +64,6 @@ Public Class AdminDBPaymentHistory
                     INNER JOIN Patients P ON R.PatientID = P.PatientID
                     INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
                     INNER JOIN Users U ON A.UserID = U.UserID
-
                     "
 
                 If Not String.IsNullOrEmpty(searchName) Then
@@ -100,7 +98,7 @@ Public Class AdminDBPaymentHistory
                     If dgvHistory.Columns.Contains("Total Bill") Then dgvHistory.Columns("Total Bill").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("Cash Tendered") Then dgvHistory.Columns("Cash Tendered").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("Change Given") Then dgvHistory.Columns("Change Given").DefaultCellStyle.Format = "N2"
-                    If dgvHistory.Columns.Contains("SubTotal") Then dgvHistory.Columns("SubTotal").DefaultCellStyle.Format = "N2"
+                    If dgvHistory.Columns.Contains("VATable Sales") Then dgvHistory.Columns("VATable Sales").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATAmount") Then dgvHistory.Columns("VATAmount").DefaultCellStyle.Format = "N2"
 
                     ' Hide ID columns
@@ -138,20 +136,20 @@ Public Class AdminDBPaymentHistory
         SelectedPaymentMethod = row.Cells("Method").Value.ToString()
         SelectedRefNo = If(row.Cells("Ref No").Value IsNot DBNull.Value, row.Cells("Ref No").Value.ToString(), "")
 
-        ' Get values from DB - Now treating SubTotal as Gross Total
+        ' Get values from DB
         SelectedTotalAmount = CDec(row.Cells("Total Bill").Value).ToString("F2")
         SelectedAmountPaid = CDec(row.Cells("Cash Tendered").Value).ToString("F2")
         SelectedChange = CDec(row.Cells("Change Given").Value).ToString("F2")
-
-        ' Correct mapping
-        SelectedSubTotal = CDec(row.Cells("Total Bill").Value).ToString("F2")   ' Gross Subtotal = Total
         SelectedVatAmount = If(row.Cells("VATAmount").Value IsNot DBNull.Value,
                               CDec(row.Cells("VATAmount").Value).ToString("F2"), "0.00")
 
-        ' Calculate VATable Sales from Total (safest way for reprint)
+        ' Calculate VATable Sales from Total (safest for reprint)
         Dim totalVal As Decimal = CDec(SelectedTotalAmount)
         Dim vatExemptVal As Decimal = If(totalVal > 0, totalVal / 1.12D, 0D)
         SelectedVatExempt = vatExemptVal.ToString("F2")
+
+        ' We use TotalAmount as Gross Subtotal
+        Dim selectedSubTotal As String = SelectedTotalAmount
 
         FetchDetailsForReprint(SelectedAppointmentID)
 
@@ -160,7 +158,7 @@ Public Class AdminDBPaymentHistory
             SelectedPatientName,
             SelectedDentistName,
             SelectedTreatmentNotes,
-            SelectedSubTotal,          ' Gross Subtotal
+            selectedSubTotal,          ' Gross Subtotal
             SelectedVatExempt,         ' VATable Sales
             SelectedVatAmount,         ' VAT Amount
             SelectedTotalAmount,       ' Total
@@ -184,7 +182,7 @@ Public Class AdminDBPaymentHistory
                 SelectedPatientName,
                 SelectedDentistName,
                 SelectedTreatmentNotes,
-                SelectedSubTotal,
+                selectedSubTotal,
                 SelectedVatExempt,
                 SelectedVatAmount,
                 SelectedTotalAmount,
@@ -272,10 +270,10 @@ Public Class AdminDBPaymentHistory
 
                     Dim voidCmd As New SqlCommand("
                     UPDATE Receipts
-                    SET Status='Voided',
+                    SET Status = 'Voided',
                         VoidedAt = GETDATE(),
                         VoidedBy = @user
-                    WHERE ReceiptID=@id", con, trans)
+                    WHERE ReceiptID = @id", con, trans)
 
                     voidCmd.Parameters.AddWithValue("@id", receiptID)
                     voidCmd.Parameters.AddWithValue("@user", SystemSession.LoggedInFullName)
@@ -290,7 +288,7 @@ Public Class AdminDBPaymentHistory
                     LoadPaymentHistory()
 
                 Catch ex As Exception
-                    trans.Rollback()
+                    If trans.Connection IsNot Nothing Then trans.Rollback()
                     MessageBox.Show("Error voiding receipt: " & ex.Message)
                 End Try
             End Using

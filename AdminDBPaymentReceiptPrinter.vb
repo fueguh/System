@@ -7,10 +7,10 @@ Public Module AdminDBPaymentReceiptPrinter
     Private _PatientName As String
     Private _DentistName As String
     Private _Notes As String
-    Private _Subtotal As String          ' Gross Subtotal (VAT Inclusive) = Total
-    Private _VatExempt As String         ' VATable Sales (Net of VAT)
+    Private _Subtotal As String          ' Gross Subtotal = TotalAmount (VAT Inclusive)
+    Private _VatExempt As String         ' VATableSales (Net of VAT)
     Private _VatAmount As String
-    Private _Total As String             ' Should be equal to Subtotal
+    Private _Total As String             ' Should always equal _Subtotal
     Private _AmountPaid As String
     Private _Change As String
     Private _Method As String
@@ -31,16 +31,16 @@ Public Module AdminDBPaymentReceiptPrinter
     End Function
 
     ''' <summary>
-    ''' Print Receipt - Receives pre-computed values
+    ''' Print Receipt - Receives pre-computed values from DB
     ''' </summary>
     Public Sub PrintReceipt(
         patient As String,
         dentist As String,
         notes As String,
-        subtotal As String,      ' Gross Subtotal (VAT Inclusive)
-        vatExempt As String,     ' VATable Sales
+        subtotal As String,      ' Gross Total (TotalAmount)
+        vatExempt As String,     ' VATableSales
         vatAmount As String,
-        total As String,         ' Should be same as subtotal
+        total As String,         ' Should be equal to subtotal
         paid As String,
         change As String,
         method As String,
@@ -48,6 +48,7 @@ Public Module AdminDBPaymentReceiptPrinter
         services As DataTable,
         followups As DataTable)
 
+        ' Assign values
         _PatientName = patient
         _DentistName = dentist
         _Notes = notes
@@ -62,6 +63,7 @@ Public Module AdminDBPaymentReceiptPrinter
         _ServicesDt = services
         _FollowUpsDt = followups
 
+        ' Print setup
         Dim pd As New PrintDocument()
         pd.DefaultPageSettings.PaperSize = New PaperSize("Custom", 300, 1000)
         AddHandler pd.PrintPage, AddressOf SharedPrintPageHandler
@@ -74,6 +76,7 @@ Public Module AdminDBPaymentReceiptPrinter
             If Not IsPrinterOnline(pkName) Then
                 If MessageBox.Show($"Printer '{pkName}' is offline. Print anyway?", "Offline", MessageBoxButtons.YesNo) = DialogResult.No Then Exit Sub
             End If
+
             Try
                 pd.Print()
             Catch ex As Exception
@@ -127,7 +130,7 @@ Public Module AdminDBPaymentReceiptPrinter
         g.DrawString("--------------------------------", fontBody, Brushes.Black, leftMargin, currentY)
         currentY += 15
 
-        ' Corrected VAT Section
+        ' VAT Section - Clean & Standard
         g.DrawString("SUBTOTAL:", fontBody, Brushes.Black, leftMargin, currentY)
         g.DrawString("P" & _Subtotal, fontBody, Brushes.Black, rightMargin - g.MeasureString("P" & _Subtotal, fontBody).Width, currentY)
         currentY += 15
@@ -143,7 +146,7 @@ Public Module AdminDBPaymentReceiptPrinter
         g.DrawString("TOTAL AMOUNT: P" & _Total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
         currentY += 25
 
-        ' Payment Section
+        ' Payment
         g.DrawString("Amount Paid:", fontBody, Brushes.Black, leftMargin, currentY)
         g.DrawString(_AmountPaid, fontBody, Brushes.Black, rightMargin - g.MeasureString(_AmountPaid, fontBody).Width, currentY)
         currentY += 15
@@ -152,7 +155,7 @@ Public Module AdminDBPaymentReceiptPrinter
         g.DrawString(_Change, fontBody, Brushes.Black, rightMargin - g.MeasureString(_Change, fontBody).Width, currentY)
         currentY += 25
 
-        ' Follow-Ups & Notes (unchanged)
+        ' Follow-Ups
         If _FollowUpsDt IsNot Nothing AndAlso _FollowUpsDt.Rows.Count > 0 Then
             currentY += 10
             g.DrawString("FOLLOW-UP SCHEDULE:", New Font("Consolas", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
@@ -165,6 +168,7 @@ Public Module AdminDBPaymentReceiptPrinter
             Next
         End If
 
+        ' Notes
         currentY += 10
         g.DrawString("DENTIST NOTES:", New Font("Consolas", 8, FontStyle.Bold), Brushes.Black, leftMargin, currentY)
         currentY += 15
@@ -182,9 +186,6 @@ Public Module AdminDBPaymentReceiptPrinter
         currentY += 30
         g.DrawString("Thank you for visiting!", fontBody, Brushes.Black, leftMargin, currentY)
     End Sub
-
-    ' IsPrinterOnline and GetReceiptFlashPreview remain the same as your last version
-    ' (I kept them unchanged for brevity - they are already correct)
 
     Public Function IsPrinterOnline(printerName As String) As Boolean
         Try
