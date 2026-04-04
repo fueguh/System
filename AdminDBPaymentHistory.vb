@@ -12,16 +12,17 @@ Public Class AdminDBPaymentHistory
     Private SelectedRefNo As String = ""
     Private SelectedPaymentMethod As String = ""
 
-    ' Variables from Receipts table (matching your current table)
-    Private SelectedTotalAmount As String = "0.00"      ' Gross Total
-    Private SelectedVatExempt As String = "0.00"       ' VATableSales
-    Private SelectedVatAmount As String = "0.00"
-    Private SelectedAmountPaid As String = "0.00"
-    Private SelectedChange As String = "0.00"
+    ' Receipt values
+    Private SelectedTotalAmount As Decimal = 0D
+    Private SelectedVatExempt As Decimal = 0D
+    Private SelectedVatAmount As Decimal = 0D
+    Private SelectedAmountPaid As Decimal = 0D
+    Private SelectedChange As Decimal = 0D
 
     Private dtServicesForPrinting As New DataTable()
     Private dtFollowUpsForPrinting As New DataTable()
 
+    ' ================= LOAD =================
     Private Sub AdminDBPaymentHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPaymentHistory()
         dgvHistory.ReadOnly = True
@@ -30,10 +31,12 @@ Public Class AdminDBPaymentHistory
         clearform()
     End Sub
 
+    ' ================= LOAD HISTORY =================
     Private Sub LoadPaymentHistory(Optional searchName As String = "")
         Try
             Using con As New SqlConnection(connectionString)
                 con.Open()
+
                 Dim sql As String = "
                 SELECT 
                     R.ReceiptID,
@@ -48,8 +51,7 @@ Public Class AdminDBPaymentHistory
                     R.PaymentMethod AS [Method],
                     R.ReferenceNumber AS [Ref No],
                     R.DateIssued AS [Payment Date],
-                    R.Status,                                   -- 'Active' or 'Voided'
-
+                    R.Status,
                     ISNULL((
                         SELECT STRING_AGG(
                             CONVERT(VARCHAR(20), F.FollowUpDate, 101) + ' (' + ISNULL(F.Reason, '') + ')', 
@@ -58,70 +60,69 @@ Public Class AdminDBPaymentHistory
                         FROM PatientFollowUps F
                         WHERE F.AppointmentID = R.AppointmentID
                     ), 'None') AS [Follow-Ups]
-
                 FROM Receipts R
                 INNER JOIN Patients P ON R.PatientID = P.PatientID
                 INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
-                INNER JOIN Users U ON A.UserID = U.UserID
-                "
+                INNER JOIN Users U ON A.UserID = U.UserID"
 
-                If Not String.IsNullOrEmpty(searchName) Then
+                If Not String.IsNullOrWhiteSpace(searchName) Then
                     sql &= " WHERE (P.FullName LIKE @search 
-                        OR U.FullName LIKE @search 
-                        OR R.ReferenceNumber LIKE @search
-                        OR R.PaymentMethod LIKE @search)"
+                              OR U.FullName LIKE @search 
+                              OR R.ReferenceNumber LIKE @search
+                              OR R.PaymentMethod LIKE @search)"
                 End If
 
                 sql &= " ORDER BY R.DateIssued DESC"
 
                 Using cmd As New SqlCommand(sql, con)
-                    If Not String.IsNullOrEmpty(searchName) Then
+
+                    If Not String.IsNullOrWhiteSpace(searchName) Then
                         cmd.Parameters.AddWithValue("@search", "%" & searchName & "%")
                     End If
 
-                    Dim da As New SqlDataAdapter(cmd)
                     Dim dt As New DataTable()
+                    Dim da As New SqlDataAdapter(cmd)
                     da.Fill(dt)
+
                     dgvHistory.DataSource = dt
 
-                    ' Hide internal ID columns (used only for logic, not for display)
-                    If dgvHistory.Columns.Contains("ReceiptID") Then
-                        dgvHistory.Columns("ReceiptID").Visible = False
-                    End If
+                    If dgvHistory.Columns.Contains("ReceiptID") Then dgvHistory.Columns("ReceiptID").Visible = False
+                    If dgvHistory.Columns.Contains("AppointmentID") Then dgvHistory.Columns("AppointmentID").Visible = False
 
-                    If dgvHistory.Columns.Contains("AppointmentID") Then
-                        dgvHistory.Columns("AppointmentID").Visible = False
-                    End If
-
-                    ' Highlight VOIDED rows
+                    ' highlight voided
                     For Each row As DataGridViewRow In dgvHistory.Rows
-                        If row.Cells("Status").Value?.ToString() = "Voided" Then
+                        If row.Cells("Status").Value IsNot Nothing AndAlso
+                           row.Cells("Status").Value.ToString() = "Voided" Then
                             row.DefaultCellStyle.BackColor = Color.LightGray
                             row.DefaultCellStyle.ForeColor = Color.Red
                         End If
                     Next
 
-                    ' Format Currency Columns
+                    ' formatting
                     If dgvHistory.Columns.Contains("Total Bill") Then dgvHistory.Columns("Total Bill").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("Cash Tendered") Then dgvHistory.Columns("Cash Tendered").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("Change Given") Then dgvHistory.Columns("Change Given").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATable Sales") Then dgvHistory.Columns("VATable Sales").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATAmount") Then dgvHistory.Columns("VATAmount").DefaultCellStyle.Format = "N2"
+
                 End Using
             End Using
+
         Catch ex As Exception
             MessageBox.Show("Error loading history: " & ex.Message)
         End Try
     End Sub
 
+    ' ================= SEARCH =================
     Private Sub txtSearchPatient_TextChanged(sender As Object, e As EventArgs) Handles txtSearchPatient.TextChanged
         LoadPaymentHistory(txtSearchPatient.Text.Trim())
     End Sub
 
-    ' ====================== REPRINT FUNCTION ======================
+    ' ================= REPRINT =================
     Private Sub btnReprint_Click(sender As Object, e As EventArgs) Handles btnReprint.Click
+
         If dgvHistory.SelectedRows.Count = 0 Then
-            MessageBox.Show("Please select a record from the history list.")
+            MessageBox.Show("Please select a record.")
             Exit Sub
         End If
 
@@ -137,186 +138,201 @@ Public Class AdminDBPaymentHistory
         SelectedPaymentMethod = row.Cells("Method").Value.ToString()
         SelectedRefNo = If(row.Cells("Ref No").Value IsNot DBNull.Value, row.Cells("Ref No").Value.ToString(), "")
 
-        ' Get values from DB
-        SelectedTotalAmount = CDec(row.Cells("Total Bill").Value).ToString("F2")
-        SelectedAmountPaid = CDec(row.Cells("Cash Tendered").Value).ToString("F2")
-        SelectedChange = CDec(row.Cells("Change Given").Value).ToString("F2")
-        SelectedVatAmount = If(row.Cells("VATAmount").Value IsNot DBNull.Value,
-                              CDec(row.Cells("VATAmount").Value).ToString("F2"), "0.00")
+        SelectedTotalAmount = Convert.ToDecimal(row.Cells("Total Bill").Value)
+        SelectedAmountPaid = Convert.ToDecimal(row.Cells("Cash Tendered").Value)
+        SelectedChange = Convert.ToDecimal(row.Cells("Change Given").Value)
 
-        ' Calculate VATable Sales
-        Dim totalVal As Decimal = CDec(SelectedTotalAmount)
-        SelectedVatExempt = If(totalVal > 0, (totalVal / 1.12D).ToString("F2"), "0.00")
+        SelectedVatAmount = If(row.Cells("VATAmount").Value Is DBNull.Value,
+                               0D,
+                               Convert.ToDecimal(row.Cells("VATAmount").Value))
+
+        SelectedVatExempt = If(SelectedTotalAmount > 0,
+                               SelectedTotalAmount / 1.12D,
+                               0D)
 
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        ' Flash Preview
         Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
             SelectedPatientName,
             SelectedDentistName,
             SelectedTreatmentNotes,
-            SelectedTotalAmount,       ' Gross Subtotal
-            SelectedVatExempt,         ' VATable Sales
-            SelectedVatAmount,
-            SelectedTotalAmount,       ' Total
-            SelectedAmountPaid,
-            SelectedChange,
+            SelectedTotalAmount.ToString("F2"),
+            SelectedVatExempt.ToString("F2"),
+            SelectedVatAmount.ToString("F2"),
+            SelectedTotalAmount.ToString("F2"),
+            SelectedAmountPaid.ToString("F2"),
+            SelectedChange.ToString("F2"),
             SelectedPaymentMethod,
             SelectedRefNo,
             dtServicesForPrinting,
             dtFollowUpsForPrinting
         )
 
-        MessageBox.Show(flashMsg, "RECEIPT PREVIEW - This is exactly how it will be printed",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show(flashMsg, "PREVIEW", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        ' Ask to print
-        Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
-                                      "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If MessageBox.Show("Print receipt?", "Confirm", MessageBoxButtons.YesNo) = DialogResult.Yes Then
 
-        If askPrint = DialogResult.Yes Then
             AdminDBPaymentReceiptPrinter.PrintReceipt(
                 SelectedPatientName,
                 SelectedDentistName,
                 SelectedTreatmentNotes,
-                SelectedTotalAmount,
-                SelectedVatExempt,
-                SelectedVatAmount,
-                SelectedTotalAmount,
-                SelectedAmountPaid,
-                SelectedChange,
+                SelectedTotalAmount.ToString("F2"),
+                SelectedVatExempt.ToString("F2"),
+                SelectedVatAmount.ToString("F2"),
+                SelectedTotalAmount.ToString("F2"),
+                SelectedAmountPaid.ToString("F2"),
+                SelectedChange.ToString("F2"),
                 SelectedPaymentMethod,
                 SelectedRefNo,
                 dtServicesForPrinting,
                 dtFollowUpsForPrinting
             )
+
         End If
+
     End Sub
 
+    ' ================= DETAILS =================
     Private Sub FetchDetailsForReprint(apptID As Integer)
+
         Using con As New SqlConnection(connectionString)
             con.Open()
 
-            ' Get Dentist Name and Treatment Notes
-            Dim sqlDetails As String = "
+            Dim sql As String = "
             SELECT 
-                U.FullName AS DentistName, 
-                ISNULL(T.TreatmentNotes, 'No notes recorded') AS Notes 
+                U.FullName AS DentistName,
+                ISNULL(T.TreatmentNotes,'No notes') AS Notes
             FROM Appointments A
             INNER JOIN Users U ON A.UserID = U.UserID
             LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
             WHERE A.AppointmentID = @AID"
 
-            Using cmd As New SqlCommand(sqlDetails, con)
+            Using cmd As New SqlCommand(sql, con)
                 cmd.Parameters.AddWithValue("@AID", apptID)
-                Using reader As SqlDataReader = cmd.ExecuteReader()
-                    If reader.Read() Then
-                        SelectedDentistName = reader("DentistName").ToString()
-                        SelectedTreatmentNotes = reader("Notes").ToString()
-                    Else
-                        SelectedDentistName = "N/A"
-                        SelectedTreatmentNotes = "No notes recorded"
+
+                Using r = cmd.ExecuteReader()
+                    If r.Read() Then
+                        SelectedDentistName = r("DentistName").ToString()
+                        SelectedTreatmentNotes = r("Notes").ToString()
                     End If
                 End Using
             End Using
 
-            ' Get Services
-            Dim cmdSvc As New SqlCommand("SELECT S.ServiceName, S.Price 
-                                          FROM AppointmentServices ASV 
-                                          INNER JOIN Services S ON ASV.ServiceID = S.ServiceID 
-                                          WHERE ASV.AppointmentID = @AID", con)
+            Dim cmdSvc As New SqlCommand("
+                SELECT S.ServiceName, S.Price
+                FROM AppointmentServices ASV
+                INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
+                WHERE ASV.AppointmentID = @AID", con)
+
             cmdSvc.Parameters.AddWithValue("@AID", apptID)
 
-            Dim da As New SqlDataAdapter(cmdSvc)
             dtServicesForPrinting.Clear()
+            Dim da As New SqlDataAdapter(cmdSvc)
             da.Fill(dtServicesForPrinting)
 
-            ' Get Follow-Ups
             Dim cmdFU As New SqlCommand("
-            SELECT FollowUpDate, Reason 
-            FROM PatientFollowUps 
-            WHERE AppointmentID = @AID
-            ORDER BY FollowUpDate ASC", con)
+                SELECT FollowUpDate, Reason
+                FROM PatientFollowUps
+                WHERE AppointmentID = @AID
+                ORDER BY FollowUpDate", con)
 
             cmdFU.Parameters.AddWithValue("@AID", apptID)
 
-            Dim daFU As New SqlDataAdapter(cmdFU)
             dtFollowUpsForPrinting.Clear()
-            daFU.Fill(dtFollowUpsForPrinting)
+            Dim da2 As New SqlDataAdapter(cmdFU)
+            da2.Fill(dtFollowUpsForPrinting)
+
         End Using
+
     End Sub
 
+    ' ================= VOID =================
     Private Sub VoidReceipt(receiptID As Integer)
+
         If SystemSession.LoggedInRole <> "Admin" Then
-            MessageBox.Show("Only admins can void receipts.")
+            MessageBox.Show("Admins only.")
             Exit Sub
         End If
 
-        Using con As New SqlConnection(connectionString)
-            con.Open()
-            Using trans As SqlTransaction = con.BeginTransaction()
-                Try
-                    Dim checkCmd As New SqlCommand("SELECT Status FROM Receipts WHERE ReceiptID=@id", con, trans)
-                    checkCmd.Parameters.AddWithValue("@id", receiptID)
-                    Dim status = checkCmd.ExecuteScalar()?.ToString()
+        Try
+            Using con As New SqlConnection(connectionString)
+                con.Open()
+                Using trans = con.BeginTransaction()
+
+                    Dim check As New SqlCommand("
+                        SELECT Status FROM Receipts WHERE ReceiptID=@id",
+                        con, trans)
+
+                    check.Parameters.AddWithValue("@id", receiptID)
+
+                    Dim status = If(check.ExecuteScalar(), "").ToString()
 
                     If status = "Voided" Then
-                        MessageBox.Show("This receipt is already voided.")
+                        MessageBox.Show("Already voided.")
+                        trans.Rollback()
                         Exit Sub
                     End If
 
-                    Dim voidCmd As New SqlCommand("
-                    UPDATE Receipts
-                    SET Status = 'Voided',
-                        VoidedAt = GETDATE(),
-                        VoidedBy = @user
-                    WHERE ReceiptID = @id", con, trans)
+                    Dim cmd As New SqlCommand("
+                        UPDATE Receipts
+                        SET Status='Voided',
+                            VoidedAt=GETDATE(),
+                            VoidedBy=@user
+                        WHERE ReceiptID=@id", con, trans)
 
-                    voidCmd.Parameters.AddWithValue("@id", receiptID)
-                    voidCmd.Parameters.AddWithValue("@user", SystemSession.LoggedInFullName)
-                    voidCmd.ExecuteNonQuery()
+                    cmd.Parameters.AddWithValue("@id", receiptID)
+                    cmd.Parameters.AddWithValue("@user", SystemSession.LoggedInFullName)
+                    cmd.ExecuteNonQuery()
 
                     trans.Commit()
-
-                    SystemSession.LogAudit($"Voided Receipt #{receiptID}", "Payment History",
-                        SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-
-                    MessageBox.Show("Receipt voided successfully.")
-                    LoadPaymentHistory()
-
-                Catch ex As Exception
-                    If trans.Connection IsNot Nothing Then trans.Rollback()
-                    MessageBox.Show("Error voiding receipt: " & ex.Message)
-                End Try
+                End Using
             End Using
-        End Using
+
+            SystemSession.LogAudit("Voided Receipt #" & receiptID,
+                                   "Payment History",
+                                   SystemSession.LoggedInUserID,
+                                   SystemSession.LoggedInFullName,
+                                   SystemSession.LoggedInRole)
+
+            LoadPaymentHistory()
+
+        Catch ex As Exception
+            MessageBox.Show("Void error: " & ex.Message)
+        End Try
+
     End Sub
 
+    ' ================= RIGHT CLICK VOID =================
     Private Sub dgvHistory_CellMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvHistory.CellMouseClick
+
         If e.RowIndex < 0 Then Exit Sub
 
         If e.Button = MouseButtons.Right Then
-            Dim row = dgvHistory.Rows(e.RowIndex)
-            Dim receiptID = CInt(row.Cells("ReceiptID").Value)
-            Dim status = If(row.Cells("Status").Value, "").ToString()
 
-            If status = "Voided" Then
-                MessageBox.Show("This receipt is already voided.")
+            Dim row = dgvHistory.Rows(e.RowIndex)
+            Dim id = CInt(row.Cells("ReceiptID").Value)
+
+            If row.Cells("Status").Value?.ToString() = "Voided" Then
+                MessageBox.Show("Already voided.")
                 Exit Sub
             End If
 
-            If MessageBox.Show("Void this receipt?", "Confirm Void",
-                           MessageBoxButtons.YesNo, MessageBoxIcon.Warning) = DialogResult.Yes Then
-                VoidReceipt(receiptID)
+            If MessageBox.Show("Void this receipt?", "Confirm",
+                               MessageBoxButtons.YesNo) = DialogResult.Yes Then
+                VoidReceipt(id)
             End If
+
         End If
+
     End Sub
 
+    ' ================= CLEAR =================
     Private Sub clearform()
         txtSearchPatient.Clear()
         dgvHistory.ClearSelection()
     End Sub
 
+    ' ================= BACK =================
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub

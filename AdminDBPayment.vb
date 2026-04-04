@@ -27,49 +27,64 @@ Public Class AdminDBPayment
     Private Sub LoadPendingPayments()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            Dim sql As String = "
-            SELECT 
-                A.AppointmentID, 
-                P.PatientID,
-                P.FullName AS [Patient Name], 
-                U.FullName AS [Dentist], 
-                A.Date, 
-                ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
-                ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
-                ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
-                ISNULL((
-                    SELECT STRING_AGG(CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + ISNULL(F.Reason, ''), ' | ')
-                    FROM PatientFollowUps F 
-                    WHERE F.AppointmentID = A.AppointmentID
-                ), 'No follow-ups') AS [Follow Ups],
-                'Unpaid' AS [Payment Status]         
-            FROM Appointments A
-            INNER JOIN Patients P ON A.PatientID = P.PatientID
-            INNER JOIN Users U ON A.UserID = U.UserID
-            LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
-            LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
-            LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
-            WHERE A.Status = 'Completed'
-              AND NOT EXISTS (
-                    SELECT 1 FROM Receipts R 
-                    WHERE R.AppointmentID = A.AppointmentID 
-                      AND R.Status = 'Active'
-              )
-            GROUP BY 
-                A.AppointmentID, P.PatientID, P.FullName, U.FullName, 
-                A.Date, T.TreatmentNotes, T.Prescriptions
-            ORDER BY A.Date DESC"
 
-        Using da As New SqlDataAdapter(sql, con)
+            Dim sql As String = "
+        SELECT 
+            A.AppointmentID, 
+            P.PatientID,
+            P.FullName AS [Patient Name], 
+            U.FullName AS [Dentist], 
+            A.Date, 
+
+            ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
+            ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
+
+            ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
+
+            ISNULL((
+                SELECT STRING_AGG(
+                    CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + ISNULL(F.Reason, ''), 
+                    ' | '
+                )
+                FROM PatientFollowUps F 
+                WHERE F.AppointmentID = A.AppointmentID
+            ), 'No follow-ups') AS [Follow Ups],
+
+            ISNULL(R.Status, 'Unpaid') AS [Payment Status]
+
+        FROM Appointments A
+        INNER JOIN Patients P ON A.PatientID = P.PatientID
+        INNER JOIN Users U ON A.UserID = U.UserID
+        LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
+        LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
+        LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
+        LEFT JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+
+        WHERE A.Status = 'Completed'
+          AND (R.Status IS NULL OR R.Status <> 'Active')
+
+        GROUP BY 
+            A.AppointmentID, 
+            P.PatientID, 
+            P.FullName, 
+            U.FullName, 
+            A.Date, 
+            T.TreatmentNotes, 
+            T.Prescriptions,
+            R.Status
+
+        ORDER BY A.Date DESC"
+
+            Using da As New SqlDataAdapter(sql, con)
                 Dim dt As New DataTable()
                 da.Fill(dt)
                 dgvPendingPayments.DataSource = dt
             End Using
 
-            ' Only hide internal columns
+            ' Hide IDs
             For Each col As DataGridViewColumn In dgvPendingPayments.Columns
                 Select Case col.Name
-                    Case "AppointmentID", "PatientID", "Prescription"
+                    Case "AppointmentID", "PatientID"
                         col.Visible = False
                 End Select
             Next
@@ -170,197 +185,151 @@ Public Class AdminDBPayment
     ' REGION: RECEIPT GENERATION & DATABASE OPERATIONS
     ' ==================================================================
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-        ' 1. Security & Validation
+
         If SystemSession.LoggedInUserID <= 0 Then
             MessageBox.Show("Error: No logged-in User ID found. Please re-login.")
             Exit Sub
         End If
 
         If SelectedAppointmentID = 0 Then
-            MessageBox.Show("Please select an appointment from the list first.")
+            MessageBox.Show("Please select an appointment first.")
             Exit Sub
         End If
 
         If String.IsNullOrWhiteSpace(txtAmountPaid.Text) Then
-            MessageBox.Show("Please enter the amount paid.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txtAmountPaid.Focus()
+            MessageBox.Show("Enter amount paid.")
             Exit Sub
         End If
 
-        ' --- Calculations ---
         Dim serviceTotal As Decimal = currentTotal
         Dim itemTotal As Decimal = GetItemTotal()
-        Dim totalAmount As Decimal = serviceTotal + itemTotal          ' Gross Total (VAT Inclusive)
+        Dim totalAmount As Decimal = serviceTotal + itemTotal
 
-        Dim amountPaid As Decimal = 0
+        Dim amountPaid As Decimal
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
 
         If amountPaid < totalAmount Then
-            MessageBox.Show("Amount paid cannot be less than the total amount.", "Payment Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-            txtAmountPaid.Focus()
+            MessageBox.Show("Amount paid cannot be less than total.")
             Exit Sub
         End If
 
         Dim changeAmount As Decimal = amountPaid - totalAmount
-        If changeAmount < 0 Then changeAmount = 0
-
-        ' Correct VAT Breakdown
         Dim vatAmount As Decimal = If(totalAmount > 0, totalAmount - (totalAmount / 1.12D), 0D)
-        Dim vatExempt As Decimal = totalAmount - vatAmount               ' VATable Sales
+        Dim vatExempt As Decimal = totalAmount - vatAmount
 
-        If String.IsNullOrEmpty(ComboBoxPaymentMethod.Text) Then
-            MessageBox.Show("Please select a payment method.")
+        If String.IsNullOrWhiteSpace(ComboBoxPaymentMethod.Text) Then
+            MessageBox.Show("Select payment method.")
             Exit Sub
         End If
 
-        ' GCash Validation
         If ComboBoxPaymentMethod.Text = "Gcash" Then
             Dim refNo As String = txtReferenceNo.Text.Trim()
-            If String.IsNullOrWhiteSpace(refNo) Then
-                MessageBox.Show("Please enter the GCash Reference Number.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                txtReferenceNo.Focus()
-                Exit Sub
-            End If
 
-            If Not System.Text.RegularExpressions.Regex.IsMatch(refNo, "^\d{10,20}$") Then
-                Dim confirm = MessageBox.Show("GCash reference number should be 10-20 digits. Proceed anyway?",
-                                              "Format Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                If confirm = DialogResult.No Then
-                    txtReferenceNo.Focus()
-                    Exit Sub
-                End If
+            If String.IsNullOrWhiteSpace(refNo) Then
+                MessageBox.Show("Enter GCash reference number.")
+                Exit Sub
             End If
         End If
 
-        ' 2. Database Operation
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            Try
-                con.Open()
-                Using trans As SqlTransaction = con.BeginTransaction()
-                    ' ===== PREVENT DOUBLE CLICK =====
-                    ButtonGenerateReceipt.Enabled = False
+            con.Open()
+            Using trans As SqlTransaction = con.BeginTransaction()
 
-                    ' ===== DUPLICATE CHECK (CRITICAL FIX) =====
+                Try
+                    ' ================= CHECK DUPLICATE =================
                     Dim checkCmd As New SqlCommand("
-    SELECT COUNT(*) 
-    FROM Receipts 
-    WHERE AppointmentID = @AID 
-      AND Status = 'Active'
-", con, trans)
+                    SELECT ReceiptID FROM Receipts WHERE AppointmentID = @AID
+                ", con, trans)
 
                     checkCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
 
-                    Dim exists As Integer = CInt(checkCmd.ExecuteScalar())
+                    Dim existingID As Object = checkCmd.ExecuteScalar()
 
-                    If exists > 0 Then
-                        MessageBox.Show("This appointment already has a payment recorded.", "Duplicate Blocked")
+                    Dim receiptID As Integer = 0
 
-                        ButtonGenerateReceipt.Enabled = True
-                        trans.Rollback()
-                        Exit Sub
+                    If existingID IsNot Nothing Then
+                        receiptID = Convert.ToInt32(existingID)
+
+                        ' ================= UPDATE =================
+                        Dim updateCmd As New SqlCommand("
+                        UPDATE Receipts
+                        SET TotalAmount = @Total,
+                            VATableSales = @VATable,
+                            VATAmount = @VAT,
+                            PaymentMethod = @Method,
+                            ReferenceNumber = @Ref,
+                            AmountPaid = @Paid,
+                            ChangeAmount = @Change,
+                            Status = 'Completed'
+                        WHERE ReceiptID = @RID
+                    ", con, trans)
+
+                        updateCmd.Parameters.AddWithValue("@RID", receiptID)
+
+                        updateCmd.Parameters.AddWithValue("@Total", totalAmount)
+                        updateCmd.Parameters.AddWithValue("@VATable", vatExempt)
+                        updateCmd.Parameters.AddWithValue("@VAT", vatAmount)
+                        updateCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
+                        updateCmd.Parameters.AddWithValue("@Ref",
+                        If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                        updateCmd.Parameters.AddWithValue("@Paid", amountPaid)
+                        updateCmd.Parameters.AddWithValue("@Change", changeAmount)
+
+                        updateCmd.ExecuteNonQuery()
+
+                    Else
+                        ' ================= INSERT =================
+                        Dim insertCmd As New SqlCommand("
+                        INSERT INTO Receipts
+                        (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount,
+                         PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
+                        VALUES
+                        (@AID, @PID, @UID, @Total, @VATable, @VAT,
+                         @Method, @Ref, @Paid, @Change, 'Completed')
+                    ", con, trans)
+
+                        insertCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+                        insertCmd.Parameters.AddWithValue("@PID", SelectedPatientID)
+                        insertCmd.Parameters.AddWithValue("@UID", SystemSession.LoggedInUserID)
+
+                        insertCmd.Parameters.AddWithValue("@Total", totalAmount)
+                        insertCmd.Parameters.AddWithValue("@VATable", vatExempt)
+                        insertCmd.Parameters.AddWithValue("@VAT", vatAmount)
+
+                        insertCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
+                        insertCmd.Parameters.AddWithValue("@Ref",
+                        If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                        insertCmd.Parameters.AddWithValue("@Paid", amountPaid)
+                        insertCmd.Parameters.AddWithValue("@Change", changeAmount)
+
+                        insertCmd.ExecuteNonQuery()
                     End If
-                    Try
-                        Dim sql As String = "
-                            INSERT INTO Receipts 
-                            (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount, 
-                             PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
-                            VALUES 
-                            (@AID, @PID, @UID, @TotalAmount, @VATableSales, @VATAmount, 
-                             @Method, @Ref, @AmountPaid, @ChangeAmount, 'Active')"
 
-                        Using cmd As New SqlCommand(sql, con, trans)
-                            cmd.Parameters.Add("@AID", SqlDbType.Int).Value = SelectedAppointmentID
-                            cmd.Parameters.Add("@PID", SqlDbType.Int).Value = SelectedPatientID
-                            cmd.Parameters.Add("@UID", SqlDbType.Int).Value = SystemSession.LoggedInUserID
+                    ' ================= COMMIT =================
+                    trans.Commit()
 
-                            cmd.Parameters.Add("@TotalAmount", SqlDbType.Decimal).Value = totalAmount
-                            cmd.Parameters.Add("@VATableSales", SqlDbType.Decimal).Value = vatExempt
-                            cmd.Parameters.Add("@VATAmount", SqlDbType.Decimal).Value = vatAmount
-
-                            cmd.Parameters.Add("@Method", SqlDbType.VarChar, 20).Value = ComboBoxPaymentMethod.Text
-                            cmd.Parameters.Add("@Ref", SqlDbType.VarChar, 50).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
-                            cmd.Parameters.Add("@AmountPaid", SqlDbType.Decimal).Value = amountPaid
-                            cmd.Parameters.Add("@ChangeAmount", SqlDbType.Decimal).Value = changeAmount
-
-                            ' Precision for decimal fields
-                            For Each p In {"@TotalAmount", "@VATableSales", "@VATAmount", "@AmountPaid", "@ChangeAmount"}
-                                cmd.Parameters(p).Precision = 18
-                                cmd.Parameters(p).Scale = 2
-                            Next
-
-                            Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
-
-                            If rowsAffected > 0 Then
-                                trans.Commit()
-
-                                ' Audit Logging
-                                Dim auditMsg As String = $"Processed payment of P{totalAmount:N2} for patient {SelectedPatientName}. Change: P{changeAmount:N2}"
-                                SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-
-                                ' Flash Preview
-                                Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
-                                    SelectedPatientName,
-                                    SelectedDentistName,
-                                    SelectedTreatmentNotes,
-                                    totalAmount.ToString("F2"),      ' Gross Subtotal
-                                    vatExempt.ToString("F2"),        ' VATable Sales
-                                    vatAmount.ToString("F2"),        ' VAT Amount
-                                    totalAmount.ToString("F2"),      ' Total
-                                    amountPaid.ToString("F2"),
-                                    changeAmount.ToString("F2"),
-                                    ComboBoxPaymentMethod.Text,
-                                    txtReferenceNo.Text.Trim(),
-                                    TryCast(dgvServices.DataSource, DataTable),
-                                    GetFollowUps()
-                                )
-
-                                MessageBox.Show(flashMsg, "RECEIPT PREVIEW - This is exactly how it will be printed",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-                                ' Ask to Print
-                                Dim askPrint As DialogResult = MessageBox.Show("Would you like to print the receipt now?",
-                                    "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-
-                                If askPrint = DialogResult.Yes Then
-                                    Dim dtServicesPrint As DataTable = If(TryCast(dgvServices.DataSource, DataTable), New DataTable())
-                                    Dim dtFollowUpsPrint As DataTable = GetFollowUps()
-
-                                    AdminDBPaymentReceiptPrinter.PrintReceipt(
-                                        SelectedPatientName,
-                                        SelectedDentistName,
-                                        SelectedTreatmentNotes,
-                                        totalAmount.ToString("F2"),
-                                        vatExempt.ToString("F2"),
-                                        vatAmount.ToString("F2"),
-                                        totalAmount.ToString("F2"),
-                                        amountPaid.ToString("F2"),
-                                        changeAmount.ToString("F2"),
-                                        ComboBoxPaymentMethod.Text,
-                                        txtReferenceNo.Text.Trim(),
-                                        dtServicesPrint,
-                                        dtFollowUpsPrint
-                                    )
-                                End If
-
-                                LoadPendingPayments()
-                                ClearBillingUI()
-                                MessageBox.Show("Payment processed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                            Else
-                                trans.Rollback()
-                                MessageBox.Show("Save failed: No database rows were affected.")
-                            End If
-                        End Using
-                    Catch ex As Exception
-                        If trans.Connection IsNot Nothing Then trans.Rollback()
-
-                        ButtonGenerateReceipt.Enabled = True ' Re-enable if failed
-                        MessageBox.Show("Transaction Error: " & ex.Message)
-                    End Try
-                End Using
-            Catch ex As Exception
-                MessageBox.Show("Connection Error: " & ex.Message)
-            End Try
+                Catch ex As Exception
+                    trans.Rollback()
+                    MessageBox.Show("Transaction Error: " & ex.Message)
+                    Exit Sub
+                End Try
+            End Using
         End Using
+
+        ' ================= AUDIT =================
+        SystemSession.LogAudit(
+        $"Payment P{totalAmount:N2} for {SelectedPatientName}",
+        "Payment",
+        SystemSession.LoggedInUserID,
+        SystemSession.LoggedInFullName,
+        SystemSession.LoggedInRole
+    )
+
+        LoadPendingPayments()
+        ClearBillingUI()
+
+        MessageBox.Show("Payment successful!", "Success")
+
     End Sub
 
     ' ==================================================================
