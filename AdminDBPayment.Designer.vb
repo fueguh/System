@@ -69,6 +69,7 @@ Partial Class AdminDBPayment
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.dgvReceiptItems = New Guna.UI2.WinForms.Guna2DataGridView()
         Me.dgvInventoryItems = New Guna.UI2.WinForms.Guna2DataGridView()
+        Me.lblChange = New Guna.UI2.WinForms.Guna2HtmlLabel()
         CType(Me.btnBack, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvPendingPayments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -456,7 +457,7 @@ Partial Class AdminDBPayment
         Me.lblVATAmount.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblVATAmount.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblVATAmount.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.lblVATAmount.Location = New System.Drawing.Point(32, 287)
+        Me.lblVATAmount.Location = New System.Drawing.Point(32, 246)
         Me.lblVATAmount.Name = "lblVATAmount"
         Me.lblVATAmount.Size = New System.Drawing.Size(50, 28)
         Me.lblVATAmount.TabIndex = 58
@@ -467,7 +468,7 @@ Partial Class AdminDBPayment
         Me.lblSubtotal.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblSubtotal.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblSubtotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.lblSubtotal.Location = New System.Drawing.Point(32, 322)
+        Me.lblSubtotal.Location = New System.Drawing.Point(32, 281)
         Me.lblSubtotal.Name = "lblSubtotal"
         Me.lblSubtotal.Size = New System.Drawing.Size(113, 28)
         Me.lblSubtotal.TabIndex = 59
@@ -478,7 +479,7 @@ Partial Class AdminDBPayment
         Me.lblTotal.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.lblTotal.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTotal.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.lblTotal.Location = New System.Drawing.Point(32, 358)
+        Me.lblTotal.Location = New System.Drawing.Point(32, 341)
         Me.lblTotal.Name = "lblTotal"
         Me.lblTotal.Size = New System.Drawing.Size(126, 28)
         Me.lblTotal.TabIndex = 60
@@ -685,6 +686,17 @@ Partial Class AdminDBPayment
         Me.dgvInventoryItems.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.dgvInventoryItems.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(CType(CType(71, Byte), Integer), CType(CType(69, Byte), Integer), CType(CType(94, Byte), Integer))
         '
+        'lblChange
+        '
+        Me.lblChange.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.lblChange.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblChange.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.lblChange.Location = New System.Drawing.Point(32, 375)
+        Me.lblChange.Name = "lblChange"
+        Me.lblChange.Size = New System.Drawing.Size(155, 28)
+        Me.lblChange.TabIndex = 60
+        Me.lblChange.Text = "Change: PHP 0.00"
+        '
         'AdminDBPayment
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -693,6 +705,7 @@ Partial Class AdminDBPayment
         Me.ClientSize = New System.Drawing.Size(1810, 897)
         Me.ControlBox = False
         Me.Controls.Add(Me.GroupBox1)
+        Me.Controls.Add(Me.lblChange)
         Me.Controls.Add(Me.lblTotal)
         Me.Controls.Add(Me.lblSubtotal)
         Me.Controls.Add(Me.lblVATAmount)
@@ -759,4 +772,5 @@ Partial Class AdminDBPayment
     Friend WithEvents dgvInventoryItems As Guna.UI2.WinForms.Guna2DataGridView
     Friend WithEvents TextBoxPrescriptionNotes As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents Panel1 As Panel
+    Friend WithEvents lblChange As Guna.UI2.WinForms.Guna2HtmlLabel
 End Class

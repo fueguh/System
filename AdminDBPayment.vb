@@ -479,16 +479,26 @@ SuccessCleanup:
     End Function
 
     Private Sub UpdateGrandTotalDisplay()
-        Dim grandTotal As Decimal = currentTotal + GetItemTotal()
+        Dim itemTotal As Decimal = GetItemTotal()
+        Dim grandTotal As Decimal = currentTotal + itemTotal
 
         ' VAT Calculation (12%)
         Dim subTotal As Decimal = If(grandTotal > 0, grandTotal / 1.12D, 0D)
         Dim vatAmount As Decimal = grandTotal - subTotal
 
-        ' Update UI Labels
+        ' Update main totals
         lblTotal.Text = "Total: PHP " & grandTotal.ToString("N2")
         lblSubtotal.Text = "Subtotal: " & subTotal.ToString("N2")
         lblVATAmount.Text = "VAT (12%): " & vatAmount.ToString("N2")
+
+        ' === NEW: Calculate and show Change ===
+        Dim amountPaid As Decimal = 0
+        Decimal.TryParse(txtAmountPaid.Text, amountPaid)
+
+        Dim changeAmount As Decimal = amountPaid - grandTotal
+        If changeAmount < 0 Then changeAmount = 0
+
+        lblChange.Text = "Change: PHP " & changeAmount.ToString("N2")
 
         ' Auto-fill for GCash
         If ComboBoxPaymentMethod.Text = "Gcash" Then
@@ -544,6 +554,7 @@ SuccessCleanup:
         lblTotal.Text = "Total Amount: PHP 0.00"
         lblSubtotal.Text = "Subtotal: 0.00"
         lblVATAmount.Text = "VAT (12%): 0.00"
+        lblChange.Text = "Change: PHP 0.00"
 
         txtReferenceNo.Enabled = False
         SetPrescriptionControlsEnabled(False)
