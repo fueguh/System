@@ -95,9 +95,9 @@ Public Class AdminDBPayment
             dgvReceiptItems.Rows.Clear()
 
             LoadAppointmentServices()
-            RecalculateItemTotal()
+            UpdateGrandTotalDisplay()
             SetPrescriptionControlsEnabled(True)
-
+            ClearAllSelections()
         Catch ex As Exception
             MessageBox.Show("Selection error: " & ex.Message)
         End Try
@@ -137,25 +137,21 @@ Public Class AdminDBPayment
                 dgvServices.Columns("ServiceName").AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             End If
 
-            CalculateTotal()
+            ' === IMPORTANT: Calculate service total and update UI ===
+            CalculateServiceTotal()
         End Using
     End Sub
 
-    Private Sub CalculateTotal()
+    Private Sub CalculateServiceTotal()
         Dim dt As DataTable = TryCast(dgvServices.DataSource, DataTable)
-        If dt Is Nothing Then Exit Sub
+        If dt Is Nothing Then
+            currentTotal = 0D
+        Else
+            Dim result = dt.Compute("SUM(Price)", "")
+            currentTotal = If(IsDBNull(result), 0D, Convert.ToDecimal(result))
+        End If
 
-        Dim result = dt.Compute("SUM(Price)", "")
-        Dim total As Decimal = If(IsDBNull(result), 0D, Convert.ToDecimal(result))
-
-        currentTotal = total
-
-        Dim subtotal As Decimal = total / 1.12D
-        Dim vat As Decimal = total - subtotal
-
-        lblTotal.Text = "Total: PHP " & total.ToString("N2")
-        lblSubtotal.Text = "Subtotal: " & subtotal.ToString("N2")
-        lblVATAmount.Text = "VAT (12%): " & vat.ToString("N2")
+        UpdateGrandTotalDisplay()   ' This will now correctly include services + items
     End Sub
 
     ' ==================================================================
@@ -170,16 +166,21 @@ Public Class AdminDBPayment
         Dim isGcash As Boolean = (ComboBoxPaymentMethod.Text = "Gcash")
 
         txtReferenceNo.Enabled = isGcash
-        txtReferenceNo.Clear()
+        If Not isGcash Then txtReferenceNo.Clear()
 
         txtAmountPaid.ReadOnly = isGcash
+
         If isGcash Then
-            txtAmountPaid.Text = currentTotal.ToString("F2")
+            UpdateGrandTotalDisplay()        ' Clean & consistent
         Else
-            txtAmountPaid.Clear()
+            ' For Cash: preserve user input when possible
+            If String.IsNullOrWhiteSpace(txtAmountPaid.Text) OrElse
+           Decimal.TryParse(txtAmountPaid.Text, 0D) = currentTotal Then
+                txtAmountPaid.Clear()
+            End If
         End If
 
-        CheckReadyToPoint()
+        UpdateButtonState()
     End Sub
 
     ' ==================================================================
@@ -205,7 +206,7 @@ Public Class AdminDBPayment
 
         ' --- Calculations ---
         Dim serviceTotal As Decimal = currentTotal
-        Dim itemTotal As Decimal = CalculateItemTotal()
+        Dim itemTotal As Decimal = GetItemTotal()
         Dim totalAmount As Decimal = serviceTotal + itemTotal
 
         Dim amountPaid As Decimal = 0
@@ -361,8 +362,34 @@ SuccessCleanup:
         dgvReceiptItems.Columns("Subtotal").HeaderText = "Total"
 
         dgvReceiptItems.Columns("ItemID").Visible = False
-    End Sub
 
+        ' Important for right-click functionality
+        dgvReceiptItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgvReceiptItems.AllowUserToAddRows = False
+        dgvReceiptItems.ReadOnly = True
+    End Sub
+    ' ====================== RIGHT-CLICK TO REMOVE ITEM ======================
+    Private Sub dgvReceiptItems_MouseDown(sender As Object, e As MouseEventArgs) Handles dgvReceiptItems.MouseDown
+        If e.Button = MouseButtons.Right Then
+            Dim hit As DataGridView.HitTestInfo = dgvReceiptItems.HitTest(e.X, e.Y)
+
+            If hit.RowIndex >= 0 AndAlso hit.RowIndex < dgvReceiptItems.Rows.Count Then
+                dgvReceiptItems.ClearSelection()
+                dgvReceiptItems.Rows(hit.RowIndex).Selected = True
+
+                ' Show confirmation before deleting
+                Dim result As DialogResult = MessageBox.Show("Remove this item from the receipt?",
+                                                       "Remove Item",
+                                                       MessageBoxButtons.YesNo,
+                                                       MessageBoxIcon.Question)
+
+                If result = DialogResult.Yes Then
+                    dgvReceiptItems.Rows.RemoveAt(hit.RowIndex)
+                    UpdateGrandTotalDisplay()   ' Refresh total after removal
+                End If
+            End If
+        End If
+    End Sub
     Private Sub LoadInventoryItems(Optional search As String = "")
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             Dim sql As String = "
@@ -424,7 +451,8 @@ SuccessCleanup:
 
                 r.Cells("Quantity").Value = newQty
                 r.Cells("Subtotal").Value = price * newQty
-                RecalculateItemTotal()
+                UpdateGrandTotalDisplay()
+                ClearAllSelections()
                 Exit Sub
             End If
         Next
@@ -433,52 +461,42 @@ SuccessCleanup:
         Dim subtotal As Decimal = price * qty
         dgvReceiptItems.Rows.Add(id, name, price, qty, subtotal)
 
-        RecalculateItemTotal()
+        UpdateGrandTotalDisplay()
+        ClearAllSelections()
     End Sub
 
-    ' Single source of thruth for VAT calculations (if needed in the future for more complex scenarios)
-    Private Function CalculateVATComponents(totalAmount As Decimal) As (Subtotal As Decimal, VAT As Decimal)
-        If totalAmount <= 0 Then Return (0D, 0D)
-
-        Dim subtotal As Decimal = totalAmount / 1.12D
-        Dim vat As Decimal = totalAmount - subtotal
-        Return (subtotal, vat)
-    End Function
-
-    Private Sub RecalculateItemTotal()
-        Dim itemTotal As Decimal = 0
-
-        For Each row As DataGridViewRow In dgvReceiptItems.Rows
-            If Not row.IsNewRow Then
-                itemTotal += Convert.ToDecimal(row.Cells("Subtotal").Value)
-            End If
-        Next
-
-        Dim totalAmount As Decimal = currentTotal + itemTotal
-
-        If ComboBoxPaymentMethod.Text = "Gcash" Then
-            txtAmountPaid.Text = totalAmount.ToString("F2")
-        End If
-
-        Dim subtotal As Decimal = totalAmount / 1.12D
-        Dim vat As Decimal = totalAmount - subtotal
-
-        lblTotal.Text = "Total: PHP " & totalAmount.ToString("N2")
-        lblSubtotal.Text = "Subtotal: " & subtotal.ToString("N2")
-        lblVATAmount.Text = "VAT (12%): " & vat.ToString("N2")
-    End Sub
-
-    Private Function CalculateItemTotal() As Decimal
-        Dim total As Decimal = 0
-
+    ' ==================================================================
+    ' REGION: CALCULATION HELPERS (Single Source of Truth)
+    ' ==================================================================
+    Private Function GetItemTotal() As Decimal
+        Dim total As Decimal = 0D
         For Each row As DataGridViewRow In dgvReceiptItems.Rows
             If Not row.IsNewRow Then
                 total += Convert.ToDecimal(row.Cells("Subtotal").Value)
             End If
         Next
-
         Return total
     End Function
+
+    Private Sub UpdateGrandTotalDisplay()
+        Dim grandTotal As Decimal = currentTotal + GetItemTotal()
+
+        ' VAT Calculation (12%)
+        Dim subTotal As Decimal = If(grandTotal > 0, grandTotal / 1.12D, 0D)
+        Dim vatAmount As Decimal = grandTotal - subTotal
+
+        ' Update UI Labels
+        lblTotal.Text = "Total: PHP " & grandTotal.ToString("N2")
+        lblSubtotal.Text = "Subtotal: " & subTotal.ToString("N2")
+        lblVATAmount.Text = "VAT (12%): " & vatAmount.ToString("N2")
+
+        ' Auto-fill for GCash
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            txtAmountPaid.Text = grandTotal.ToString("F2")
+        End If
+
+        UpdateButtonState()
+    End Sub
 
     ' ==================================================================
     ' REGION: FOLLOW-UPS & HELPER METHODS
@@ -501,6 +519,14 @@ SuccessCleanup:
     ' ==================================================================
     ' REGION: UI HELPERS & EVENT HANDLERS
     ' ==================================================================
+    Private Sub ClearAllSelections()
+        dgvInventoryItems.ClearSelection()
+        dgvReceiptItems.ClearSelection()
+
+        If dgvServices IsNot Nothing Then
+            dgvServices.ClearSelection()
+        End If
+    End Sub
     Private Sub ClearBillingUI()
         SelectedAppointmentID = 0
         SelectedPatientID = 0
@@ -512,7 +538,8 @@ SuccessCleanup:
         txtReferenceNo.Clear()
         dgvReceiptItems.Rows.Clear()
         TextBoxPrescriptionNotes.Clear()
-        dgvPendingPayments.ClearSelection()
+
+        currentTotal = 0D
 
         lblTotal.Text = "Total Amount: PHP 0.00"
         lblSubtotal.Text = "Subtotal: 0.00"
@@ -521,6 +548,11 @@ SuccessCleanup:
         txtReferenceNo.Enabled = False
         SetPrescriptionControlsEnabled(False)
         dgvServices.DataSource = Nothing
+
+        ' Keep services and all other grids unselected
+        ClearAllSelections()
+        dgvPendingPayments.ClearSelection()
+        UpdateButtonState()
     End Sub
 
     Private Sub SetPrescriptionControlsEnabled(enabled As Boolean)
@@ -529,7 +561,7 @@ SuccessCleanup:
         ItemSearch.Enabled = enabled
     End Sub
 
-    Private Sub CheckReadyToPoint()
+    Private Sub UpdateButtonState()
         Dim hasMethod As Boolean = Not String.IsNullOrEmpty(ComboBoxPaymentMethod.Text)
         Dim hasAmount As Boolean = Not String.IsNullOrWhiteSpace(txtAmountPaid.Text)
 
@@ -551,7 +583,10 @@ SuccessCleanup:
     End Sub
 
     Private Sub txtReferenceNo_TextChanged(sender As Object, e As EventArgs) Handles txtReferenceNo.TextChanged
-        CheckReadyToPoint()
+        UpdateButtonState()
+    End Sub
+    Private Sub txtAmountPaid_TextChanged(sender As Object, e As EventArgs) Handles txtAmountPaid.TextChanged
+        UpdateButtonState()
     End Sub
 
     Private Sub txtAmountPaid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAmountPaid.KeyPress
@@ -564,9 +599,6 @@ SuccessCleanup:
         End If
     End Sub
 
-    Private Sub txtAmountPaid_TextChanged(sender As Object, e As EventArgs) Handles txtAmountPaid.TextChanged
-        CheckReadyToPoint()
-    End Sub
 
     Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
         LoadInventoryItems(ItemSearch.Text.Trim())
@@ -584,8 +616,5 @@ SuccessCleanup:
     End Sub
 
     ' Empty handler (kept for compatibility)
-    Private Sub dgvReceiptItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs)
-        ' Read-only grid - no action needed
-    End Sub
 
 End Class

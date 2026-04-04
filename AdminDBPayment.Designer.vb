@@ -513,7 +513,7 @@ Partial Class AdminDBPayment
         Me.ItemSearch.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.ItemSearch.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ItemSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ItemSearch.Location = New System.Drawing.Point(25, 218)
+        Me.ItemSearch.Location = New System.Drawing.Point(6, 231)
         Me.ItemSearch.Margin = New System.Windows.Forms.Padding(4)
         Me.ItemSearch.Name = "ItemSearch"
         Me.ItemSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
