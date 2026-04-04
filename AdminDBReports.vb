@@ -51,8 +51,7 @@ Public Class AdminDBReports
             INNER JOIN Patients P ON A.PatientID = P.PatientID
             INNER JOIN Users U ON A.UserID = U.UserID
             WHERE U.Role = 'Dentist'
-              AND R.Status <> 'Voided'
-              AND R.VoidedAt IS NULL
+              AND R.Status = 'Completed'   -- ✅ FIXED
             ORDER BY R.DateIssued DESC"
 
         DGVDaily.DataSource = ExecuteQuery(query)
@@ -80,8 +79,7 @@ Public Class AdminDBReports
                     ON R.AppointmentID = ASV.AppointmentID
                 INNER JOIN Services S 
                     ON ASV.ServiceID = S.ServiceID
-                WHERE R.Status <> 'Voided'
-                  AND R.VoidedAt IS NULL
+                WHERE R.Status = 'Completed'   -- ✅ FIXED
             )
             SELECT 
                 S.ServiceName AS [Service Name],
@@ -132,18 +130,25 @@ Public Class AdminDBReports
                 A.AppointmentID,
                 P.FullName AS Patient,
                 U.FullName AS Dentist,
-                STRING_AGG(S.ServiceName, ', ') AS Services,
+
+                ISNULL((
+                    SELECT STRING_AGG(S2.ServiceName, ', ')
+                    FROM AppointmentServices ASV2
+                    INNER JOIN Services S2 ON ASV2.ServiceID = S2.ServiceID
+                    WHERE ASV2.AppointmentID = A.AppointmentID
+                ), '') AS Services,
+
                 A.Date,
                 A.StartTime,
                 A.EndTime,
                 A.Status
+
             FROM Appointments A
             JOIN Patients P ON A.PatientID = P.PatientID
             JOIN Users U ON A.UserID = U.UserID 
-            LEFT JOIN AppointmentServices ASV ON A.AppointmentID = ASV.AppointmentID
-            LEFT JOIN Services S ON ASV.ServiceID = S.ServiceID
+
             WHERE A.Status = 'Completed'
-            GROUP BY A.AppointmentID, P.FullName, U.FullName, A.Date, A.StartTime, A.EndTime, A.Status
+
             ORDER BY A.Date DESC, A.StartTime ASC"
 
         DgvAppointmentHistory.DataSource = ExecuteQuery(query)
@@ -168,8 +173,7 @@ Public Class AdminDBReports
                         COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
                         SUM(R.TotalAmount) AS [Gross Revenue]
                     FROM Receipts R
-                    WHERE R.Status <> 'Voided'
-                      AND R.VoidedAt IS NULL
+                    WHERE R.Status = 'Completed'   -- ✅ FIXED
                     GROUP BY DATEPART(WEEK, R.DateIssued), YEAR(R.DateIssued)
                     ORDER BY YEAR(R.DateIssued) DESC, DATEPART(WEEK, R.DateIssued) DESC"
 
@@ -181,8 +185,7 @@ Public Class AdminDBReports
                         COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
                         SUM(R.TotalAmount) AS [Gross Revenue]
                     FROM Receipts R
-                    WHERE R.Status <> 'Voided'
-                      AND R.VoidedAt IS NULL
+                    WHERE R.Status = 'Completed'   -- ✅ FIXED
                     GROUP BY YEAR(R.DateIssued)
                     ORDER BY YEAR(R.DateIssued) DESC"
 
@@ -194,8 +197,7 @@ Public Class AdminDBReports
                         COUNT(DISTINCT R.AppointmentID) AS [Total Appointments],
                         SUM(R.TotalAmount) AS [Gross Revenue]
                     FROM Receipts R
-                    WHERE R.Status <> 'Voided'
-                      AND R.VoidedAt IS NULL
+                    WHERE R.Status = 'Completed'   -- ✅ FIXED
                     GROUP BY YEAR(R.DateIssued), MONTH(R.DateIssued)
                     ORDER BY YEAR(R.DateIssued) DESC, MONTH(R.DateIssued) DESC"
         End Select

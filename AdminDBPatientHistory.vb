@@ -26,7 +26,7 @@ Public Class AdminDBPatientHistory
             End Try
 
         Catch ex As Exception
-            MessageBox.Show("Error loading form: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error loading form: " & ex.Message)
         End Try
     End Sub
 
@@ -62,7 +62,7 @@ Public Class AdminDBPatientHistory
             cboPatients.SelectedIndex = -1
 
         Catch ex As Exception
-            MessageBox.Show("Error loading patients: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error loading patients: " & ex.Message)
         Finally
             isLoading = False
         End Try
@@ -71,7 +71,7 @@ Public Class AdminDBPatientHistory
 
 #End Region
 
-#Region "PATIENT SEARCH"
+#Region "SEARCH"
 
     Private Sub txtSearchPatient_TextChanged(sender As Object, e As EventArgs) Handles txtSearchPatient.TextChanged
 
@@ -85,28 +85,25 @@ Public Class AdminDBPatientHistory
             dvPatients.RowFilter = $"FullName LIKE '%{searchText}%'"
         End If
 
-        ' keep dropdown open while typing
         cboPatients.DroppedDown = True
-        Cursor.Current = Cursors.Default
 
     End Sub
 
 #End Region
 
-#Region "PATIENT SELECTION"
+#Region "SELECT PATIENT"
 
     Private Sub cboPatients_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboPatients.SelectedIndexChanged
 
         If isLoading Then Exit Sub
-        If cboPatients.SelectedValue Is Nothing Then Exit Sub
-        If Not IsNumeric(cboPatients.SelectedValue) Then Exit Sub
+        If cboPatients.SelectedValue Is Nothing OrElse IsDBNull(cboPatients.SelectedValue) Then Exit Sub
 
-        Dim newPatientID As Integer = Convert.ToInt32(cboPatients.SelectedValue)
+        Dim id As Integer
+        If Not Integer.TryParse(cboPatients.SelectedValue.ToString(), id) Then Exit Sub
 
-        If newPatientID <= 0 Then Exit Sub
-        If newPatientID = selectedPatientID Then Exit Sub
+        If id <= 0 OrElse id = selectedPatientID Then Exit Sub
 
-        selectedPatientID = newPatientID
+        selectedPatientID = id
 
         ClearTreatmentFields()
         selectedAppointmentID = 0
@@ -117,15 +114,11 @@ Public Class AdminDBPatientHistory
 
 #End Region
 
-#Region "MASTER LOADER"
+#Region "LOAD DATA"
 
     Private Sub LoadPatientData(patientID As Integer)
-        Try
-            LoadAppointments(patientID)
-            ClearTreatmentFields()
-        Catch ex As Exception
-            MessageBox.Show("Error loading patient data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
+        LoadAppointments(patientID)
+        ClearTreatmentFields()
     End Sub
 
 #End Region
@@ -153,14 +146,10 @@ Public Class AdminDBPatientHistory
             End Using
 
             dgvAppointments.DataSource = dt
-
             FormatAppointmentsGrid()
 
-            dgvAppointments.ClearSelection()
-            dgvAppointments.CurrentCell = Nothing
-
         Catch ex As Exception
-            MessageBox.Show("Error loading appointments: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error loading appointments: " & ex.Message)
         End Try
 
     End Sub
@@ -170,22 +159,19 @@ Public Class AdminDBPatientHistory
         If dgvAppointments.Columns.Count = 0 Then Exit Sub
 
         With dgvAppointments
+
             If .Columns.Contains("AppointmentID") Then
                 .Columns("AppointmentID").Visible = False
             End If
 
             If .Columns.Contains("Date") Then
-                .Columns("Date").HeaderText = "Appointment Date"
+                .Columns("Date").HeaderText = "Date"
                 .Columns("Date").DefaultCellStyle.Format = "dd MMM yyyy hh:mm tt"
-            End If
-
-            If .Columns.Contains("Status") Then
-                .Columns("Status").HeaderText = "Status"
             End If
 
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .ReadOnly = True
-            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+
         End With
 
     End Sub
@@ -230,9 +216,9 @@ Public Class AdminDBPatientHistory
 
                     Using reader = cmd.ExecuteReader()
                         If reader.Read() Then
-                            txtNotes.Text = reader("TreatmentNotes").ToString()
-                            txtPrescriptions.Text = reader("Prescriptions").ToString()
-                            txtProcedures.Text = reader("ProceduresDone").ToString()
+                            txtNotes.Text = If(IsDBNull(reader("TreatmentNotes")), "", reader("TreatmentNotes").ToString())
+                            txtPrescriptions.Text = If(IsDBNull(reader("Prescriptions")), "", reader("Prescriptions").ToString())
+                            txtProcedures.Text = If(IsDBNull(reader("ProceduresDone")), "", reader("ProceduresDone").ToString())
                         Else
                             ClearTreatmentFields()
                         End If
@@ -243,7 +229,6 @@ Public Class AdminDBPatientHistory
 
         Catch ex As Exception
             MessageBox.Show("Error loading treatment: " & ex.Message)
-            ClearTreatmentFields()
         End Try
 
     End Sub
@@ -275,15 +260,10 @@ Public Class AdminDBPatientHistory
             End Using
 
             dgvServices.DataSource = dt
-
             FormatServicesGrid()
-
-            dgvServices.ClearSelection()
-            dgvServices.CurrentCell = Nothing
 
         Catch ex As Exception
             MessageBox.Show("Error loading services: " & ex.Message)
-            dgvServices.DataSource = Nothing
         End Try
 
     End Sub
@@ -293,27 +273,19 @@ Public Class AdminDBPatientHistory
         If dgvServices.Columns.Count = 0 Then Exit Sub
 
         With dgvServices
-
-            If .Columns.Contains("ServiceName") Then
-                .Columns("ServiceName").HeaderText = "Service"
-            End If
-
             If .Columns.Contains("Price") Then
-                .Columns("Price").HeaderText = "Price"
                 .Columns("Price").DefaultCellStyle.Format = "C2"
-                .Columns("Price").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
             End If
 
             .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
             .ReadOnly = True
-
         End With
 
     End Sub
 
 #End Region
 
-#Region "CLEAR FUNCTIONS (FIXED)"
+#Region "CLEAR"
 
     Private Sub ClearTreatmentFields()
 
@@ -322,90 +294,53 @@ Public Class AdminDBPatientHistory
         txtProcedures.Clear()
 
         dgvServices.DataSource = Nothing
-        dgvServices.ClearSelection()
-        dgvServices.CurrentCell = Nothing
 
     End Sub
 
-    Private Sub ResetAllSelections()
+#End Region
 
-        selectedAppointmentID = 0
-
-        ClearTreatmentFields()
-
-        dgvAppointments.DataSource = Nothing
-        dgvAppointments.ClearSelection()
-        dgvAppointments.CurrentCell = Nothing
-
-    End Sub
-
-    Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
-
-        isLoading = True
-
-        Try
-            selectedPatientID = 0
-            selectedAppointmentID = 0
-
-            txtSearchPatient.Clear()
-
-            cboPatients.DataSource = Nothing
-            cboPatients.SelectedIndex = -1
-
-            LoadPatients()
-
-            ResetAllSelections()
-
-            txtSearchPatient.Focus()
-
-        Finally
-            isLoading = False
-        End Try
-
-    End Sub
-
-    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
-        SystemSession.NavigateToDashboard(Me)
-    End Sub
+#Region "FULL HISTORY (WITH PAYMENT STATUS FIXED)"
 
     Private Sub btnFullHistory_Click(sender As Object, e As EventArgs) Handles btnFullHistory.Click
 
         If selectedPatientID = 0 Then
-            MessageBox.Show("Please select a patient first.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("Select a patient first.")
             Exit Sub
         End If
 
         Dim sb As New StringBuilder()
 
-        sb.AppendLine("FULL PATIENT HISTORY")
-        sb.AppendLine("Patient ID: " & selectedPatientID)
-        sb.AppendLine("==================================================")
-        sb.AppendLine()
-
         Try
             Using conn As New SqlConnection(connectionString)
                 conn.Open()
 
-                ' ======================================================
-                ' 1. TREATMENT RECORDS + SERVICES
-                ' ======================================================
                 Dim query As String = "
                 SELECT 
                     tr.DateCreated,
                     tr.ProceduresDone,
                     tr.TreatmentNotes,
                     tr.Prescriptions,
-                    ISNULL(STRING_AGG(s.ServiceName, ', '), 'None') AS Services
+                    ISNULL(STRING_AGG(s.ServiceName, ', '), 'None') AS Services,
+
+                    (
+                        SELECT TOP 1 r.Status
+                        FROM Receipts r
+                        WHERE r.AppointmentID = tr.AppointmentID
+                        ORDER BY r.ReceiptID DESC
+                    ) AS PaymentStatus
+
                 FROM TreatmentRecords tr
                 LEFT JOIN AppointmentServices aps ON tr.AppointmentID = aps.AppointmentID
                 LEFT JOIN Services s ON aps.ServiceID = s.ServiceID
                 WHERE tr.PatientID = @PatientID
+
                 GROUP BY 
                     tr.DateCreated,
-                    tr.RecordID,
                     tr.ProceduresDone,
                     tr.TreatmentNotes,
-                    tr.Prescriptions
+                    tr.Prescriptions,
+                    tr.AppointmentID
+
                 ORDER BY tr.DateCreated DESC"
 
                 Using cmd As New SqlCommand(query, conn)
@@ -413,66 +348,28 @@ Public Class AdminDBPatientHistory
 
                     Using reader = cmd.ExecuteReader()
 
-                        Dim hasRecords As Boolean = False
-
-                        sb.AppendLine("TREATMENT RECORDS")
+                        sb.AppendLine("FULL PATIENT HISTORY")
                         sb.AppendLine("==================================================")
+
+                        Dim hasRecords As Boolean = False
 
                         While reader.Read()
                             hasRecords = True
 
-                            sb.AppendLine("Date: " & Convert.ToDateTime(reader("DateCreated")).ToString("dd MMM yyyy hh:mm tt"))
+                            Dim paymentStatus As String =
+                                If(IsDBNull(reader("PaymentStatus")), "UNPAID", reader("PaymentStatus").ToString())
+
+                            sb.AppendLine("Date: " & Convert.ToDateTime(reader("DateCreated")).ToString("dd MMM yyyy"))
                             sb.AppendLine("Procedures: " & reader("ProceduresDone").ToString())
                             sb.AppendLine("Notes: " & reader("TreatmentNotes").ToString())
                             sb.AppendLine("Prescriptions: " & reader("Prescriptions").ToString())
                             sb.AppendLine("Services: " & reader("Services").ToString())
+                            sb.AppendLine("Payment Status: " & paymentStatus)
                             sb.AppendLine("--------------------------------------------------")
                         End While
 
                         If Not hasRecords Then
-                            sb.AppendLine("No treatment records found.")
-                            sb.AppendLine("--------------------------------------------------")
-                        End If
-
-                    End Using
-                End Using
-
-                ' ======================================================
-                ' 2. FOLLOW-UP RECORDS (NEW ADDITION)
-                ' ======================================================
-                Dim followUpQuery As String = "
-                SELECT 
-                    FollowUpDate,
-                    Reason,
-                    Status,
-                    CreatedAt
-                FROM PatientFollowUps
-                WHERE PatientID = @PatientID
-                ORDER BY FollowUpDate DESC"
-
-                Using cmd2 As New SqlCommand(followUpQuery, conn)
-                    cmd2.Parameters.AddWithValue("@PatientID", selectedPatientID)
-
-                    Using reader2 = cmd2.ExecuteReader()
-
-                        Dim hasFollowUps As Boolean = False
-
-                        sb.AppendLine()
-                        sb.AppendLine("FOLLOW-UP RECORDS")
-                        sb.AppendLine("==================================================")
-
-                        While reader2.Read()
-                            hasFollowUps = True
-
-                            sb.AppendLine("Date: " & Convert.ToDateTime(reader2("FollowUpDate")).ToString("dd MMM yyyy"))
-                            sb.AppendLine("Reason: " & reader2("Reason").ToString())
-                            sb.AppendLine("Status: " & reader2("Status").ToString())
-                            sb.AppendLine("Created: " & Convert.ToDateTime(reader2("CreatedAt")).ToString("dd MMM yyyy"))
-                            sb.AppendLine("--------------------------------------------------")
-                        End While
-
-                        If Not hasFollowUps Then
-                            sb.AppendLine("No follow-up records found.")
+                            sb.AppendLine("No records found.")
                         End If
 
                     End Using
@@ -480,10 +377,10 @@ Public Class AdminDBPatientHistory
 
             End Using
 
-            MessageBox.Show(sb.ToString(), "Full Patient History", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show(sb.ToString(), "Full History")
 
         Catch ex As Exception
-            MessageBox.Show("Error retrieving full history: " & ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error: " & ex.Message)
         End Try
 
     End Sub

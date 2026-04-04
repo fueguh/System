@@ -260,7 +260,9 @@ Public Class AdminDBPayment
                             ReferenceNumber = @Ref,
                             AmountPaid = @Paid,
                             ChangeAmount = @Change,
-                            Status = 'Completed'
+                            Status = 'Completed',
+                            voidedAt = Null
+
                         WHERE ReceiptID = @RID
                     ", con, trans)
 
