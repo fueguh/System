@@ -10,6 +10,7 @@ Public Class AdminDBPayment
     Private SelectedTreatmentNotes As String = ""
     Private currentTotal As Decimal = 0
     Private originalStockCache As New Dictionary(Of Integer, Integer)
+    Private SelectedReceiptStatus As String = ""
 
     ' NEW: Flag to know if we are editing an existing receipt
     Private isEditingExistingReceipt As Boolean = False
@@ -96,6 +97,8 @@ Public Class AdminDBPayment
             SelectedDentistName = Convert.ToString(row.Cells("Dentist").Value)
             SelectedTreatmentNotes = Convert.ToString(row.Cells("Dentist Notes").Value)
 
+            SelectedReceiptStatus = Convert.ToString(row.Cells("Payment Status").Value)
+
             patient_name.Text = SelectedPatientName
             dentist_name.Text = SelectedDentistName
             TextBoxPrescriptionNotes.Text = Convert.ToString(row.Cells("Prescription").Value)
@@ -103,13 +106,22 @@ Public Class AdminDBPayment
             dgvReceiptItems.Rows.Clear()
 
             ' We are now editing/viewing an existing receipt
-            isEditingExistingReceipt = True
-
             LoadAppointmentServices()
             LoadExistingReceiptItems()
-            UpdateGrandTotalDisplay()        ' This will NOT deduct loaded items
-            SetPrescriptionControlsEnabled(True)
+            UpdateGrandTotalDisplay()
             ClearAllSelections()
+
+            ' NEW: enforce edit rules based on status
+            If SelectedReceiptStatus = "Completed" Then
+                ' VIEW ONLY MODE
+                isEditingExistingReceipt = True
+                SetReadOnlyMode(True)
+            Else
+                ' EDIT MODE (only unpaid/active)
+                isEditingExistingReceipt = False
+                SetReadOnlyMode(False)
+                SetPrescriptionControlsEnabled(True)
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Selection error: " & ex.Message)
@@ -217,9 +229,11 @@ Public Class AdminDBPayment
     ' REGION: RECEIPT GENERATION & DATABASE OPERATIONS (Single Source of Truth)
     ' ==================================================================
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-        ' ... [Your current ButtonGenerateReceipt_Click code remains unchanged] ...
-        ' (I kept your latest version with StockTransactions as requested)
-
+        ' NEW: HARD STOP for completed receipts
+        If SelectedReceiptStatus = "Completed" Then
+            MessageBox.Show("This transaction is already completed and cannot be modified.")
+            Exit Sub
+        End If
         If SystemSession.LoggedInUserID <= 0 Then
             MessageBox.Show("Error: No logged-in User ID found. Please re-login.")
             Exit Sub
@@ -421,7 +435,7 @@ Public Class AdminDBPayment
 
     Private Sub dgvReceiptItems_MouseDown(sender As Object, e As MouseEventArgs) Handles dgvReceiptItems.MouseDown
         If e.Button <> MouseButtons.Right Then Exit Sub
-
+        If SelectedReceiptStatus = "Completed" Then Exit Sub
         Dim hit As DataGridView.HitTestInfo = dgvReceiptItems.HitTest(e.X, e.Y)
         If hit.RowIndex < 0 OrElse hit.RowIndex >= dgvReceiptItems.Rows.Count Then Exit Sub
 
@@ -605,6 +619,24 @@ Public Class AdminDBPayment
         If dgvServices IsNot Nothing Then dgvServices.ClearSelection()
     End Sub
 
+    Private Sub SetReadOnlyMode(isReadOnly As Boolean)
+
+        dgvInventoryItems.Enabled = Not isReadOnly
+        dgvReceiptItems.Enabled = Not isReadOnly
+        ItemSearch.Enabled = Not isReadOnly
+
+        ComboBoxPaymentMethod.Enabled = Not isReadOnly
+
+        txtAmountPaid.ReadOnly = isReadOnly
+
+        ' Only allow reference editing if NOT read-only AND Gcash
+        txtReferenceNo.Enabled = Not isReadOnly AndAlso ComboBoxPaymentMethod.Text = "Gcash"
+
+        ' Disable main action button when viewing completed receipt
+        ButtonGenerateReceipt.Enabled = Not isReadOnly
+
+    End Sub
+
     Private Sub ClearBillingUI()
         SelectedAppointmentID = 0
         SelectedPatientID = 0
@@ -632,6 +664,9 @@ Public Class AdminDBPayment
         ClearAllSelections()
         dgvPendingPayments.ClearSelection()
         UpdateButtonState()
+        ' NEW: reset receipt mode state
+        SelectedReceiptStatus = ""
+        SetReadOnlyMode(False)
     End Sub
 
     Private Sub SetPrescriptionControlsEnabled(enabled As Boolean)

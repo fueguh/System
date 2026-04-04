@@ -385,6 +385,10 @@ Public Class AdminDBPatientHistory
 
     End Sub
 
+    Private Sub Guna2CirclePictureBox1_Click(sender As Object, e As EventArgs) Handles Guna2CirclePictureBox1.Click
+        SystemSession.NavigateToDashboard(Me)
+    End Sub
+
 #End Region
 
 End Class
