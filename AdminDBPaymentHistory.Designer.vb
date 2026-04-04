@@ -46,7 +46,7 @@ Partial Class AdminDBPaymentHistory
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(1514, 100)
+        Me.Panel1.Size = New System.Drawing.Size(1826, 100)
         Me.Panel1.TabIndex = 0
         '
         'btnBack
@@ -56,7 +56,7 @@ Partial Class AdminDBPaymentHistory
         Me.btnBack.FillColor = System.Drawing.Color.LightGray
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1442, 21)
+        Me.btnBack.Location = New System.Drawing.Point(1754, 21)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.btnBack.Size = New System.Drawing.Size(60, 58)
@@ -72,7 +72,7 @@ Partial Class AdminDBPaymentHistory
         Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Label1.Location = New System.Drawing.Point(-3, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(1514, 100)
+        Me.Label1.Size = New System.Drawing.Size(1826, 100)
         Me.Label1.TabIndex = 0
         Me.Label1.Text = "Payment History"
         Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -115,7 +115,7 @@ Partial Class AdminDBPaymentHistory
         Me.dgvHistory.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.dgvHistory.RowHeadersVisible = False
         Me.dgvHistory.RowHeadersWidth = 51
-        Me.dgvHistory.Size = New System.Drawing.Size(1491, 348)
+        Me.dgvHistory.Size = New System.Drawing.Size(1802, 536)
         Me.dgvHistory.TabIndex = 33
         Me.dgvHistory.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvHistory.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -183,7 +183,7 @@ Partial Class AdminDBPaymentHistory
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1514, 668)
+        Me.ClientSize = New System.Drawing.Size(1826, 856)
         Me.ControlBox = False
         Me.Controls.Add(Me.btnReprint)
         Me.Controls.Add(Me.txtSearchPatient)

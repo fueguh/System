@@ -28,44 +28,45 @@ Public Class AdminDBPayment
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim sql As String = "
-                SELECT 
-                    A.AppointmentID, 
-                    P.PatientID,
-                    P.FullName AS [Patient Name], 
-                    U.FullName AS [Dentist], 
-                    A.Date, 
-                    ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
-                    ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
-                    ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
-                    ISNULL((
-                        SELECT STRING_AGG(CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + ISNULL(F.Reason, ''), ' | ')
-                        FROM PatientFollowUps F 
-                        WHERE F.AppointmentID = A.AppointmentID
-                    ), 'No follow-ups') AS [Follow Ups]
-                FROM Appointments A
-                INNER JOIN Patients P ON A.PatientID = P.PatientID
-                INNER JOIN Users U ON A.UserID = U.UserID
-                LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
-                LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
-                LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
-                WHERE A.Status = 'Completed'
-                  AND NOT EXISTS (
-                        SELECT 1 FROM Receipts R 
-                        WHERE R.AppointmentID = A.AppointmentID 
-                          AND R.Status = 'Active'           -- Only active receipts block pending
-                  )
-                GROUP BY 
-                    A.AppointmentID, P.PatientID, P.FullName, U.FullName, 
-                    A.Date, T.TreatmentNotes, T.Prescriptions
-                ORDER BY A.Date DESC"
+            SELECT 
+                A.AppointmentID, 
+                P.PatientID,
+                P.FullName AS [Patient Name], 
+                U.FullName AS [Dentist], 
+                A.Date, 
+                ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
+                ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
+                ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
+                ISNULL((
+                    SELECT STRING_AGG(CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + ISNULL(F.Reason, ''), ' | ')
+                    FROM PatientFollowUps F 
+                    WHERE F.AppointmentID = A.AppointmentID
+                ), 'No follow-ups') AS [Follow Ups],
+                'Unpaid' AS [Payment Status]         
+            FROM Appointments A
+            INNER JOIN Patients P ON A.PatientID = P.PatientID
+            INNER JOIN Users U ON A.UserID = U.UserID
+            LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
+            LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
+            LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
+            WHERE A.Status = 'Completed'
+              AND NOT EXISTS (
+                    SELECT 1 FROM Receipts R 
+                    WHERE R.AppointmentID = A.AppointmentID 
+                      AND R.Status = 'Active'
+              )
+            GROUP BY 
+                A.AppointmentID, P.PatientID, P.FullName, U.FullName, 
+                A.Date, T.TreatmentNotes, T.Prescriptions
+            ORDER BY A.Date DESC"
 
-            Using da As New SqlDataAdapter(sql, con)
+        Using da As New SqlDataAdapter(sql, con)
                 Dim dt As New DataTable()
                 da.Fill(dt)
                 dgvPendingPayments.DataSource = dt
             End Using
 
-            ' Hide columns
+            ' Only hide internal columns
             For Each col As DataGridViewColumn In dgvPendingPayments.Columns
                 Select Case col.Name
                     Case "AppointmentID", "PatientID", "Prescription"
@@ -236,6 +237,28 @@ Public Class AdminDBPayment
             Try
                 con.Open()
                 Using trans As SqlTransaction = con.BeginTransaction()
+                    ' ===== PREVENT DOUBLE CLICK =====
+                    ButtonGenerateReceipt.Enabled = False
+
+                    ' ===== DUPLICATE CHECK (CRITICAL FIX) =====
+                    Dim checkCmd As New SqlCommand("
+    SELECT COUNT(*) 
+    FROM Receipts 
+    WHERE AppointmentID = @AID 
+      AND Status = 'Active'
+", con, trans)
+
+                    checkCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+
+                    Dim exists As Integer = CInt(checkCmd.ExecuteScalar())
+
+                    If exists > 0 Then
+                        MessageBox.Show("This appointment already has a payment recorded.", "Duplicate Blocked")
+
+                        ButtonGenerateReceipt.Enabled = True
+                        trans.Rollback()
+                        Exit Sub
+                    End If
                     Try
                         Dim sql As String = "
                             INSERT INTO Receipts 
@@ -329,6 +352,8 @@ Public Class AdminDBPayment
                         End Using
                     Catch ex As Exception
                         If trans.Connection IsNot Nothing Then trans.Rollback()
+
+                        ButtonGenerateReceipt.Enabled = True ' Re-enable if failed
                         MessageBox.Show("Transaction Error: " & ex.Message)
                     End Try
                 End Using

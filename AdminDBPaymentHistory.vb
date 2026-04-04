@@ -12,9 +12,9 @@ Public Class AdminDBPaymentHistory
     Private SelectedRefNo As String = ""
     Private SelectedPaymentMethod As String = ""
 
-    ' Correct variables from Receipts table (matching your current table)
-    Private SelectedTotalAmount As String = "0.00"     ' Gross Total (what patient paid)
-    Private SelectedVatExempt As String = "0.00"      ' VATableSales (Net of VAT)
+    ' Variables from Receipts table (matching your current table)
+    Private SelectedTotalAmount As String = "0.00"      ' Gross Total
+    Private SelectedVatExempt As String = "0.00"       ' VATableSales
     Private SelectedVatAmount As String = "0.00"
     Private SelectedAmountPaid As String = "0.00"
     Private SelectedChange As String = "0.00"
@@ -24,7 +24,6 @@ Public Class AdminDBPaymentHistory
 
     Private Sub AdminDBPaymentHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPaymentHistory()
-
         dgvHistory.ReadOnly = True
         dgvHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvHistory.AllowUserToAddRows = False
@@ -36,41 +35,41 @@ Public Class AdminDBPaymentHistory
             Using con As New SqlConnection(connectionString)
                 con.Open()
                 Dim sql As String = "
-                    SELECT 
-                        R.ReceiptID,
-                        R.AppointmentID,
-                        P.FullName AS [Patient Name],
-                        U.FullName AS [Dentist],
-                        R.TotalAmount AS [Total Bill],
-                        R.VATableSales AS [VATable Sales],
-                        R.VATAmount,
-                        R.AmountPaid AS [Cash Tendered],
-                        R.ChangeAmount AS [Change Given],
-                        R.PaymentMethod AS [Method],
-                        R.ReferenceNumber AS [Ref No],
-                        R.DateIssued AS [Payment Date],
-                        R.Status,
+                SELECT 
+                    R.ReceiptID,
+                    R.AppointmentID,
+                    P.FullName AS [Patient Name],
+                    U.FullName AS [Dentist],
+                    R.TotalAmount AS [Total Bill],
+                    R.VATableSales AS [VATable Sales],
+                    R.VATAmount,
+                    R.AmountPaid AS [Cash Tendered],
+                    R.ChangeAmount AS [Change Given],
+                    R.PaymentMethod AS [Method],
+                    R.ReferenceNumber AS [Ref No],
+                    R.DateIssued AS [Payment Date],
+                    R.Status,                                   -- 'Active' or 'Voided'
 
-                        ISNULL((
-                            SELECT STRING_AGG(
-                                CONVERT(VARCHAR(20), F.FollowUpDate, 101) + ' (' + ISNULL(F.Reason, '') + ')', 
-                                ', '
-                            )
-                            FROM PatientFollowUps F
-                            WHERE F.AppointmentID = R.AppointmentID
-                        ), 'None') AS [Follow-Ups]
+                    ISNULL((
+                        SELECT STRING_AGG(
+                            CONVERT(VARCHAR(20), F.FollowUpDate, 101) + ' (' + ISNULL(F.Reason, '') + ')', 
+                            ', '
+                        )
+                        FROM PatientFollowUps F
+                        WHERE F.AppointmentID = R.AppointmentID
+                    ), 'None') AS [Follow-Ups]
 
-                    FROM Receipts R
-                    INNER JOIN Patients P ON R.PatientID = P.PatientID
-                    INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
-                    INNER JOIN Users U ON A.UserID = U.UserID
-                    "
+                FROM Receipts R
+                INNER JOIN Patients P ON R.PatientID = P.PatientID
+                INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
+                INNER JOIN Users U ON A.UserID = U.UserID
+                "
 
                 If Not String.IsNullOrEmpty(searchName) Then
                     sql &= " WHERE (P.FullName LIKE @search 
-                            OR U.FullName LIKE @search 
-                            OR R.ReferenceNumber LIKE @search
-                            OR R.PaymentMethod LIKE @search)"
+                        OR U.FullName LIKE @search 
+                        OR R.ReferenceNumber LIKE @search
+                        OR R.PaymentMethod LIKE @search)"
                 End If
 
                 sql &= " ORDER BY R.DateIssued DESC"
@@ -85,10 +84,18 @@ Public Class AdminDBPaymentHistory
                     da.Fill(dt)
                     dgvHistory.DataSource = dt
 
+                    ' Hide internal ID columns (used only for logic, not for display)
+                    If dgvHistory.Columns.Contains("ReceiptID") Then
+                        dgvHistory.Columns("ReceiptID").Visible = False
+                    End If
+
+                    If dgvHistory.Columns.Contains("AppointmentID") Then
+                        dgvHistory.Columns("AppointmentID").Visible = False
+                    End If
+
                     ' Highlight VOIDED rows
                     For Each row As DataGridViewRow In dgvHistory.Rows
-                        If row.Cells("Status").Value IsNot Nothing AndAlso
-                           row.Cells("Status").Value.ToString() = "Voided" Then
+                        If row.Cells("Status").Value?.ToString() = "Voided" Then
                             row.DefaultCellStyle.BackColor = Color.LightGray
                             row.DefaultCellStyle.ForeColor = Color.Red
                         End If
@@ -100,10 +107,6 @@ Public Class AdminDBPaymentHistory
                     If dgvHistory.Columns.Contains("Change Given") Then dgvHistory.Columns("Change Given").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATable Sales") Then dgvHistory.Columns("VATable Sales").DefaultCellStyle.Format = "N2"
                     If dgvHistory.Columns.Contains("VATAmount") Then dgvHistory.Columns("VATAmount").DefaultCellStyle.Format = "N2"
-
-                    ' Hide ID columns
-                    If dgvHistory.Columns.Contains("ReceiptID") Then dgvHistory.Columns("ReceiptID").Visible = False
-                    If dgvHistory.Columns.Contains("AppointmentID") Then dgvHistory.Columns("AppointmentID").Visible = False
                 End Using
             End Using
         Catch ex As Exception
@@ -124,9 +127,7 @@ Public Class AdminDBPaymentHistory
 
         Dim row = dgvHistory.SelectedRows(0)
 
-        ' Prevent reprint if voided
-        If row.Cells("Status").Value IsNot Nothing AndAlso
-           row.Cells("Status").Value.ToString() = "Voided" Then
+        If row.Cells("Status").Value?.ToString() = "Voided" Then
             MessageBox.Show("Cannot reprint a voided receipt.")
             Exit Sub
         End If
@@ -143,24 +144,20 @@ Public Class AdminDBPaymentHistory
         SelectedVatAmount = If(row.Cells("VATAmount").Value IsNot DBNull.Value,
                               CDec(row.Cells("VATAmount").Value).ToString("F2"), "0.00")
 
-        ' Calculate VATable Sales from Total (safest for reprint)
+        ' Calculate VATable Sales
         Dim totalVal As Decimal = CDec(SelectedTotalAmount)
-        Dim vatExemptVal As Decimal = If(totalVal > 0, totalVal / 1.12D, 0D)
-        SelectedVatExempt = vatExemptVal.ToString("F2")
-
-        ' We use TotalAmount as Gross Subtotal
-        Dim selectedSubTotal As String = SelectedTotalAmount
+        SelectedVatExempt = If(totalVal > 0, (totalVal / 1.12D).ToString("F2"), "0.00")
 
         FetchDetailsForReprint(SelectedAppointmentID)
 
-        ' === FLASH PREVIEW ===
+        ' Flash Preview
         Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
             SelectedPatientName,
             SelectedDentistName,
             SelectedTreatmentNotes,
-            selectedSubTotal,          ' Gross Subtotal
+            SelectedTotalAmount,       ' Gross Subtotal
             SelectedVatExempt,         ' VATable Sales
-            SelectedVatAmount,         ' VAT Amount
+            SelectedVatAmount,
             SelectedTotalAmount,       ' Total
             SelectedAmountPaid,
             SelectedChange,
@@ -182,7 +179,7 @@ Public Class AdminDBPaymentHistory
                 SelectedPatientName,
                 SelectedDentistName,
                 SelectedTreatmentNotes,
-                selectedSubTotal,
+                SelectedTotalAmount,
                 SelectedVatExempt,
                 SelectedVatAmount,
                 SelectedTotalAmount,

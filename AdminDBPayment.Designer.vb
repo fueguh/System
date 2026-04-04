@@ -157,7 +157,7 @@ Partial Class AdminDBPayment
         Me.btnBack.FillColor = System.Drawing.Color.LightGray
         Me.btnBack.Image = CType(resources.GetObject("btnBack.Image"), System.Drawing.Image)
         Me.btnBack.ImageRotate = 0!
-        Me.btnBack.Location = New System.Drawing.Point(1723, 24)
+        Me.btnBack.Location = New System.Drawing.Point(1782, 24)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle
         Me.btnBack.Size = New System.Drawing.Size(60, 58)
@@ -169,7 +169,7 @@ Partial Class AdminDBPayment
         '
         Me.dgvPendingPayments.AllowUserToAddRows = False
         Me.dgvPendingPayments.AllowUserToDeleteRows = False
-        DataGridViewCellStyle1.BackColor = System.Drawing.Color.White
+        DataGridViewCellStyle1.BackColor = System.Drawing.Color.WhiteSmoke
         Me.dgvPendingPayments.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         Me.dgvPendingPayments.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells
         DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -190,7 +190,7 @@ Partial Class AdminDBPayment
         DataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvPendingPayments.DefaultCellStyle = DataGridViewCellStyle3
         Me.dgvPendingPayments.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvPendingPayments.Location = New System.Drawing.Point(892, 174)
+        Me.dgvPendingPayments.Location = New System.Drawing.Point(837, 174)
         Me.dgvPendingPayments.Name = "dgvPendingPayments"
         Me.dgvPendingPayments.ReadOnly = True
         DataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -203,7 +203,7 @@ Partial Class AdminDBPayment
         Me.dgvPendingPayments.RowHeadersDefaultCellStyle = DataGridViewCellStyle4
         Me.dgvPendingPayments.RowHeadersVisible = False
         Me.dgvPendingPayments.RowHeadersWidth = 51
-        Me.dgvPendingPayments.Size = New System.Drawing.Size(906, 302)
+        Me.dgvPendingPayments.Size = New System.Drawing.Size(1020, 413)
         Me.dgvPendingPayments.TabIndex = 32
         Me.dgvPendingPayments.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvPendingPayments.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -238,7 +238,7 @@ Partial Class AdminDBPayment
         Me.Guna2CustomGradientPanel1.FillColor4 = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.Guna2CustomGradientPanel1.Location = New System.Drawing.Point(0, 0)
         Me.Guna2CustomGradientPanel1.Name = "Guna2CustomGradientPanel1"
-        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1810, 107)
+        Me.Guna2CustomGradientPanel1.Size = New System.Drawing.Size(1869, 107)
         Me.Guna2CustomGradientPanel1.TabIndex = 49
         '
         'Guna2HtmlLabel6
@@ -251,7 +251,7 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel6.Location = New System.Drawing.Point(0, -1)
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
-        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1810, 107)
+        Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1869, 107)
         Me.Guna2HtmlLabel6.TabIndex = 47
         Me.Guna2HtmlLabel6.Text = "Payment"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -292,7 +292,7 @@ Partial Class AdminDBPayment
         DataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.[True]
         Me.dgvServices.DefaultCellStyle = DataGridViewCellStyle7
         Me.dgvServices.GridColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(229, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.dgvServices.Location = New System.Drawing.Point(892, 543)
+        Me.dgvServices.Location = New System.Drawing.Point(837, 654)
         Me.dgvServices.Name = "dgvServices"
         Me.dgvServices.ReadOnly = True
         DataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
@@ -305,7 +305,7 @@ Partial Class AdminDBPayment
         Me.dgvServices.RowHeadersDefaultCellStyle = DataGridViewCellStyle8
         Me.dgvServices.RowHeadersVisible = False
         Me.dgvServices.RowHeadersWidth = 51
-        Me.dgvServices.Size = New System.Drawing.Size(906, 206)
+        Me.dgvServices.Size = New System.Drawing.Size(1020, 206)
         Me.dgvServices.TabIndex = 51
         Me.dgvServices.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvServices.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -344,9 +344,9 @@ Partial Class AdminDBPayment
         '
         Me.Guna2Panel1.Controls.Add(Me.Guna2HtmlLabel3)
         Me.Guna2Panel1.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel1.Location = New System.Drawing.Point(892, 125)
+        Me.Guna2Panel1.Location = New System.Drawing.Point(837, 125)
         Me.Guna2Panel1.Name = "Guna2Panel1"
-        Me.Guna2Panel1.Size = New System.Drawing.Size(906, 45)
+        Me.Guna2Panel1.Size = New System.Drawing.Size(1020, 45)
         Me.Guna2Panel1.TabIndex = 53
         '
         'Guna2HtmlLabel3
@@ -359,7 +359,7 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(0, 0)
         Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
-        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(906, 43)
+        Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(1020, 43)
         Me.Guna2HtmlLabel3.TabIndex = 48
         Me.Guna2HtmlLabel3.Text = "Queue"
         Me.Guna2HtmlLabel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -368,9 +368,9 @@ Partial Class AdminDBPayment
         '
         Me.Guna2Panel2.Controls.Add(Me.Guna2HtmlLabel4)
         Me.Guna2Panel2.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.Guna2Panel2.Location = New System.Drawing.Point(892, 494)
+        Me.Guna2Panel2.Location = New System.Drawing.Point(837, 605)
         Me.Guna2Panel2.Name = "Guna2Panel2"
-        Me.Guna2Panel2.Size = New System.Drawing.Size(906, 43)
+        Me.Guna2Panel2.Size = New System.Drawing.Size(1020, 43)
         Me.Guna2Panel2.TabIndex = 54
         '
         'Guna2HtmlLabel4
@@ -383,7 +383,7 @@ Partial Class AdminDBPayment
         Me.Guna2HtmlLabel4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Guna2HtmlLabel4.Location = New System.Drawing.Point(0, 0)
         Me.Guna2HtmlLabel4.Name = "Guna2HtmlLabel4"
-        Me.Guna2HtmlLabel4.Size = New System.Drawing.Size(906, 43)
+        Me.Guna2HtmlLabel4.Size = New System.Drawing.Size(1020, 43)
         Me.Guna2HtmlLabel4.TabIndex = 49
         Me.Guna2HtmlLabel4.Text = "Details"
         Me.Guna2HtmlLabel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
@@ -494,7 +494,7 @@ Partial Class AdminDBPayment
         Me.GroupBox1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.GroupBox1.Location = New System.Drawing.Point(333, 125)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(538, 729)
+        Me.GroupBox1.Size = New System.Drawing.Size(498, 729)
         Me.GroupBox1.TabIndex = 93
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Prescriptions:"
@@ -520,7 +520,7 @@ Partial Class AdminDBPayment
         Me.ItemSearch.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.ItemSearch.PlaceholderText = "Search item.."
         Me.ItemSearch.SelectedText = ""
-        Me.ItemSearch.Size = New System.Drawing.Size(345, 50)
+        Me.ItemSearch.Size = New System.Drawing.Size(302, 50)
         Me.ItemSearch.TabIndex = 99
         '
         'TextBoxPrescriptionNotes
@@ -547,7 +547,7 @@ Partial Class AdminDBPayment
         Me.TextBoxPrescriptionNotes.ReadOnly = True
         Me.TextBoxPrescriptionNotes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.TextBoxPrescriptionNotes.SelectedText = ""
-        Me.TextBoxPrescriptionNotes.Size = New System.Drawing.Size(488, 130)
+        Me.TextBoxPrescriptionNotes.Size = New System.Drawing.Size(445, 130)
         Me.TextBoxPrescriptionNotes.TabIndex = 96
         '
         'Panel1
@@ -599,7 +599,7 @@ Partial Class AdminDBPayment
         Me.dgvReceiptItems.RowHeadersDefaultCellStyle = DataGridViewCellStyle12
         Me.dgvReceiptItems.RowHeadersVisible = False
         Me.dgvReceiptItems.RowHeadersWidth = 51
-        Me.dgvReceiptItems.Size = New System.Drawing.Size(488, 156)
+        Me.dgvReceiptItems.Size = New System.Drawing.Size(445, 156)
         Me.dgvReceiptItems.TabIndex = 98
         Me.dgvReceiptItems.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvReceiptItems.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -662,7 +662,7 @@ Partial Class AdminDBPayment
         Me.dgvInventoryItems.RowHeadersDefaultCellStyle = DataGridViewCellStyle16
         Me.dgvInventoryItems.RowHeadersVisible = False
         Me.dgvInventoryItems.RowHeadersWidth = 51
-        Me.dgvInventoryItems.Size = New System.Drawing.Size(488, 220)
+        Me.dgvInventoryItems.Size = New System.Drawing.Size(445, 220)
         Me.dgvInventoryItems.TabIndex = 97
         Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White
         Me.dgvInventoryItems.ThemeStyle.AlternatingRowsStyle.Font = Nothing
@@ -702,7 +702,7 @@ Partial Class AdminDBPayment
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1810, 897)
+        Me.ClientSize = New System.Drawing.Size(1869, 897)
         Me.ControlBox = False
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.lblChange)
