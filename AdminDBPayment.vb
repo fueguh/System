@@ -387,7 +387,7 @@ SuccessCleanup:
         End Using
     End Sub
 
-    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellContentClick
+    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellClick
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row = dgvInventoryItems.Rows(e.RowIndex)
