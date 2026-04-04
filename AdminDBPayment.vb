@@ -597,6 +597,7 @@ SuccessCleanup:
         UpdateButtonState()
     End Sub
     Private Sub txtAmountPaid_TextChanged(sender As Object, e As EventArgs) Handles txtAmountPaid.TextChanged
+        UpdateGrandTotalDisplay()
         UpdateButtonState()
     End Sub
 
@@ -609,7 +610,6 @@ SuccessCleanup:
             e.Handled = True
         End If
     End Sub
-
 
     Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
         LoadInventoryItems(ItemSearch.Text.Trim())
