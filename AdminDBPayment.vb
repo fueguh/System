@@ -9,7 +9,6 @@ Public Class AdminDBPayment
     Private SelectedDentistName As String = ""
     Private SelectedTreatmentNotes As String = ""
     Private currentTotal As Decimal = 0
-    Private originalStockCache As New Dictionary(Of Integer, Integer)
     Private SelectedReceiptStatus As String = ""
 
     ' NEW: Flag to know if we are editing an existing receipt
@@ -455,14 +454,16 @@ Public Class AdminDBPayment
 
     Private Sub LoadInventoryItems(Optional search As String = "")
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+
             Dim sql As String = "
-                SELECT 
-                    ItemID,
-                    ItemName AS [Item],
-                    Price AS [Unit Price],
-                    Quantity AS [Stock]
-                FROM ItemManagement
-                WHERE ItemName LIKE @Search OR CONVERT(VARCHAR(50), ItemID) LIKE @Search"
+            SELECT 
+                ItemID,
+                ItemName AS [Item],
+                Price AS [Unit Price],
+                Quantity AS [Stock]
+            FROM ItemManagement
+            WHERE ItemName LIKE @Search 
+               OR CONVERT(VARCHAR(50), ItemID) LIKE @Search"
 
             Using cmd As New SqlCommand(sql, con)
                 cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
@@ -476,43 +477,11 @@ Public Class AdminDBPayment
                 If dgvInventoryItems.Columns.Contains("ItemID") Then
                     dgvInventoryItems.Columns("ItemID").Visible = False
                 End If
-
-                originalStockCache.Clear()
-                For Each row As DataRow In dt.Rows
-                    Dim id As Integer = CInt(row("ItemID"))
-                    Dim stock As Integer = CInt(row("Stock"))
-                    originalStockCache(id) = stock
-                Next
             End Using
         End Using
-
-        RefreshInventoryStockView()
     End Sub
 
-    ' =========================================================
-    ' FIXED: Virtual Stock only considers current session additions
-    ' =========================================================
-    Private Function GetVirtualStock(itemID As Integer) As Integer
-        Dim original As Integer = 0
-        If originalStockCache.ContainsKey(itemID) Then
-            original = originalStockCache(itemID)
-        End If
-
-        Dim used As Integer = 0
-
-        ' IMPORTANT: Do NOT deduct previously loaded items when editing
-        If Not isEditingExistingReceipt Then
-            For Each row As DataGridViewRow In dgvReceiptItems.Rows
-                If Not row.IsNewRow AndAlso CInt(row.Cells("ItemID").Value) = itemID Then
-                    used += CInt(row.Cells("Quantity").Value)
-                End If
-            Next
-        End If
-
-        Return original - used
-    End Function
-
-    Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellClick
+    Private Sub dgvInventoryItems_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellClick
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row = dgvInventoryItems.Rows(e.RowIndex)
@@ -520,58 +489,43 @@ Public Class AdminDBPayment
         Dim id As Integer = CInt(row.Cells("ItemID").Value)
         Dim name As String = row.Cells("Item").Value.ToString()
         Dim price As Decimal = CDec(row.Cells("Unit Price").Value)
-        Dim availableStock As Integer = GetVirtualStock(id)
+        Dim availableStock As Integer = CInt(row.Cells("Stock").Value)
 
-        Dim qtyStr As String = InputBox($"Enter quantity for {name} (Available: {availableStock})", "Prescription Item", "1")
+        Dim qtyStr As String = InputBox(
+        $"Enter quantity for {name} (Available: {availableStock})",
+        "Add Item",
+        "1"
+    )
+
         Dim qty As Integer
-
         If Not Integer.TryParse(qtyStr, qty) OrElse qty <= 0 Then Exit Sub
 
         If qty > availableStock Then
-            MessageBox.Show($"Not enough stock! Available: {availableStock}", "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show($"Not enough stock! Available: {availableStock}")
             Exit Sub
         End If
 
-        ' Check if item already exists in current receipt
+        ' check duplicate in receipt
         For Each r As DataGridViewRow In dgvReceiptItems.Rows
             If Not r.IsNewRow AndAlso CInt(r.Cells("ItemID").Value) = id Then
-                Dim existingQty As Integer = CInt(r.Cells("Quantity").Value)
-                Dim newQty As Integer = existingQty + qty
+                Dim newQty As Integer = CInt(r.Cells("Quantity").Value) + qty
 
                 If newQty > availableStock Then
-                    MessageBox.Show($"Total exceeds stock! Available: {availableStock}", "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    MessageBox.Show($"Total exceeds stock! Available: {availableStock}")
                     Exit Sub
                 End If
 
                 r.Cells("Quantity").Value = newQty
                 r.Cells("Subtotal").Value = price * newQty
                 UpdateGrandTotalDisplay()
-                ClearAllSelections()
                 Exit Sub
             End If
         Next
 
-        ' Add new row
-        Dim subtotal As Decimal = price * qty
-        dgvReceiptItems.Rows.Add(id, name, price, qty, subtotal)
-
-        ' User is now actively adding items → enable virtual deduction
-        isEditingExistingReceipt = False
-
+        dgvReceiptItems.Rows.Add(id, name, price, qty, price * qty)
         UpdateGrandTotalDisplay()
-        ClearAllSelections()
     End Sub
 
-    Private Sub RefreshInventoryStockView()
-        For Each row As DataGridViewRow In dgvInventoryItems.Rows
-            If row.IsNewRow Then Continue For
-
-            Dim itemId As Integer = CInt(row.Cells("ItemID").Value)
-            Dim virtualStock As Integer = GetVirtualStock(itemId)
-
-            row.Cells("Stock").Value = virtualStock
-        Next
-    End Sub
 
     ' ==================================================================
     ' REGION: CALCULATION HELPERS
@@ -606,7 +560,6 @@ Public Class AdminDBPayment
             txtAmountPaid.Text = grandTotal.ToString("F2")
         End If
 
-        RefreshInventoryStockView()
         UpdateButtonState()
     End Sub
 
