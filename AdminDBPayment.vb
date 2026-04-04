@@ -9,6 +9,7 @@ Public Class AdminDBPayment
     Private SelectedDentistName As String = ""
     Private SelectedTreatmentNotes As String = ""
     Private currentTotal As Decimal = 0
+    Private originalStockCache As New Dictionary(Of Integer, Integer)
 
     ' ================= FORM LOAD =================
     Private Sub AdminDBPayment_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -217,18 +218,6 @@ Public Class AdminDBPayment
         Dim vatAmount As Decimal = If(totalAmount > 0, totalAmount - (totalAmount / 1.12D), 0D)
         Dim vatExempt As Decimal = totalAmount - vatAmount
 
-        If String.IsNullOrWhiteSpace(ComboBoxPaymentMethod.Text) Then
-            MessageBox.Show("Select payment method.")
-            Exit Sub
-        End If
-
-        If ComboBoxPaymentMethod.Text = "Gcash" Then
-            If String.IsNullOrWhiteSpace(txtReferenceNo.Text) Then
-                MessageBox.Show("Enter GCash reference number.")
-                Exit Sub
-            End If
-        End If
-
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
 
@@ -236,35 +225,72 @@ Public Class AdminDBPayment
 
                 Try
                     ' ================= CHECK EXISTING RECEIPT =================
+                    Dim receiptID As Integer = 0
+
                     Dim checkCmd As New SqlCommand("
-                        SELECT ReceiptID FROM Receipts WHERE AppointmentID = @AID
-                    ", con, trans)
+                    SELECT ReceiptID FROM Receipts WHERE AppointmentID = @AID
+                ", con, trans)
 
                     checkCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
 
-                    Dim existingID As Object = checkCmd.ExecuteScalar()
-                    Dim receiptID As Integer = 0
+                    Dim existingID = checkCmd.ExecuteScalar()
 
-                    ' ===========================================================
-                    ' UPDATE EXISTING RECEIPT (NO STOCK DEDUCTION HERE)
-                    ' ===========================================================
-                    If existingID IsNot Nothing Then
+                    ' ================= UPDATE OR INSERT RECEIPT =================
+                    If existingID IsNot Nothing AndAlso existingID IsNot DBNull.Value Then
+
 
                         receiptID = Convert.ToInt32(existingID)
+                        ' ================= RESTORE OLD STOCK FIRST =================
+                        Dim oldItems As New Dictionary(Of Integer, Integer)
 
+                        Dim oldCmd As New SqlCommand("
+    SELECT ItemID, Quantity
+    FROM ReceiptItems
+    WHERE ReceiptID = @RID
+", con, trans)
+
+                        oldCmd.Parameters.AddWithValue("@RID", receiptID)
+
+                        Using reader = oldCmd.ExecuteReader()
+                            While reader.Read()
+                                Dim id As Integer = CInt(reader("ItemID"))
+                                Dim qty As Integer = CInt(reader("Quantity"))
+
+                                If oldItems.ContainsKey(id) Then
+                                    oldItems(id) += qty
+                                Else
+                                    oldItems(id) = qty
+                                End If
+                            End While
+                        End Using
+
+                        For Each kvp In oldItems
+
+                            Dim restoreCmd As New SqlCommand("
+        UPDATE ItemManagement
+        SET Quantity = Quantity + @Qty
+        WHERE ItemID = @ItemID
+    ", con, trans)
+
+                            restoreCmd.Parameters.AddWithValue("@Qty", kvp.Value)
+                            restoreCmd.Parameters.AddWithValue("@ItemID", kvp.Key)
+
+                            restoreCmd.ExecuteNonQuery()
+
+                        Next
                         Dim updateCmd As New SqlCommand("
-                            UPDATE Receipts
-                            SET TotalAmount = @Total,
-                                VATableSales = @VATable,
-                                VATAmount = @VAT,
-                                PaymentMethod = @Method,
-                                ReferenceNumber = @Ref,
-                                AmountPaid = @Paid,
-                                ChangeAmount = @Change,
-                                Status = 'Completed',
-                                voidedAt = NULL
-                            WHERE ReceiptID = @RID
-                        ", con, trans)
+                        UPDATE Receipts
+                        SET TotalAmount = @Total,
+                            VATableSales = @VATable,
+                            VATAmount = @VAT,
+                            PaymentMethod = @Method,
+                            ReferenceNumber = @Ref,
+                            AmountPaid = @Paid,
+                            ChangeAmount = @Change,
+                            Status = 'Completed',
+                            voidedAt = NULL
+                        WHERE ReceiptID = @RID
+                    ", con, trans)
 
                         updateCmd.Parameters.AddWithValue("@RID", receiptID)
                         updateCmd.Parameters.AddWithValue("@Total", totalAmount)
@@ -272,7 +298,7 @@ Public Class AdminDBPayment
                         updateCmd.Parameters.AddWithValue("@VAT", vatAmount)
                         updateCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
                         updateCmd.Parameters.AddWithValue("@Ref",
-                            If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                        If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
                         updateCmd.Parameters.AddWithValue("@Paid", amountPaid)
                         updateCmd.Parameters.AddWithValue("@Change", changeAmount)
 
@@ -280,17 +306,15 @@ Public Class AdminDBPayment
 
                     Else
 
-                        ' ===========================================================
-                        ' INSERT NEW RECEIPT
-                        ' ===========================================================
                         Dim insertCmd As New SqlCommand("
-                            INSERT INTO Receipts
-                            (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount,
-                             PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
-                            VALUES
-                            (@AID, @PID, @UID, @Total, @VATable, @VAT,
-                             @Method, @Ref, @Paid, @Change, 'Completed')
-                        ", con, trans)
+                        INSERT INTO Receipts
+                        (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount,
+                         PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
+                        VALUES
+                        (@AID, @PID, @UID, @Total, @VATable, @VAT,
+                         @Method, @Ref, @Paid, @Change, 'Completed');
+                        SELECT SCOPE_IDENTITY();
+                    ", con, trans)
 
                         insertCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
                         insertCmd.Parameters.AddWithValue("@PID", SelectedPatientID)
@@ -300,11 +324,12 @@ Public Class AdminDBPayment
                         insertCmd.Parameters.AddWithValue("@VAT", vatAmount)
                         insertCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
                         insertCmd.Parameters.AddWithValue("@Ref",
-                            If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                        If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
                         insertCmd.Parameters.AddWithValue("@Paid", amountPaid)
                         insertCmd.Parameters.AddWithValue("@Change", changeAmount)
 
-                        insertCmd.ExecuteNonQuery()
+                        receiptID = Convert.ToInt32(insertCmd.ExecuteScalar())
+
 
                         ' ===========================================================
                         ' ✅ STOCK DEDUCTION (NEW FEATURE ADDED HERE)
@@ -313,29 +338,47 @@ Public Class AdminDBPayment
                             If Not row.IsNewRow Then
 
                                 Dim itemID As Integer = Convert.ToInt32(row.Cells("ItemID").Value)
+                                Dim itemName As String = Convert.ToString(row.Cells("ItemName").Value)
+                                Dim price As Decimal = Convert.ToDecimal(row.Cells("Price").Value)
                                 Dim qty As Integer = Convert.ToInt32(row.Cells("Quantity").Value)
+                                Dim subtotal As Decimal = Convert.ToDecimal(row.Cells("Subtotal").Value)
 
+                                ' ================= SAVE RECEIPT ITEMS =================
+                                Dim itemCmd As New SqlCommand("
+                            INSERT INTO ReceiptItems
+                            (ReceiptID, ItemType, ItemID, ItemName, UnitPrice, Quantity, Subtotal)
+                            VALUES
+                            (@RID, 'Inventory', @ItemID, @ItemName, @Price, @Qty, @Subtotal)
+                        ", con, trans)
+
+                                itemCmd.Parameters.AddWithValue("@RID", receiptID)
+                                itemCmd.Parameters.AddWithValue("@ItemID", itemID)
+                                itemCmd.Parameters.AddWithValue("@ItemName", itemName)
+                                itemCmd.Parameters.AddWithValue("@Price", price)
+                                itemCmd.Parameters.AddWithValue("@Qty", qty)
+                                itemCmd.Parameters.AddWithValue("@Subtotal", subtotal)
+
+                                itemCmd.ExecuteNonQuery()
+
+                                ' ================= ACTUAL STOCK DEDUCTION =================
                                 Dim stockCmd As New SqlCommand("
-                                    INSERT INTO StockTransactions
-                                    (ItemID, TransactionType, Quantity, TransactionDate)
-                                    VALUES
-                                    (@ItemID, 'OUT', @Qty, @Date)
-                                ", con, trans)
+    UPDATE ItemManagement
+    SET Quantity = Quantity - @Qty
+    WHERE ItemID = @ItemID
+    AND Quantity >= @Qty
+", con, trans)
 
                                 stockCmd.Parameters.AddWithValue("@ItemID", itemID)
                                 stockCmd.Parameters.AddWithValue("@Qty", qty)
-                                stockCmd.Parameters.AddWithValue("@Date", DateTime.Now)
 
                                 stockCmd.ExecuteNonQuery()
 
                             End If
                         Next
-
                     End If
-
                     trans.Commit()
 
-                Catch ex As Exception
+            Catch ex As Exception
                     trans.Rollback()
                     MessageBox.Show("Transaction Error: " & ex.Message)
                     Exit Sub
@@ -345,12 +388,12 @@ Public Class AdminDBPayment
 
         ' ================= AUDIT =================
         SystemSession.LogAudit(
-            $"Payment P{totalAmount:N2} for {SelectedPatientName}",
-            "Payment",
-            SystemSession.LoggedInUserID,
-            SystemSession.LoggedInFullName,
-            SystemSession.LoggedInRole
-        )
+        $"Payment P{currentTotal:N2} for {SelectedPatientName}",
+        "Payment",
+        SystemSession.LoggedInUserID,
+        SystemSession.LoggedInFullName,
+        SystemSession.LoggedInRole
+    )
 
         LoadPendingPayments()
         ClearBillingUI()
@@ -408,15 +451,16 @@ Public Class AdminDBPayment
     End Sub
     Private Sub LoadInventoryItems(Optional search As String = "")
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+
             Dim sql As String = "
-                SELECT 
-                    ItemID,
-                    ItemName AS [Item],
-                    Price AS [Unit Price],
-                    Quantity AS [Stock]
-                FROM ItemManagement
-                WHERE ItemName LIKE @Search OR CONVERT(VARCHAR(50), ItemID) LIKE @Search
-            "
+            SELECT 
+                ItemID,
+                ItemName AS [Item],
+                Price AS [Unit Price],
+                Quantity AS [Stock]
+            FROM ItemManagement
+            WHERE ItemName LIKE @Search OR CONVERT(VARCHAR(50), ItemID) LIKE @Search
+        "
 
             Using cmd As New SqlCommand(sql, con)
                 cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
@@ -424,15 +468,55 @@ Public Class AdminDBPayment
                 Dim da As New SqlDataAdapter(cmd)
                 Dim dt As New DataTable()
                 da.Fill(dt)
+
                 dgvInventoryItems.DataSource = dt
 
                 If dgvInventoryItems.Columns.Contains("ItemID") Then
                     dgvInventoryItems.Columns("ItemID").Visible = False
                 End If
+
+                ' =========================================================
+                ' CACHE ORIGINAL STOCK (BASE STOCK FROM DATABASE)
+                ' This ensures we can simulate deduction safely in UI
+                ' =========================================================
+                originalStockCache.Clear()
+
+                For Each row As DataRow In dt.Rows
+                    Dim id As Integer = CInt(row("ItemID"))
+                    Dim stock As Integer = CInt(row("Stock"))
+
+                    originalStockCache(id) = stock
+                Next
+
             End Using
         End Using
-    End Sub
 
+        ' Refresh UI stock preview after reload
+        RefreshInventoryStockView()
+    End Sub
+    ' =========================================================
+    ' RETURNS LIVE STOCK (ORIGINAL - ITEMS IN RECEIPT GRID)
+    ' This prevents overselling BEFORE transaction is saved
+    ' =========================================================
+    Private Function GetVirtualStock(itemID As Integer) As Integer
+
+        Dim original As Integer = 0
+
+        If originalStockCache.ContainsKey(itemID) Then
+            original = originalStockCache(itemID)
+        End If
+
+        Dim used As Integer = 0
+
+        For Each row As DataGridViewRow In dgvReceiptItems.Rows
+            If Not row.IsNewRow AndAlso CInt(row.Cells("ItemID").Value) = itemID Then
+                used += CInt(row.Cells("Quantity").Value)
+            End If
+        Next
+
+        Return original - used
+
+    End Function
     Private Sub dgvInventoryItems_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellClick
         If e.RowIndex < 0 Then Exit Sub
 
@@ -441,8 +525,7 @@ Public Class AdminDBPayment
         Dim id As Integer = CInt(row.Cells("ItemID").Value)
         Dim name As String = row.Cells("Item").Value.ToString()
         Dim price As Decimal = CDec(row.Cells("Unit Price").Value)
-        Dim availableStock As Integer = CInt(row.Cells("Stock").Value)
-
+        Dim availableStock As Integer = GetVirtualStock(id)
         Dim qtyStr As String = InputBox($"Enter quantity for {name} (Available: {availableStock})", "Prescription Item", "1")
         Dim qty As Integer
 
@@ -450,7 +533,12 @@ Public Class AdminDBPayment
 
         ' Block if not enough stock
         If qty > availableStock Then
-            MessageBox.Show($"Not enough stock! Available only: {availableStock}", "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            MessageBox.Show(
+        $"Not enough stock! Available (live): {availableStock}",
+        "Stock Error",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Warning
+    )
             Exit Sub
         End If
 
@@ -480,6 +568,52 @@ Public Class AdminDBPayment
         UpdateGrandTotalDisplay()
         ClearAllSelections()
     End Sub
+    Private Function GetExistingReceiptItems(receiptID As Integer) As Dictionary(Of Integer, Integer)
+
+        Dim dict As New Dictionary(Of Integer, Integer)
+
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+
+            Dim cmd As New SqlCommand("
+            SELECT ItemID, Quantity
+            FROM ReceiptItems
+            WHERE ReceiptID = @RID
+        ", con)
+
+            cmd.Parameters.AddWithValue("@RID", receiptID)
+
+            Using reader = cmd.ExecuteReader()
+                While reader.Read()
+                    Dim id As Integer = CInt(reader("ItemID"))
+                    Dim qty As Integer = CInt(reader("Quantity"))
+
+                    If dict.ContainsKey(id) Then
+                        dict(id) += qty
+                    Else
+                        dict(id) = qty
+                    End If
+                End While
+            End Using
+        End Using
+
+        Return dict
+
+    End Function
+    Private Sub RefreshInventoryStockView()
+
+        For Each row As DataGridViewRow In dgvInventoryItems.Rows
+
+            If row.IsNewRow Then Continue For
+
+            Dim itemId As Integer = CInt(row.Cells("ItemID").Value)
+            Dim virtualStock As Integer = GetVirtualStock(itemId)
+
+            row.Cells("Stock").Value = virtualStock
+
+        Next
+
+    End Sub
 
     ' ==================================================================
     ' REGION: CALCULATION HELPERS (Single Source of Truth)
@@ -495,19 +629,19 @@ Public Class AdminDBPayment
     End Function
 
     Private Sub UpdateGrandTotalDisplay()
+
         Dim itemTotal As Decimal = GetItemTotal()
-        Dim grandTotal As Decimal = currentTotal + itemTotal   ' This is the real Total Amount Due
+        Dim grandTotal As Decimal = currentTotal + itemTotal
 
-        ' Correct VAT Breakdown (VAT Inclusive)
+        ' ================= VAT CALCULATION =================
         Dim vatAmount As Decimal = If(grandTotal > 0, grandTotal - (grandTotal / 1.12D), 0D)
-        Dim vatExempt As Decimal = grandTotal - vatAmount      ' VATable Sales
 
-        ' Update UI Labels
+        ' ================= UI TOTALS =================
         lblTotal.Text = "Total: PHP " & grandTotal.ToString("N2")
-        lblSubtotal.Text = "Subtotal: " & grandTotal.ToString("N2")   ' Show Gross as Subtotal
+        lblSubtotal.Text = "Subtotal: " & grandTotal.ToString("N2")
         lblVATAmount.Text = "VAT (12%): " & vatAmount.ToString("N2")
 
-        ' Change calculation
+        ' ================= PAYMENT CALCULATION =================
         Dim amountPaid As Decimal = 0
         Decimal.TryParse(txtAmountPaid.Text, amountPaid)
 
@@ -516,12 +650,19 @@ Public Class AdminDBPayment
 
         lblChange.Text = "Change: PHP " & changeAmount.ToString("N2")
 
-        ' Auto-fill for GCash
+        ' ================= GCASH AUTO-FILL (SAFE LOOP PREVENTION) =================
         If ComboBoxPaymentMethod.Text = "Gcash" Then
-            txtAmountPaid.Text = grandTotal.ToString("F2")
+            If Not txtAmountPaid.Focused Then
+                txtAmountPaid.Text = grandTotal.ToString("F2")
+            End If
         End If
 
+        ' ================= STOCK REFRESH (ONLY ONE SOURCE OF TRUTH) =================
+        RefreshInventoryStockView()
+
+        ' ================= BUTTON STATE =================
         UpdateButtonState()
+
     End Sub
 
     ' ==================================================================
