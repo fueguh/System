@@ -34,8 +34,6 @@ Public Class AdminDBStockTracking
 
     Private Sub ClearInputs()
         ComboBoxItem.SelectedIndex = -1
-        RadioIn.Checked = False
-        RadioOut.Checked = False
         NumericUpDownQuantity.Value = 0
         TransactionDate.Value = DateTime.Now.Date
         DGVTransactions.ClearSelection()
@@ -94,10 +92,7 @@ Public Class AdminDBStockTracking
             Exit Sub
         End If
 
-        If Not RadioIn.Checked AndAlso Not RadioOut.Checked Then
-            MessageBox.Show("Please select if the stock is coming IN or going OUT.")
-            Exit Sub
-        End If
+        ' Radio buttons removed: all transactions are treated as stock IN (add quantity)
 
         If NumericUpDownQuantity.Value <= 0 Then
             MessageBox.Show("Quantity must be greater than zero.")
@@ -108,25 +103,13 @@ Public Class AdminDBStockTracking
         Dim itemID As Integer = CInt(ComboBoxItem.SelectedValue)
         Dim itemName As String = ComboBoxItem.Text
         Dim qty As Integer = CInt(NumericUpDownQuantity.Value)
-        Dim transType As String = If(RadioIn.Checked, "IN", "OUT")
+        Dim transType As String = "IN"
         Dim transDate As Date = TransactionDate.Value.Date
 
         Using connection As New SqlConnection(My.Settings.DentalDBConnection2)
             connection.Open()
 
-            ' --- STOCK CHECK ---
-            If transType = "OUT" Then
-                ' Check balance from the calculated history
-                Dim balQuery As String = "SELECT ISNULL(SUM(CASE WHEN TransactionType='IN' THEN Quantity ELSE -Quantity END), 0) FROM StockTransactions WHERE ItemID=@ID"
-                Using cmdCheck As New SqlCommand(balQuery, connection)
-                    cmdCheck.Parameters.AddWithValue("@ID", itemID)
-                    Dim currentBalance As Integer = Convert.ToInt32(cmdCheck.ExecuteScalar())
-                    If qty > currentBalance Then
-                        MessageBox.Show($"Cannot deduct {qty}. Current balance is only {currentBalance}.")
-                        Exit Sub
-                    End If
-                End Using
-            End If
+            ' No OUT transactions anymore; we always add quantity so no balance check is required here.
 
             ' --- DATABASE TRANSACTION ---
             Using sqlTrans As SqlTransaction = connection.BeginTransaction()

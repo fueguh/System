@@ -4,31 +4,12 @@ Public Class AdminDBPaymentHistory
 
     Private connectionString As String = My.Settings.DentalDBConnection2
 
-    ' Selected Data for Reprint
-    Private SelectedAppointmentID As Integer = 0
-    Private SelectedReceiptID As Integer = 0
-    Private SelectedPatientName As String = ""
-    Private SelectedTreatmentNotes As String = ""
-    Private SelectedDentistName As String = ""
-    Private SelectedRefNo As String = ""
-    Private SelectedPaymentMethod As String = ""
-
-    ' Receipt values
-    Private SelectedTotalAmount As Decimal = 0D
-    Private SelectedAmountPaid As Decimal = 0D
-    Private SelectedChange As Decimal = 0D
-
-    Private dtServicesForPrinting As New DataTable()
-    Private dtItemsForPrinting As New DataTable()
-    Private dtFollowUpsForPrinting As New DataTable()
-
     ' ================= LOAD =================
     Private Sub AdminDBPaymentHistory_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPaymentHistory()
         dgvHistory.ReadOnly = True
         dgvHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect
         dgvHistory.AllowUserToAddRows = False
-        clearform()
     End Sub
 
     ' ================= LOAD HISTORY =================
@@ -116,7 +97,7 @@ Public Class AdminDBPaymentHistory
         LoadPaymentHistory(txtSearchPatient.Text.Trim())
     End Sub
 
-    ' ================= REPRINT - WITH DEBUG =================
+    ' ================= REPRINT =================
     Private Sub btnReprint_Click(sender As Object, e As EventArgs) Handles btnReprint.Click
         If dgvHistory.SelectedRows.Count = 0 Then
             MessageBox.Show("Please select a record to reprint.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -130,75 +111,61 @@ Public Class AdminDBPaymentHistory
             Exit Sub
         End If
 
-        ' ================= BASIC INFO =================
-        SelectedReceiptID = CInt(row.Cells("ReceiptID").Value)
-        SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
-        SelectedPatientName = row.Cells("Patient Name").Value.ToString()
-        SelectedPaymentMethod = row.Cells("Method").Value.ToString()
-        SelectedRefNo = If(row.Cells("Ref No").Value IsNot DBNull.Value, row.Cells("Ref No").Value.ToString(), "")
+        ' Extract data directly from selected row
+        Dim appointmentID As Integer = CInt(row.Cells("AppointmentID").Value)
+        Dim receiptID As Integer = CInt(row.Cells("ReceiptID").Value)
 
-        SelectedTotalAmount = Convert.ToDecimal(row.Cells("Total Bill").Value)
-        SelectedAmountPaid = Convert.ToDecimal(row.Cells("Cash Tendered").Value)
-        SelectedChange = Convert.ToDecimal(row.Cells("Change Given").Value)
+        Dim patientName As String = row.Cells("Patient Name").Value.ToString()
+        Dim dentistName As String = row.Cells("Dentist").Value.ToString()
+        Dim paymentMethod As String = row.Cells("Method").Value.ToString()
+        Dim refNo As String = If(row.Cells("Ref No").Value IsNot DBNull.Value, row.Cells("Ref No").Value.ToString(), "")
 
-        ' ================= FETCH DETAILS =================
-        FetchDetailsForReprint(SelectedAppointmentID, SelectedReceiptID)
+        Dim totalAmount As Decimal = Convert.ToDecimal(row.Cells("Total Bill").Value)
+        Dim amountPaid As Decimal = Convert.ToDecimal(row.Cells("Cash Tendered").Value)
+        Dim changeAmount As Decimal = Convert.ToDecimal(row.Cells("Change Given").Value)
 
-        ' ================= DEBUG =================
-        Dim msg As String = $"ReceiptID: {SelectedReceiptID}" & vbCrLf &
-                        $"Services: {dtServicesForPrinting.Rows.Count} row(s)" & vbCrLf &
-                        $"Items: {dtItemsForPrinting.Rows.Count} row(s)" & vbCrLf &
-                        $"Follow-ups: {dtFollowUpsForPrinting.Rows.Count} row(s)"
+        ' Fetch detailed data
+        Dim dtServices As New DataTable()
+        Dim dtItems As New DataTable()
+        Dim dtFollowUps As New DataTable()
+        Dim treatmentNotes As String = ""
 
-        MessageBox.Show(msg, "Debug - Data Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        FetchDetailsForReprint(appointmentID, receiptID, dtServices, dtItems, dtFollowUps, treatmentNotes)
 
-        ' ================= PREVIEW =================
+        ' ================= PREVIEW (using printer module) =================
         Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
-    SelectedPatientName,
-    SelectedDentistName,
-    SelectedTreatmentNotes,
-    SelectedTotalAmount.ToString("F2"),
-    SelectedAmountPaid.ToString("F2"),
-    SelectedChange.ToString("F2"),
-    SelectedPaymentMethod,
-    SelectedRefNo,
-    dtServicesForPrinting,
-    dtItemsForPrinting,
-    dtFollowUpsForPrinting
-)
+            patientName, dentistName, treatmentNotes,
+            totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
+            paymentMethod, refNo, dtServices, dtItems, dtFollowUps)
 
         MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        ' ================= PRINT =================
+        ' ================= PRINT (using printer module) =================
         If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
-                       MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
 
             AdminDBPaymentReceiptPrinter.PrintReceipt(
-    SelectedPatientName,
-    SelectedDentistName,
-    SelectedTreatmentNotes,
-    SelectedTotalAmount.ToString("F2"),
-    SelectedAmountPaid.ToString("F2"),
-    SelectedChange.ToString("F2"),
-    SelectedPaymentMethod,
-    SelectedRefNo,
-    dtServicesForPrinting,
-    dtFollowUpsForPrinting,
-    dtItemsForPrinting
-)
+                patientName, dentistName, treatmentNotes,
+                totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
+                paymentMethod, refNo, dtServices, dtFollowUps, dtItems)
         End If
     End Sub
 
     ' ================= FETCH DETAILS FOR REPRINT =================
-    Private Sub FetchDetailsForReprint(apptID As Integer, receiptID As Integer)
-        dtServicesForPrinting.Clear()
-        dtItemsForPrinting.Clear()
-        dtFollowUpsForPrinting.Clear()
+    Private Sub FetchDetailsForReprint(apptID As Integer, receiptID As Integer,
+                                      ByRef dtServices As DataTable,
+                                      ByRef dtItems As DataTable,
+                                      ByRef dtFollowUps As DataTable,
+                                      ByRef treatmentNotes As String)
+
+        dtServices.Clear()
+        dtItems.Clear()
+        dtFollowUps.Clear()
 
         Using con As New SqlConnection(connectionString)
             con.Open()
 
-            ' 1. Dentist + Notes
+            ' 1. Dentist Name + Treatment Notes
             Dim sqlInfo As String = "
             SELECT 
                 U.FullName AS DentistName,
@@ -212,58 +179,48 @@ Public Class AdminDBPaymentHistory
                 cmd.Parameters.AddWithValue("@AID", apptID)
                 Using r = cmd.ExecuteReader()
                     If r.Read() Then
-                        SelectedDentistName = r("DentistName").ToString()
-                        SelectedTreatmentNotes = r("Notes").ToString()
+                        treatmentNotes = r("Notes").ToString()
                     End If
                 End Using
             End Using
 
             ' 2. Services
-            Dim cmdSvc As New SqlCommand("
-                SELECT S.ServiceName, S.Price 
+            Using cmdSvc As New SqlCommand("
+                SELECT ServiceName, Price 
                 FROM AppointmentServices ASV
                 INNER JOIN Services S ON ASV.ServiceID = S.ServiceID
                 WHERE ASV.AppointmentID = @AID", con)
-            cmdSvc.Parameters.AddWithValue("@AID", apptID)
-            Dim daSvc As New SqlDataAdapter(cmdSvc)
-            daSvc.Fill(dtServicesForPrinting)
+                cmdSvc.Parameters.AddWithValue("@AID", apptID)
+                Dim da As New SqlDataAdapter(cmdSvc)
+                da.Fill(dtServices)
+            End Using
 
-            ' 3. ITEMS - FIXED to match your saving logic
-            Dim cmdItems As New SqlCommand("
-                SELECT 
-                    ItemName,
-                    Quantity,
-                    UnitPrice AS Price
+            ' 3. Items
+            Using cmdItems As New SqlCommand("
+                SELECT ItemName, Quantity, UnitPrice AS Price
                 FROM ReceiptItems 
                 WHERE ReceiptID = @ReceiptID 
-                  AND ItemType IN ('Item', 'Inventory')   -- ← Changed here
+                  AND ItemType IN ('Item', 'Inventory')
                 ORDER BY ReceiptItemID", con)
-
-            cmdItems.Parameters.AddWithValue("@ReceiptID", receiptID)
-            Dim daItems As New SqlDataAdapter(cmdItems)
-            daItems.Fill(dtItemsForPrinting)
-
-            ' Safety: Ensure "Price" column exists for the preview/print
-            If Not dtItemsForPrinting.Columns.Contains("Price") Then
-                If dtItemsForPrinting.Columns.Contains("UnitPrice") Then
-                    dtItemsForPrinting.Columns("UnitPrice").ColumnName = "Price"
-                End If
-            End If
+                cmdItems.Parameters.AddWithValue("@ReceiptID", receiptID)
+                Dim da As New SqlDataAdapter(cmdItems)
+                da.Fill(dtItems)
+            End Using
 
             ' 4. Follow-ups
-            Dim cmdFU As New SqlCommand("
+            Using cmdFU As New SqlCommand("
                 SELECT FollowUpDate, Reason
                 FROM PatientFollowUps
                 WHERE AppointmentID = @AID
                 ORDER BY FollowUpDate", con)
-            cmdFU.Parameters.AddWithValue("@AID", apptID)
-            Dim daFU As New SqlDataAdapter(cmdFU)
-            daFU.Fill(dtFollowUpsForPrinting)
-
+                cmdFU.Parameters.AddWithValue("@AID", apptID)
+                Dim da As New SqlDataAdapter(cmdFU)
+                da.Fill(dtFollowUps)
+            End Using
         End Using
     End Sub
 
-    ' ================= VOID ================= (unchanged)
+    ' ================= VOID =================
     Private Sub VoidReceipt(receiptID As Integer)
         If SystemSession.LoggedInRole <> "Admin" Then
             MessageBox.Show("Only Admins can void receipts.", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -333,12 +290,7 @@ Public Class AdminDBPaymentHistory
         End If
     End Sub
 
-    ' ================= CLEAR & BACK =================
-    Private Sub clearform()
-        txtSearchPatient.Clear()
-        dgvHistory.ClearSelection()
-    End Sub
-
+    ' ================= BACK =================
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub

@@ -39,6 +39,11 @@ Public Class AdminDBItemManagement
             Dim dt As New DataTable()
             adapter.Fill(dt)
             DgvItems.DataSource = dt
+
+            ' Hide ItemID column from display while keeping the value available in the data source
+            If DgvItems.Columns.Contains("ItemID") Then
+                DgvItems.Columns("ItemID").Visible = False
+            End If
         End Using
     End Sub
 

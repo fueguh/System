@@ -27,11 +27,9 @@ Partial Class AdminDBStockTracking
         Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle3 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Dim DataGridViewCellStyle4 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
-        Me.RadioIn = New Guna.UI2.WinForms.Guna2RadioButton()
         Me.NumericUpDownQuantity = New Guna.UI2.WinForms.Guna2NumericUpDown()
         Me.ButtonRecord = New Guna.UI2.WinForms.Guna2Button()
         Me.TransactionDate = New Guna.UI2.WinForms.Guna2DateTimePicker()
-        Me.RadioOut = New Guna.UI2.WinForms.Guna2RadioButton()
         Me.ComboBoxItem = New Guna.UI2.WinForms.Guna2ComboBox()
         Me.Guna2HtmlLabel1 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.Guna2HtmlLabel2 = New Guna.UI2.WinForms.Guna2HtmlLabel()
@@ -46,26 +44,6 @@ Partial Class AdminDBStockTracking
         Me.Guna2CustomGradientPanel1.SuspendLayout()
         CType(Me.DGVTransactions, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'RadioIn
-        '
-        Me.RadioIn.AutoSize = True
-        Me.RadioIn.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioIn.CheckedState.BorderThickness = 0
-        Me.RadioIn.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioIn.CheckedState.InnerColor = System.Drawing.Color.White
-        Me.RadioIn.CheckedState.InnerOffset = -4
-        Me.RadioIn.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.RadioIn.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioIn.Location = New System.Drawing.Point(71, 291)
-        Me.RadioIn.Name = "RadioIn"
-        Me.RadioIn.Size = New System.Drawing.Size(42, 20)
-        Me.RadioIn.TabIndex = 1
-        Me.RadioIn.Text = "IN"
-        Me.RadioIn.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioIn.UncheckedState.BorderThickness = 2
-        Me.RadioIn.UncheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.RadioIn.UncheckedState.InnerColor = System.Drawing.Color.Transparent
         '
         'NumericUpDownQuantity
         '
@@ -117,26 +95,6 @@ Partial Class AdminDBStockTracking
         Me.TransactionDate.Size = New System.Drawing.Size(304, 46)
         Me.TransactionDate.TabIndex = 33
         Me.TransactionDate.Value = New Date(2026, 2, 19, 0, 0, 0, 0)
-        '
-        'RadioOut
-        '
-        Me.RadioOut.AutoSize = True
-        Me.RadioOut.CheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioOut.CheckedState.BorderThickness = 0
-        Me.RadioOut.CheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioOut.CheckedState.InnerColor = System.Drawing.Color.White
-        Me.RadioOut.CheckedState.InnerOffset = -4
-        Me.RadioOut.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
-        Me.RadioOut.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioOut.Location = New System.Drawing.Point(178, 291)
-        Me.RadioOut.Name = "RadioOut"
-        Me.RadioOut.Size = New System.Drawing.Size(59, 20)
-        Me.RadioOut.TabIndex = 34
-        Me.RadioOut.Text = "OUT"
-        Me.RadioOut.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.RadioOut.UncheckedState.BorderThickness = 2
-        Me.RadioOut.UncheckedState.FillColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.RadioOut.UncheckedState.InnerColor = System.Drawing.Color.Transparent
         '
         'ComboBoxItem
         '
@@ -318,11 +276,9 @@ Partial Class AdminDBStockTracking
         Me.Controls.Add(Me.Guna2HtmlLabel2)
         Me.Controls.Add(Me.Guna2HtmlLabel1)
         Me.Controls.Add(Me.ComboBoxItem)
-        Me.Controls.Add(Me.RadioOut)
         Me.Controls.Add(Me.TransactionDate)
         Me.Controls.Add(Me.ButtonRecord)
         Me.Controls.Add(Me.NumericUpDownQuantity)
-        Me.Controls.Add(Me.RadioIn)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Name = "AdminDBStockTracking"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
@@ -335,11 +291,9 @@ Partial Class AdminDBStockTracking
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents RadioIn As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents NumericUpDownQuantity As Guna.UI2.WinForms.Guna2NumericUpDown
     Friend WithEvents ButtonRecord As Guna.UI2.WinForms.Guna2Button
     Friend WithEvents TransactionDate As Guna.UI2.WinForms.Guna2DateTimePicker
-    Friend WithEvents RadioOut As Guna.UI2.WinForms.Guna2RadioButton
     Friend WithEvents ComboBoxItem As Guna.UI2.WinForms.Guna2ComboBox
     Friend WithEvents Guna2HtmlLabel1 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents Guna2HtmlLabel2 As Guna.UI2.WinForms.Guna2HtmlLabel
