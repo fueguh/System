@@ -211,8 +211,14 @@ Public Module AdminDBPaymentReceiptPrinter
         g.DrawString("VAT (12%):", fontBody, Brushes.Black, left, y)
         g.DrawString("P" & vatAmount.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign) : y += 22
 
-        g.DrawString("TOTAL AMOUNT DUE:", New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, left, y)
-        g.DrawString("P" & total, New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, right, y, rightAlign) : y += 28
+        ' Make the TOTAL label & amount slightly smaller and add spacing so
+        ' the dashed separator does not visually merge with the amount.
+        Dim totalFont As New Font("Consolas", 9, FontStyle.Bold)
+        y += 6
+        g.DrawString("TOTAL AMOUNT DUE:", totalFont, Brushes.Black, left, y)
+        ' Shift the right-aligned amount a few pixels left to ensure it doesn't touch the separator
+        g.DrawString("P" & total, totalFont, Brushes.Black, right - 6, y, rightAlign) : y += 28
+        totalFont.Dispose()
 
         g.DrawString("Amount Paid:", fontBody, Brushes.Black, left, y)
         g.DrawString("P" & paid, fontBody, Brushes.Black, right, y, rightAlign) : y += 16
@@ -224,15 +230,25 @@ Public Module AdminDBPaymentReceiptPrinter
             g.DrawString("FOLLOW-UP SCHEDULE:", fontBold, Brushes.Black, left, y) : y += 18
             For Each row As DataRow In followups.Rows
                 Dim fDate As String = CDate(row("FollowUpDate")).ToString("MM/dd/yyyy")
-                g.DrawString(fDate & " - " & row("Reason").ToString(), fontBody, Brushes.Black, left, y) : y += 16
+                Dim fuText As String = fDate & " - " & row("Reason").ToString()
+                Dim fuRect As New RectangleF(left, y, right - left, 200)
+                ' Measure and draw wrapped text within available width
+                Dim fuMeasured As SizeF = g.MeasureString(fuText, fontBody, New SizeF(fuRect.Width, 1000))
+                g.DrawString(fuText, fontBody, Brushes.Black, fuRect)
+                y += fuMeasured.Height + 4
             Next
-            y += 12
+            y += 8
         End If
 
         g.DrawString("DENTIST NOTES:", fontBold, Brushes.Black, left, y) : y += 18
-        Dim notesRect As New RectangleF(left, y, right - left, 140)
+        ' Measure notes height dynamically and limit excessive spacing
+        Dim notesMaxWidth As Single = right - left
+        Dim measuredNotesSize As SizeF = g.MeasureString(notes, fontBody, New SizeF(notesMaxWidth, 1000))
+        Dim notesHeight As Single = Math.Min(measuredNotesSize.Height, 200)
+        Dim notesRect As New RectangleF(left, y, notesMaxWidth, notesHeight)
         g.DrawString(notes, fontBody, Brushes.Black, notesRect)
-        y += g.MeasureString(notes, fontBody, notesRect.Size).Height + 25
+        ' Use measured height for layout and reduce extra gap before the separator
+        y += measuredNotesSize.Height + 10
 
         g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, left, y) : y += 18
         g.DrawString("TOTAL AMOUNT: P" & total, New Font("Consolas", 9, FontStyle.Bold), Brushes.Black, left, y) : y += 20

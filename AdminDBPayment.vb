@@ -404,6 +404,52 @@ Public Class AdminDBPayment
 
         LoadPendingPayments()
         LoadInventoryItems()
+
+        ' Prepare tables for printing/preview
+        Dim dtServices As New DataTable()
+        dtServices.Columns.Add("ServiceName", GetType(String))
+        dtServices.Columns.Add("Price", GetType(Decimal))
+        If dgvServices.DataSource IsNot Nothing Then
+            Dim src As DataTable = TryCast(dgvServices.DataSource, DataTable)
+            If src IsNot Nothing Then
+                For Each r As DataRow In src.Rows
+                    dtServices.Rows.Add(r("ServiceName").ToString(), Convert.ToDecimal(r("Price")))
+                Next
+            End If
+        End If
+
+        Dim dtItems As New DataTable()
+        dtItems.Columns.Add("ItemName", GetType(String))
+        dtItems.Columns.Add("Quantity", GetType(Integer))
+        dtItems.Columns.Add("Price", GetType(Decimal))
+        For Each r As DataGridViewRow In dgvReceiptItems.Rows
+            If r.IsNewRow Then Continue For
+            dtItems.Rows.Add(r.Cells("ItemName").Value.ToString(), CInt(r.Cells("Quantity").Value), Convert.ToDecimal(r.Cells("Price").Value))
+        Next
+
+        Dim dtFollowUps As New DataTable()
+        dtFollowUps.Columns.Add("FollowUpDate", GetType(String))
+        dtFollowUps.Columns.Add("Reason", GetType(String))
+
+        ' Show flash preview
+        Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
+            SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes,
+            totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
+            ComboBoxPaymentMethod.Text, If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), ""),
+            dtServices, dtItems, dtFollowUps)
+
+        MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+
+            AdminDBPaymentReceiptPrinter.PrintReceipt(
+                SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes,
+                totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
+                ComboBoxPaymentMethod.Text, If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), ""),
+                dtServices, dtFollowUps, dtItems)
+        End If
+
         ClearBillingUI()
 
         MessageBox.Show("Payment processed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
