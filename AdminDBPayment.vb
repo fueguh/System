@@ -686,6 +686,16 @@ Public Class AdminDBPayment
         ' NEW: reset receipt mode state
         SelectedReceiptStatus = ""
         SetReadOnlyMode(False)
+        ' Ensure a sensible default payment method so user doesn't have to pick every time
+        Try
+            If ComboBoxPaymentMethod.Items.Contains("Cash") Then
+                ComboBoxPaymentMethod.SelectedItem = "Cash"
+            ElseIf ComboBoxPaymentMethod.Items.Count > 0 Then
+                ComboBoxPaymentMethod.SelectedIndex = 0
+            End If
+        Catch
+            ' ignore any issues setting default selection
+        End Try
     End Sub
 
     Private Sub SetPrescriptionControlsEnabled(enabled As Boolean)
