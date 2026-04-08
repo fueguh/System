@@ -185,14 +185,15 @@ Public Class AdminDBAdminMaintenance
             Exit Sub
         End If
 
-        ' Prevent accidental self-deletion without serious warning
+        ' Prevent self-deletion: an admin cannot delete their own account from this screen.
         If selectedAdminID = SystemSession.LoggedInUserID Then
-            Dim result = MessageBox.Show("You are about to delete your own account. You will be logged out immediately. Proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-            If result = DialogResult.No Then Exit Sub
-        Else
-            Dim result = MessageBox.Show("Are you sure you want to delete this admin?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-            If result = DialogResult.No Then Exit Sub
+            MessageBox.Show("You cannot delete your own admin account. Please sign in as a different administrator to remove this account.", "Action Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
         End If
+
+        ' Confirm delete for other admins
+        Dim confirm = MessageBox.Show("Are you sure you want to delete this admin?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If confirm = DialogResult.No Then Exit Sub
 
         Try
             Using con As New SqlConnection(My.Settings.DentalDBConnection2)
@@ -486,7 +487,8 @@ Public Class AdminDBAdminMaintenance
             ' Switch button states
             BTNAdd.Enabled = False
             BtnUpdate.Enabled = True
-            BtnDelete.Enabled = True
+            ' Disable delete if this is the currently logged-in admin (prevent self-deletion from UI)
+            BtnDelete.Enabled = (selectedAdminID <> SystemSession.LoggedInUserID)
         End If
     End Sub
     Private selectedAdminID As Integer = 0 ' Add this line at the top
