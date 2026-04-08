@@ -440,15 +440,29 @@ Public Class AdminDBPayment
 
         MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
-                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-
+        ' Automatically proceed to print after preview (no confirmation) and do not show
+        ' any further message boxes. Failures or successes are recorded to audit log only.
+        Try
             AdminDBPaymentReceiptPrinter.PrintReceipt(
                 SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes,
                 totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
                 ComboBoxPaymentMethod.Text, If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), ""),
                 dtServices, dtFollowUps, dtItems)
-        End If
+
+            ' Log successful print silently
+            Try
+                SystemSession.LogAudit($"Receipt printed for {SelectedPatientName}", "Print", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            Catch
+                ' swallow logging errors
+            End Try
+        Catch ex As Exception
+            ' Log printing error silently
+            Try
+                SystemSession.LogAudit($"Printing failed for {SelectedPatientName}: {ex.Message}", "PrintError", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            Catch
+                ' swallow logging errors
+            End Try
+        End Try
 
         ClearBillingUI()
 
