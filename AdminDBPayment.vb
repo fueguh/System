@@ -482,6 +482,12 @@ Public Class AdminDBPayment
     End Sub
 
     Private Sub dgvInventoryItems_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellClick
+        ' Prevent adding inventory items until an appointment/transaction is selected
+        If SelectedAppointmentID = 0 Then
+            MessageBox.Show("Please select a transaction/appointment first.", "No Transaction Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
         If e.RowIndex < 0 Then Exit Sub
 
         Dim row = dgvInventoryItems.Rows(e.RowIndex)
