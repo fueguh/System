@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class AdminDBPatients
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class AdminDBPatients
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(AdminDBPatients))
         Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
@@ -42,7 +42,7 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel6 = New Guna.UI2.WinForms.Guna2HtmlLabel()
         Me.txtAllergy = New Guna.UI2.WinForms.Guna2TextBox()
         Me.btnClear = New Guna.UI2.WinForms.Guna2Button()
-        Me.txtBirthDate = New System.Windows.Forms.MaskedTextBox()
+        Me.DtpBirthDate = New Guna.UI2.WinForms.Guna2DateTimePicker()
         CType(Me.Guna2CirclePictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DGVPatients, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Guna2CustomGradientPanel1.SuspendLayout()
@@ -301,7 +301,7 @@ Partial Class AdminDBPatients
         Me.Guna2HtmlLabel3.BackColor = System.Drawing.Color.Transparent
         Me.Guna2HtmlLabel3.Font = New System.Drawing.Font("Palatino Linotype", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Guna2HtmlLabel3.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(423, 177)
+        Me.Guna2HtmlLabel3.Location = New System.Drawing.Point(423, 120)
         Me.Guna2HtmlLabel3.Name = "Guna2HtmlLabel3"
         Me.Guna2HtmlLabel3.Size = New System.Drawing.Size(94, 28)
         Me.Guna2HtmlLabel3.TabIndex = 43
@@ -373,20 +373,25 @@ Partial Class AdminDBPatients
         Me.btnClear.TabIndex = 82
         Me.btnClear.Text = "Clear"
         '
-        'txtBirthDate
+        'DtpBirthDate
         '
-        Me.txtBirthDate.AllowPromptAsInput = False
-        Me.txtBirthDate.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.txtBirthDate.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.txtBirthDate.Font = New System.Drawing.Font("Mongolian Baiti", 20.0!)
-        Me.txtBirthDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.txtBirthDate.InsertKeyMode = System.Windows.Forms.InsertKeyMode.Overwrite
-        Me.txtBirthDate.Location = New System.Drawing.Point(526, 172)
-        Me.txtBirthDate.Mask = "00/00/0000"
-        Me.txtBirthDate.Name = "txtBirthDate"
-        Me.txtBirthDate.Size = New System.Drawing.Size(158, 31)
-        Me.txtBirthDate.TabIndex = 83
-        Me.txtBirthDate.ValidatingType = GetType(Date)
+        Me.DtpBirthDate.BorderColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.DtpBirthDate.BorderRadius = 10
+        Me.DtpBirthDate.BorderThickness = 2
+        Me.DtpBirthDate.Checked = True
+        Me.DtpBirthDate.CustomFormat = "dd/MM/yyyy"
+        Me.DtpBirthDate.FillColor = System.Drawing.Color.White
+        Me.DtpBirthDate.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.DtpBirthDate.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.DtpBirthDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom
+        Me.DtpBirthDate.Location = New System.Drawing.Point(423, 155)
+        Me.DtpBirthDate.Margin = New System.Windows.Forms.Padding(4)
+        Me.DtpBirthDate.MaxDate = New Date(2110, 12, 31, 0, 0, 0, 0)
+        Me.DtpBirthDate.MinDate = New Date(1900, 1, 1, 0, 0, 0, 0)
+        Me.DtpBirthDate.Name = "DtpBirthDate"
+        Me.DtpBirthDate.Size = New System.Drawing.Size(351, 46)
+        Me.DtpBirthDate.TabIndex = 84
+        Me.DtpBirthDate.Value = New Date(2026, 3, 22, 0, 0, 0, 0)
         '
         'AdminDBPatients
         '
@@ -395,7 +400,7 @@ Partial Class AdminDBPatients
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.ClientSize = New System.Drawing.Size(1379, 881)
         Me.ControlBox = False
-        Me.Controls.Add(Me.txtBirthDate)
+        Me.Controls.Add(Me.DtpBirthDate)
         Me.Controls.Add(Me.btnClear)
         Me.Controls.Add(Me.txtAllergy)
         Me.Controls.Add(Me.Guna2CustomGradientPanel1)
@@ -436,5 +441,5 @@ Partial Class AdminDBPatients
     Friend WithEvents Guna2HtmlLabel6 As Guna.UI2.WinForms.Guna2HtmlLabel
     Friend WithEvents txtAllergy As Guna.UI2.WinForms.Guna2TextBox
     Friend WithEvents btnClear As Guna.UI2.WinForms.Guna2Button
-    Friend WithEvents txtBirthDate As MaskedTextBox
+    Friend WithEvents DtpBirthDate As Guna.UI2.WinForms.Guna2DateTimePicker
 End Class

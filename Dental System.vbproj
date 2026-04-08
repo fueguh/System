@@ -125,10 +125,22 @@
     <Compile Include="AdminDBCategory.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AdminDBFollowUps.Designer.vb">
+      <DependentUpon>AdminDBFollowUps.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBFollowUps.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AdminDBItemManagement.Designer.vb">
       <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
     </Compile>
     <Compile Include="AdminDBItemManagement.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDBPatientHistory.Designer.vb">
+      <DependentUpon>AdminDBPatientHistory.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDBPatientHistory.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AdminDBPatientSelection.Designer.vb">
@@ -185,16 +197,16 @@
     <Compile Include="ClinicSettings.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AvailableAppointments.Designer.vb">
-      <DependentUpon>AvailableAppointments.vb</DependentUpon>
+    <Compile Include="AdminDBAppointmentsToday.Designer.vb">
+      <DependentUpon>AdminDBAppointmentsToday.vb</DependentUpon>
     </Compile>
-    <Compile Include="AvailableAppointments.vb">
+    <Compile Include="AdminDBAppointmentsToday.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmCustomSchedule.Designer.vb">
-      <DependentUpon>FrmCustomSchedule.vb</DependentUpon>
+    <Compile Include="AdminDBDentistSchedule.Designer.vb">
+      <DependentUpon>AdminDBDentistSchedule.vb</DependentUpon>
     </Compile>
-    <Compile Include="FrmCustomSchedule.vb">
+    <Compile Include="AdminDBDentistSchedule.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Globals.vb" />
@@ -276,7 +288,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="My Project\StaffDashboard.vb" />
-    <Compile Include="ReceiptPrinter.vb" />
+    <Compile Include="AdminDBPaymentReceiptPrinter.vb" />
     <Compile Include="Reports.Designer.vb">
       <DependentUpon>Reports.vb</DependentUpon>
     </Compile>
@@ -296,10 +308,10 @@
     <Compile Include="SuperadminDashboard.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TreatmentRecords.Designer.vb">
-      <DependentUpon>TreatmentRecords.vb</DependentUpon>
+    <Compile Include="AdminDBTreatmentRecords.Designer.vb">
+      <DependentUpon>AdminDBTreatmentRecords.vb</DependentUpon>
     </Compile>
-    <Compile Include="TreatmentRecords.vb">
+    <Compile Include="AdminDBTreatmentRecords.vb">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
@@ -319,8 +331,14 @@
     <EmbeddedResource Include="AdminDBDentists.resx">
       <DependentUpon>AdminDBDentists.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBFollowUps.resx">
+      <DependentUpon>AdminDBFollowUps.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AdminDBItemManagement.resx">
       <DependentUpon>AdminDBItemManagement.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDBPatientHistory.resx">
+      <DependentUpon>AdminDBPatientHistory.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AdminDBPatients.resx">
       <DependentUpon>AdminDBPatients.vb</DependentUpon>
@@ -358,8 +376,8 @@
     <EmbeddedResource Include="AdminAuditTrailForm.resx">
       <DependentUpon>AdminAuditTrailForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AvailableAppointments.resx">
-      <DependentUpon>AvailableAppointments.vb</DependentUpon>
+    <EmbeddedResource Include="AdminDBAppointmentsToday.resx">
+      <DependentUpon>AdminDBAppointmentsToday.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="BillingForm.resx">
       <DependentUpon>BillingForm.vb</DependentUpon>
@@ -370,8 +388,8 @@
     <EmbeddedResource Include="DentistDashboard.resx">
       <DependentUpon>DentistDashboard.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmCustomSchedule.resx">
-      <DependentUpon>FrmCustomSchedule.vb</DependentUpon>
+    <EmbeddedResource Include="AdminDBDentistSchedule.resx">
+      <DependentUpon>AdminDBDentistSchedule.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.vb</DependentUpon>
@@ -391,8 +409,8 @@
     <EmbeddedResource Include="SuperadminDashboard.resx">
       <DependentUpon>SuperadminDashboard.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TreatmentRecords.resx">
-      <DependentUpon>TreatmentRecords.vb</DependentUpon>
+    <EmbeddedResource Include="AdminDBTreatmentRecords.resx">
+      <DependentUpon>AdminDBTreatmentRecords.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

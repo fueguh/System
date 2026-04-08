@@ -28,11 +28,7 @@ Partial Class Login
         Me.Guna2MessageDialog1 = New Guna.UI2.WinForms.Guna2MessageDialog()
         Me.CheckBoxShowPassword = New Guna.UI2.WinForms.Guna2CheckBox()
         Me.chkRememberMe = New Guna.UI2.WinForms.Guna2CheckBox()
-        Me.lbl_clinicName = New System.Windows.Forms.Label()
-        Me.lbl_Location = New System.Windows.Forms.Label()
-        Me.lbl_contact = New System.Windows.Forms.Label()
-        Me.lbl_email = New System.Windows.Forms.Label()
-        Me.lbl_schedule = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'txtUsername
@@ -50,7 +46,7 @@ Partial Class Login
         Me.txtUsername.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.txtUsername.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtUsername.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtUsername.Location = New System.Drawing.Point(117, 225)
+        Me.txtUsername.Location = New System.Drawing.Point(118, 169)
         Me.txtUsername.Margin = New System.Windows.Forms.Padding(4)
         Me.txtUsername.Name = "txtUsername"
         Me.txtUsername.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -74,7 +70,7 @@ Partial Class Login
         Me.txtPassword.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.txtPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.txtPassword.HoverState.BorderColor = System.Drawing.Color.FromArgb(CType(CType(94, Byte), Integer), CType(CType(148, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.txtPassword.Location = New System.Drawing.Point(117, 317)
+        Me.txtPassword.Location = New System.Drawing.Point(118, 261)
         Me.txtPassword.Margin = New System.Windows.Forms.Padding(4)
         Me.txtPassword.Name = "txtPassword"
         Me.txtPassword.PlaceholderForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
@@ -95,7 +91,7 @@ Partial Class Login
         Me.btnLogin.FillColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
         Me.btnLogin.Font = New System.Drawing.Font("Mongolian Baiti", 14.25!)
         Me.btnLogin.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.btnLogin.Location = New System.Drawing.Point(117, 456)
+        Me.btnLogin.Location = New System.Drawing.Point(118, 400)
         Me.btnLogin.Name = "btnLogin"
         Me.btnLogin.Size = New System.Drawing.Size(257, 45)
         Me.btnLogin.TabIndex = 3
@@ -120,7 +116,7 @@ Partial Class Login
         Me.CheckBoxShowPassword.CheckMarkColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.CheckBoxShowPassword.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!)
         Me.CheckBoxShowPassword.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(117, 374)
+        Me.CheckBoxShowPassword.Location = New System.Drawing.Point(118, 318)
         Me.CheckBoxShowPassword.Name = "CheckBoxShowPassword"
         Me.CheckBoxShowPassword.Size = New System.Drawing.Size(128, 20)
         Me.CheckBoxShowPassword.TabIndex = 7
@@ -140,7 +136,7 @@ Partial Class Login
         Me.chkRememberMe.CheckMarkColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
         Me.chkRememberMe.Font = New System.Drawing.Font("Mongolian Baiti", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.chkRememberMe.ForeColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.chkRememberMe.Location = New System.Drawing.Point(179, 507)
+        Me.chkRememberMe.Location = New System.Drawing.Point(180, 451)
         Me.chkRememberMe.Name = "chkRememberMe"
         Me.chkRememberMe.Size = New System.Drawing.Size(118, 20)
         Me.chkRememberMe.TabIndex = 2
@@ -150,60 +146,16 @@ Partial Class Login
         Me.chkRememberMe.UncheckedState.BorderThickness = 1
         Me.chkRememberMe.UncheckedState.FillColor = System.Drawing.Color.White
         '
-        'lbl_clinicName
+        'Label1
         '
-        Me.lbl_clinicName.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lbl_clinicName.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_clinicName.Location = New System.Drawing.Point(-4, 42)
-        Me.lbl_clinicName.Name = "lbl_clinicName"
-        Me.lbl_clinicName.Size = New System.Drawing.Size(517, 59)
-        Me.lbl_clinicName.TabIndex = 8
-        Me.lbl_clinicName.Text = "Clinic Name:"
-        Me.lbl_clinicName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lbl_Location
-        '
-        Me.lbl_Location.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lbl_Location.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_Location.Location = New System.Drawing.Point(3, 101)
-        Me.lbl_Location.Name = "lbl_Location"
-        Me.lbl_Location.Size = New System.Drawing.Size(510, 46)
-        Me.lbl_Location.TabIndex = 8
-        Me.lbl_Location.Text = "Location:"
-        Me.lbl_Location.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lbl_contact
-        '
-        Me.lbl_contact.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lbl_contact.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_contact.Location = New System.Drawing.Point(3, 645)
-        Me.lbl_contact.Name = "lbl_contact"
-        Me.lbl_contact.Size = New System.Drawing.Size(510, 37)
-        Me.lbl_contact.TabIndex = 8
-        Me.lbl_contact.Text = "Contact number:"
-        Me.lbl_contact.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lbl_email
-        '
-        Me.lbl_email.Font = New System.Drawing.Font("Georgia", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lbl_email.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_email.Location = New System.Drawing.Point(3, 682)
-        Me.lbl_email.Name = "lbl_email"
-        Me.lbl_email.Size = New System.Drawing.Size(510, 37)
-        Me.lbl_email.TabIndex = 8
-        Me.lbl_email.Text = "Email address:"
-        Me.lbl_email.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'lbl_schedule
-        '
-        Me.lbl_schedule.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lbl_schedule.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
-        Me.lbl_schedule.Location = New System.Drawing.Point(3, 147)
-        Me.lbl_schedule.Name = "lbl_schedule"
-        Me.lbl_schedule.Size = New System.Drawing.Size(510, 53)
-        Me.lbl_schedule.TabIndex = 8
-        Me.lbl_schedule.Text = "Schedule:"
-        Me.lbl_schedule.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.Label1.Font = New System.Drawing.Font("Georgia", 24.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(8, Byte), Integer), CType(CType(131, Byte), Integer), CType(CType(149, Byte), Integer))
+        Me.Label1.Location = New System.Drawing.Point(-4, 24)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(517, 59)
+        Me.Label1.TabIndex = 9
+        Me.Label1.Text = "Login"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Login
         '
@@ -211,12 +163,8 @@ Partial Class Login
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(512, 719)
-        Me.Controls.Add(Me.lbl_email)
-        Me.Controls.Add(Me.lbl_contact)
-        Me.Controls.Add(Me.lbl_schedule)
-        Me.Controls.Add(Me.lbl_Location)
-        Me.Controls.Add(Me.lbl_clinicName)
+        Me.ClientSize = New System.Drawing.Size(512, 553)
+        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.CheckBoxShowPassword)
         Me.Controls.Add(Me.chkRememberMe)
         Me.Controls.Add(Me.btnLogin)
@@ -237,9 +185,5 @@ Partial Class Login
     Friend WithEvents Guna2MessageDialog1 As Guna.UI2.WinForms.Guna2MessageDialog
     Friend WithEvents CheckBoxShowPassword As Guna.UI2.WinForms.Guna2CheckBox
     Friend WithEvents chkRememberMe As Guna.UI2.WinForms.Guna2CheckBox
-    Friend WithEvents lbl_clinicName As Label
-    Friend WithEvents lbl_Location As Label
-    Friend WithEvents lbl_contact As Label
-    Friend WithEvents lbl_email As Label
-    Friend WithEvents lbl_schedule As Label
+    Friend WithEvents Label1 As Label
 End Class

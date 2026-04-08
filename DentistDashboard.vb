@@ -30,7 +30,7 @@ Public Class DentistDashboard
 
         Select Case denTab.SelectedTab.Name
             Case "tabAppointment"
-                Dim frmAppt As New AvailableAppointments()
+                Dim frmAppt As New AdminDBAppointmentsToday()
                 frmAppt.Show()
                 Me.Hide()
 
@@ -38,7 +38,7 @@ Public Class DentistDashboard
                 LoadPatientsGrid()
 
             Case "tabTreatmentRecords"
-                Dim frmTreatment As New TreatmentRecords()
+                Dim frmTreatment As New AdminDBTreatmentRecords()
 
                 ' Pass the data
                 frmTreatment.PassedAppointmentID = Me.PassedAppointmentID

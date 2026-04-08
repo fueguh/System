@@ -19,6 +19,9 @@ Public Class AdminDBAppointments
     Private Sub AdminDBAppointments_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         isFormLoading = True
 
+        ' Ensure schedule date defaults to today on form load
+        DtpDate.Value = Date.Today
+
         SetupStatusCombo()
         LoadComboBoxes()
 
@@ -39,8 +42,9 @@ Public Class AdminDBAppointments
 
     Private Sub SetupStatusCombo()
         cmbStatus.Items.Clear()
-        cmbStatus.Items.AddRange({"Confirmed", "Ongoing", "Completed", "Cancelled"})
-        cmbStatus.SelectedIndex = -1
+        cmbStatus.Items.AddRange({"Confirmed", "Cancelled"})
+        ' Default to Confirmed to speed up creating new appointments
+        cmbStatus.SelectedIndex = 0
     End Sub
 
     ' ==========================================
@@ -149,6 +153,13 @@ Public Class AdminDBAppointments
             Exit Sub
         End If
 
+        ' === NEW: Prevent updating Completed appointments (DB is source of truth) ===
+        If IsAppointmentCompleted(selectedAppointmentID) Then
+            MessageBox.Show("This appointment is already Completed and cannot be updated.",
+                       "Update Not Allowed", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
         If Not ValidateFields() Then Exit Sub
 
         ' 2. PREPARE DATA
@@ -209,6 +220,11 @@ Public Class AdminDBAppointments
         newServices.Sort()
         If String.Join(", ", oldServices) <> String.Join(", ", newServices) Then
             changes.Add($"Services: [{String.Join(", ", oldServices)}] -> [{String.Join(", ", newServices)}]")
+        End If
+        ' If nothing changed, skip the update
+        If changes.Count = 0 Then
+            MessageBox.Show("No changes detected. Update skipped.", "No Changes", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
         End If
         ' 3. DATABASE OPERATIONS
         Dim isUpdateSuccessful As Boolean = False
@@ -313,24 +329,22 @@ Public Class AdminDBAppointments
 
         ' 2. Date and Status Logic (Past Date Handler)
         If DtpDate.Value.Date < DateTime.Today Then
-            ' Get the status as it exists in the Database/Grid before the update
-            Dim currentStatus As String = DGVAppointments.CurrentRow.Cells("Status").Value.ToString()
-            Dim newStatus As String = cmbStatus.Text
 
-            ' BLOCK 1: Final States (Cannot change once it's done)
-            If currentStatus = "Completed" OrElse currentStatus = "Cancelled" Then
-                MessageBox.Show($"This appointment is already '{currentStatus}' and cannot be modified.", "Record Locked", MessageBoxButtons.OK, MessageBoxIcon.Stop)
+            Dim rowStatus As String = DGVAppointments.CurrentRow.Cells("Status").Value.ToString()
+            Dim selectedStatus As String = cmbStatus.Text
+
+            ' lock final states
+            If rowStatus = "Completed" OrElse rowStatus = "Cancelled" Then
+                MessageBox.Show("This appointment is already locked.")
                 Return False
             End If
 
-            ' BLOCK 2: Valid Transitions for Past Appointments
-            ' Allowed: Confirmed -> Cancelled, Confirmed -> Completed, Ongoing -> Completed, Ongoing -> Cancelled
-            Dim isValidTransition As Boolean = (newStatus = "Completed" OrElse newStatus = "Cancelled")
-
-            If Not isValidTransition Then
-                MessageBox.Show("For past appointments, you must set the status to either 'Completed' or 'Cancelled'.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            ' only allow final transitions
+            If selectedStatus <> "Completed" AndAlso selectedStatus <> "Cancelled" Then
+                MessageBox.Show("Past appointments can only be set to Completed or Cancelled.")
                 Return False
             End If
+
         End If
 
         ' --- CLEANED VALIDATION BLOCK ---
@@ -413,7 +427,22 @@ Public Class AdminDBAppointments
             Return "" ' No conflict
         End Using
     End Function
-
+    ' ==========================================
+    ' HELPER: Check if appointment is Completed (DB source of truth)
+    ' ==========================================
+    Private Function IsAppointmentCompleted(appointmentID As Integer) As Boolean
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+            con.Open()
+            Using cmd As New SqlCommand("SELECT Status FROM Appointments WHERE AppointmentID = @id", con)
+                cmd.Parameters.AddWithValue("@id", appointmentID)
+                Dim status As Object = cmd.ExecuteScalar()
+                If status IsNot Nothing Then
+                    Return status.ToString().Trim().Equals("Completed", StringComparison.OrdinalIgnoreCase)
+                End If
+            End Using
+        End Using
+        Return False
+    End Function
     ' ==========================================
     ' UI EVENT HANDLERS
     ' ==========================================
@@ -440,13 +469,23 @@ Public Class AdminDBAppointments
 
             If Not cmbStartTime.Items.Contains(formatted) Then cmbStartTime.Items.Add(formatted)
             cmbStartTime.SelectedItem = formatted
+            cmbStatus.SelectedIndex = -1
             cmbStatus.Text = row.Cells("Status").Value.ToString()
+            cmbStatus.Tag = row.Cells("Status").Value.ToString()
 
             LoadCheckedServices(selectedAppointmentID)
             CalculateTotalDuration()
 
+            Dim status As String = row.Cells("Status").Value.ToString()
+
             BTNAdd.Enabled = False
-            BTNUpdate.Enabled = (cmbStatus.Text <> "Cancelled")
+            Dim rowStatus As String = row.Cells("Status").Value.ToString()
+
+            Dim isLocked As Boolean =
+(DGVAppointments.Rows(e.RowIndex).Cells("Status").Value.ToString() = "Cancelled")
+
+            BTNUpdate.Enabled = Not isLocked
+            cmbStatus.Enabled = Not isLocked
         Catch ex As Exception
             MessageBox.Show("Error loading selection: " & ex.Message)
         Finally
@@ -526,7 +565,12 @@ Public Class AdminDBAppointments
         CmbDent.SelectedIndex = -1
         CmbDent.Text = ""
 
-        cmbStatus.SelectedIndex = -1
+        ' Default status for new appointments
+        If cmbStatus.Items.Count > 0 Then
+            cmbStatus.SelectedIndex = 0
+        Else
+            cmbStatus.SelectedIndex = -1
+        End If
         cmbStartTime.Items.Clear()
         cmbStartTime.Text = ""
         DtpDate.Value = Date.Today
@@ -534,7 +578,7 @@ Public Class AdminDBAppointments
         For i As Integer = 0 To clbServices.Items.Count - 1
             clbServices.SetItemChecked(i, False)
         Next
-
+        DGVAppointments.ClearSelection()
         selectedAppointmentID = 0
         selectedPatientID = 0
         selectedEndTime = TimeSpan.Zero
@@ -631,7 +675,7 @@ Public Class AdminDBAppointments
                     cmbStartTime.Items.Add(DateTime.Today.Add(current).ToString("hh:mm tt"))
                 End If
 
-                current = current.Add(TimeSpan.FromMinutes(30))
+                current = current.Add(TimeSpan.FromMinutes(15))
             End While
         End Using
     End Sub

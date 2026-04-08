@@ -7,293 +7,724 @@ Public Class AdminDBPayment
     Public SelectedPatientID As Integer = 0
     Public SelectedPatientName As String = ""
     Private SelectedDentistName As String = ""
-    Private SelectedTreatmentNotes As String = "" ' Merged Notes Variable
+    Private SelectedTreatmentNotes As String = ""
+    Private currentTotal As Decimal = 0
+    Private SelectedReceiptStatus As String = ""
+
+    ' NEW: Flag to know if we are editing an existing receipt
+    Private isEditingExistingReceipt As Boolean = False
 
     ' ================= FORM LOAD =================
     Private Sub AdminDBPayment_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadPendingPayments()
         LoadPaymentMethods()
-        txtReferenceNo.Enabled = False ' Ensure it starts disabled
-        ' Formatting the Grid for Word Wrap (For those long dentist notes)
-        dgvPendingPayments.DefaultCellStyle.WrapMode = DataGridViewTriState.True
-        dgvPendingPayments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
-
-        TextBoxTotal.ReadOnly = True
-        dgvPendingPayments.ReadOnly = True
-        dgvPendingPayments.AllowUserToAddRows = False
-        dgvPendingPayments.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        LoadInventoryItems()
+        SetupReceiptGrid()
+        txtReferenceNo.Enabled = False
+        SetPrescriptionControlsEnabled(False)
+        ClearBillingUI()
     End Sub
 
-    ' ================= MERGED DATA FETCH (GRID) =================
+    ' ==================================================================
+    ' REGION: PENDING PAYMENTS GRID
+    ' ==================================================================
     Private Sub LoadPendingPayments()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            ' This Query merges Appointments, Patients, and TreatmentRecords
-            ' It uses STRING_AGG to list all services in one cell for the grid
-            ' Inside LoadPendingPayments()
+
             Dim sql As String = "
-    SELECT 
-        A.AppointmentID, 
-        P.PatientID,
-        P.FullName AS [Patient Name], 
-        U.FullName AS [Dentist], -- Added Dentist Name
-        A.Date, 
-        ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
-        (SELECT STRING_AGG(S.ServiceName, ', ') 
-         FROM AppointmentServices AS [AS] 
-         JOIN Services S ON [AS].ServiceID = S.ServiceID 
-         WHERE [AS].AppointmentID = A.AppointmentID) AS [Services Done]
-    FROM Appointments A
-    INNER JOIN Patients P ON A.PatientID = P.PatientID
-    INNER JOIN Users U ON A.UserID = U.UserID -- Join to get Dentist Name
-    LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
-    WHERE A.Status = 'Completed' 
-    AND NOT EXISTS (SELECT 1 FROM Receipts R WHERE R.AppointmentID = A.AppointmentID)"
+                SELECT 
+                    A.AppointmentID, 
+                    P.PatientID,
+                    P.FullName AS [Patient Name], 
+                    U.FullName AS [Dentist], 
+                    A.Date, 
+                    ISNULL(T.TreatmentNotes, 'No notes recorded') AS [Dentist Notes],
+                    ISNULL(T.Prescriptions, 'No prescription') AS [Prescription],
+                    ISNULL(STRING_AGG(S.ServiceName, ', '), '') AS [Services Done],
+                    ISNULL((
+                        SELECT STRING_AGG(
+                            CONVERT(VARCHAR, F.FollowUpDate, 120) + ' - ' + ISNULL(F.Reason, ''), 
+                            ' | '
+                        )
+                        FROM PatientFollowUps F 
+                        WHERE F.AppointmentID = A.AppointmentID
+                    ), 'No follow-ups') AS [Follow Ups],
+                    ISNULL(R.Status, 'Unpaid') AS [Payment Status]
+                FROM Appointments A
+                INNER JOIN Patients P ON A.PatientID = P.PatientID
+                INNER JOIN Users U ON A.UserID = U.UserID
+                LEFT JOIN TreatmentRecords T ON A.AppointmentID = T.AppointmentID
+                LEFT JOIN AppointmentServices AP ON A.AppointmentID = AP.AppointmentID
+                LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
+                LEFT JOIN Receipts R ON A.AppointmentID = R.AppointmentID
+                WHERE A.Status = 'Completed'
+                  AND (R.Status IS NULL OR R.Status <> 'Active')
+                GROUP BY 
+                    A.AppointmentID, P.PatientID, P.FullName, U.FullName, A.Date, 
+                    T.TreatmentNotes, T.Prescriptions, R.Status
+                ORDER BY A.Date DESC"
 
-            Dim da As New SqlDataAdapter(sql, con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-            dgvPendingPayments.DataSource = dt
+            Using da As New SqlDataAdapter(sql, con)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                dgvPendingPayments.DataSource = dt
+            End Using
 
-            ' Hide IDs to keep it clean
-            If dgvPendingPayments.Columns.Contains("AppointmentID") Then dgvPendingPayments.Columns("AppointmentID").Visible = False
-            If dgvPendingPayments.Columns.Contains("PatientID") Then dgvPendingPayments.Columns("PatientID").Visible = False
+            For Each col As DataGridViewColumn In dgvPendingPayments.Columns
+                If col.Name = "AppointmentID" OrElse col.Name = "PatientID" Then
+                    col.Visible = False
+                End If
+            Next
         End Using
     End Sub
 
-    ' ================= GRID SELECTION LOGIC =================
+    ' ==================================================================
+    ' REGION: GRID SELECTION & DATA FETCHING
+    ' ==================================================================
     Private Sub dgvPendingPayments_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvPendingPayments.CellClick
-        If e.RowIndex >= 0 Then
+        Try
+            If e.RowIndex < 0 OrElse dgvPendingPayments.Rows.Count = 0 Then Exit Sub
+
             Dim row = dgvPendingPayments.Rows(e.RowIndex)
+            If row Is Nothing OrElse row.Cells("AppointmentID").Value Is Nothing Then Exit Sub
 
-            ' 1. Transfer IDs
-            SelectedAppointmentID = CInt(row.Cells("AppointmentID").Value)
-            SelectedPatientID = CInt(row.Cells("PatientID").Value)
+            SelectedAppointmentID = Convert.ToInt32(row.Cells("AppointmentID").Value)
+            SelectedPatientID = Convert.ToInt32(row.Cells("PatientID").Value)
 
-            ' 2. Update Labels directly from Grid data
-            SelectedPatientName = row.Cells("Patient Name").Value.ToString()
-            SelectedDentistName = row.Cells("Dentist").Value.ToString() ' Get from Grid
-            SelectedTreatmentNotes = row.Cells("Dentist Notes").Value.ToString()
+            SelectedPatientName = Convert.ToString(row.Cells("Patient Name").Value)
+            SelectedDentistName = Convert.ToString(row.Cells("Dentist").Value)
+            SelectedTreatmentNotes = Convert.ToString(row.Cells("Dentist Notes").Value)
 
-            ' 3. Sync the UI Labels
+            SelectedReceiptStatus = Convert.ToString(row.Cells("Payment Status").Value)
+
             patient_name.Text = SelectedPatientName
-            dentist_name.Text = SelectedDentistName ' Update your dentist label here
+            dentist_name.Text = SelectedDentistName
+            TextBoxPrescriptionNotes.Text = Convert.ToString(row.Cells("Prescription").Value)
 
-            ' 4. Sync Services
+            dgvReceiptItems.Rows.Clear()
+
+            ' We are now editing/viewing an existing receipt
             LoadAppointmentServices()
-        End If
+            LoadExistingReceiptItems()
+            UpdateGrandTotalDisplay()
+            ClearAllSelections()
+
+            ' NEW: enforce edit rules based on status
+            If SelectedReceiptStatus = "Completed" Then
+                ' VIEW ONLY MODE
+                isEditingExistingReceipt = True
+                SetReadOnlyMode(True)
+            Else
+                ' EDIT MODE (only unpaid/active)
+                isEditingExistingReceipt = False
+                SetReadOnlyMode(False)
+                SetPrescriptionControlsEnabled(True)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Selection error: " & ex.Message)
+        End Try
     End Sub
 
-    Private Sub FetchDentistName()
+    ' ==================================================================
+    ' NEW METHOD: LOAD PREVIOUSLY SAVED INVENTORY ITEMS
+    ' ==================================================================
+    Private Sub LoadExistingReceiptItems()
+        If SelectedAppointmentID = 0 Then Exit Sub
+
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
-            Dim cmd As New SqlCommand("SELECT U.FullName FROM Appointments A INNER JOIN Users U ON A.UserID = U.UserID WHERE A.AppointmentID = @AID", con)
-            cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
-            Dim res = cmd.ExecuteScalar()
-            SelectedDentistName = If(res IsNot Nothing, res.ToString(), "N/A")
+
+            Dim sql As String = "
+                SELECT 
+                    RI.ItemID,
+                    RI.ItemName,
+                    RI.UnitPrice AS Price,
+                    RI.Quantity,
+                    RI.Subtotal
+                FROM ReceiptItems RI
+                INNER JOIN Receipts R ON RI.ReceiptID = R.ReceiptID
+                WHERE R.AppointmentID = @AID 
+                  AND RI.ItemType = 'Inventory'
+                ORDER BY RI.ItemName"
+
+            Using cmd As New SqlCommand(sql, con)
+                cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+
+                Using reader = cmd.ExecuteReader()
+                    While reader.Read()
+                        dgvReceiptItems.Rows.Add(
+                            CInt(reader("ItemID")),
+                            reader("ItemName").ToString(),
+                            CDec(reader("Price")),
+                            CInt(reader("Quantity")),
+                            CDec(reader("Subtotal"))
+                        )
+                    End While
+                End Using
+            End Using
         End Using
     End Sub
 
-    ' ================= SERVICE LOADING & CALCULATION =================
-    Private Sub LoadAllServices()
-        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            con.Open()
-            Dim da As New SqlDataAdapter("SELECT ServiceID, ServiceName, Price FROM Services ORDER BY ServiceName ASC", con)
-            Dim dt As New DataTable()
-            da.Fill(dt)
-
-        End Using
-    End Sub
-
+    ' ==================================================================
+    ' REGION: SERVICES LOADING & CALCULATION
+    ' ==================================================================
     Private Sub LoadAppointmentServices()
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
             con.Open()
             Dim cmd As New SqlCommand("SELECT S.ServiceID, S.ServiceName, S.Price FROM AppointmentServices AS A INNER JOIN Services AS S ON A.ServiceID = S.ServiceID WHERE A.AppointmentID = @AID", con)
             cmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+
             Dim da As New SqlDataAdapter(cmd)
             Dim dt As New DataTable()
             da.Fill(dt)
 
-            ' Display in the detail grid
             dgvServices.DataSource = dt
 
-            ' === HIDE SERVICE ID COLUMN ===
-            If dgvServices.Columns.Contains("ServiceID") Then
-                dgvServices.Columns("ServiceID").Visible = False
-            End If
+            If dgvServices.Columns.Contains("ServiceID") Then dgvServices.Columns("ServiceID").Visible = False
+            If dgvServices.Columns.Contains("ServiceName") Then dgvServices.Columns("ServiceName").AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
-            ' Optional: Make the service name fill the remaining space
-            If dgvServices.Columns.Contains("ServiceName") Then
-                dgvServices.Columns("ServiceName").AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-            End If
-
-            CalculateTotal()
+            CalculateServiceTotal()
         End Using
     End Sub
 
-    Private Sub CalculateTotal()
-        Dim total As Decimal = 0
-        ' Loop through the second grid (dgvServices) instead of clbServices
-        For Each row As DataGridViewRow In dgvServices.Rows
-            If Not row.IsNewRow Then
-                total += Convert.ToDecimal(row.Cells("Price").Value)
-            End If
-        Next
-        TextBoxTotal.Text = total.ToString("F2")
+    Private Sub CalculateServiceTotal()
+        Dim dt As DataTable = TryCast(dgvServices.DataSource, DataTable)
+        currentTotal = If(dt Is Nothing, 0D,
+                        If(IsDBNull(dt.Compute("SUM(Price)", "")), 0D, Convert.ToDecimal(dt.Compute("SUM(Price)", ""))))
+
+        UpdateGrandTotalDisplay()
     End Sub
 
+    ' ==================================================================
+    ' REGION: PAYMENT METHODS & INPUT HANDLING
+    ' ==================================================================
     Private Sub LoadPaymentMethods()
         ComboBoxPaymentMethod.Items.Clear()
         ComboBoxPaymentMethod.Items.AddRange(New String() {"Cash", "Gcash"})
     End Sub
+
     Private Sub ComboBoxPaymentMethod_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxPaymentMethod.SelectedIndexChanged
-        If ComboBoxPaymentMethod.Text = "Gcash" Then
-            txtReferenceNo.Enabled = True
-            txtReferenceNo.PlaceholderText = "Enter Reference No." ' If using Guna or modern controls
+        Dim isGcash As Boolean = (ComboBoxPaymentMethod.Text = "Gcash")
+
+        txtReferenceNo.Enabled = isGcash
+        If Not isGcash Then txtReferenceNo.Clear()
+
+        txtAmountPaid.ReadOnly = isGcash
+
+        If isGcash Then
+            UpdateGrandTotalDisplay()
         Else
-            txtReferenceNo.Enabled = False
-            txtReferenceNo.Clear()
+            If String.IsNullOrWhiteSpace(txtAmountPaid.Text) OrElse Decimal.TryParse(txtAmountPaid.Text, 0D) = currentTotal Then
+                txtAmountPaid.Clear()
+            End If
         End If
+
+        UpdateButtonState()
     End Sub
+
+    ' ==================================================================
+    ' REGION: RECEIPT GENERATION & DATABASE OPERATIONS (Single Source of Truth)
+    ' ==================================================================
     Private Sub ButtonGenerateReceipt_Click(sender As Object, e As EventArgs) Handles ButtonGenerateReceipt.Click
-        ' 1. Security & Validation
+        ' NEW: HARD STOP for completed receipts
+        If SelectedReceiptStatus = "Completed" Then
+            MessageBox.Show("This transaction is already completed and cannot be modified.")
+            Exit Sub
+        End If
         If SystemSession.LoggedInUserID <= 0 Then
             MessageBox.Show("Error: No logged-in User ID found. Please re-login.")
             Exit Sub
         End If
 
         If SelectedAppointmentID = 0 Then
-            MessageBox.Show("Please select an appointment from the list first.")
+            MessageBox.Show("Please select an appointment first.")
             Exit Sub
         End If
 
-        If String.IsNullOrEmpty(ComboBoxPaymentMethod.Text) Then
-            MessageBox.Show("Please select a payment method.")
+        If String.IsNullOrWhiteSpace(txtAmountPaid.Text) Then
+            MessageBox.Show("Enter amount paid.")
             Exit Sub
         End If
 
-        ' --- GCash Validation Check ---
-        If ComboBoxPaymentMethod.Text = "Gcash" Then
-            Dim refNo As String = txtReferenceNo.Text.Trim()
+        Dim serviceTotal As Decimal = currentTotal
+        Dim itemTotal As Decimal = GetItemTotal()
+        Dim totalAmount As Decimal = serviceTotal + itemTotal
 
-            If String.IsNullOrWhiteSpace(refNo) Then
-                MessageBox.Show("Please enter the GCash Reference Number.", "Input Required", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                txtReferenceNo.Focus()
-                Exit Sub
-            End If
-
-            ' Philippines standard GCash Ref is 13 digits
-            If Not System.Text.RegularExpressions.Regex.IsMatch(refNo, "^\d{13}$") Then
-                Dim confirm = MessageBox.Show("Standard GCash reference numbers are 13 digits. Proceed anyway?",
-                                    "Format Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                If confirm = DialogResult.No Then
-                    txtReferenceNo.Focus()
-                    Exit Sub
-                End If
-            End If
+        Dim amountPaid As Decimal
+        If Not Decimal.TryParse(txtAmountPaid.Text, amountPaid) Then
+            MessageBox.Show("Invalid amount paid.")
+            Exit Sub
         End If
+
+        If amountPaid < totalAmount Then
+            MessageBox.Show("Amount paid cannot be less than total.")
+            Exit Sub
+        End If
+
+        Dim changeAmount As Decimal = amountPaid - totalAmount
+        Dim vatAmount As Decimal = If(totalAmount > 0, totalAmount - (totalAmount / 1.12D), 0D)
+        Dim vatExempt As Decimal = totalAmount - vatAmount
 
         Using con As New SqlConnection(My.Settings.DentalDBConnection2)
-            Try
-                con.Open()
-                Using trans As SqlTransaction = con.BeginTransaction()
-                    Try
-                        ' 2. Database Insert
-                        Dim sql As String = "INSERT INTO Receipts (AppointmentID, PatientID, UserID, TotalAmount, PaymentMethod, ReferenceNumber) " &
-                                        "VALUES (@AID, @PID, @UID, @Total, @Method, @Ref)"
+            con.Open()
 
-                        Using cmd As New SqlCommand(sql, con, trans)
-                            cmd.Parameters.Add("@AID", SqlDbType.Int).Value = SelectedAppointmentID
-                            cmd.Parameters.Add("@PID", SqlDbType.Int).Value = SelectedPatientID
-                            cmd.Parameters.Add("@UID", SqlDbType.Int).Value = SystemSession.LoggedInUserID
-                            cmd.Parameters.Add("@Total", SqlDbType.Decimal).Value = CDec(TextBoxTotal.Text)
-                            cmd.Parameters.Add("@Method", SqlDbType.VarChar).Value = ComboBoxPaymentMethod.Text
+            Using trans As SqlTransaction = con.BeginTransaction()
+                Try
+                    Dim receiptID As Integer = 0
 
-                            ' Pass Reference Number or DBNull
-                            cmd.Parameters.Add("@Ref", SqlDbType.VarChar).Value = If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value)
+                    Dim checkCmd As New SqlCommand("SELECT ReceiptID FROM Receipts WHERE AppointmentID = @AID", con, trans)
+                    checkCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+                    Dim existingID = checkCmd.ExecuteScalar()
 
-                            Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+                    If existingID IsNot Nothing AndAlso existingID IsNot DBNull.Value Then
+                        receiptID = Convert.ToInt32(existingID)
 
-                            If rowsAffected > 0 Then
-                                trans.Commit()
+                        ' Get old items to reverse OUT transactions
+                        Dim oldCmd As New SqlCommand("SELECT ItemID, Quantity FROM ReceiptItems WHERE ReceiptID = @RID", con, trans)
+                        oldCmd.Parameters.AddWithValue("@RID", receiptID)
 
-                                ' Audit Logging
-                                Dim auditMsg As String = String.Format("Processed payment of P{0} for patient {1}", TextBoxTotal.Text, SelectedPatientName)
-                                SystemSession.LogAudit(auditMsg, "Payment", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
-
-                                ' 3. Unified Printing Call
-                                Dim askPrint As DialogResult = MessageBox.Show("Payment Successful! Would you like to print the receipt now?",
-                                               "Print Receipt", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-
-                                ' Inside ButtonGenerateReceipt_Click
-                                If askPrint = DialogResult.Yes Then
-                                    ' 1. Grab the table from the grid
-                                    Dim dtServices As DataTable = CType(dgvServices.DataSource, DataTable)
-
-                                    ' 2. Call the Unified Module
-                                    ReceiptPrinter.PrintReceipt(SelectedPatientName,
-                              SelectedDentistName,
-                              SelectedTreatmentNotes,
-                              TextBoxTotal.Text,
-                              ComboBoxPaymentMethod.Text,
-                              txtReferenceNo.Text,
-                              dtServices)
-                                End If
-
-                                ' Jump to cleanup
-                                GoTo SuccessCleanup
-                            Else
-                                trans.Rollback()
-                                MessageBox.Show("Save failed: No rows were affected.")
-                            End If
+                        Dim oldItems As New Dictionary(Of Integer, Integer)
+                        Using reader = oldCmd.ExecuteReader()
+                            While reader.Read()
+                                Dim id As Integer = CInt(reader("ItemID"))
+                                Dim qty As Integer = CInt(reader("Quantity"))
+                                If oldItems.ContainsKey(id) Then oldItems(id) += qty Else oldItems(id) = qty
+                            End While
                         End Using
-                    Catch ex As Exception
-                        If trans.Connection IsNot Nothing Then trans.Rollback()
-                        MessageBox.Show("Transaction Error: " & ex.Message)
-                    End Try
-                End Using
-            Catch ex As Exception
-                MessageBox.Show("Connection Error: " & ex.Message)
-            End Try
-        End Using
-        Exit Sub
 
-SuccessCleanup:
+                        ' Delete old OUT transactions
+                        For Each kvp In oldItems
+                            Dim deleteTransCmd As New SqlCommand("
+                                DELETE FROM StockTransactions 
+                                WHERE ItemID = @ItemID AND TransactionType = 'OUT' 
+                                  AND TransactionDate >= @Today", con, trans)
+                            deleteTransCmd.Parameters.AddWithValue("@ItemID", kvp.Key)
+                            deleteTransCmd.Parameters.AddWithValue("@Today", DateTime.Now.Date.AddDays(-30))
+                            deleteTransCmd.ExecuteNonQuery()
+                        Next
+
+                        ' Delete old ReceiptItems
+                        Dim deleteItemsCmd As New SqlCommand("DELETE FROM ReceiptItems WHERE ReceiptID = @RID", con, trans)
+                        deleteItemsCmd.Parameters.AddWithValue("@RID", receiptID)
+                        deleteItemsCmd.ExecuteNonQuery()
+
+                        ' Update receipt header
+                        Dim updateCmd As New SqlCommand("
+                            UPDATE Receipts
+                            SET TotalAmount = @Total, VATableSales = @VATable, VATAmount = @VAT,
+                                PaymentMethod = @Method, ReferenceNumber = @Ref,
+                                AmountPaid = @Paid, ChangeAmount = @Change,
+                                Status = 'Completed', voidedAt = NULL
+                            WHERE ReceiptID = @RID", con, trans)
+
+                        updateCmd.Parameters.AddWithValue("@RID", receiptID)
+                        updateCmd.Parameters.AddWithValue("@Total", totalAmount)
+                        updateCmd.Parameters.AddWithValue("@VATable", vatExempt)
+                        updateCmd.Parameters.AddWithValue("@VAT", vatAmount)
+                        updateCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
+                        updateCmd.Parameters.AddWithValue("@Ref", If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                        updateCmd.Parameters.AddWithValue("@Paid", amountPaid)
+                        updateCmd.Parameters.AddWithValue("@Change", changeAmount)
+                        updateCmd.ExecuteNonQuery()
+
+                    Else
+                        ' Insert new receipt
+                        Dim insertCmd As New SqlCommand("
+                            INSERT INTO Receipts 
+                            (AppointmentID, PatientID, UserID, TotalAmount, VATableSales, VATAmount,
+                             PaymentMethod, ReferenceNumber, AmountPaid, ChangeAmount, Status)
+                            VALUES (@AID, @PID, @UID, @Total, @VATable, @VAT, @Method, @Ref, @Paid, @Change, 'Completed');
+                            SELECT SCOPE_IDENTITY();", con, trans)
+
+                        insertCmd.Parameters.AddWithValue("@AID", SelectedAppointmentID)
+                        insertCmd.Parameters.AddWithValue("@PID", SelectedPatientID)
+                        insertCmd.Parameters.AddWithValue("@UID", SystemSession.LoggedInUserID)
+                        insertCmd.Parameters.AddWithValue("@Total", totalAmount)
+                        insertCmd.Parameters.AddWithValue("@VATable", vatExempt)
+                        insertCmd.Parameters.AddWithValue("@VAT", vatAmount)
+                        insertCmd.Parameters.AddWithValue("@Method", ComboBoxPaymentMethod.Text)
+                        insertCmd.Parameters.AddWithValue("@Ref", If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), DBNull.Value))
+                        insertCmd.Parameters.AddWithValue("@Paid", amountPaid)
+                        insertCmd.Parameters.AddWithValue("@Change", changeAmount)
+
+                        receiptID = Convert.ToInt32(insertCmd.ExecuteScalar())
+                    End If
+
+                    ' Save items + record OUT transactions
+                    For Each row As DataGridViewRow In dgvReceiptItems.Rows
+                        If row.IsNewRow Then Continue For
+
+                        Dim itemID As Integer = CInt(row.Cells("ItemID").Value)
+                        Dim itemName As String = CStr(row.Cells("ItemName").Value)
+                        Dim price As Decimal = CDec(row.Cells("Price").Value)
+                        Dim qty As Integer = CInt(row.Cells("Quantity").Value)
+                        Dim subtotal As Decimal = CDec(row.Cells("Subtotal").Value)
+
+                        ' Insert ReceiptItem
+                        Dim itemCmd As New SqlCommand("
+                            INSERT INTO ReceiptItems 
+                            (ReceiptID, ItemType, ItemID, ItemName, UnitPrice, Quantity, Subtotal)
+                            VALUES (@RID, 'Inventory', @ItemID, @ItemName, @Price, @Qty, @Subtotal)", con, trans)
+
+                        itemCmd.Parameters.AddWithValue("@RID", receiptID)
+                        itemCmd.Parameters.AddWithValue("@ItemID", itemID)
+                        itemCmd.Parameters.AddWithValue("@ItemName", itemName)
+                        itemCmd.Parameters.AddWithValue("@Price", price)
+                        itemCmd.Parameters.AddWithValue("@Qty", qty)
+                        itemCmd.Parameters.AddWithValue("@Subtotal", subtotal)
+                        itemCmd.ExecuteNonQuery()
+
+                        ' Record Stock OUT (Trigger updates Quantity)
+                        Dim stockOutCmd As New SqlCommand("
+                            INSERT INTO StockTransactions 
+                            (ItemID, TransactionType, Quantity, TransactionDate)
+                            VALUES (@ItemID, 'OUT', @Qty, @Date)", con, trans)
+
+                        stockOutCmd.Parameters.AddWithValue("@ItemID", itemID)
+                        stockOutCmd.Parameters.AddWithValue("@Qty", qty)
+                        stockOutCmd.Parameters.AddWithValue("@Date", DateTime.Now.Date)
+                        stockOutCmd.ExecuteNonQuery()
+                    Next
+
+                    trans.Commit()
+
+                Catch ex As Exception
+                    trans.Rollback()
+                    MessageBox.Show("Transaction Error: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End Try
+            End Using
+        End Using
+
+        ' Success
+        SystemSession.LogAudit($"Payment ₱{currentTotal:N2} for {SelectedPatientName}", "Payment",
+                               SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
         LoadPendingPayments()
+        LoadInventoryItems()
+
+        ' Prepare tables for printing/preview
+        Dim dtServices As New DataTable()
+        dtServices.Columns.Add("ServiceName", GetType(String))
+        dtServices.Columns.Add("Price", GetType(Decimal))
+        If dgvServices.DataSource IsNot Nothing Then
+            Dim src As DataTable = TryCast(dgvServices.DataSource, DataTable)
+            If src IsNot Nothing Then
+                For Each r As DataRow In src.Rows
+                    dtServices.Rows.Add(r("ServiceName").ToString(), Convert.ToDecimal(r("Price")))
+                Next
+            End If
+        End If
+
+        Dim dtItems As New DataTable()
+        dtItems.Columns.Add("ItemName", GetType(String))
+        dtItems.Columns.Add("Quantity", GetType(Integer))
+        dtItems.Columns.Add("Price", GetType(Decimal))
+        For Each r As DataGridViewRow In dgvReceiptItems.Rows
+            If r.IsNewRow Then Continue For
+            dtItems.Rows.Add(r.Cells("ItemName").Value.ToString(), CInt(r.Cells("Quantity").Value), Convert.ToDecimal(r.Cells("Price").Value))
+        Next
+
+        Dim dtFollowUps As New DataTable()
+        dtFollowUps.Columns.Add("FollowUpDate", GetType(String))
+        dtFollowUps.Columns.Add("Reason", GetType(String))
+
+        ' Show flash preview
+        Dim flashMsg As String = AdminDBPaymentReceiptPrinter.GetReceiptFlashPreview(
+            SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes,
+            totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
+            ComboBoxPaymentMethod.Text, If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), ""),
+            dtServices, dtItems, dtFollowUps)
+
+        MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+
+            AdminDBPaymentReceiptPrinter.PrintReceipt(
+                SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes,
+                totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
+                ComboBoxPaymentMethod.Text, If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), ""),
+                dtServices, dtFollowUps, dtItems)
+        End If
+
         ClearBillingUI()
+
+        MessageBox.Show("Payment processed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
+    ' ==================================================================
+    ' REGION: INVENTORY & PRESCRIPTION ITEMS
+    ' ==================================================================
+    Private Sub SetupReceiptGrid()
+        dgvReceiptItems.Columns.Clear()
+
+        dgvReceiptItems.Columns.Add("ItemID", "ItemID")
+        dgvReceiptItems.Columns.Add("ItemName", "Item Name")
+        dgvReceiptItems.Columns.Add("Price", "Price")
+        dgvReceiptItems.Columns.Add("Quantity", "Qty")
+        dgvReceiptItems.Columns.Add("Subtotal", "Subtotal")
+
+        dgvReceiptItems.Columns("ItemName").HeaderText = "Item"
+        dgvReceiptItems.Columns("Quantity").HeaderText = "Quantity"
+        dgvReceiptItems.Columns("Price").HeaderText = "Price"
+        dgvReceiptItems.Columns("Subtotal").HeaderText = "Total"
+
+        dgvReceiptItems.Columns("ItemID").Visible = False
+        dgvReceiptItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect
+        dgvReceiptItems.AllowUserToAddRows = False
+        dgvReceiptItems.ReadOnly = True
+    End Sub
+
+    Private Sub dgvReceiptItems_MouseDown(sender As Object, e As MouseEventArgs) Handles dgvReceiptItems.MouseDown
+        If e.Button <> MouseButtons.Right Then Exit Sub
+        If SelectedReceiptStatus = "Completed" Then Exit Sub
+        Dim hit As DataGridView.HitTestInfo = dgvReceiptItems.HitTest(e.X, e.Y)
+        If hit.RowIndex < 0 OrElse hit.RowIndex >= dgvReceiptItems.Rows.Count Then Exit Sub
+
+        dgvReceiptItems.ClearSelection()
+        dgvReceiptItems.Rows(hit.RowIndex).Selected = True
+
+        Dim result As DialogResult = MessageBox.Show("Remove this item from the receipt?" & vbCrLf &
+                                                     "Stock will be returned to inventory.",
+                                                     "Remove Item",
+                                                     MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+        If result = DialogResult.Yes Then
+            dgvReceiptItems.Rows.RemoveAt(hit.RowIndex)
+            UpdateGrandTotalDisplay()
+        End If
+    End Sub
+
+    Private Sub LoadInventoryItems(Optional search As String = "")
+        Using con As New SqlConnection(My.Settings.DentalDBConnection2)
+
+            Dim sql As String = "
+            SELECT 
+                ItemID,
+                ItemName AS [Item],
+                Price AS [Unit Price],
+                Quantity AS [Stock]
+            FROM ItemManagement
+            WHERE ItemName LIKE @Search 
+               OR CONVERT(VARCHAR(50), ItemID) LIKE @Search"
+
+            Using cmd As New SqlCommand(sql, con)
+                cmd.Parameters.AddWithValue("@Search", "%" & search & "%")
+
+                Dim da As New SqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+
+                dgvInventoryItems.DataSource = dt
+
+                If dgvInventoryItems.Columns.Contains("ItemID") Then
+                    dgvInventoryItems.Columns("ItemID").Visible = False
+                End If
+            End Using
+        End Using
+    End Sub
+
+    Private Sub dgvInventoryItems_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvInventoryItems.CellClick
+        ' Prevent adding inventory items until an appointment/transaction is selected
+        If SelectedAppointmentID = 0 Then
+            MessageBox.Show("Please select a transaction/appointment first.", "No Transaction Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
+        End If
+
+        If e.RowIndex < 0 Then Exit Sub
+
+        Dim row = dgvInventoryItems.Rows(e.RowIndex)
+
+        Dim id As Integer = CInt(row.Cells("ItemID").Value)
+        Dim name As String = row.Cells("Item").Value.ToString()
+        Dim price As Decimal = CDec(row.Cells("Unit Price").Value)
+        Dim availableStock As Integer = CInt(row.Cells("Stock").Value)
+
+        Dim qtyStr As String = InputBox(
+        $"Enter quantity for {name} (Available: {availableStock})",
+        "Add Item",
+        "1"
+    )
+
+        Dim qty As Integer
+        If Not Integer.TryParse(qtyStr, qty) OrElse qty <= 0 Then Exit Sub
+
+        If qty > availableStock Then
+            MessageBox.Show($"Not enough stock! Available: {availableStock}")
+            Exit Sub
+        End If
+
+        ' check duplicate in receipt
+        For Each r As DataGridViewRow In dgvReceiptItems.Rows
+            If Not r.IsNewRow AndAlso CInt(r.Cells("ItemID").Value) = id Then
+                Dim newQty As Integer = CInt(r.Cells("Quantity").Value) + qty
+
+                If newQty > availableStock Then
+                    MessageBox.Show($"Total exceeds stock! Available: {availableStock}")
+                    Exit Sub
+                End If
+
+                r.Cells("Quantity").Value = newQty
+                r.Cells("Subtotal").Value = price * newQty
+                UpdateGrandTotalDisplay()
+                Exit Sub
+            End If
+        Next
+
+        dgvReceiptItems.Rows.Add(id, name, price, qty, price * qty)
+        UpdateGrandTotalDisplay()
+    End Sub
+
+
+    ' ==================================================================
+    ' REGION: CALCULATION HELPERS
+    ' ==================================================================
+    Private Function GetItemTotal() As Decimal
+        Dim total As Decimal = 0D
+        For Each row As DataGridViewRow In dgvReceiptItems.Rows
+            If Not row.IsNewRow Then
+                total += Convert.ToDecimal(row.Cells("Subtotal").Value)
+            End If
+        Next
+        Return total
+    End Function
+
+    Private Sub UpdateGrandTotalDisplay()
+        Dim itemTotal As Decimal = GetItemTotal()
+        Dim grandTotal As Decimal = currentTotal + itemTotal
+
+        Dim vatAmount As Decimal = If(grandTotal > 0, grandTotal - (grandTotal / 1.12D), 0D)
+
+        lblTotal.Text = "Total: PHP " & grandTotal.ToString("N2")
+        lblSubtotal.Text = "Subtotal: " & grandTotal.ToString("N2")
+        lblVATAmount.Text = "VAT (12%): " & vatAmount.ToString("N2")
+
+        Dim amountPaid As Decimal = 0
+        Decimal.TryParse(txtAmountPaid.Text, amountPaid)
+
+        Dim changeAmount As Decimal = If(amountPaid - grandTotal > 0, amountPaid - grandTotal, 0)
+        lblChange.Text = "Change: PHP " & changeAmount.ToString("N2")
+
+        If ComboBoxPaymentMethod.Text = "Gcash" AndAlso Not txtAmountPaid.Focused Then
+            txtAmountPaid.Text = grandTotal.ToString("F2")
+        End If
+
+        UpdateButtonState()
+    End Sub
+
+    ' ==================================================================
+    ' REGION: UI HELPERS
+    ' ==================================================================
+    Private Sub ClearAllSelections()
+        dgvInventoryItems.ClearSelection()
+        dgvReceiptItems.ClearSelection()
+        If dgvServices IsNot Nothing Then dgvServices.ClearSelection()
+    End Sub
+
+    Private Sub SetReadOnlyMode(isReadOnly As Boolean)
+
+        dgvInventoryItems.Enabled = Not isReadOnly
+        dgvReceiptItems.Enabled = Not isReadOnly
+        ItemSearch.Enabled = Not isReadOnly
+
+        ComboBoxPaymentMethod.Enabled = Not isReadOnly
+
+        txtAmountPaid.ReadOnly = isReadOnly
+
+        ' Only allow reference editing if NOT read-only AND Gcash
+        txtReferenceNo.Enabled = Not isReadOnly AndAlso ComboBoxPaymentMethod.Text = "Gcash"
+
+        ' Disable main action button when viewing completed receipt
+        ButtonGenerateReceipt.Enabled = Not isReadOnly
+
+    End Sub
+
+    Private Sub ClearBillingUI()
+        SelectedAppointmentID = 0
+        SelectedPatientID = 0
+        isEditingExistingReceipt = False   ' Reset flag
+
+        patient_name.Text = "---"
+        dentist_name.Text = "---"
+
+        txtAmountPaid.Clear()
+        txtReferenceNo.Clear()
+        dgvReceiptItems.Rows.Clear()
+        TextBoxPrescriptionNotes.Clear()
+
+        currentTotal = 0D
+
+        lblTotal.Text = "Total Amount: PHP 0.00"
+        lblSubtotal.Text = "Subtotal: 0.00"
+        lblVATAmount.Text = "VAT (12%): 0.00"
+        lblChange.Text = "Change: PHP 0.00"
+
+        txtReferenceNo.Enabled = False
+        SetPrescriptionControlsEnabled(False)
+        dgvServices.DataSource = Nothing
+
+        ClearAllSelections()
+        dgvPendingPayments.ClearSelection()
+        UpdateButtonState()
+        ' NEW: reset receipt mode state
+        SelectedReceiptStatus = ""
+        SetReadOnlyMode(False)
+    End Sub
+
+    Private Sub SetPrescriptionControlsEnabled(enabled As Boolean)
+        dgvInventoryItems.Enabled = enabled
+        dgvReceiptItems.Enabled = enabled
+        ItemSearch.Enabled = enabled
+    End Sub
+
+    Private Sub UpdateButtonState()
+        Dim hasMethod As Boolean = Not String.IsNullOrEmpty(ComboBoxPaymentMethod.Text)
+        Dim hasAmount As Boolean = Not String.IsNullOrWhiteSpace(txtAmountPaid.Text)
+
+        Dim gcashValid As Boolean = True
+        If ComboBoxPaymentMethod.Text = "Gcash" Then
+            gcashValid = System.Text.RegularExpressions.Regex.IsMatch(txtReferenceNo.Text.Trim(), "^\d{13}$")
+        End If
+
+        ButtonGenerateReceipt.Enabled = hasMethod AndAlso hasAmount AndAlso gcashValid
+    End Sub
+
+    ' ==================================================================
+    ' INPUT VALIDATION & OTHER METHODS (unchanged)
+    ' ==================================================================
+    ' ... (Keep all your existing validation methods, btnBack, btnClear, etc.)
+
+    Private Sub txtReferenceNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtReferenceNo.KeyPress
+        If Not Char.IsDigit(e.KeyChar) AndAlso Not Char.IsControl(e.KeyChar) Then e.Handled = True
+    End Sub
+
+    Private Sub txtReferenceNo_TextChanged(sender As Object, e As EventArgs) Handles txtReferenceNo.TextChanged
+        UpdateButtonState()
+    End Sub
+
+    Private Sub txtAmountPaid_TextChanged(sender As Object, e As EventArgs) Handles txtAmountPaid.TextChanged
+        UpdateGrandTotalDisplay()
+        UpdateButtonState()
+    End Sub
+
+    Private Sub txtAmountPaid_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtAmountPaid.KeyPress
+        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) AndAlso e.KeyChar <> "."c Then e.Handled = True
+        If e.KeyChar = "."c AndAlso DirectCast(sender, TextBox).Text.Contains(".") Then e.Handled = True
+    End Sub
+
+    Private Sub ItemSearch_TextChanged(sender As Object, e As EventArgs) Handles ItemSearch.TextChanged
+        LoadInventoryItems(ItemSearch.Text.Trim())
     End Sub
 
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         SystemSession.NavigateToDashboard(Me)
     End Sub
 
-    ' Helper to clean up the screen after saving
-    Private Sub ClearBillingUI()
-        ' Reset IDs
-        SelectedAppointmentID = 0
-        SelectedPatientID = 0
-
-        ' Reset Labels (Assuming these are your Label names)
-        patient_name.Text = "---"
-        dentist_name.Text = "---"
-        ' Reset Numeric fields
-        TextBoxTotal.Text = "0.00"
-
-        ' Clear the Itemized Grid
-        dgvServices.DataSource = Nothing
-        txtReferenceNo.Clear()
-        ' Clear reference number and disable it until GCash is selected again
-        txtReferenceNo.Enabled = False
-        ' Reset selection in main grid
-        dgvPendingPayments.ClearSelection()
-    End Sub
-    ' Only allows numbers and backspace in the Reference Number box
-    Private Sub txtReferenceNo_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtReferenceNo.KeyPress
-        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
-            e.Handled = True
-        End If
-    End Sub
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         ClearBillingUI()
     End Sub
+
 End Class

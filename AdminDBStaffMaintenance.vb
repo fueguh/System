@@ -72,8 +72,11 @@ Public Class AdminDBStaffMaintenance
     Private Sub BTNAdd_Click(sender As Object, e As EventArgs) Handles BTNAdd.Click
         If Not ValidateStaffFields() Then Exit Sub
 
-        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim()) Then
-            MessageBox.Show("Email or Username already exists.")
+        Dim dup As String = IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim())
+        If dup <> "" Then
+            Dim msg As String = If(dup = "Username", "Username already exists.", "Email already exists.")
+            MessageBox.Show(msg, "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            If dup = "Username" Then TxtUsername.Focus() Else TxtEmail.Focus()
             Exit Sub
         End If
 
@@ -105,11 +108,20 @@ Public Class AdminDBStaffMaintenance
     End Sub
 
     Private Sub BtnUpdate_Click(sender As Object, e As EventArgs) Handles BtnUpdate.Click
-        If selectedStaffID = 0 Then Exit Sub
+        If selectedStaffID = 0 Then
+            MessageBox.Show("Please select a staff member to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Exit Sub
+        End If
+
         If Not ValidateStaffFields(selectedStaffID) Then Exit Sub
 
-        ' Check duplicates (handles its own MessageBox)
-        If IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedStaffID) Then
+        ' Improved duplicate check with clear message
+        Dim dup As String = IsDuplicateEmailOrUsername(TxtEmail.Text.Trim(), TxtUsername.Text.Trim(), selectedStaffID)
+        If dup <> "" Then
+            Dim msg As String = If(dup = "Username", "Username already exists.", "Email already exists.")
+            MessageBox.Show(msg & vbCrLf & "It is used by another user in the system.",
+                       "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            If dup = "Username" Then TxtUsername.Focus() Else TxtEmail.Focus()
             Exit Sub
         End If
 
@@ -279,17 +291,31 @@ Public Class AdminDBStaffMaintenance
         End Using
     End Function
 
-    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional id As Integer = 0) As Boolean
+    Private Function IsDuplicateEmailOrUsername(email As String, username As String, Optional id As Integer = 0) As String
+        ' Returns "" if OK, otherwise returns "Email" or "Username" so we can show clear message
         Using con As New SqlConnection(connString)
             con.Open()
-            Dim query As String = "SELECT COUNT(*) FROM Users WHERE (Email = @em OR Username = @un) AND UserID <> @id"
-            Using cmd As New SqlCommand(query, con)
-                cmd.Parameters.AddWithValue("@em", email)
+
+            ' Check Username first
+            Dim queryUn As String = "SELECT COUNT(*) FROM Users WHERE Username = @un AND UserID <> @id"
+            Using cmd As New SqlCommand(queryUn, con)
                 cmd.Parameters.AddWithValue("@un", username)
                 cmd.Parameters.AddWithValue("@id", id)
-                Return CInt(cmd.ExecuteScalar()) > 0
+                If CInt(cmd.ExecuteScalar()) > 0 Then Return "Username"
             End Using
+
+            ' ✅ Check Email ONLY if not empty
+            If Not String.IsNullOrWhiteSpace(email) Then
+                Dim queryEm As String = "SELECT COUNT(*) FROM Users WHERE Email = @em AND UserID <> @id"
+                Using cmd As New SqlCommand(queryEm, con)
+                    cmd.Parameters.AddWithValue("@em", email)
+                    cmd.Parameters.AddWithValue("@id", id)
+                    If CInt(cmd.ExecuteScalar()) > 0 Then Return "Email"
+                End Using
+            End If
         End Using
+
+        Return ""   ' No duplicate
     End Function
 
     ' ✅ IMPROVED: Unified Validation Logic
