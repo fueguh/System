@@ -159,11 +159,19 @@ Public Class AdminDBUsers
                     End Using
                 End Using
 
-                ' Warn the user if they are about to demote themselves
-                If selectedUserID = SystemSession.LoggedInUserID AndAlso oldRole = "Admin" AndAlso Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
-                    Dim res = MessageBox.Show("You are about to change your own role from Admin to '" & CmbRole.Text & "'. This will end your session immediately and log you out. Continue?", "Confirm role change", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                    If res <> DialogResult.Yes Then
+                ' Prevent the logged-in Admin from demoting themselves to Staff
+                If selectedUserID = SystemSession.LoggedInUserID AndAlso oldRole = "Admin" Then
+                    If CmbRole.Text.Equals("Staff", StringComparison.OrdinalIgnoreCase) Then
+                        MessageBox.Show("You cannot change your own role to 'Staff'. Please ask another Admin to change your role.", "Action Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                         Return
+                    End If
+
+                    ' For other non-Admin role changes, ask for confirmation because it will end the session
+                    If Not CmbRole.Text.Equals("Admin", StringComparison.OrdinalIgnoreCase) Then
+                        Dim res = MessageBox.Show("You are about to change your own role from Admin to '" & CmbRole.Text & "'. This will end your session immediately and log you out. Continue?", "Confirm role change", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                        If res <> DialogResult.Yes Then
+                            Return
+                        End If
                     End If
                 End If
 
@@ -249,14 +257,10 @@ Public Class AdminDBUsers
             Exit Sub
         End If
 
-        ' Warn the user if they are about to delete their own account
+        ' Prevent deleting own account — require another Admin to perform deletions
         If selectedUserID = SystemSession.LoggedInUserID Then
-            Dim confirmSelf = MessageBox.Show(
-                "You are about to delete your own account. This will log you out immediately. Do you want to continue?",
-                "Confirm Self-Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-            If confirmSelf <> DialogResult.Yes Then
-                Exit Sub
-            End If
+            MessageBox.Show("You cannot delete your own account. Please ask another Admin to perform this action.", "Action Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Exit Sub
         End If
 
         Try
