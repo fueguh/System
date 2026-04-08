@@ -7,9 +7,6 @@ Public Module AdminDBPaymentReceiptPrinter
     Private _PatientName As String
     Private _DentistName As String
     Private _Notes As String
-    Private _Subtotal As String
-    Private _VatExempt As String
-    Private _VatAmount As String
     Private _Total As String
     Private _AmountPaid As String
     Private _Change As String
@@ -35,17 +32,17 @@ Public Module AdminDBPaymentReceiptPrinter
     ''' Print Receipt - Now includes Items from ReceiptItems table
     ''' </summary>
     Public Sub PrintReceipt(
-    patient As String,
-    dentist As String,
-    notes As String,
-    total As String,
-    paid As String,
-    change As String,
-    method As String,
-    ref As String,
-    services As DataTable,
-    followups As DataTable,
-    items As DataTable)
+        patient As String,
+        dentist As String,
+        notes As String,
+        total As String,
+        paid As String,
+        change As String,
+        method As String,
+        ref As String,
+        services As DataTable,
+        followups As DataTable,
+        items As DataTable)
 
         ' Assign values
         _PatientName = patient
@@ -60,7 +57,7 @@ Public Module AdminDBPaymentReceiptPrinter
         _FollowUpsDt = followups
         _ItemsDt = items
 
-        ' Print setup - Better for 80mm thermal printer
+        ' Print setup - Better for 58mm/80mm thermal printer
         Dim pd As New PrintDocument()
         pd.DefaultPageSettings.PaperSize = New PaperSize("58mm", 228, 1000) ' Continuous roll
         pd.DefaultPageSettings.Margins = New Margins(5, 5, 5, 5)
@@ -115,7 +112,7 @@ Public Module AdminDBPaymentReceiptPrinter
                      New RectangleF(left, y, right - left, 30), center)
         y += 32
 
-        ' Info
+        ' Info Section
         g.DrawString("Date: " & DateTime.Now.ToString("G"), fontBody, Brushes.Black, left, y)
         y += 16
         g.DrawString("Patient: " & _PatientName, fontBody, Brushes.Black, left, y)
@@ -136,9 +133,8 @@ Public Module AdminDBPaymentReceiptPrinter
             Dim name As String = row("ServiceName").ToString().Trim()
             Dim price As String = "P" & CDec(row("Price")).ToString("F2")
 
-            ' Services Truncation
+            ' Truncation for long service names
             If g.MeasureString(name, fontBody).Width > (right - left - 60) Then
-                ' Only substring if the name is actually longer than 25 chars
                 If name.Length > 25 Then
                     name = name.Substring(0, 22) & ".."
                 End If
@@ -164,9 +160,9 @@ Public Module AdminDBPaymentReceiptPrinter
 
                 Dim leftText As String = name & " x" & qty
                 Dim rightText As String = "P" & lineTotal.ToString("F2")
-                ' Items Truncation
+
+                ' Truncation for long item names
                 If g.MeasureString(leftText, fontBody).Width > (right - left - 85) Then
-                    ' Only substring if the text is actually longer than 25 chars
                     If leftText.Length > 25 Then
                         leftText = leftText.Substring(0, 22) & ".."
                     End If
@@ -180,28 +176,34 @@ Public Module AdminDBPaymentReceiptPrinter
             g.DrawString("".PadRight(45, "-"), fontBody, Brushes.Black, left, y)
             y += 18
         End If
-        Dim totalDec As Decimal = CDec(_Total)
-        Dim vatExemptDec As Decimal = Math.Round(totalDec / 1.12D, 2)
-        Dim vatAmountDec As Decimal = Math.Round(totalDec - vatExemptDec, 2)
+
         ' ================= VAT SECTION - CLEAN & PROFESSIONAL =================
-        g.DrawString("SUBTOTAL:", fontBody, Brushes.Black, left, y)
+        Dim totalDec As Decimal = CDec(_Total)
+        Dim vatRate As Decimal = 1.12D
+
+        ' Safe VAT back-calculation (Philippine BIR standard)
+        Dim vatableSales As Decimal = Decimal.Round(totalDec / vatRate, 2, MidpointRounding.AwayFromZero)
+        Dim vatAmount As Decimal = totalDec - vatableSales
+
+        ' VAT Details
+        g.DrawString("SUBTOTAL (VAT Inclusive):", fontBody, Brushes.Black, left, y)
         g.DrawString("P" & totalDec.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
         y += 16
 
         g.DrawString("VATable Sales:", fontBody, Brushes.Black, left, y)
-        g.DrawString("P" & vatExemptDec.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
+        g.DrawString("P" & vatableSales.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
         y += 16
 
         g.DrawString("VAT (12%):", fontBody, Brushes.Black, left, y)
-        g.DrawString("P" & vatAmountDec.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
+        g.DrawString("P" & vatAmount.ToString("F2"), fontBody, Brushes.Black, right, y, rightAlign)
         y += 22
 
         ' Grand Total
-        g.DrawString("TOTAL AMOUNT:", New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, left, y)
+        g.DrawString("TOTAL AMOUNT DUE:", New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, left, y)
         g.DrawString("P" & _Total, New Font("Consolas", 10, FontStyle.Bold), Brushes.Black, right, y, rightAlign)
         y += 28
 
-        ' Payment
+        ' Payment Details
         g.DrawString("Amount Paid:", fontBody, Brushes.Black, left, y)
         g.DrawString("P" & _AmountPaid, fontBody, Brushes.Black, right, y, rightAlign)
         y += 16
@@ -245,6 +247,7 @@ Public Module AdminDBPaymentReceiptPrinter
         y += 65
         e.HasMorePages = False
     End Sub
+
     Public Function IsPrinterOnline(printerName As String) As Boolean
         Try
             Dim query As String = "SELECT * FROM Win32_Printer WHERE Name = '" & printerName.Replace("\", "\\") & "'"
@@ -260,7 +263,7 @@ Public Module AdminDBPaymentReceiptPrinter
     End Function
 
     ''' <summary>
-    ''' Flash Preview - Updated to include Items and consistent formatting
+    ''' Flash Preview - Consistent with printed receipt
     ''' </summary>
     Public Function GetReceiptFlashPreview(
         patientName As String,
@@ -274,9 +277,12 @@ Public Module AdminDBPaymentReceiptPrinter
         servicesDt As DataTable,
         itemsDt As DataTable,
         followUpsDt As DataTable) As String
+
         Dim totalDec As Decimal = CDec(total)
-        Dim vatExemptDec As Decimal = Math.Round(totalDec / 1.12D, 2)
-        Dim vatAmountDec As Decimal = Math.Round(totalDec - vatExemptDec, 2)
+        Dim vatRate As Decimal = 1.12D
+        Dim vatableSales As Decimal = Decimal.Round(totalDec / vatRate, 2, MidpointRounding.AwayFromZero)
+        Dim vatAmount As Decimal = totalDec - vatableSales
+
         Dim flashMsg As String = GetReceiptHeader() & vbCrLf & vbCrLf
 
         flashMsg &= "Date: " & DateTime.Now.ToString("G") & vbCrLf
@@ -312,10 +318,10 @@ Public Module AdminDBPaymentReceiptPrinter
         flashMsg &= "--------------------------------" & vbCrLf
 
         ' Financials
-        flashMsg &= "SUBTOTAL:           P" & totalDec.ToString("F2") & vbCrLf
-        flashMsg &= "VATable Sales:      P" & vatExemptDec.ToString("F2") & vbCrLf
-        flashMsg &= "VAT (12%):          P" & vatAmountDec.ToString("F2") & vbCrLf & vbCrLf
-        flashMsg &= "TOTAL AMOUNT:       P" & total & vbCrLf & vbCrLf
+        flashMsg &= "SUBTOTAL (VAT Inclusive):   P" & totalDec.ToString("F2") & vbCrLf
+        flashMsg &= "VATable Sales:              P" & vatableSales.ToString("F2") & vbCrLf
+        flashMsg &= "VAT (12%):                  P" & vatAmount.ToString("F2") & vbCrLf & vbCrLf
+        flashMsg &= "TOTAL AMOUNT DUE:           P" & total & vbCrLf & vbCrLf
 
         ' Payment
         flashMsg &= "Amount Paid:        P" & amountPaid & vbCrLf
