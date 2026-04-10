@@ -59,7 +59,9 @@ Public Class AdminDBPayment
                 LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
                 LEFT JOIN Receipts R ON A.AppointmentID = R.AppointmentID
                 WHERE A.Status = 'Completed'
-                  AND (R.Status IS NULL OR R.Status <> 'Active')
+                  -- Only show appointments that have no receipt (unpaid) or whose receipt was voided.
+                  -- Exclude receipts that are already completed/paid so they don't appear in the queue.
+                  AND (R.Status IS NULL OR R.Status IN ('Voided', 'Pending'))
                 GROUP BY 
                     A.AppointmentID, P.PatientID, P.FullName, U.FullName, A.Date, 
                     T.TreatmentNotes, T.Prescriptions, R.Status
