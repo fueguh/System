@@ -49,7 +49,7 @@ Public Class AdminDBDentistSchedule
             colEnd.Items.Add(timeString)
             cmbBulkStart.Items.Add(timeString)
             cmbBulkEnd.Items.Add(timeString)
-            current = current.Add(TimeSpan.FromMinutes(30))
+            current = current.Add(TimeSpan.FromMinutes(15))
         End While
 
         DgvSchedule.Columns.Add(colStart)
