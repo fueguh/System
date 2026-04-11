@@ -122,7 +122,7 @@ Public Class AdminDashboard
         Me.Hide()
     End Sub
 
-    Private Sub Stock_Tracking_Click(sender As Object, e As EventArgs) Handles Stock_Tracking.Click
+    Private Sub Stocks_Click(sender As Object, e As EventArgs) Handles Stocks.Click
         AdminDBStockTracking.Show()
         Me.Hide()
     End Sub

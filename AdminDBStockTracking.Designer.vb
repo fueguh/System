@@ -174,7 +174,7 @@ Partial Class AdminDBStockTracking
         Me.Guna2HtmlLabel6.Name = "Guna2HtmlLabel6"
         Me.Guna2HtmlLabel6.Size = New System.Drawing.Size(1657, 107)
         Me.Guna2HtmlLabel6.TabIndex = 47
-        Me.Guna2HtmlLabel6.Text = "Stock Tracking"
+        Me.Guna2HtmlLabel6.Text = "Stocks"
         Me.Guna2HtmlLabel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter
         '
         'Guna2HtmlLabel3
