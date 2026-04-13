@@ -33,6 +33,8 @@ Public Class AdminDBReports
     ' ===================== PAYMENT HISTORY =====================
     Private Sub LoadPaymentHistory()
 
+        ' Show completed receipts but also display voided and pending/unpaid receipts
+        ' so users can see history for transactions that were later voided or remain unpaid.
         Dim query As String = "
             SELECT 
                 R.ReceiptID,
@@ -46,13 +48,18 @@ Public Class AdminDBReports
                 R.AmountPaid,
                 R.ChangeAmount,
                 R.DateIssued,
-                R.Status
+                ISNULL(R.Status, 'Unpaid') AS Status
             FROM Receipts R
             INNER JOIN Appointments A ON R.AppointmentID = A.AppointmentID
             INNER JOIN Patients P ON A.PatientID = P.PatientID
             INNER JOIN Users U ON A.UserID = U.UserID
             WHERE U.Role = 'Dentist'
-              AND R.Status = 'Completed'   -- ✅ FIXED
+              AND (
+                    R.Status = 'Completed'
+                 OR R.Status = 'Voided'
+                 OR R.Status IS NULL
+                 OR R.Status = 'Unpaid'
+              )
             ORDER BY R.DateIssued DESC"
 
         DGVDaily.DataSource = ExecuteQuery(query)

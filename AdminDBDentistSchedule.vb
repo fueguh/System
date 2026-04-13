@@ -2,6 +2,7 @@
 
 Public Class AdminDBDentistSchedule
     Public Property DentistID As Integer
+    Public Property DentistName As String = ""
     Public Property ScheduleSaved As Boolean = False
 
     ' ==========================================
@@ -49,7 +50,7 @@ Public Class AdminDBDentistSchedule
             colEnd.Items.Add(timeString)
             cmbBulkStart.Items.Add(timeString)
             cmbBulkEnd.Items.Add(timeString)
-            current = current.Add(TimeSpan.FromMinutes(30))
+            current = current.Add(TimeSpan.FromMinutes(15))
         End While
 
         DgvSchedule.Columns.Add(colStart)
@@ -124,6 +125,7 @@ Public Class AdminDBDentistSchedule
 
         Dim row As DataGridViewRow = DGVPartTimers.Rows(e.RowIndex)
         DentistID = CInt(row.Cells("UserID").Value)
+        DentistName = row.Cells("FullName").Value.ToString()
 
         ' Reset grid to all 7 days
         PopulateEmptyGrid()
@@ -245,6 +247,9 @@ Public Class AdminDBDentistSchedule
                         Next
 
                         trans.Commit()
+                        ' Audit log: record who updated which dentist schedule (use name)
+                        SystemSession.LogAudit("Updated schedule for dentist: " & DentistName, "Dentist Schedule", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
                         MessageBox.Show("Dentist schedule updated successfully!")
                         LoadPartTimeDentists()
                         ClearForm()
@@ -286,6 +291,9 @@ Public Class AdminDBDentistSchedule
             End Using
 
             MessageBox.Show("Schedule cleared successfully.")
+            ' Audit log: record removal of all schedule entries for this dentist (use name)
+            SystemSession.LogAudit("Removed all scheduled days for dentist: " & DentistName, "Dentist Schedule", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+
             LoadPartTimeDentists()   ' update the list summary
             ClearForm()              ' reset grid and selection
 
@@ -379,6 +387,7 @@ Public Class AdminDBDentistSchedule
     ' ==========================================
     Private Sub ClearForm()
         DentistID = 0
+        DentistName = ""
         PopulateEmptyGrid()
         DGVPartTimers.ClearSelection()
         cmbBulkStart.SelectedIndex = -1

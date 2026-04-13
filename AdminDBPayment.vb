@@ -59,7 +59,9 @@ Public Class AdminDBPayment
                 LEFT JOIN Services S ON AP.ServiceID = S.ServiceID
                 LEFT JOIN Receipts R ON A.AppointmentID = R.AppointmentID
                 WHERE A.Status = 'Completed'
-                  AND (R.Status IS NULL OR R.Status <> 'Active')
+                  -- Only show appointments that have no receipt (unpaid) or whose receipt was voided.
+                  -- Exclude receipts that are already completed/paid so they don't appear in the queue.
+                  AND (R.Status IS NULL OR R.Status IN ('Voided', 'Pending'))
                 GROUP BY 
                     A.AppointmentID, P.PatientID, P.FullName, U.FullName, A.Date, 
                     T.TreatmentNotes, T.Prescriptions, R.Status
@@ -440,15 +442,29 @@ Public Class AdminDBPayment
 
         MessageBox.Show(flashMsg, "Receipt Preview", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
-        If MessageBox.Show("Do you want to print this receipt?", "Confirm Print",
-                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
-
+        ' Automatically proceed to print after preview (no confirmation) and do not show
+        ' any further message boxes. Failures or successes are recorded to audit log only.
+        Try
             AdminDBPaymentReceiptPrinter.PrintReceipt(
                 SelectedPatientName, SelectedDentistName, SelectedTreatmentNotes,
                 totalAmount.ToString("F2"), amountPaid.ToString("F2"), changeAmount.ToString("F2"),
                 ComboBoxPaymentMethod.Text, If(ComboBoxPaymentMethod.Text = "Gcash", txtReferenceNo.Text.Trim(), ""),
                 dtServices, dtFollowUps, dtItems)
-        End If
+
+            ' Log successful print silently
+            Try
+                SystemSession.LogAudit($"Receipt printed for {SelectedPatientName}", "Print", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            Catch
+                ' swallow logging errors
+            End Try
+        Catch ex As Exception
+            ' Log printing error silently
+            Try
+                SystemSession.LogAudit($"Printing failed for {SelectedPatientName}: {ex.Message}", "PrintError", SystemSession.LoggedInUserID, SystemSession.LoggedInFullName, SystemSession.LoggedInRole)
+            Catch
+                ' swallow logging errors
+            End Try
+        End Try
 
         ClearBillingUI()
 
@@ -672,6 +688,16 @@ Public Class AdminDBPayment
         ' NEW: reset receipt mode state
         SelectedReceiptStatus = ""
         SetReadOnlyMode(False)
+        ' Ensure a sensible default payment method so user doesn't have to pick every time
+        Try
+            If ComboBoxPaymentMethod.Items.Contains("Cash") Then
+                ComboBoxPaymentMethod.SelectedItem = "Cash"
+            ElseIf ComboBoxPaymentMethod.Items.Count > 0 Then
+                ComboBoxPaymentMethod.SelectedIndex = 0
+            End If
+        Catch
+            ' ignore any issues setting default selection
+        End Try
     End Sub
 
     Private Sub SetPrescriptionControlsEnabled(enabled As Boolean)

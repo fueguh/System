@@ -49,7 +49,7 @@ Public Module AdminDBPaymentReceiptPrinter
 
         ' Items
         If items IsNot Nothing AndAlso items.Rows.Count > 0 Then
-            sb.AppendLine("ITEMS USED:")
+            sb.AppendLine("ITEMS SOLD:")
             For Each row As DataRow In items.Rows
                 Dim name As String = row("ItemName").ToString().Trim()
                 Dim qty As Integer = CInt(row("Quantity"))
@@ -131,7 +131,7 @@ Public Module AdminDBPaymentReceiptPrinter
         services As DataTable, followups As DataTable, items As DataTable)
 
         Dim g As Graphics = e.Graphics
-        Dim y As Single = 30.0F
+        Dim y As Single = 40.0F
         Dim left As Single = 5
         Dim right As Single = 185
 

@@ -41,7 +41,7 @@ Partial Class AdminDashboard
         Me.Reports = New System.Windows.Forms.ToolStripMenuItem()
         Me.Inventory_Management = New System.Windows.Forms.ToolStripMenuItem()
         Me.Item_Management = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Stock_Tracking = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Stocks = New System.Windows.Forms.ToolStripMenuItem()
         Me.Analytics = New System.Windows.Forms.ToolStripMenuItem()
         Me.Payment = New System.Windows.Forms.ToolStripMenuItem()
         Me.Payment_History = New System.Windows.Forms.ToolStripMenuItem()
@@ -224,7 +224,7 @@ Partial Class AdminDashboard
         '
         'Inventory_Management
         '
-        Me.Inventory_Management.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Item_Management, Me.Stock_Tracking, Me.Analytics})
+        Me.Inventory_Management.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Item_Management, Me.Stocks, Me.Analytics})
         Me.Inventory_Management.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
         Me.Inventory_Management.Name = "Inventory_Management"
         Me.Inventory_Management.Size = New System.Drawing.Size(355, 44)
@@ -238,13 +238,13 @@ Partial Class AdminDashboard
         Me.Item_Management.Size = New System.Drawing.Size(349, 44)
         Me.Item_Management.Text = "Item Management"
         '
-        'Stock_Tracking
+        'Stocks
         '
-        Me.Stock_Tracking.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
-        Me.Stock_Tracking.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
-        Me.Stock_Tracking.Name = "Stock_Tracking"
-        Me.Stock_Tracking.Size = New System.Drawing.Size(349, 44)
-        Me.Stock_Tracking.Text = "Stock Tracking"
+        Me.Stocks.BackColor = System.Drawing.Color.FromArgb(CType(CType(9, Byte), Integer), CType(CType(99, Byte), Integer), CType(CType(126, Byte), Integer))
+        Me.Stocks.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(244, Byte), Integer), CType(CType(246, Byte), Integer))
+        Me.Stocks.Name = "Stocks"
+        Me.Stocks.Size = New System.Drawing.Size(349, 44)
+        Me.Stocks.Text = "Stock Tracking"
         '
         'Analytics
         '
@@ -638,7 +638,7 @@ Partial Class AdminDashboard
     Friend WithEvents TodaysAppointment As ToolStripMenuItem
     Friend WithEvents Inventory_Management As ToolStripMenuItem
     Friend WithEvents Item_Management As ToolStripMenuItem
-    Friend WithEvents Stock_Tracking As ToolStripMenuItem
+    Friend WithEvents Stocks As ToolStripMenuItem
     Friend WithEvents Analytics As ToolStripMenuItem
     Friend WithEvents Payment As ToolStripMenuItem
     Friend WithEvents Payment_History As ToolStripMenuItem
